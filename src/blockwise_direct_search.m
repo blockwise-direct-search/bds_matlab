@@ -210,12 +210,9 @@ if fval <= ftarget
     maxit = 0;
 end
 
-% Initialize success_block_index. It is the index of the block where a
-% success occurred and is hence a value between 1 and nb. When no
-% sufficient decrease is observed for all directions in all blocks, we set
-% success_block_index to -1, which will be more easier to port python and C in
-% the future.
-% success_block_index = -1;
+if polling_blocks == "Randomized_block_array"
+    block_index = 1:nb;
+end
 
 % Start the actual computations.
 for iter = 1 : maxit
@@ -225,8 +222,17 @@ for iter = 1 : maxit
     % The corresponding value of the objective function is stored in fbase.
     xbase = xval(:);
     fbase = fval;
-
-    i = get_block(iter, nb, hist, polling_blocks);
+    
+    if polling_blocks == "Randomized_block_array"
+        block_index_array = mod(length(hist.block)-1, nb);
+        if block_index_array == 0
+            block_array = block_index(randperm(length(block_index)));
+        else
+            i = block_array(block_index_array);
+        end
+    else
+        i = get_block(iter, nb, hist, polling_blocks);
+    end
     direction_indices = searching_set_indices{i}; % acquire indices in block i_real
 
     suboptions.maxfun = maxfun - nf;
