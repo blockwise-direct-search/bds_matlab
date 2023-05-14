@@ -1,0 +1,91 @@
+name: Verification, archiva
+
+on:
+  # Trigger the workflow on push or pull request
+  #push:
+  #pull_request:  # DANGEROUS! MUST be disabled for self-hosted runners!
+  # Trigger the workflow by cron. The default time zone of GitHub Actions is UTC.
+  schedule:
+      #  - cron: '0 1,9,17 * * *'
+    - cron: '0 22 * * *'
+  # Trigger the workflow manually
+  workflow_dispatch:
+
+env:
+  GFORTRAN_VERSION: 12
+
+jobs:
+  test:
+    name: Verify PRIMA.
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        matlab: [latest]
+        solver: [newuoa, cobyla, lincoa, bobyqa, uobyqa]
+        dim: [small, big, large]
+        version: [220208, 220227, 220513, 220531,220601,220616,220819,220926,221105,221128,230108,230305,230430,230509]
+        exclude:
+          - solver: lincoa
+            dim: large  # very few problems but takes too much time to run
+          - solver: newuoa
+            dim: large  # very few problems but takes too much time to run
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3.5.2
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY_ACT }} # This forces checkout to use SSH, not HTTPS
+          submodules: recursive
+
+      - name: Clone MatCUTEst
+        uses: actions/checkout@v3.5.2
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY_ACT }} # This forces checkout to use SSH, not HTTPS
+          repository: equipez/matcutest_compiled
+          path: matcutest
+
+      - name: Link gfortran for MATLAB on Linux
+        if: startsWith(matrix.os, 'ubuntu')
+        run: bash .github/scripts/link_gfortran ${{ env.GFORTRAN_VERSION }}
+
+      - name: Check MATLAB
+        id: check_matlab
+        run: if type 'matlab' &> /dev/null ; then echo "::set-output name=has_matlab::true" ; fi
+
+      - name: Cache MATLAB
+        id: cache-matlab
+        uses: actions/cache@v3.3.1
+        with:
+          path: ${{ runner.tool_cache }}/MATLAB
+          key: ${{ matrix.os }}-${{ matrix.matlab }}
+
+      - name: Set up MATLAB
+        if: ${{ steps.check_matlab.outputs.has_matlab != 'true' }}
+        uses: matlab-actions/setup-matlab@v2-beta
+        with:
+          release: ${{ matrix.matlab }}
+
+      - name: Conduct the test
+        uses: matlab-actions/run-command@v1.1.3
+        with:
+          command: |
+            ver;
+            root_dir = pwd();
+
+            cd(fullfile(root_dir, 'matcutest')); install(); which macup
+
+            cd(fullfile(root_dir, '.development/archiva/${{ matrix.version }}/matlab/tests'));
+            tz = 'Asia/Shanghai';
+            dt = datetime('now', 'TimeZone', tz);
+            DayMonth = day(dt);
+            options = struct();
+            options.verbose = true;
+            options.seed = 10000*mod(year(dt), 100) + 100*week(dt) + hour(dt);
+            options.nr = 1; % Since the code will not change along the time, big nr is not needed.
+            options.no_classical = true;  % Starting from 20230212, we do not verify the classical version for the archiva.
+            options
+            verify('${{ matrix.solver }}', '${{ matrix.dim }}', 'seq', options);  % Zaikun 20230328: Conduct the verification in sequential to avoid the debugging pain.
+            delete([upper('${{ matrix.solver }}'), '_output.txt']);
+            delete('fort.6');
+            cd(root_dir); setup clean; setup uninstall;

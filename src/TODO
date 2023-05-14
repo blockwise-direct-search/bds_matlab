@@ -1,0 +1,33 @@
+0. Move test_bds.m to ../tests; it will be necessary to add paths or it will not work.
+1. save test result, testfile and algorithm into one folder to ensure that it can be run again and have the same result.
+2. let Tom help check testbds
+3. preconditions and postconditions
+4. github actions
+5. automated and randomized experiment on github actions
+6.There should be two types of tests:
+- Verification
+The purpose is to verify the correctness and robustness of the algorithm.
+There are two basic types of verifications.
+-- Normal verification. With CUTEst problem and *reasonably* randomized input (x0, alpha0, maxfun),
+test that the returned x is "optimized" up to a certain tolerance. For example,
+check that the returned gradient is below a tolerance (relative to the initial one).
+The tolerance may be set to different values according to the problems (1.0e-8 for easy problems,
+ 1.0-e-4, 1.0e-2, 1.0e-1, fval < f(x0).
+
+-- Tough tests
+CUTEst, crazily/badly randomized f, badly randomized other input (x0, alpha0)
+Ensure that the algorithm behaves properly without crashing.
+
+- Comparison
+The purpose is to compare the efficiency of the algorithm against some competitors.
+Plot performance profiles against competitors: plain, randomized x0, noisy 10-8, 10-6, 10-4, 10-3.
+single precision, signif3, 5,
+
+***7. Initialize success_index (maybe other indices also) to -1 rather than 0. This will prevent bugs
+   if the code is ported to Python or C in the future. This may affect cycling.m.
+   Instead of checking success_index == 0, check success_index < 1.
+
+8. Restore and set paths before and after the test, to make sure that we are testing the correct
+   version of the code.
+
+9. Learn and use Try Catch.
