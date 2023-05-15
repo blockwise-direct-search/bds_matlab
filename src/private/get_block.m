@@ -22,7 +22,6 @@ if nb ~= 1
             if nb_visited == 0 || nb_visited == 1
                 block_index = nb_visited+1;
             else
-
                 block_index_last = find(block_hist, 1, 'last');
                 block_last = block_hist(block_index_last);
                 block_second_last = block_hist(block_index_last-1);
@@ -43,9 +42,8 @@ if nb ~= 1
             if nb_visited == 0
                 block_index = 1;
             else
-                block_visited = find(block_hist);
-                block_index_visited = block_visited(length(block_visited));
-                block_last = block_hist(block_index_visited);
+                block_index_last = find(block_hist, 1, 'last');
+                block_last = block_hist(block_index_last);
                 block_array_init(block_last) = [];
                 index = round(rand(1,1)*(nb-2)+1);
                 block_index = block_array_init(index);

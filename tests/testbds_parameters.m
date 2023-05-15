@@ -21,15 +21,15 @@ addpath(path_competitors);
 parameters.solvers_invoke = ["blockwise_direct_search",  ...
   "blockwise_direct_search"];
 parameters.solvers_label = [ ...
- "GS", "Randomized(index)"];
+ "GS", "Randomized(no repetition)"];
 parameters.memory = [true, true];
 parameters.polling_outer = ["opportunistic", "opportunistic",...
     ];
-parameters.polling_blocks = ["Gauss-Seidel", "Randomized_block_index"];
+parameters.polling_blocks = ["Gauss-Seidel", "Randomized_no_repetition"];
 parameters.polling_inner = ["opportunistic", "opportunistic",...
     ];
 parameters.cycling_inner = [1, 1];
-parameters.solvers_tag = ["GS", "Randomized_block_index"];
+parameters.solvers_tag = ["GS", "Randomized_no_repetition"];
 parameters.nb_generator = [0.5, 0.5];
 nb_tag = ["n", "n"];
 parameters.maxfun_dim = 1000;
