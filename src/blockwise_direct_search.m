@@ -210,9 +210,7 @@ if fval <= ftarget
     maxit = 0;
 end
 
-if polling_blocks == "Randomized_block_array"
-    block_index = 1:nb;
-end
+block_indices = 1:nb;
 
 % Start the actual computations.
 for iter = 1 : maxit
@@ -223,17 +221,9 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;
     
-    if polling_blocks == "Randomized_block_array"
-        block_index_array = mod(length(hist.block)-1, nb);
-        if block_index_array == 0
-            block_array = block_index(randperm(length(block_index)));
-        else
-            i = block_array(block_index_array);
-        end
-    else
-        i = get_block(iter, nb, hist, polling_blocks);
-    end
-    direction_indices = searching_set_indices{i}; % acquire indices in block i_real
+    [i, block_indices] = get_block(iter, nb, hist, polling_blocks, block_indices);
+        
+    direction_indices = searching_set_indices{i}; % get indices in block i_real
 
     suboptions.maxfun = maxfun - nf;
     % Memory and cycling are needed since we permutate indices in inner_direct_search

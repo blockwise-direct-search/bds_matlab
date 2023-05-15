@@ -1,6 +1,8 @@
-function block_index = get_block(k, nb, hist, polling_outer)
+function [block_index, block_indices] = get_block(k, nb, hist, polling_outer, block_indices)
 
 % Extreme case: How about nb = 1? 
+
+block_array_init = 1:nb;
 
 hist_block = hist.block;
 if nb ~= 1
@@ -28,6 +30,14 @@ if nb ~= 1
                 if block_index ~= hist_block(k)
                     break;
                 end
+            end
+        case {"Randomized_block_array"}
+            block_index_array = mod(length(hist.block)-1, nb);
+            if block_index_array == 0
+                block_indices = block_array_init(randperm(length(block_array_init)));
+                block_index = block_indices(1);
+            else
+                block_index = block_indices(block_index_array);
             end
     end
 else
