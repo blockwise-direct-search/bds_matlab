@@ -1,44 +1,62 @@
-function [block_index, block_indices] = get_block(k, nb, hist, polling_outer, block_indices)
+function block_index = get_block(nb, hist, polling_blocks, block_indices)
 
 % Extreme case: How about nb = 1? 
 
 block_array_init = 1:nb;
 
-hist_block = hist.block;
+block_hist = hist.block;
 if nb ~= 1
-    switch polling_outer
+    
+    % Initialize hist_block as a zero vector. Thus, number of
+    % nonzero elements will be number of blocks that having been
+    % visited
+    nb_visited = nnz(block_hist);
+    
+    switch polling_blocks
+        % Gauss-Seidel
         case {"Gauss-Seidel"}
-            % Gauss-Seidel
-            if hist_block(length(hist_block)) == 0 || hist_block(k) == nb
-                block_index = 1;
-            else
-                block_index = hist_block(k)+1;
-            end
+            block_index = mod(nb_visited, nb)+1;
+        
+        % symmetric Gauss-Seidel    
         case {"sGauss-Seidel"}
-            % symmetric Gauss-Seidel
-            if hist_block(length(hist_block)) == 0 || hist_block(k) == 1 || ...
-                    (hist_block(k-1)< hist_block(k) && hist_block(k) ~= nb)
-                block_index = hist_block(k)+1;
+            if nb_visited == 0 || nb_visited == 1
+                block_index = nb_visited+1;
             else
-                block_index = hist_block(k)-1;
-            end
-        case {"Randomized_block_index"}
-            block_index = round(rand(1,1)*(nb-1)+1);
-        case {"Randomized_no_repetition"}
-            for i = 1:10000
-                block_index = round(rand(1,1)*(nb-1)+1);
-                if block_index ~= hist_block(k)
-                    break;
+
+                block_index_last = find(block_hist, 1, 'last');
+                block_last = block_hist(block_index_last);
+                block_second_last = block_hist(block_index_last-1);
+                if block_last == 1 || (block_second_last < block_last && block_last ~= nb)
+                    block_index = block_last+1;
+                else
+                    block_index = block_last-1;
                 end
             end
-        case {"Randomized_block_array"}
-            block_index_array = mod(length(hist.block)-1, nb);
-            if block_index_array == 0
-                block_indices = block_array_init(randperm(length(block_array_init)));
-                block_index = block_indices(1);
+            
+        % Randomly produce an index from 1:nb.
+        case {"Randomized_block_index"}
+            block_index = round(rand(1,1)*(nb-1)+1);
+        
+        % Randomly produce an index from 1:nb, which is different from the 
+        % last index having been visited
+        case {"Randomized_no_repetition"}            
+            if nb_visited == 0
+                block_index = 1;
             else
-                block_index = block_indices(block_index_array);
+                block_visited = find(block_hist);
+                block_index_visited = block_visited(length(block_visited));
+                block_last = block_hist(block_index_visited);
+                block_array_init(block_last) = [];
+                index = round(rand(1,1)*(nb-2)+1);
+                block_index = block_array_init(index);
             end
+            
+        % Randomly produce an array from 1:nb. The following nb blocks going 
+        % to be visited is the array.
+        case {"Randomized_block_array"}
+            index = mod(nb_visited, nb);
+            block_index = block_indices(index)+1;
+
     end
 else
    block_index = 1; 

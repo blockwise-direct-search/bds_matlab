@@ -80,7 +80,6 @@ end
 % If number of directions is less than number of blocks, then the number of
 % blocks is defined as the number of directions.
 nb = min(m, nb);
-alpha_hist = cell(1, nb);
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e4.
@@ -170,15 +169,14 @@ else
     memory = get_default_constant("memory");
 end
 
+% Set initial step size and alpha_hist to store the history of step size.
+alpha_hist = NaN(nb, maxit);
 if isfield(options, "alpha_all")
     alpha_all = options.alpha_all*ones(nb, 1);
 else
     alpha_all = ones(nb, 1);
 end
-
-for i = 1:nb 
-    alpha_hist{i} = [alpha_hist{i} alpha_all(1)];
-end
+alpha_hist(:, 1) = alpha_all;
 
 % Divide the indices of the polling directions for each block.
 % TODO: Tell Zaikun that Tom disagrees with this name.
@@ -186,17 +184,14 @@ searching_set_indices = divide_searching_set(m, nb);
 
 % Initialize the computations.
 fhist = NaN(1, maxfun); % history of function values
-xhist = NaN(n, maxfun); % history of iterates
-hist.fvalue = [];
-hist.block = 0;
-hist.xvalue = [];
+xhist = NaN(n, maxfun); % history of points having been visited
+hist.block = zeros(1, maxfun); % history of blocks having been visited
 xval = x0; % current iterate
 fval = fun(xval);
 nf = 1; % number of function evaluations
 fhist(nf) = fval;
-hist.fvalue = [hist.fvalue fval];
 xhist(:, nf) = xval;
-hist.xvalue = [hist.xvalue xval];
+
 
 % Check whether ftarget is reached by fval. If this is the case, the
 % computations afterwards should NOT be done.
@@ -210,6 +205,8 @@ if fval <= ftarget
     maxit = 0;
 end
 
+% The number of blocks having been visited.
+nb_visited = 0;
 block_indices = 1:nb;
 
 % Start the actual computations.
@@ -221,9 +218,17 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;
     
-    [i, block_indices] = get_block(iter, nb, hist, polling_blocks, block_indices);
-        
-    direction_indices = searching_set_indices{i}; % get indices in block i_real
+    % Get the block that we are going to visit.
+    if mod(nb_visited, nb) == 0
+        block_indices = block_indices(randperm(length(block_indices)));
+    end
+    
+    i = get_block(nb, hist, polling_blocks, block_indices);
+
+    if i>nb || i <= 0
+        keyboard;
+    end
+    direction_indices = searching_set_indices{i}; % get indices in the i-th block
 
     suboptions.maxfun = maxfun - nf;
     % Memory and cycling are needed since we permutate indices in inner_direct_search
@@ -237,16 +242,18 @@ for iter = 1 : maxit
         fval, xbase, fbase, D(:, direction_indices), direction_indices,...
         alpha_all(i), suboptions);
     
-    hist.block = [hist.block i];
-
+    % The i-th block has been visited recently.
+    hist.block(iter) = i;
+    % Update the history of step size.
+    alpha_hist(:, iter) = alpha_all;
+    % Update the number of blocks having been visited.
+    nb_visited = nb_visited+1;
+    
     % Store the history of the evaluations performed by
     % inner_direct_search, and adjust the number of function
     % evaluations.
     fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
-    
-    hist.fvalue = [hist.fvalue suboutput.fhist];
     xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
-    hist.xvalue = [hist.xvalue suboutput.xhist];
     nf = nf+suboutput.nf;
 
     % If suboutput.terminate is true, then inner_direct_search returned
@@ -270,7 +277,7 @@ for iter = 1 : maxit
     else
         alpha_all(i) = shrink * alpha_all(i);
     end
-    alpha_hist{i} = [alpha_hist{i} alpha_all(1)];
+    alpha_hist(:, iter) = alpha_all;
     
     % Terminate the computations if the largest step size is below a
     % given tolerance.
@@ -301,7 +308,7 @@ end
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
-output.alpha_hist = alpha_hist;
+output.alpha_hist = alpha_hist(:, iter+1);
 
 % Postcondition: If debug_flag is true, then post-conditions is operated on
 % output. If output_correctness is false, then assert will let code crash.
