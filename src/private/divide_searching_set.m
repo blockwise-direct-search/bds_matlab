@@ -18,7 +18,13 @@ function index_searching_set = divide_searching_set(m, nb)
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    precondition_divide_searching_set(m, nb);
+    % Assert m is a positive integer.
+    assert(isintegerscalar(m) && m>0);
+    % Assert nb is a positive integer.
+    assert(isintegerscalar(nb) && nb>0);
+    % Assert the number of directions is greater than the number of
+    % blocks. (Preprocess it)
+    assert(nb<m);
 end
 
 num_direction_block = floor(m/nb); % Number of directions each block (average)
@@ -37,7 +43,7 @@ end
 % Postcondition: If debug_flag is true, then post-conditions is operated on
 % output. If output_correctness is false, then assert will let code crash.
 if debug_flag
-    postcondition_divide_searching_set(index_searching_set, nb);
+    assert(length(index_searching_set) == nb);
 end
 
 end
