@@ -10,7 +10,7 @@ function [xval, fval, exitflag, output] = blockwise_direct_search(fun, x0, optio
 %   default optimization parameters replaced by values in the structure OPTIONS,
 %   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 %   expand, shrink, sufficient decrease factor, tol, ftarget, polling_inner,
-%   polling_outer, memory, cycling.
+%   polling_blocks, memory, cycling.
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
@@ -308,7 +308,7 @@ end
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
-output.alpha_hist = alpha_hist(:, iter+1);
+output.alpha_hist = alpha_hist(:, 1:nf);
 
 % Postcondition: If debug_flag is true, then post-conditions is operated on
 % output. If output_correctness is false, then assert will let code crash.

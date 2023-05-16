@@ -19,9 +19,9 @@ addpath(path_src);
 path_competitors = strcat(path_tests, "/competitors");
 addpath(path_competitors);
 parameters.solvers_invoke = ["blockwise_direct_search",  ...
-  "blockwise_direct_search"];
+  "newuoa"];
 parameters.solvers_label = [ ...
- "GS", "Randomized(no repetition)"];
+ "GS", "newuoa"];
 parameters.memory = [true, true];
 parameters.polling_outer = ["opportunistic", "opportunistic",...
     ];
@@ -29,14 +29,14 @@ parameters.polling_blocks = ["Gauss-Seidel", "Randomized_no_repetition"];
 parameters.polling_inner = ["opportunistic", "opportunistic",...
     ];
 parameters.cycling_inner = [1, 1];
-parameters.solvers_tag = ["GS", "Randomized_no_repetition"];
+parameters.solvers_tag = ["GS", "newuoa"];
 parameters.nb_generator = [0.5, 0.5];
 nb_tag = ["n", "n"];
 parameters.maxfun_dim = 1000;
 parameters.maxfun = 60000;
 parameters.problems_type = 'u';
-parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
+parameters.problems_mindim = 6;
+parameters.problems_maxdim = 60;
 parameters.tau = 10.^(-1:-1:-10);
 % canonical; random
 parameters.direction = ["canonical", "canonical"];
