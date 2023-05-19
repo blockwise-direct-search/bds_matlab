@@ -20,7 +20,7 @@ switch constant_name
     case {"polling_inner"}
         constant_value = "opportunistic";
     case {"polling_blocks"}
-        constant_value = "sGauss-Seidel";
+        constant_value = "Gauss-Seidel";
     case {"cycling_inner"}
         constant_value = 1;
     case {"memory"}

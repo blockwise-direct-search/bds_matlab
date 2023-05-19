@@ -19,17 +19,17 @@ addpath(path_src);
 path_competitors = strcat(path_tests, "/competitors");
 addpath(path_competitors);
 parameters.solvers_invoke = ["blockwise_direct_search",  ...
-  "newuoa"];
+  "blockwise_direct_search"];
 parameters.solvers_label = [ ...
- "GS", "newuoa"];
+ "canonical", "normal"];
 parameters.memory = [true, true];
 parameters.polling_outer = ["opportunistic", "opportunistic",...
     ];
-parameters.polling_blocks = ["Gauss-Seidel", "Randomized_no_repetition"];
+parameters.polling_blocks = ["Gauss-Seidel", "Gauss-Seidel"];
 parameters.polling_inner = ["opportunistic", "opportunistic",...
     ];
 parameters.cycling_inner = [1, 1];
-parameters.solvers_tag = ["GS", "newuoa"];
+parameters.solvers_tag = ["GS_canonical", "GS_normal"];
 parameters.nb_generator = [0.5, 0.5];
 nb_tag = ["n", "n"];
 parameters.maxfun_dim = 1000;
@@ -39,8 +39,8 @@ parameters.problems_mindim = 6;
 parameters.problems_maxdim = 60;
 parameters.tau = 10.^(-1:-1:-10);
 % canonical; random
-parameters.direction = ["canonical", "canonical"];
-parameters.parallel = false;
+parameters.direction = ["canonical", "normal"];
+parameters.parallel = true;
 num_solvers = length(parameters.cycling_inner);
 pdfname = "";
 % Name pdf automatically (not manually).
