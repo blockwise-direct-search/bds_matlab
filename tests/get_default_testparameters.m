@@ -19,6 +19,8 @@ switch constant_name
         constant_value = -inf;
     case {"polling"}
         constant_value = "opportunistic";
+    case {"polling_outer"}
+        constant_value = "opportunistic";
     case {"polling_inner"}
         constant_value = "opportunistic";
     case {"polling_blocks"}
@@ -47,6 +49,8 @@ switch constant_name
         constant_value = "no-label";
     case {"solvers_tag"}
         constant_value = "none";
+    case {"tau_minimum"}
+        constant_value = -10;
     otherwise
         constant_value = "Unknown constant name";
 end

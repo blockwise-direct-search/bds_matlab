@@ -4,6 +4,7 @@ function [] = testbds_input(parameters)
 if nargin < 1
     parameters = struct();
 end
+
 % Avoid modify test file manually.
 restoredefaultpath;
 % The code of the following lines is for using matcutest first time.
@@ -27,9 +28,10 @@ path_competitors = strcat(path_tests, "/competitors");
 addpath(path_competitors);
 
 % The number of solvers. In case that no parameters are input.
-
 if ~isfield(parameters, "num_solvers")
     num_solvers = get_default_testparameters("num_solvers");
+else
+    num_solvers = parameters.num_solvers;
 end
 
 if ~isfield(parameters, "solvers_invoke")
@@ -53,8 +55,12 @@ if ~isfield(parameters, "memory")
     end
 end
 
-parameters.polling_outer = ["opportunistic", "opportunistic",...
-    ];
+if ~isfield(parameters, "polling_outer")
+    parameters.polling_outer = [];
+    for i = 1:num_solvers
+        parameters.polling_outer = [parameters.polling_outer get_default_testparameters("polling_outer")];
+    end
+end
 
 if ~isfield(parameters, "polling_inner")
     parameters.polling_inner = [];
@@ -110,7 +116,11 @@ if ~isfield(parameters, "maxfun_dim")
     end
 end
 
-parameters.tau = 10.^(-1:-1:-10);
+if ~isfield(parameters, "tau_minimum")
+    parameters.tau = 10.^(-1:-1:get_default_testparameters("tau_minimum"));
+else
+    parameters.tau = 10.^(-1:-1:(-parameters.tau_minimum));
+end
 
 if ~isfield(parameters, "direction")
     parameters.direction = [];
@@ -118,7 +128,7 @@ if ~isfield(parameters, "direction")
         parameters.direction = [parameters.direction get_default_testparameters("direction")];
     end
 end
-
+keyboard
 parameters.parallel = true;
 pdfname = "";
 % Name pdf automatically (not manually).
