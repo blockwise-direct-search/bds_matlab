@@ -71,7 +71,6 @@ options_test.noise_type = "uniform";
 options_test.scaling_matrix = false;
 options_test.scaling_matrix_factor = 5;
 
-options_solvers.polling_blocks = parameters.polling_blocks;
 options_solvers.cycling_inner = parameters.cycling_inner;
 options_solvers.polling_inner = parameters.polling_inner;
 options_solvers.solvers_label = parameters.solvers_label;

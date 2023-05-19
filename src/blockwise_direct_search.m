@@ -142,12 +142,6 @@ else
    ftarget = get_default_constant("ftarget");
 end
 
-if isfield(options, "polling_blocks")
-    polling_blocks = options.polling_blocks;
-else
-    polling_blocks = get_default_constant("polling_blocks");
-end
-
 % Set the default inner polling strategy. This is the polling strategy
 % employed within one block.
 if ~isfield(options, "polling_inner")
@@ -205,90 +199,103 @@ if fval <= ftarget
     maxit = 0;
 end
 
-% The number of blocks having been visited.
+% The number of blocks having been visited. When we store alpha_hist, this
+% parameter is needed.
 nb_visited = 0;
-block_indices = 1:nb;
-
 % Start the actual computations.
+% nb blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
     
     % Let xbase be the point from which the polling directions are
     % employed. In one iteration, all the block use the same base point.
     % The corresponding value of the objective function is stored in fbase.
     xbase = xval(:);
-    fbase = fval;
+    fbase = fval;   
     
-    % Get the block that we are going to visit.
-    if mod(nb_visited, nb) == 0
-        block_indices = block_indices(randperm(length(block_indices)));
+    for i = 1:nb
+        
+        % Let xbase be the point from which the polling directions are
+        % employed. In one iteration, all the block use the same base point.
+        % The corresponding value of the objective function is stored in fbase.
+        % xbase = xval(:);
+        % fbase = fval;
+        
+        % Debug
+        if i>nb || i <= 0
+            keyboard;
+        end
+        
+        direction_indices = searching_set_indices{i}; % get indices in the i-th block
+        
+        suboptions.maxfun = maxfun - nf;
+        % Memory and cycling are needed since we permutate indices in inner_direct_search
+        suboptions.cycling = cycling_inner;
+        suboptions.memory = memory;
+        suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
+        suboptions.ftarget = ftarget;
+        suboptions.polling_inner = options.polling_inner;
+        
+        [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
+            fval, xbase, fbase, D(:, direction_indices), direction_indices,...
+            alpha_all(i), suboptions);
+        
+        % After exploring one block, update xbase and fbase immediately.
+        xbase = xval;
+        fbase = fval;
+                
+        % The i-th block has been visited recently.
+        hist.block(iter) = i;
+        % Update the history of step size.
+        alpha_hist(:, iter) = alpha_all;
+        % Update the number of blocks having been visited.
+        nb_visited = nb_visited + 1;
+        
+        % Store the history of the evaluations performed by
+        % inner_direct_search, and adjust the number of function
+        % evaluations.
+        fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
+        xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
+        nf = nf+suboutput.nf;
+        
+        % If suboutput.terminate is true, then inner_direct_search returned
+        % because either the maximum number of function evaluations or the
+        % target on the objective function value is reached. In both cases,
+        % the exitflag is set by inner_direct_search.
+        terminate = suboutput.terminate;
+        if terminate
+            exitflag = sub_exitflag;
+            break;
+        end
+        
+        % Retrieve the order the polling direction and check whether a
+        % sufficient decrease has been achieved in inner_direct_search.
+        searching_set_indices{i} = suboutput.direction_indices;
+        success = suboutput.success;
+        
+        % Update the step sizes and store the history of step sizes.
+        if success
+            alpha_all(i) = expand * alpha_all(i);
+        else
+            alpha_all(i) = shrink * alpha_all(i);
+        end
+        alpha_hist(:, nb_visited+1) = alpha_all;
+        
+        % Terminate the computations if the largest step size is below a
+        % given tolerance.
+        % TODO: Is it normal to check whether "SMALL_ALPHA" is reached
+        % directly after updating the step sizes, or should be do one more
+        % iteration with the last value of the step sizes?
+        if max(alpha_all) < alpha_tol
+            terminate = true;
+            exitflag = get_exitflag("SMALL_ALPHA");
+            break
+        end
     end
     
-    i = get_block(nb, hist, polling_blocks, block_indices);
-
-    if i>nb || i <= 0
-        keyboard;
-    end
-    direction_indices = searching_set_indices{i}; % get indices in the i-th block
-
-    suboptions.maxfun = maxfun - nf;
-    % Memory and cycling are needed since we permutate indices in inner_direct_search
-    suboptions.cycling = cycling_inner;
-    suboptions.memory = memory;
-    suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
-    suboptions.ftarget = ftarget;
-    suboptions.polling_inner = options.polling_inner;
+    % After exploring nb blocks, update xval and fval immediately.
+    xval = xbase;
+    fval = fbase;
     
-    [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
-        fval, xbase, fbase, D(:, direction_indices), direction_indices,...
-        alpha_all(i), suboptions);
-    
-    % The i-th block has been visited recently.
-    hist.block(iter) = i;
-    % Update the history of step size.
-    alpha_hist(:, iter) = alpha_all;
-    % Update the number of blocks having been visited.
-    nb_visited = nb_visited+1;
-    
-    % Store the history of the evaluations performed by
-    % inner_direct_search, and adjust the number of function
-    % evaluations.
-    fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
-    xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
-    nf = nf+suboutput.nf;
-
-    % If suboutput.terminate is true, then inner_direct_search returned
-    % because either the maximum number of function evaluations or the
-    % target on the objective function value is reached. In both cases,
-    % the exitflag is set by inner_direct_search.
-    terminate = suboutput.terminate;
-    if terminate
-        exitflag = sub_exitflag;
-        break;
-    end
-
-    % Retrieve the order the polling direction and check whether a
-    % sufficient decrease has been achieved in inner_direct_search.
-    searching_set_indices{i} = suboutput.direction_indices;
-    success = suboutput.success;
-
-    % Update the step sizes.
-    if success
-        alpha_all(i) = expand * alpha_all(i);
-    else
-        alpha_all(i) = shrink * alpha_all(i);
-    end
-    alpha_hist(:, iter) = alpha_all;
-    
-    % Terminate the computations if the largest step size is below a
-    % given tolerance.
-    % TODO: Is it normal to check whether "SMALL_ALPHA" is reached
-    % directly after updating the step sizes, or should be do one more
-    % iteration with the last value of the step sizes?
-    if max(alpha_all) < alpha_tol
-        exitflag = get_exitflag("SMALL_ALPHA");
-        break
-    end
-
     % The following case can be reached (SMALL_ALPHA, MAXFUN_REACHED,
     % FTARGET_REACHED).
     if terminate

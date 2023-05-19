@@ -19,27 +19,26 @@ addpath(path_src);
 path_competitors = strcat(path_tests, "/competitors");
 addpath(path_competitors);
 parameters.solvers_invoke = ["blockwise_direct_search",  ...
-  "blockwise_direct_search"];
+  "bds_polling"];
 parameters.solvers_label = [ ...
- "canonical", "normal"];
+ "new", "old"];
 parameters.memory = [true, true];
 parameters.polling_outer = ["opportunistic", "opportunistic",...
     ];
-parameters.polling_blocks = ["Gauss-Seidel", "Gauss-Seidel"];
 parameters.polling_inner = ["opportunistic", "opportunistic",...
     ];
 parameters.cycling_inner = [1, 1];
-parameters.solvers_tag = ["GS_canonical", "GS_normal"];
+parameters.solvers_tag = ["new", "old"];
 parameters.nb_generator = [0.5, 0.5];
 nb_tag = ["n", "n"];
 parameters.maxfun_dim = 1000;
 parameters.maxfun = 60000;
 parameters.problems_type = 'u';
-parameters.problems_mindim = 6;
-parameters.problems_maxdim = 60;
+parameters.problems_mindim = 1;
+parameters.problems_maxdim = 1;
 parameters.tau = 10.^(-1:-1:-10);
 % canonical; random
-parameters.direction = ["canonical", "normal"];
+parameters.direction = ["canonical", "canonical"];
 parameters.parallel = true;
 num_solvers = length(parameters.cycling_inner);
 pdfname = "";

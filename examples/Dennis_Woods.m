@@ -11,8 +11,10 @@ options.memory = true;
 
 addpath('/home/lhtian97/bds_new_framework/src');
 
-%[x, fval, exitflag, output] = blockwise_direct_search(@rosenb, [-1; 2], options)
-[x, fval, exitflag, output] = fminsearch(@rosenb, [-1; 2], options)
+[x, fval, exitflag, output] = blockwise_direct_search(@rosenb, [0; 0], options)
+%[x, fval, exitflag, output] = fminsearch(@rosenb, [-1; 2], options)
+
+rmpath('/home/lhtian97/bds_new_framework/src');
 
 function f = rosenb(x)
 

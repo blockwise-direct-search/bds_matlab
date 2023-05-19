@@ -10,6 +10,7 @@ function output = perfprof(frec, fmin, options)
 delsame = 0;
 penalty = 2;
 cut = 1.05;
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Appearance of the plots.
 fontsize = 12;
@@ -175,7 +176,12 @@ ylabel('$\pi_s(\alpha)$', 'fontsize', fontsize, 'interpreter', 'latex');
 set(gca,'FontSize',fontsize);
 
 % Save the figure as eps.
-fignamebase = strcat(options.stamp, '_', 'perf_', int2str(int32(-log10(tau))));
+if int32(-log10(tau)) < 10
+    fignamebase = strcat(options.stamp, '_', 'perf_', '0', int2str(int32(-log10(tau))));
+else
+    fignamebase = strcat(options.stamp, '_', 'perf_', int2str(int32(-log10(tau))));   
+end
+
 figname = fullfile(options.outdir, strcat(fignamebase,'.fig'));
 pdfname = fullfile(options.outdir, strcat(fignamebase,'.pdf'));
 saveas(hfig, figname, 'fig');

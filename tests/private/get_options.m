@@ -10,7 +10,6 @@ maxfun = options.maxfun;
 if name_solver == "blockwise_direct_search"
     
     % Polling strategies should be defined in the loop!!!
-    options.polling_blocks = options_solvers.polling_blocks(j);
     options.polling_inner = options_solvers.polling_inner(j);
     
     % Strategy of blocking
