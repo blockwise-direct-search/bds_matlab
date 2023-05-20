@@ -1,0 +1,37 @@
+#!/bin/bash
+# This script sets the following environment variables for GitHub Actions:
+# ROOT_DIR: the root directory of the current repo
+# TEST_DIR: a random directory under /tmp for testing
+# SEDI: sed -i "" (mocOS) or sed -i (Linux/Windows)
+#
+# Usage: bash misc_env
+
+# Set ROOT_DIR to the root directory of the current repo.
+ROOT_DIR="$(pwd -P)"  # `realpath` is unavailable on macOS; -P is needed
+echo "$ROOT_DIR"
+echo "ROOT_DIR=$ROOT_DIR" >> "$GITHUB_ENV"
+
+# Set TEST_DIR to a random directory. It is needed in the Makefiles for the Fortran tests of PRIM.
+TEST_DIR=/tmp/gittest_$(date +%s)_"$((RANDOM*RANDOM))"
+echo "$TEST_DIR"
+echo "TEST_DIR=$TEST_DIR" >> "$GITHUB_ENV"
+
+# Set SEDI to either 'sed -i ""' (macOS) or 'sed -i' (Linux/Windows).
+# When calling "sed -i" on macOS, it is obligatory to specify a string (e.g., .bak) after -i as the
+# extension for saving a backup. If the string is "", then no backup will be saved. If no string is
+# specified, then an error will be raised, saying "invalid command code".
+if [[ "$RUNNER_OS" = "macOS" ]] ; then
+    SEDI='sed -i ""'
+else
+    SEDI='sed -i'
+fi
+echo "$SEDI"
+echo "SEDI=$SEDI" >> "$GITHUB_ENV"
+
+# The following does not work. Why?
+# Make tools such as grep, make, and git available on Windows.
+#if [[ "$RUNNER_OS" = "Windows" ]] ; then
+#    PATH="$PATH"":/c/Program Files/Git/usr/bin:/c/Program Files/Git/bin:/c/ProgramData/Chocolatey/bin"
+#    echo "$PATH"
+#    echo "PATH=$PATH" >> "$GITHUB_ENV"
+#fi

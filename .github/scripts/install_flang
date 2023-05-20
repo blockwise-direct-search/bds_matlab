@@ -1,0 +1,44 @@
+#!/bin/bash
+# Usage: bash install_flang
+
+REPO_NAME="flang"
+TMP_DIR="$(mktemp -d)"
+
+FLANG_DFT="$HOME/local/flang"
+
+if [[ ! -d /home/runner/work/ ]] ; then
+    printf "\nThe runner is not hosted by GitHub. Skip installation of p7zip and ncurses.\n"
+    if [[ -d $FLANG_DFT && -f $FLANG_DFT/bin/flang && -f $FLANG_DFT/bin/flang ]] ;then
+        echo "PATH=$PATH:$FLANG_DFT/bin" >> "$GITHUB_ENV"
+        echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$FLANG_DFT/lib" >> "$GITHUB_ENV"
+        printf "\nflang is already installed. Skip installation.\n"
+        exit 0
+    fi
+else
+    if [[ "$RUNNER_OS" == "Linux" ]] ; then
+        sudo apt update && sudo apt install p7zip-full libncurses* # libncurses* needed for libtinfo.so
+    elif [[ "$RUNNER_OS" == "macOS" ]] ; then
+        brew install p7zip ncurses
+    fi
+fi
+
+PI_MODEL_FILE="/sys/firmware/devicetree/base/model"
+if [[ -f "$PI_MODEL_FILE" ]]  && grep -qi 'Raspberry Pi' < "$PI_MODEL_FILE" ; then  # Raspberry Pi
+    ARCH=aarch64
+elif [[ $(uname -s) == 'Darwin' ]] ; then  # macOS
+    ARCH=macos_86
+else  # Linux
+    ARCH=x86_64
+fi
+
+cd "$TMP_DIR" || exit 42
+git clone https://github.com/zaikunzhang/"$REPO_NAME".git
+
+cd "$REPO_NAME/$ARCH" || exit 42
+FLANG_7Z="flang.7z.001"
+7za x "$FLANG_7Z" -aoa  # -aoa: overwrite all existing files without prompt
+
+# Set environment variable for subsequent steps
+# N.B.: The following lines will not work if this script is invoked with sudo.
+echo "PATH=$PATH:$TMP_DIR/$REPO_NAME/$ARCH/flang/bin" >> "$GITHUB_ENV"
+echo "LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$TMP_DIR/$REPO_NAME/$ARCH/flang/lib" >> "$GITHUB_ENV"
