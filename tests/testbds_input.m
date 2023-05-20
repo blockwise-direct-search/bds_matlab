@@ -8,6 +8,8 @@ end
 % Avoid modify test file manually.
 restoredefaultpath;
 % The code of the following lines is for using matcutest first time.
+% On github action, compile matcutest first. Then the problems can be
+% invoked everywhere.
 %addpath('/home/htl/local/matcutest/mtools/src');
 %addpath('/home/lhtian97/local/matcutest/mtools/src');
 %addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
