@@ -87,15 +87,17 @@ jobs:
           command: |
             ver;
             root_dir = cd()
+            directory = strcat(root_dir, 'matcutest');
+            install(directory)
 
-            dt = datetime('now');
-            r = mod(ceil(second(dt)), 2)
-            if r == 0
-                install();
-            else
-                directory = tempname(fullfile(getenv('HOME'), 'test'))
-                install(directory);
-            end
+            #dt = datetime('now');
+            #r = mod(ceil(second(dt)), 2)
+            #if r == 0
+            #    install();
+            #else
+            #    directory = tempname(fullfile(getenv('HOME'), 'test'))
+            #    install(directory);
+            #end
 
             cd(getenv('HOME'));
             help matcutest
