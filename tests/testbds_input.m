@@ -128,7 +128,7 @@ if ~isfield(parameters, "direction")
         parameters.direction = [parameters.direction get_default_testparameters("direction")];
     end
 end
-keyboard
+
 parameters.parallel = true;
 pdfname = "";
 % Name pdf automatically (not manually).
