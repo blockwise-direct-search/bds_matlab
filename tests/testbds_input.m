@@ -9,14 +9,17 @@ end
 restoredefaultpath;
 % The code of the following lines is for using matcutest first time.
 %addpath('/home/htl/local/matcutest/mtools/src');
-addpath('/home/lhtian97/local/matcutest/mtools/src');
-addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
+%addpath('/home/lhtian97/local/matcutest/mtools/src');
+%addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
+
 fullpath = mfilename('fullpath');
 [path_tests,~] = fileparts(fullpath);
+
 % The code of the following three lines is for running prima first time.
-% cd(path_tests)
-% cd ./competitors/prima
-% setup
+cd(path_tests)
+cd ./competitors/prima
+setup
+
 addpath(path_tests);
 cd(path_tests)
 cd ..
