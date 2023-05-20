@@ -87,7 +87,7 @@ jobs:
           command: |
             ver;
             root_dir = cd()
-            directory = strcat(root_dir, '/matcutest');
+            directory = strcat(root_dir, '/local');
             install(directory)
 
             cd(getenv('HOME'));
