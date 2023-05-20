@@ -1,0 +1,54 @@
+#!/bin/bash
+# This scripts deletes $REPO at $REPO_URL (if it exists), recreates it, and then pushes everything to
+# the newly created repo.
+# N.B.: Before starting the GitHub command-line interface gh must be installed and authorized for
+# login and deleting repos:
+# $gh auth login
+# $gh auth refresh -s delete_repo
+
+GIT="github.com"
+REPO="equipez/matcutest_compiled"  # Repo name, preceded by the organization name.
+REPO_URL=git@"$GIT":"$REPO".git
+SCRIPTS_REPO="equipez/github_actions_scripts"
+SCRIPTS_URL=git@"$GIT":"$SCRIPTS_REPO".git
+
+# Delete the existing $REPO
+printf "Checking whether %s exists ...\n" "$REPO_URL"
+if git ls-remote "$REPO_URL" > /dev/null 2>&1 ; then
+    printf "\n%s exists. Delete? [y/N] " "$REPO_URL"
+    KEY="N"
+    read -n1 -s -r -p $'' KEY
+    printf "%s\n" "$KEY"
+
+    if [[ "$KEY" = "Y" || "$KEY" = "y" ]] ; then
+        printf "\nDeleting %s ...\n" "$REPO_URL"
+        gh repo delete "$REPO" --confirm
+    else
+        printf "\nExit.\n\n"
+        exit 1
+    fi
+fi
+
+# (Re)Create $REPO
+printf "\n(Re)Creating %s ...\n" "$REPO_URL"
+gh repo create "$REPO" --public
+
+# Push to $REPO
+if [[ $(basename "$PWD") != $(basename "$REPO") ]] ; then
+    printf "\nError: Currently in %s, but the repo name is '%s'.\n\n"  "$PWD" "$(basename "$REPO")"
+    exit 2
+fi
+rm -rf .git
+rm -rf .github/scripts  # Remove .github/scripts, which will be re-added as a submodule later.
+git init
+# Add equipez/github_actions_scripts as a submodule
+printf "\nAdding %s as a submodule ...\n" "$SCRIPTS_REPO"
+git submodule add "$SCRIPTS_URL" .github/scripts
+git add -A
+git commit -m "init"
+git branch -M main
+git remote add origin "$REPO_URL"
+printf "\nPushing to %s ...\n" "$REPO_URL"
+git push -u origin main
+
+exit 0
