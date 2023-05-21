@@ -47,7 +47,7 @@ if exist(matcutest, 'dir') || exist(matcutest, 'file')
     return
 end
 fprintf('\nMatCUTEst will be installed at\n\n    %s\n', matcutest);
-mkdir(matcutest);
+
 if exist(fullfile(mdir, pkg), 'file')
     pkg = fullfile(mdir, pkg);
 else
@@ -70,6 +70,7 @@ try
     cd(path);
     % Run `7z x pkg`. Use `evalc` to make is quiet.
     evalc('system([''7z x '', pkg])');
+    exist(matcutest, 'dir') || exist(matcutest, 'file')
     cd(fullfile(matcutest, 'mtools'));
     setup();
 catch exception
