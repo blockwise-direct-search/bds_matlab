@@ -7,7 +7,7 @@ on:
     types: [opened, synchronize, reopened]
   # Trigger the workflow by cron. The default time zone of GitHub Actions is UTC.
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 16 * * 5'
   # Trigger the workflow when it is manually triggered
   workflow_dispatch:
 
@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-latest]
-        matlab: [R2020b]
+        matlab: [R2020b, R2021a, R2021b, R2022a, R2022b, R2023a, latest]
         #list: [full, customized, test]
         list: [full]
         #list: [new]
@@ -89,11 +89,11 @@ jobs:
             root_dir = cd()
 
             dt = datetime('now');
-            r = mod(ceil(second(dt)), 2);
+            r = mod(ceil(second(dt)), 2)
             if r == 0
                 install();
             else
-                directory = tempname(getnv('HOME'), 'test'));
+                directory = tempname(fullfile(getenv('HOME'), 'test'))
                 install(directory);
             end
 
