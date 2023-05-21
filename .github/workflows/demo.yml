@@ -42,7 +42,8 @@ jobs:
             root_dir = pwd()
 
             % Install MatCUTEst
-            cd(fullfile(root_dir, 'matcutest')); install(); cd(root_dir);
+            cd(fullfile(root_dir, 'matcutest'));
+            install(); cd(root_dir);
 
             % Check the installation
             help matcutest, which('macup'), which('decup'), which('secup')
@@ -51,6 +52,8 @@ jobs:
             parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
             parameters.solvers_label = ['GS', 'newuoa'];
             parameters.solver_tag = ['GS', 'newuoa'];
+            path_matcutest = strcat(root_dir, '/matcutest/mtools/src');
+            addpath(path_matcutest)
             cd(fullfile(root_dir, 'bds_new_framework'))
             path = pwd;
             path_tests = fullfile(path, 'tests');
