@@ -47,7 +47,7 @@ if exist(matcutest, 'dir') || exist(matcutest, 'file')
     return
 end
 fprintf('\nMatCUTEst will be installed at\n\n    %s\n', matcutest);
-
+mkdir(matcutest);
 if exist(fullfile(mdir, pkg), 'file')
     pkg = fullfile(mdir, pkg);
 else
