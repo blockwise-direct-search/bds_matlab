@@ -77,7 +77,7 @@ jobs:
 
       - name: get matcutest by clone
         run:
-          CURRENT_DIR=$(pwd);
+          CURRENT_DIR=$(pwd)
           git clone git@github.com:equipez/matcutest_compiled.git
 
       - name: Revise the installation script according to the list
