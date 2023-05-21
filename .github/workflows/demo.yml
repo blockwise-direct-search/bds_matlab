@@ -45,6 +45,7 @@ jobs:
             parameters.solvers_label = ['GS', 'newuoa'];
             parameters.solver_tag = ['GS', 'newuoa'];
             cd ${{ github.workspace }}
+            ls
             path = pwd;
             path_tests = strcat(path, '/tests');
             cd(path_tests)
