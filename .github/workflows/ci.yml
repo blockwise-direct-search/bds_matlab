@@ -81,8 +81,10 @@ jobs:
           repository: equipez/matcutest_compiled
           path: matcutest_compiled
           submodules: recursive
-          run:
-            CURRENT_DIR=$(pwd);
+
+      - name: get matcutest by clone
+        run:
+          git clone git@github.com:equipez/matcutest_compiled.git
 
       - name: Revise the installation script according to the list
         run: |
