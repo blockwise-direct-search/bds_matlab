@@ -44,6 +44,7 @@ jobs:
             parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
             parameters.solvers_label = ['GS', 'newuoa'];
             parameters.solver_tag = ['GS', 'newuoa'];
-            path_test = strcat(root_dir, "/tests");
+            path_repository = GITHUB_WORKSPACE;
+            path_test = strcat(path_repository, '/tests');
             cd(path_test)
             testbds_input(parameters)

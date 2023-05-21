@@ -9,12 +9,18 @@ options.polling_blocks = "Gauss-Seidel";
 options.cycling_inner = 1;
 options.memory = true;
 
-addpath('/home/lhtian97/bds_new_framework/src');
+fullpath = mfilename('fullpath');
+[path_examples,~] = fileparts(fullpath);
+cd(path_examples)
+cd ..
+path_src = pwd;
+add(path_src)
 
 [x, fval, exitflag, output] = blockwise_direct_search(@rosenb, [0; 0], options)
 %[x, fval, exitflag, output] = fminsearch(@rosenb, [-1; 2], options)
 
-rmpath('/home/lhtian97/bds_new_framework/src');
+rmpath(path_src)
+
 
 function f = rosenb(x)
 
