@@ -50,15 +50,11 @@ jobs:
             macup('akiva')
 
             % Conduct your tests
-            parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
-            parameters.solvers_label = ['GS', 'newuoa'];
-            parameters.solver_tag = ['GS', 'newuoa'];
-            path_matcutest = '/home/runner/.local/matcutest/mtools/src/';
-            addpath(path_matcutest)
-            path_matcutest_mtools = '/home/runner/.local/matcutest/';
-            install
             cd(fullfile(root_dir, 'bds_new_framework'))
             path = pwd;
             path_tests = fullfile(path, 'tests');
             cd(path_tests)
+            parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
+            parameters.solvers_label = ['GS', 'newuoa'];
+            parameters.solver_tag = ['GS', 'newuoa'];
             testbds_input(parameters)
