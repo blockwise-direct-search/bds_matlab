@@ -82,6 +82,14 @@ jobs:
             path: matcutest_compiled
             submodules: recursive
 
+      - name: Install matcutest
+        uses: matlab-actions/run-command@v1.2.0
+        with:
+          command:
+            cd(matcutest_compiled);
+            cd ./mtools;
+            setup
+
       - name: Revise the installation script according to the list
         run: |
           PKG_DFT=full.matcutest.7z.001
