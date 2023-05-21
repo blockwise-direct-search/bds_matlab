@@ -44,3 +44,6 @@ jobs:
             parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
             parameters.solvers_label = ['GS', 'newuoa'];
             parameters.solver_tag = ['GS', 'newuoa'];
+            path_test = strcat(root_dir, "/bds_new_framework/tests");
+            cd(path_test)
+            testbds_input(parameters)
