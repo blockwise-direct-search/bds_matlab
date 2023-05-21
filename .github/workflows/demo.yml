@@ -47,5 +47,5 @@ jobs:
             cd ${{ github.workspace }}
             path = pwd;
             path_tests = strcat(path, '/tests');
-            cd(path_test)
+            cd(path_tests)
             testbds_input(parameters)
