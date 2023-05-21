@@ -78,8 +78,8 @@ jobs:
       - name: get matcutest
         uses: actions/checkout@v3.5.2
         with:
-          repository:equipez/matcutest_compiled
-          path: matcutest
+          repository: equipez/matcutest_compiled
+          path: matcutest_compiled
           submodules: recursive
 
       - name: Revise the installation script according to the list
