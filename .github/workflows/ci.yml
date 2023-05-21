@@ -75,15 +75,9 @@ jobs:
         with:
           release: ${{ matrix.matlab }}
 
-      - name: get matcutest
-        uses: actions/checkout@v3.5.2
-        with:
-          repository: equipez/matcutest_compiled
-          path: matcutest_compiled
-          submodules: recursive
-
       - name: get matcutest by clone
         run:
+          CURRENT_DIR=$(pwd);
           git clone git@github.com:equipez/matcutest_compiled.git
 
       - name: Revise the installation script according to the list
