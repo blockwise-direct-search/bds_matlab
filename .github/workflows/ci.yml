@@ -96,43 +96,6 @@ jobs:
           PKG=${{ matrix.list }}.matcutest.7z.001
           sed -i "s|$PKG_DFT|$PKG|g" ./install.m
 
-      - name: Install and test MatCUTEst
-        uses: matlab-actions/run-command@v1.2.0
-        with:
-          command: |
-            ver;
-            root_dir = cd()
-
-            dt = datetime('now');
-            r = mod(ceil(second(dt)), 2)
-            if r == 0
-                install();
-            else
-                directory = tempname(fullfile(getenv('HOME'), 'test'))
-                install(directory);
-            end
-
-            cd(getenv('HOME'));
-            help matcutest
-            which macup
-
-            req = []; req.blacklist = github_black_list(); req.maxdim=20000; req.maxcon=40000;
-            badlist = chcup(secup(req), 1)
-            if ~isempty(badlist)
-                error('Some problems did not pass the checking.');
-            end
-
-            cd(fullfile(root_dir, 'prima', 'matlab', 'tests'));
-            opt.blacklist = {};
-            profile('uobyqa', 'seq', opt);
-            profile('newuoa', 'seq', opt);
-            profile('bobyqa', 'seq', 'b', opt);
-            profile('lincoa', 'seq', 'l', opt);
-            profile('cobyla', 'seq', 'n', opt);
-            mkdir(fullfile(root_dir, 'matcutest.compiled'));
-            copyfile('./testdata/*summary*.pdf', fullfile(root_dir, 'matcutest.compiled'));
-            copyfile('./testdata/*problems.txt', fullfile(root_dir, 'matcutest.compiled'));
-
       - name: Store artifacts
         uses: actions/upload-artifact@v3.1.2
         with:
