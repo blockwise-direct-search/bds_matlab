@@ -47,6 +47,7 @@ jobs:
 
             % Check the installation
             help matcutest, which('macup'), which('decup'), which('secup')
+            macup('akiva')
 
             % Conduct your tests
             parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
