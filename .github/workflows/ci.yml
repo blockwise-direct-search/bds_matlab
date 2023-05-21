@@ -90,12 +90,6 @@ jobs:
             cd(fullfile(root_dir, 'matcutest_compiled'));
             install
 
-      - name: Revise the installation script according to the list
-        run: |
-          PKG_DFT=full.matcutest.7z.001
-          PKG=${{ matrix.list }}.matcutest.7z.001
-          sed -i "s|$PKG_DFT|$PKG|g" ./install.m
-
       - name: Store artifacts
         uses: actions/upload-artifact@v3.1.2
         with:
