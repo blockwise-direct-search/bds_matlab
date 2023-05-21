@@ -32,7 +32,7 @@ jobs:
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
-            root_dir = pwd();
+            root_dir = pwd()
 
             % Install MatCUTEst
             cd(fullfile(root_dir, 'matcutest')); install(); cd(root_dir);
@@ -41,4 +41,6 @@ jobs:
             help matcutest, which('macup'), which('decup'), which('secup')
 
             % Conduct your tests
-            parameters.memory = [true, false];
+            parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
+            parameters.solvers_label = ['GS', 'newuoa'];
+            parameters.solver_tag = ['GS', 'newuoa'];
