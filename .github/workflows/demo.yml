@@ -25,6 +25,13 @@ jobs:
           repository: equipez/matcutest_compiled
           path: matcutest
 
+      - name: Clone bds_new_framework
+        uses: actions/checkout@v3.5.2
+        with:
+          repository: Lht97/bds_new_framework
+          path: bds_new_framework
+
+
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2-beta
 
