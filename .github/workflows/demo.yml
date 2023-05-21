@@ -52,7 +52,7 @@ jobs:
             parameters.solvers_invoke = ['blockwise_direct_search', 'newuoa'];
             parameters.solvers_label = ['GS', 'newuoa'];
             parameters.solver_tag = ['GS', 'newuoa'];
-            path_matcutest = '/home/runner/work/bds_new_framework/matcutest/mtools/src';
+            path_matcutest = '/home/runner/.local/matcutest/mtools/src';
             addpath(path_matcutest)
             cd(fullfile(root_dir, 'bds_new_framework'))
             path = pwd;
