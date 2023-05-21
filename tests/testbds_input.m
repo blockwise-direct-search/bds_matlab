@@ -7,23 +7,31 @@ end
 
 % Avoid modify test file manually.
 restoredefaultpath;
-% The code of the following lines is for using matcutest first time.
-% On github action, compile matcutest first. Then the problems can be
-% invoked everywhere.
-%addpath('/home/htl/local/matcutest/mtools/src');
-%addpath('/home/lhtian97/local/matcutest/mtools/src');
+% The code of the following lines is for using matcutest.
+path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
+path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
+
+if exist(path_matcutest_local, "dir")
+    addpath(path_matcutest_local);
+end
+
+if exist(path_matcutest_server, "dir")
+    addpath(path_matcutest_server);
+end
+
 %addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
 
 fullpath = mfilename('fullpath');
 [path_tests,~] = fileparts(fullpath);
 
-% The code of the following three lines is for running prima first time.
-cd(path_tests)
-cd ./competitors/prima
-setup
-
 addpath(path_tests);
 cd(path_tests)
+% If testdata does not exist, make a new one.
+path_testdata = strcat(path_tests, "/testdata");
+if ~exist(path_testdata, "dir")
+    mkdir(path_testdata);
+end
+
 cd ..
 path_bds = pwd;
 addpath(path_bds);
@@ -45,6 +53,12 @@ if ~isfield(parameters, "solvers_invoke")
         parameters.solvers_invoke = [parameters.solvers_invoke get_default_testparameters("solvers_invoke")];
     end
 end
+
+% The code of the following three lines is for running prima first time. If
+% we need to compare with prima, then we compile it.
+cd(path_tests)
+cd ./competitors/prima
+setup
 
 if ~isfield(parameters, "solvers_label")
     parameters.solvers_label = [];
