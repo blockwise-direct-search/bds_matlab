@@ -67,8 +67,6 @@ fprintf('\nInstalling the compiled package\n\n    %s\n', pkg);
 
 exception = [];
 try
-    cd(matcutest);
-    dir
     cd(path);
     % Run `7z x pkg`. Use `evalc` to make is quiet.
     evalc('system([''7z x '', pkg])');

@@ -87,8 +87,15 @@ jobs:
           command: |
             ver;
             root_dir = cd()
-            directory = strcat(root_dir, '/local');
-            install(directory)
+
+            dt = datetime('now');
+            r = mod(ceil(second(dt)), 2);
+            if r == 0
+                install();
+            else
+                directory = tempname(getnv('HOME'), 'test'));
+                install(directory);
+            end
 
             cd(getenv('HOME'));
             help matcutest
