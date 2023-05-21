@@ -81,6 +81,8 @@ jobs:
           repository: equipez/matcutest_compiled
           path: matcutest_compiled
           submodules: recursive
+          run:
+            CURRENT_DIR=$(pwd);
 
       - name: Revise the installation script according to the list
         run: |
