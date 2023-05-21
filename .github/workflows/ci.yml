@@ -87,8 +87,7 @@ jobs:
         with:
           command:
             cd(matcutest_compiled);
-            cd ./mtools;
-            setup
+            install
 
       - name: Revise the installation script according to the list
         run: |
