@@ -162,6 +162,6 @@ end
 
 cd(options.outdir)
 system("pdfunite *.pdf all.pdf");
-movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
+%movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
 end
 

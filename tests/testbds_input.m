@@ -152,7 +152,7 @@ if ~isfield(parameters, "direction")
         parameters.direction = [parameters.direction get_default_testparameters("direction")];
     end
 end
-if isfield(parameters, "parallel")
+if ~isfield(parameters, "parallel")
     parameters.parallel = false;
 end
 pdfname = "";
