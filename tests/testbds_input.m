@@ -5,24 +5,25 @@ if nargin < 1
     parameters = struct();
 end
 
-%restoredefaultpath;
+restoredefaultpath;
+
 if isfield(parameters, "matcutest_github_actions")
     if exist(parameters.matcutest_github_actions, "dir")
         addpath(parameters.matcutest_github_actions);
     end
 end
 
-% The code of the following lines is for using matcutest.
-path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
-path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
-
-if exist(path_matcutest_local, "dir")
-    addpath(path_matcutest_local);
-end
-
-if exist(path_matcutest_server, "dir")
-    addpath(path_matcutest_server);
-end
+% % The code of the following lines is for using matcutest.
+% path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
+% path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
+% 
+% if exist(path_matcutest_local, "dir")
+%     addpath(path_matcutest_local);
+% end
+% 
+% if exist(path_matcutest_server, "dir")
+%     addpath(path_matcutest_server);
+% end
 
 %addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
 
@@ -63,7 +64,7 @@ end
 % we need to compare with prima, then we compile it.
 cd(path_tests)
 cd ./competitors/prima
-setup
+setup('newuoa')
 
 if ~isfield(parameters, "solvers_label")
     parameters.solvers_label = [];

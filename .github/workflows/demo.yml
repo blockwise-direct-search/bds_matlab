@@ -34,6 +34,12 @@ jobs:
           repository: Lht97/bds_new_framework
           path: bds_new_framework
 
+      - name: Cache MATLAB
+        id: cache-matlab
+        uses: actions/cache@v3.3.1
+        with:
+          path: ${{ runner.tool_cache }}/MATLAB
+          key: ${{ matrix.os }}-${{ matrix.matlab }}
 
       - name: Set up MATLAB
         uses: matlab-actions/setup-matlab@v2-beta
@@ -70,4 +76,3 @@ jobs:
         with:
           name: my-artifact
           path: '/home/runner/work/bds_new_framework/bds_new_framework/bds_new_framework/tests/testdata'
-          retention-days: 30

@@ -27,12 +27,11 @@ if isfield(options, "direction") && options.direction == "canonical"
 end
 
 if isfield(options, "direction") && options.direction == "random"
-D_initial = [eye(n) -eye(n)];
 % using size to obtain number of column of D，randperm permutates the order
 % of column
-column_rank = randperm(size(D_initial, 2));  
+column_rank = randperm(size(D, 2));  
 % reorder the column of column_rank
-D = D_initial(:,column_rank);              
+D = D(:, column_rank);              
 end
 
 end

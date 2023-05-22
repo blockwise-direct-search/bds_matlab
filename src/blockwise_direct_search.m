@@ -220,11 +220,6 @@ for iter = 1 : maxit
         % xbase = xval(:);
         % fbase = fval;
         
-        % Debug
-        if i>nb || i <= 0
-            keyboard;
-        end
-        
         direction_indices = searching_set_indices{i}; % get indices in the i-th block
         
         suboptions.maxfun = maxfun - nf;

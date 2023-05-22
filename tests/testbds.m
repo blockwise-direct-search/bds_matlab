@@ -5,6 +5,8 @@ function [output] = testbds(parameters)
 % clear
 % clc
 
+% Tell MATLAB where to find MatCUTEst.
+locate_matcutest();
 % Get list of problems
 s.type = parameters.problems_type; % Unconstrained: 'u'
 s.mindim = parameters.problems_mindim; % Minimum of dimension
