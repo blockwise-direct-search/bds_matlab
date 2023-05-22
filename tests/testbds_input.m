@@ -6,9 +6,10 @@ if nargin < 1
 end
 
 %restoredefaultpath;
-
-if exist(parameters.matcutest_github_actions, "dir")
-    addpath(parameters.matcutest_github_actions);
+if isfield(parameters, "matcutest_github_actions")
+    if exist(parameters.matcutest_github_actions, "dir")
+        addpath(parameters.matcutest_github_actions);
+    end
 end
 
 % The code of the following lines is for using matcutest.
@@ -152,7 +153,7 @@ if ~isfield(parameters, "direction")
     end
 end
 
-parameters.parallel = true;
+parameters.parallel = false;
 pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers
