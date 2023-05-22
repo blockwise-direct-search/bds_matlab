@@ -65,5 +65,5 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: my-artifact
-        path: pwd
+        path: pwd/perf
         retention-days: 30
