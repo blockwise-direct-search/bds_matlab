@@ -60,10 +60,11 @@ jobs:
             parameters.solver_tag = ["GS", "newuoa"];
             parameters.parallel = true;
             testbds_input(parameters)
+            path_artifact = pwd;
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: pwd/perf
+          path: path_artifact
           retention-days: 30
