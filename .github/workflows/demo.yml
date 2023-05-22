@@ -61,9 +61,9 @@ jobs:
             parameters.parallel = true;
             testbds_input(parameters)
 
-    - name: Upload artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: my-artifact
-        path: pwd/perf
-        retention-days: 30
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-artifact
+          path: pwd/perf
+          retention-days: 30
