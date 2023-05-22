@@ -161,8 +161,41 @@ for l = 1:tau_length
 end
 
 cd(options.outdir)
-system("pdfunite *.pdf all.pdf");
-ls
-%movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
+if ~isfield(parameters, "matcutest_github_actions")
+    system("pdfunite *.pdf all.pdf");
+    ls
+else
+    % Specify the folder to process and the output file name
+    folder_path = options.outdir;
+    output_file = 'all.pdf';
+    
+    % Get the file names of all FIG files in the folder
+    file_list = dir(fullfile(folder_path, '*.fig'));
+    file_names = {file_list.name};
+    
+    % Create an empty PDF file
+    pdf_file = output_file;
+    exportgraphics(gcf, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white');
+    
+    % Save FIG files as PDF files one by one
+    for i = 1:length(file_names)
+        % Read FIG file
+        file_path = fullfile(folder_path, file_names{i});
+        fig_handle = openfig(file_path);
+        
+        % Save graphs as PDF files
+        exportgraphics(fig_handle, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white', 'Append', true);
+        
+        % close graphics
+        close(fig_handle);
+    end
+    
+    % close PDF file
+    close(gcf);
+end
+
+% Rename pdf
+movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
+
 end
 
