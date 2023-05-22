@@ -65,6 +65,9 @@ jobs:
             testbds_input(parameters)
             path_artifact = pwd;
 
+      - name: Verify the path
+        run: echo "The current path is: ${PWD}"
+
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
