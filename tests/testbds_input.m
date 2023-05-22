@@ -5,7 +5,8 @@ if nargin < 1
     parameters = struct();
 end
 
-restoredefaultpath;
+%restoredefaultpath;
+
 if exist(parameters.matcutest_github_actions, "dir")
     addpath(parameters.matcutest_github_actions);
 end
