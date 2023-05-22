@@ -152,8 +152,9 @@ if ~isfield(parameters, "direction")
         parameters.direction = [parameters.direction get_default_testparameters("direction")];
     end
 end
-
-parameters.parallel = false;
+if isfield(parameters, "parallel")
+    parameters.parallel = false;
+end
 pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers
