@@ -54,6 +54,7 @@ jobs:
 
             % Conduct your tests
             cd(fullfile(root_dir, 'bds_new_framework'))
+            pwd
             path = pwd;
             path_tests = fullfile(path, 'tests');
             cd(path_tests)
@@ -69,5 +70,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: ${{ path_artifact}}
+          path: path_artifact
           retention-days: 30
