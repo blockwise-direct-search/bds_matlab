@@ -21,7 +21,8 @@ jobs:
     steps:
 
       - name: Clone PRIMA
-      - uses: actions/checkout@v3.5.2
+        run: |
+        uses: actions/checkout@v3.5.2
         with:
           repository: libprima/prima
           path: prima
