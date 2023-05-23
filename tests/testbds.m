@@ -149,7 +149,7 @@ path_outdir_tests_private = strcat(path_outdir_tests, '/private');
 copyfile('competitors', sprintf("%s",path_outdir_tests_competitors));
 copyfile('private', sprintf("%s",path_outdir_tests_private));
 copyfile('testbds.m', sprintf("%s",path_outdir_tests));
-copyfile('testbds_parameters.m', sprintf("%s",path_outdir_tests));
+copyfile('testbds_input.m', sprintf("%s",path_outdir_tests));
 
 % performance profile
 tau = parameters.tau; % Tolerance of convergence test in performance profile

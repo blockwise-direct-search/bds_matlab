@@ -143,6 +143,11 @@ else
    ftarget = get_default_constant("ftarget");
 end
 
+% Set the default polling_blocks. Default one is Gauss-Seidel.
+if ~isfield(options, "polling_blocks")
+    options.polling_blocks = get_default_constant("polling_blocks");
+end
+
 % Set the default inner polling strategy. This is the polling strategy
 % employed within one block.
 if ~isfield(options, "polling_inner")
