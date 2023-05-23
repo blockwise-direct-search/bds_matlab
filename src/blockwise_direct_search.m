@@ -213,8 +213,9 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;   
     
+    block_indices = permutate(block_indices, options);
     for i = 1:nb
-        
+        % In case of permutation.
         i_real = block_indices(i);
         
         direction_indices = searching_set_indices{i_real}; % get indices in the i-th block
