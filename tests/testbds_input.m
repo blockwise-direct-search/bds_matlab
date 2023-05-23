@@ -29,7 +29,9 @@ end
 
 fullpath = mfilename('fullpath');
 [path_tests,~] = fileparts(fullpath);
-
+parameters.path_tests = path_tests;
+path_bds = fileparts(path_tests);
+parameters.path_bds = path_bds;
 addpath(path_tests);
 cd(path_tests)
 % If testdata does not exist, make a new one.
@@ -38,13 +40,13 @@ if ~exist(path_testdata, "dir")
     mkdir(path_testdata);
 end
 
-cd ..
-path_bds = pwd;
 addpath(path_bds);
-path_src = strcat(path_bds, "/src");
+path_src = fullfile(path_bds, 'src');
+parameters.path_src = path_src;
 addpath(path_src);
-path_competitors = strcat(path_tests, "/competitors");
+path_competitors = fullfile(path_tests, 'competitors');
 addpath(path_competitors);
+parameters.path_competitors = path_competitors;
 
 % The number of solvers. In case that no parameters are input.
 if ~isfield(parameters, "num_solvers")
@@ -62,8 +64,8 @@ end
 
 % The code of the following three lines is for running prima first time. If
 % we need to compare with prima, then we compile it.
-cd(path_tests)
-cd ./competitors/prima
+path_prima = fullfile(path_tests, 'competitors', 'prima');
+cd(path_prima)
 setup('newuoa')
 
 if ~isfield(parameters, "solvers_label")

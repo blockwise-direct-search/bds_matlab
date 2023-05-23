@@ -2,7 +2,7 @@ function [block_indices] = permutate(block_indices, options)
 % If strategy is randomized_array, then permutate block_indices.
 
 % Whether variable is an array.
-assert(isnumeric(block_indices) && numel(block_indices) > 1);
+assert(isnumeric(block_indices) && numel(block_indices) >= 1);
 % Whether each of the elements of variable is a positive integer.
 assert(all(block_indices(:) > 0) && all(mod(block_indices(:), 1) == 0));
 

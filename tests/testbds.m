@@ -126,30 +126,29 @@ time = datestr(now,31);
 time = trim_time(time); % trim the form of time
 tst = sprintf("test_%s",time); % time stamp to rename
 tst = strcat(tst, "_", parameters.pdfname); % rename as mixture of time stamp and parameters
-fullpath = mfilename('fullpath');
-[path,~] = fileparts(fullpath);
-options.path = path;
-path_outdir = strcat(options.path, '/testdata/', tst);
-options.outdir = strcat(path_outdir, '/perf');
-path = strcat(options.path, '/testdata');
-% mkdir testdata: test for reproduce this experiment.
-cd(path)
-mkdir(tst)
-% TODO: parellel the code initially (in case experiement is broken)
-cd(path_outdir)
-mkdir perf
-mkdir tests
-cd ../../..
-path_outdir_src = strcat(path_outdir, '/src');
-copyfile('src', sprintf("%s",path_outdir_src));
-cd ./tests
-path_outdir_tests = strcat(path_outdir, '/tests');
-path_outdir_tests_competitors = strcat(path_outdir_tests, '/competitors');
-path_outdir_tests_private = strcat(path_outdir_tests, '/private');
-copyfile('competitors', sprintf("%s",path_outdir_tests_competitors));
-copyfile('private', sprintf("%s",path_outdir_tests_private));
-copyfile('testbds.m', sprintf("%s",path_outdir_tests));
-copyfile('testbds_input.m', sprintf("%s",path_outdir_tests));
+options.path = parameters.path_tests;
+path_testdata = fullfile(options.path, 'testdata');
+path_outdir = fullfile(options.path, 'testdata', tst);
+
+% mkdir a new folder to save numerical results and source code.
+mkdir(path_testdata, tst);
+mkdir(path_outdir, 'perf');
+options.outdir = fullfile(path_outdir, 'perf');
+mkdir(path_outdir, 'src');
+path_src = fullfile(path_outdir, 'src');
+mkdir(path_outdir, 'tests');
+path_tests = fullfile(path_outdir, 'tests');
+
+% Copy the source code and test code to path_outdir.
+copyfile(fullfile(parameters.path_src, '*'), path_src);
+copyfile(fullfile(parameters.path_tests, 'competitors'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'private'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'bds_unit_test.m'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'get_default_testoptions.m'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'get_default_testparameters.m'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'locate_matcutest.m'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'testbds.m'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'testbds_input.m'), path_tests);
 
 % performance profile
 tau = parameters.tau; % Tolerance of convergence test in performance profile
