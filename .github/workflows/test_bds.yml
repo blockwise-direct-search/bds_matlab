@@ -19,8 +19,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Install poppler-utils
-        run: sudo apt-get install poppler-utils   # Install pdfunite tool
+        
+      - name: Clone PRIMA
+      - uses: actions/checkout@v3.5.2
+        with: 
+          repository: libprima/prima
+            path: prima
+          submodules: recursive  
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v3.5.2

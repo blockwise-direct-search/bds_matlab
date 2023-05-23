@@ -16,14 +16,7 @@ end
 % % The code of the following lines is for using matcutest.
 % path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
 % path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
-% 
-% if exist(path_matcutest_local, "dir")
-%     addpath(path_matcutest_local);
-% end
-% 
-% if exist(path_matcutest_server, "dir")
-%     addpath(path_matcutest_server);
-% end
+
 
 %addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
 
@@ -64,9 +57,9 @@ end
 
 % The code of the following three lines is for running prima first time. If
 % we need to compare with prima, then we compile it.
-path_prima = fullfile(path_tests, 'competitors', 'prima');
-cd(path_prima)
-setup('newuoa')
+% path_prima = fullfile(path_tests, 'competitors', 'prima');
+% cd(path_prima)
+% setup('newuoa')
 
 if ~isfield(parameters, "solvers_label")
     parameters.solvers_label = [];

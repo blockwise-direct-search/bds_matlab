@@ -7,6 +7,9 @@ function [output] = testbds(parameters)
 
 % Tell MATLAB where to find MatCUTEst.
 locate_matcutest();
+% Tell MATLAB where to find prima.
+locate_prima();
+
 % Get list of problems
 s.type = parameters.problems_type; % Unconstrained: 'u'
 s.mindim = parameters.problems_mindim; % Minimum of dimension
