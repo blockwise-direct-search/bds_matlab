@@ -19,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-        
+
       - name: Clone PRIMA
       - uses: actions/checkout@v3.5.2
-        with: 
+        with:
           repository: libprima/prima
-            path: prima
-          submodules: recursive  
+          path: prima
+          submodules: recursive
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v3.5.2

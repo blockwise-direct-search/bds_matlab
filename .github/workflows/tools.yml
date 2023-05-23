@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-20.04, ubuntu-latest]
-        matlab: [R2020b]
+        matlab: [R2023a]
         #list: [full, customized, test]
         list: [full]
         #list: [new]

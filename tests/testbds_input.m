@@ -55,11 +55,6 @@ if ~isfield(parameters, "solvers_invoke")
     end
 end
 
-% The code of the following three lines is for running prima first time. If
-% we need to compare with prima, then we compile it.
-% path_prima = fullfile(path_tests, 'competitors', 'prima');
-% cd(path_prima)
-% setup('newuoa')
 
 if ~isfield(parameters, "solvers_label")
     parameters.solvers_label = [];
