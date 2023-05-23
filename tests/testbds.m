@@ -167,7 +167,6 @@ end
 cd(options.outdir)
 if ~isfield(parameters, "matcutest_github_actions")
     system("pdfunite *.pdf all.pdf");
-    ls
 else
     % Specify the folder to process and the output file name
     folder_path = options.outdir;
