@@ -80,6 +80,7 @@ end
 % If number of directions is less than number of blocks, then the number of
 % blocks is defined as the number of directions.
 nb = min(m, nb);
+block_indices = 1:nb;
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e4.
@@ -214,13 +215,9 @@ for iter = 1 : maxit
     
     for i = 1:nb
         
-        % Let xbase be the point from which the polling directions are
-        % employed. In one iteration, all the block use the same base point.
-        % The corresponding value of the objective function is stored in fbase.
-        % xbase = xval(:);
-        % fbase = fval;
+        i_real = block_indices(i);
         
-        direction_indices = searching_set_indices{i}; % get indices in the i-th block
+        direction_indices = searching_set_indices{i_real}; % get indices in the i-th block
         
         suboptions.maxfun = maxfun - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search
@@ -232,14 +229,14 @@ for iter = 1 : maxit
         
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, xbase, fbase, D(:, direction_indices), direction_indices,...
-            alpha_all(i), suboptions);
+            alpha_all(i_real), suboptions);
         
         % After exploring one block, update xbase and fbase immediately.
         xbase = xval;
         fbase = fval;
                 
         % The i-th block has been visited recently.
-        hist.block(iter) = i;
+        hist.block(iter) = i_real;
         % Update the history of step size.
         alpha_hist(:, iter) = alpha_all;
         % Update the number of blocks having been visited.
@@ -264,14 +261,14 @@ for iter = 1 : maxit
         
         % Retrieve the order the polling direction and check whether a
         % sufficient decrease has been achieved in inner_direct_search.
-        searching_set_indices{i} = suboutput.direction_indices;
+        searching_set_indices{i_real} = suboutput.direction_indices;
         success = suboutput.success;
         
         % Update the step sizes and store the history of step sizes.
         if success
-            alpha_all(i) = expand * alpha_all(i);
+            alpha_all(i_real) = expand * alpha_all(i_real);
         else
-            alpha_all(i) = shrink * alpha_all(i);
+            alpha_all(i_real) = shrink * alpha_all(i_real);
         end
         alpha_hist(:, nb_visited+1) = alpha_all;
         

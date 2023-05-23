@@ -56,7 +56,6 @@ jobs:
 
             % Check the installation
             help matcutest, which('macup'), which('decup'), which('secup')
-            macup('akiva')
 
             % Conduct your tests
             cd(fullfile(root_dir, 'bds_new_framework'))
@@ -64,9 +63,10 @@ jobs:
             path_tests = fullfile(path, 'tests');
             cd(path_tests)
             parameters.matcutest_github_actions = '/home/runner/.local/matcutest/mtools/src';
-            parameters.solvers_invoke = ["blockwise_direct_search", "newuoa"];
-            parameters.solvers_label = ["GS", "newuoa"];
-            parameters.solver_tag = ["GS", "newuoa"];
+            parameters.solvers_invoke = ["blockwise_direct_search", "blockwise_direct_search"];
+            parameters.polling_blocks= ["Gauss-Seidel", "Randomized_array"];
+            parameters.solvers_label = ["GS", "Randomized(array)"];
+            parameters.solver_tag = ["GS", "Randomized_array"];
             parameters.parallel = true;
             testbds_input(parameters)
             path_artifact = pwd;
