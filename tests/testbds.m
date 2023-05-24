@@ -164,41 +164,63 @@ for l = 1:tau_length
     output = perfprof(frec, fmin, options_perf);
 end
 
+
 cd(options.outdir)
-if ~isfield(parameters, "matcutest_github_actions")
-    system("pdfunite *.pdf all.pdf");
-else
-    % Specify the folder to process and the output file name
-    folder_path = options.outdir;
-    output_file = 'all.pdf';
-    
-    % Get the file names of all FIG files in the folder
-    file_list = dir(fullfile(folder_path, '*.fig'));
-    file_names = {file_list.name};
-    
-    % Create an empty PDF file
-    pdf_file = output_file;
-    exportgraphics(gcf, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white');
-    
-    % Save FIG files as PDF files one by one
-    for i = 1:length(file_names)
-        % Read FIG file
-        file_path = fullfile(folder_path, file_names{i});
-        fig_handle = openfig(file_path);
-        
-        % Save graphs as PDF files
-        exportgraphics(fig_handle, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white', 'Append', true);
-        
-        % close graphics
-        close(fig_handle);
-    end
-    
-    % close PDF file
-    close(gcf);
+
+% 初始化字符串变量
+pdfFiles = dir(fullfile(options.outdir, '*.pdf'));
+
+% 将文件名存储到单元格数组中
+pdfNamesCell = cell(numel(pdfFiles), 1);
+for i = 1:numel(pdfFiles)
+    pdfNamesCell{i} = pdfFiles(i).name;
 end
 
+% 使用 strjoin 函数将单元格数组拼接成一个字符串
+inputfiles = strjoin(pdfNamesCell, ' ');
+
+% 去掉字符串开头的空格
+inputfiles = strtrim(inputfiles);
+outputfile = 'all.pdf';
+system(['bash ', fullfile(parameters.path_tests, 'private', 'compdf'), ' ', inputfiles, ' -o ', outputfile]);
 % Rename pdf
 movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
+
+
+% if ~isfield(parameters, "matcutest_github_actions")
+%     system("pdfunite *.pdf all.pdf");
+% else
+%     % Specify the folder to process and the output file name
+%     folder_path = options.outdir;
+%     output_file = 'all.pdf';
+%     
+%     % Get the file names of all FIG files in the folder
+%     file_list = dir(fullfile(folder_path, '*.fig'));
+%     file_names = {file_list.name};
+%     
+%     % Create an empty PDF file
+%     pdf_file = output_file;
+%     exportgraphics(gcf, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white');
+%     
+%     % Save FIG files as PDF files one by one
+%     for i = 1:length(file_names)
+%         % Read FIG file
+%         file_path = fullfile(folder_path, file_names{i});
+%         fig_handle = openfig(file_path);
+%         
+%         % Save graphs as PDF files
+%         exportgraphics(fig_handle, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white', 'Append', true);
+%         
+%         % close graphics
+%         close(fig_handle);
+%     end
+%     
+%     % close PDF file
+%     close(gcf);
+% end
+% 
+% % Rename pdf
+% movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
 
 end
 

@@ -26,7 +26,6 @@ parameters.path_tests = path_tests;
 path_bds = fileparts(path_tests);
 parameters.path_bds = path_bds;
 addpath(path_tests);
-cd(path_tests)
 % If testdata does not exist, make a new one.
 path_testdata = strcat(path_tests, "/testdata");
 if ~exist(path_testdata, "dir")

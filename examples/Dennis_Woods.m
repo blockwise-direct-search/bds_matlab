@@ -11,9 +11,8 @@ options.memory = true;
 
 fullpath = mfilename('fullpath');
 [path_examples,~] = fileparts(fullpath);
-cd(path_examples)
-cd ..
-path_src = pwd;
+[path_bds, ~, ~] = fileparts(path_examples);
+path_src = fullfile(path_bds, 'src');
 add(path_src)
 
 [x, fval, exitflag, output] = blockwise_direct_search(@rosenb, [0; 0], options)

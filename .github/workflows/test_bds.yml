@@ -19,6 +19,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Check out repository 
+        uses: actions.checkout@v3.5.2
+        with:
+          submodules: recursive
 
       - name: Clone PRIMA
         uses: actions/checkout@v3.5.2
@@ -31,12 +35,6 @@ jobs:
         with:
           repository: equipez/matcutest_compiled
           path: matcutest
-
-      - name: Clone bds_new_framework
-        uses: actions/checkout@v3.5.2
-        with:
-          repository: Lht97/bds_new_framework
-          path: bds_new_framework
 
       - name: Cache MATLAB
         id: cache-matlab
@@ -62,9 +60,7 @@ jobs:
             help matcutest, which('macup'), which('decup'), which('secup')
 
             % Conduct your tests
-            cd(fullfile(root_dir, 'bds_new_framework'))
-            path = pwd;
-            path_tests = fullfile(path, 'tests');
+            path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.matcutest_github_actions = '/home/runner/.local/matcutest/mtools/src';
             parameters.solvers_invoke = ["blockwise_direct_search", "blockwise_direct_search"];
