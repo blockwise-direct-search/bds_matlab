@@ -70,9 +70,10 @@ jobs:
 
             % Check the installation
             help matcutest, which('macup'), which('decup'), which('secup')
-            
+
             % Compile prima
-            cd(prima);
+            path_prima = fullfile(root_dir, 'prima');
+            cd(path_prima);
             setup
 
             % Conduct your tests
