@@ -75,7 +75,6 @@ jobs:
             help matcutest, which('macup'), which('decup'), which('secup')
 
             % Add Optimization Toolbox to the path.
-            add-on install optimization;
             addpath('toolbox_path');
 
             % Compile prima
