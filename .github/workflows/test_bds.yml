@@ -55,8 +55,11 @@ jobs:
           path: ${{ runner.tool_cache }}/MATLAB
           key: ${{ matrix.os }}-${{ matrix.matlab }}
 
-      - name: Set up MATLAB
+      - name: Set up MATLAB with optimization toolbox
         uses: matlab-actions/setup-matlab@v2-beta
+        with:
+          release: ${{ matrix.matlab }}
+          products: Optimization_Toolbox
 
       - name: Run tests
         uses: matlab-actions/run-command@v1.2.0
@@ -109,11 +112,9 @@ jobs:
             path_artifact = fullfile(path_tests, 'testdata');
             cd(path_artifact);
 
-      - name: Compress files
-        run: tar -czvf artifacts.tar.gz *
-        
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: my-artifacts
-          path: artifacts.tar.gz
+          path:
+            path_artifact
