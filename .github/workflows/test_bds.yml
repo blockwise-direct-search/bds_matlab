@@ -107,10 +107,13 @@ jobs:
                 testbds_input(parameters);
             end
             path_artifact = fullfile(path_tests, 'testdata');
-            cd(old_path)
+            cd(path_artifact);
 
+      - name: Compress files
+        run: tar -czvf artifacts.tar.gz *
+        
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
-          path: path_artifact
+          name: my-artifacts
+          path: artifacts.tar.gz
