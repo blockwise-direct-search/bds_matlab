@@ -1,4 +1,4 @@
-function block_index = get_block(nb, hist, polling_blocks, block_indices)
+function block_index = get_block(nb, hist, blocks_strategy, block_indices)
 
 % Extreme case: How about nb = 1? 
 
@@ -12,7 +12,7 @@ if nb ~= 1
     % visited
     nb_visited = nnz(block_hist);
     
-    switch polling_blocks
+    switch blocks_strategy
         % Gauss-Seidel
         case {"Gauss-Seidel"}
             block_index = mod(nb_visited, nb)+1;

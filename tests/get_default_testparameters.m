@@ -6,24 +6,20 @@ switch constant_name
     case {"maxfun_dim"}
         constant_value = 1000;
     case {"maxfun"}
-        constant_value = 1e4;
+        constant_value = 1e5;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}
         constant_value = 0.5;
     case {"sufficient_decrease_factor"}
-        constant_value = 1e-3;
+        constant_value = 1e-5;
     case {"tol"}
         constant_value = 1e-12;
     case {"ftarget"}
         constant_value = -inf;
-    case {"polling"}
-        constant_value = "opportunistic";
-    case {"polling_outer"}
-        constant_value = "opportunistic";
     case {"polling_inner"}
         constant_value = "opportunistic";
-    case {"polling_blocks"}
+    case {"block_strategy"}
         constant_value = "Gauss-Seidel";
     case {"cycling_inner"}
         constant_value = 1;

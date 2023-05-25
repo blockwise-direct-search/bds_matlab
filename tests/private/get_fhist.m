@@ -60,7 +60,7 @@ if options_test.is_noisy
        noise = randn(1); 
     end
     rng(seed)
-    if noise_abs == "relative"
+    if options_test.noise_abs == "relative"
         FUN = FUN*(1.0+options_test.noise_level*noise);
     else
         FUN = FUN + options_test.noise_level*noise;

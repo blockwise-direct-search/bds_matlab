@@ -13,19 +13,11 @@ fullpath = mfilename('fullpath');
 [path_examples,~] = fileparts(fullpath);
 [path_bds, ~, ~] = fileparts(path_examples);
 path_src = fullfile(path_bds, 'src');
-add(path_src)
+addpath(path_src)
 
-[x, fval, exitflag, output] = blockwise_direct_search(@rosenb, [0; 0], options)
+[x, fval, exitflag, output] = blockwise_direct_search(@DW, [0; 0.1], options)
 %[x, fval, exitflag, output] = fminsearch(@rosenb, [-1; 2], options)
 
 rmpath(path_src)
 
-
-function f = rosenb(x)
-
-c_1 = [1; -1];
-c_2 = [-1; 1];
-f = max(norm(x-c_1), norm(x-c_2));
-
-end
 

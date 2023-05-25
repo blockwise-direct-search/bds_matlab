@@ -4,7 +4,7 @@ function constant_value = get_default_constant(constant_name)
 %   of the constant named CONSTANT_NAMED.
 switch constant_name
     case {"maxfun"}
-        constant_value = 1e4;
+        constant_value = 1e5;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}
@@ -12,14 +12,14 @@ switch constant_name
     case {"sufficient_decrease_factor"}
         constant_value = 1e-3;
     case {"tol"}
-        constant_value = 1e-12;
+        constant_value = eps;
     case {"ftarget"}
         constant_value = -inf;
     case {"polling"}
         constant_value = "opportunistic";
     case {"polling_inner"}
         constant_value = "opportunistic";
-    case {"polling_blocks"}
+    case {"blocks_strategy"}
         constant_value = "Gauss-Seidel";
     case {"cycling_inner"}
         constant_value = 1;

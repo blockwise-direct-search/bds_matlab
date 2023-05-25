@@ -33,6 +33,7 @@ if name_solver == "blockwise_direct_search"
     options.memory = options_solvers.memory(j);
     options.cycling_inner = options_solvers.cycling_inner(j);
     options.direction = options_solvers.direction(j);
+    options.blocks_strategy = options_solvers.blocks_strategy(j);
     
 elseif name_solver == "bds_polling"
     

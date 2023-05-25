@@ -95,7 +95,7 @@ for j = 1 : num_directions
     % 2. What if we update fnew and xnew whenever there is a smple decrease?
     %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
 
-    if fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2
+    if fnew < fbase - sufficient_decrease_factor * alpha^2 / 2
         success = true;
         if fnew < fval
             xval = xnew;

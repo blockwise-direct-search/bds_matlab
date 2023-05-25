@@ -10,7 +10,7 @@ function [xval, fval, exitflag, output] = blockwise_direct_search(fun, x0, optio
 %   default optimization parameters replaced by values in the structure OPTIONS,
 %   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 %   expand, shrink, sufficient decrease factor, tol, ftarget, polling_inner,
-%   polling_blocks, memory, cycling.
+%   blocks_strategy, memory, cycling.
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
@@ -143,9 +143,9 @@ else
    ftarget = get_default_constant("ftarget");
 end
 
-% Set the default polling_blocks. Default one is Gauss-Seidel.
-if ~isfield(options, "polling_blocks")
-    options.polling_blocks = get_default_constant("polling_blocks");
+% Set the default blocks_strategy. Default one is Gauss-Seidel.
+if ~isfield(options, "blocks_strategy")
+    options.blocks_strategy = get_default_constant("blocks_strategy");
 end
 
 % Set the default inner polling strategy. This is the polling strategy
@@ -208,6 +208,7 @@ end
 % The number of blocks having been visited. When we store alpha_hist, this
 % parameter is needed.
 nb_visited = 0;
+options.permutation_indicator = false;
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
@@ -219,6 +220,8 @@ for iter = 1 : maxit
     fbase = fval;   
     
     block_indices = permutate(block_indices, options);
+    options.permutation_indicator = false;
+    
     for i = 1:nb
         % In case of permutation.
         i_real = block_indices(i);
@@ -272,6 +275,7 @@ for iter = 1 : maxit
         
         % Update the step sizes and store the history of step sizes.
         if success
+            options.permutation_indicator = true;
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
             alpha_all(i_real) = shrink * alpha_all(i_real);

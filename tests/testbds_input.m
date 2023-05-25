@@ -142,9 +142,27 @@ if ~isfield(parameters, "direction")
         parameters.direction = [parameters.direction get_default_testparameters("direction")];
     end
 end
+
 if ~isfield(parameters, "parallel")
     parameters.parallel = false;
 end
+
+if ~isfield(parameters, "is_noisy")
+    parameters.is_noisy = false;
+end
+
+if ~isfield(parameters, "noise_level")
+    parameters.noise_level = 1e-3;
+end
+
+if ~isfield(parameters, "noise_abs")
+    parameters.noise_abs = "relative";
+end
+
+if ~isfield(parameters, "noise_type")
+    parameters.noise_type = "gaussian";
+end
+
 pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers

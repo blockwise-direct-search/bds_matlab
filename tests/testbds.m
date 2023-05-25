@@ -24,8 +24,13 @@ s.blacklist = [s.blacklist, {}];
 % TODO: check why {'PARKCH'} takes so long to run?
 % TODO: check why {'STRATEC'} takes so long to run?
 % {'PALMER1C'},{'PALMER2C'},{'PALMER3C'},{'PALMER4C'},{'PALMER5C'},{'PALMER6C'},{'PALMER7C'},{'PALMER8C'}
-s.blacklist = [s.blacklist,{'LRCOVTYPE'},{'LRIJCNN1'},{'PARKCH'},{'STRATEC'}...
-    ];
+% s.blacklist = [s.blacklist,{'LRCOVTYPE'},{'LRIJCNN1'},{'PARKCH'},{'STRATEC'}...
+%     ];
+s.blacklist = [{'LRCOVTYPE'},{'LRIJCNN1'},{'PARKCH'},{'STRATEC'}];
+%    {'GAUSS1LS'}, {'GAUSS2LS'}, {'GAUSS3LS'}, {'HEART8LS'}, ...
+%     {'PALMER1C'}, {'PALMER2C'}, {'PALMER3C'}, {'PALMER4C'}, {'PALMER6C'}, ...
+%     {'PALMER7C'}, {'PALMER8C'}, {'VESUVIALS'}, {'VESUVIOLS'}, {'VESUVIOULS'}, ...    
+%     {'VIBRBEAM'}
 problem_names = secup(s);
 
 % list = list(1:min(20,length(list)));
@@ -67,15 +72,16 @@ random_fmin = NaN(num_problems,num_random);
 
 % Some temporary options for test
 % noise
-options_test.is_noisy = false;
-options_test.noise_level = 1e-3;
+options_test.is_noisy = parameters.is_noisy;
+options_test.noise_level = parameters.noise_level;
 % relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
-options_test.noise_abs = "relative";
-options_test.noise_type = "uniform";
+options_test.noise_abs = parameters.noise_abs;
+options_test.noise_type = parameters.noise_type;
 
 options_test.scaling_matrix = false;
 options_test.scaling_matrix_factor = 5;
 
+options_solvers.blocks_strategy = parameters.blocks_strategy;
 options_solvers.cycling_inner = parameters.cycling_inner;
 options_solvers.polling_inner = parameters.polling_inner;
 options_solvers.solvers_label = parameters.solvers_label;
