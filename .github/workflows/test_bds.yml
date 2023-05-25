@@ -42,20 +42,6 @@ jobs:
           repository: equipez/matcutest_compiled
           path: matcutest
 
-
-      - name: Link gfortran for MATLAB on Linux
-        if: startsWith(matrix.os, 'ubuntu')
-        run: |
-          GFVER=12
-          if [[ "${{ matrix.os }}" = "ubuntu-20.04" ]] ; then
-              GFVER=11
-          fi
-          if [[ "${{ matrix.matlab }}" = "R2020a" || "${{ matrix.matlab }}" = "R2020b" \
-             || "${{ matrix.matlab }}" = "R2021a" || "${{ matrix.matlab }}" = "R2021b" ]] ; then
-              GFVER=9
-          fi
-          bash .github/scripts/link_gfortran "$GFVER"
-
       - name: Install epstopdf and ghostscript
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
