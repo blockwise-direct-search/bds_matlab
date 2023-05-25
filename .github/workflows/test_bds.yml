@@ -108,12 +108,9 @@ jobs:
             end
             path_artifact = fullfile(path_tests, 'testdata');
             cd(path_artifact);
-            pwd
-            ls
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           name: my-artifacts
-          path:
-            path_tests
+          path: ./tests/testdata
