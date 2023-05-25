@@ -98,11 +98,13 @@ jobs:
                 parameters.solvers_label = ["GS", "simplex"];
                 parameters.solvers_label = ["GS", "simplex"];
                 parameters.nb_tag = ["nb", "no"];
+                testbds_input(parameters);
             elseif strcmp('${{ matrix.competitor }}', 'matlab_fminunc')
                 parameters.solvers_invoke = ["${{ matrix.solver }}", "matlab_fminunc"];
                 parameters.solvers_label = ["GS", "bfgs"];
                 parameters.solvers_label = ["GS", "bfgs"];
                 parameters.nb_tag = ["n", "no"];
+                testbds_input(parameters);
             end
             path_artifact = fullfile(path_tests, 'testdata');
             cd(old_path)
