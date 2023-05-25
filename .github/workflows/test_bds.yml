@@ -20,14 +20,11 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        solver: ["blockwise_direct_search"]
-        solver_label: [GS];
-        solver_tag: [GS];
-        solver_nb_tag: [n];
-        competitor: ["blockwise_direct_search", "newuoa", "matlab_fminsearch", "matlab_fminunc"];
-        competitor_label: ["randomized(array)", "newuoa", "simplex", "bfgs"];
-        competitor_solver_tag: ["randomized_array", "newuoa", "simplex", "bfgs"];
-        competitor_nb_tag: ["n", "no", "no", "no"];
+        solver: [blockwise_direct_search]
+        solver_label: [GS]
+        solver_tag: [GS]
+        solver_nb_tag: [n]
+        competitor: [blockwise_direct_search, newuoa, matlab_fminsearch, matlab_fminunc]
 
     steps:
       - name: Check out repository
@@ -79,18 +76,36 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             old_path = cd(path_tests)
-            parameters.matcutest_github_actions = '/home/runner/.local/matcutest/mtools/src';
-            parameters.solvers_invoke = ["blockwise_direct_search", "blockwise_direct_search"];
-            parameters.polling_blocks= ["Gauss-Seidel", "Randomized_array"];
-            parameters.solvers_label = ["GS", "Randomized(array)"];
-            parameters.solver_tag = ["GS", "Randomized_array"];
+            parameters.blocks_strategy = ["Gauss-Seidel", "Randomized_array"];
             parameters.parallel = true;
-            testbds_input(parameters)
-            path_artifact = pwd;
+            if strcmp('${{ matrix.competitor }}', 'blockwise_direct_search')
+                parameters.solvers_invoke = ["${{ matrix.solver }}", "blockwise_direct_search"];
+                parameters.solvers_label = ["GS", "Randomized(array)"];
+                parameters.solvers_tag = ["GS", "Randomized_array"];
+                parameters.nb_tag = ["n", "no"];
+                testbds_input(parameters);
+            elseif strcmp('${{ matrix.competitor }}', 'newuoa')
+                parameters.solvers_invoke = ["${{ matrix.solver }}", "newuoa"];
+                parameters.solvers_label = ["GS", "newuoa"];
+                parameters.solvers_tag = ["GS", "newuoa"];
+                parameters.nb_tag = ["n", "no"];
+                testbds_input(parameters);
+            elseif strcmp('${{ matrix.competitor }}', 'matlab_fminsearch')
+                parameters.solvers_invoke = ["${{ matrix.solver }}", "matlab_fminsearch"];
+                parameters.solvers_label = ["GS", "simplex"];
+                parameters.solvers_label = ["GS", "simplex"];
+                parameters.nb_tag = ["nb", "no"];
+            elseif strcmp('${{ matrix.competitor }}', 'matlab_fminunc')
+                parameters.solvers_invoke = ["${{ matrix.solver }}", "matlab_fminunc"];
+                parameters.solvers_label = ["GS", "bfgs"];
+                parameters.solvers_label = ["GS", "bfgs"];
+                parameters.nb_tag = ["n", "no"];
+            end
+            path_artifact = fullfile(path_tests, 'testdata');
             cd(old_path)
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: my-artifact
-          path: 'bds_new_framework/bds_new_framework/bds_new_framework/tests/testdata'
+          path: path_artifact

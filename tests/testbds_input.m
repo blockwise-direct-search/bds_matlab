@@ -7,17 +7,9 @@ end
 
 restoredefaultpath;
 
-if isfield(parameters, "matcutest_github_actions")
-    if exist(parameters.matcutest_github_actions, "dir")
-        addpath(parameters.matcutest_github_actions);
-    end
-end
-
 % % The code of the following lines is for using matcutest.
 % path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
 % path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
-
-
 %addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
 
 fullpath = mfilename('fullpath');
