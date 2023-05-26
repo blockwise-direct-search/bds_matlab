@@ -21,10 +21,7 @@ jobs:
         os: [ubuntu-latest]
         matlab: [latest]
         solver: [blockwise_direct_search]
-        solver_label: [GS]
-        solver_tag: [GS]
-        solver_nb_tag: [n]
-        competitor: [blockwise_direct_search, newuoa, matlab_fminsearch]
+        competitor: [blockwise_direct_search, newuoa, matlab_fminsearch, matlab_fminunc]
 
     steps:
       - name: Check out repository
