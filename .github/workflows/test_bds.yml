@@ -78,10 +78,6 @@ jobs:
             % Check the installation
             help matcutest, which('macup'), which('decup'), which('secup')
 
-            % Add Optimization Toolbox to the path.
-            addpath('toolbox_path');
-
-            % Compile prima
             path_prima = fullfile(root_dir, 'prima');
             cd(path_prima);
             setup
@@ -95,7 +91,7 @@ jobs:
                 parameters.solvers_invoke = ["${{ matrix.solver }}", "blockwise_direct_search"];
                 parameters.solvers_label = ["GS", "Randomized(array)"];
                 parameters.solvers_tag = ["GS", "Randomized_array"];
-                parameters.nb_tag = ["n", "no"];
+                parameters.nb_tag = ["n", "n"];
                 testbds_input(parameters);
             elseif strcmp('${{ matrix.competitor }}', 'newuoa')
                 parameters.solvers_invoke = ["${{ matrix.solver }}", "newuoa"];
@@ -106,8 +102,14 @@ jobs:
             elseif strcmp('${{ matrix.competitor }}', 'matlab_fminsearch')
                 parameters.solvers_invoke = ["${{ matrix.solver }}", "matlab_fminsearch"];
                 parameters.solvers_label = ["GS", "simplex"];
-                parameters.solvers_label = ["GS", "simplex"];
-                parameters.nb_tag = ["nb", "no"];
+                parameters.solvers_tag = ["GS", "simplex"];
+                parameters.nb_tag = ["n", "no"];
+                testbds_input(parameters);
+            elseif strcmp('${{ matrix.competitor }}', 'matlab_fminunc')
+                parameters.solvers_invoke = ["${{ matrix.solver }}", "matlab_fminunc"];
+                parameters.solvers_label = ["GS", "bfgs"];
+                parameters.solvers_tag = ["GS", "bfgs"];
+                parameters.nb_tag = ["n", "no"];
                 testbds_input(parameters);
             end
             path_artifact = fullfile(path_tests, 'testdata');
