@@ -15,7 +15,7 @@ end
 
 % Matlab_fminunc
 if strcmp(parameters.solvers_invoke(j), "matlab_fminunc")
-    solver_legend = "bfgs";
+    solver_legend = parameters.fminunc_type;
 end
 
 % Prima

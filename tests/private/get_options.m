@@ -76,7 +76,9 @@ elseif name_solver == "matlab_fminsearch"
     options = optimset(oldopts, 'MaxIter', maxfun);
     
 elseif name_solver == "matlab_fminunc"
-    options = optimoptions(options_solvers.fminunc_type, 'MaxFunctionEvaluations', maxfun,...
+    %options = optimoptions('fminunc', 'Algorithm', 'trust-region', 'HessUpdate', 'bfgs', 'MaxIter', 1000);
+    options = optimoptions('fminunc', 'Algorithm', 'quasi-newton', ...
+        'HessUpdate', options_solvers.fminunc_type, 'MaxFunctionEvaluations', maxfun,...
         'MaxIterations', maxfun, 'StepTolerance', 1e-12, 'OptimalityTolerance', 1e-12);
     
 else
