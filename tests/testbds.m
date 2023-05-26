@@ -153,9 +153,8 @@ copyfile(fullfile(parameters.path_src, '*'), path_src);
 copyfile(fullfile(parameters.path_tests, 'competitors'), path_tests);
 copyfile(fullfile(parameters.path_tests, 'private'), path_tests);
 copyfile(fullfile(parameters.path_tests, 'bds_unit_test.m'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'get_default_testoptions.m'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'get_default_testparameters.m'), path_tests);
 copyfile(fullfile(parameters.path_tests, 'locate_matcutest.m'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'locate_prima.m'), path_tests);
 copyfile(fullfile(parameters.path_tests, 'testbds.m'), path_tests);
 copyfile(fullfile(parameters.path_tests, 'testbds_input.m'), path_tests);
 
