@@ -1,5 +1,5 @@
 function [options] = get_options(p, j, name_solver, options_solvers, options)
-keyboard
+
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if ~isempty(find(prima_list == name_solver, 1))
     name_solver = "prima";
