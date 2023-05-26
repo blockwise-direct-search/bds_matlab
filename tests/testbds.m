@@ -150,13 +150,31 @@ path_tests = fullfile(path_outdir, 'tests');
 
 % Copy the source code and test code to path_outdir.
 copyfile(fullfile(parameters.path_src, '*'), path_src);
-copyfile(fullfile(parameters.path_tests, 'competitors'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'private'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'bds_unit_test.m'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'locate_matcutest.m'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'locate_prima.m'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'testbds.m'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'testbds_input.m'), path_tests);
+parameters.path_competitors = fullfile(parameters.path_tests, 'competitors');
+copyfile(fullfile(parameters.path_competitors, '*'), path_tests);
+copyfile(fullfile(parameters.path_tests, 'private', '*'), path_tests);
+
+% Define current path and target path.
+currentPath = parameters.path_tests;
+targetPath = path_tests; 
+
+% Get all files under currentPath.
+files = dir(fullfile(currentPath, '*'));
+ 
+% Loop all files
+for i = 1:length(files)
+    if ~files(i).isdir % If it is files, not folders.
+        % Construct path of source files and target files
+        sourceFile = fullfile(currentPath, files(i).name);
+        targetFile = fullfile(targetPath, files(i).name);
+        
+        % Duplicate files
+        copyfile(sourceFile, targetFile);
+        
+        % Move files
+        movefile(targetFile, currentPath);
+    end
+end
 
 % performance profile
 tau = parameters.tau; % Tolerance of convergence test in performance profile
@@ -172,60 +190,26 @@ end
 
 cd(options.outdir)
 
-% 初始化字符串变量
+% Initialize string variable.
 pdfFiles = dir(fullfile(options.outdir, '*.pdf'));
 
-% 将文件名存储到单元格数组中
+% Store filename in a cell.
 pdfNamesCell = cell(numel(pdfFiles), 1);
 for i = 1:numel(pdfFiles)
     pdfNamesCell{i} = pdfFiles(i).name;
 end
 
-% 使用 strjoin 函数将单元格数组拼接成一个字符串
+% Use the strjoin function to concatenate the elements in a cell array into a single string. 
 inputfiles = strjoin(pdfNamesCell, ' ');
 
-% 去掉字符串开头的空格
+% Remove spaces at the beginning of a string.
 inputfiles = strtrim(inputfiles);
+
+% Merge pdf.
 outputfile = 'all.pdf';
 system(['bash ', fullfile(parameters.path_tests, 'private', 'compdf'), ' ', inputfiles, ' -o ', outputfile]);
 % Rename pdf
 movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
-
-
-% if ~isfield(parameters, "matcutest_github_actions")
-%     system("pdfunite *.pdf all.pdf");
-% else
-%     % Specify the folder to process and the output file name
-%     folder_path = options.outdir;
-%     output_file = 'all.pdf';
-%     
-%     % Get the file names of all FIG files in the folder
-%     file_list = dir(fullfile(folder_path, '*.fig'));
-%     file_names = {file_list.name};
-%     
-%     % Create an empty PDF file
-%     pdf_file = output_file;
-%     exportgraphics(gcf, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white');
-%     
-%     % Save FIG files as PDF files one by one
-%     for i = 1:length(file_names)
-%         % Read FIG file
-%         file_path = fullfile(folder_path, file_names{i});
-%         fig_handle = openfig(file_path);
-%         
-%         % Save graphs as PDF files
-%         exportgraphics(fig_handle, pdf_file, 'ContentType', 'vector', 'BackgroundColor', 'white', 'Append', true);
-%         
-%         % close graphics
-%         close(fig_handle);
-%     end
-%     
-%     % close PDF file
-%     close(gcf);
-% end
-% 
-% % Rename pdf
-% movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
 
 end
 

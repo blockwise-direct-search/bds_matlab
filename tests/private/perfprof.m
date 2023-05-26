@@ -147,7 +147,8 @@ output.cut_ratio = cut_ratio;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 axis([0 cut_ratio 0 1]);
 yticks(0 : 0.1 : 1);
-yticklegends({'0', '', '0.2', '', '0.4', '', '0.6', '', '0.8', '', '1'});
+%yticklegends({'0', '', '0.2', '', '0.4', '', '0.6', '', '0.8', '', '1'});
+yticklabels({'0', '', '0.2', '', '0.4', '', '0.6', '', '0.8', '', '1'});
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Legends and title should be added.
@@ -169,8 +170,10 @@ else
     legend(solvers,'Location', 'southeast','Orientation','vertical');
 end
 
-xlegend('$\log_2(\alpha), \quad \alpha = \mathrm{NF}/\mathrm{NF}_{\min}$', 'fontsize', fontsize, 'interpreter', 'latex');
-ylegend('$\pi_s(\alpha)$', 'fontsize', fontsize, 'interpreter', 'latex');
+%xlegend('$\log_2(\alpha), \quad \alpha = \mathrm{NF}/\mathrm{NF}_{\min}$', 'fontsize', fontsize, 'interpreter', 'latex');
+xlabel('$\log_2(\alpha), \quad \alpha = \mathrm{NF}/\mathrm{NF}_{\min}$', 'fontsize', fontsize, 'interpreter', 'latex');
+%ylegend('$\pi_s(\alpha)$', 'fontsize', fontsize, 'interpreter', 'latex');
+ylabel('$\pi_s(\alpha)$', 'fontsize', fontsize, 'interpreter', 'latex');
 %xlabh = get(gca,'Xlegend');
 %set(xlabh,'Position',get(xlabh,'Position') - [0 .0175 0])
 set(gca,'FontSize',fontsize);

@@ -146,7 +146,7 @@ for i = 1:num_solvers
     if i > 1
        pdfname = strcat(pdfname, "_"); 
     end
-    pdfname = strcat(pdfname, parameters.solvers_stamp(i), "_", ...
+    pdfname = strcat(pdfname, parameters.solvers_stamp(i), ...
          "_",  num2str(parameters.cycling_inner(i)));
 end
 pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_", num2str(parameters.problems_maxdim));
