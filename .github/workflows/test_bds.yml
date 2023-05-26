@@ -23,7 +23,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
         competitor: [matlab_fminunc]
-        competitor_type: [bfgs, lbfgs, dfp]
+        competitor_type: [bfgs, lbfgs, dfp, steepdesc]
 
     steps:
       - name: Check out repository

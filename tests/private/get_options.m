@@ -1,5 +1,5 @@
 function [options] = get_options(p, j, name_solver, options_solvers, options)
-
+keyboard
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if ~isempty(find(prima_list == name_solver, 1))
     name_solver = "prima";
@@ -79,7 +79,7 @@ elseif name_solver == "matlab_fminunc"
     %options = optimoptions('fminunc', 'Algorithm', 'trust-region', 'HessUpdate', 'bfgs', 'MaxIter', 1000);
     options = optimoptions('fminunc', 'Algorithm', 'quasi-newton', ...
         'HessUpdate', options_solvers.fminunc_type, 'MaxFunctionEvaluations', maxfun,...
-        'MaxIterations', maxfun, 'StepTolerance', 1e-12, 'OptimalityTolerance', 1e-12);
+        'MaxIterations', maxfun, 'StepTolerance', options_solvers.tol, 'OptimalityTolerance', options_solvers.tol);
     
 else
     disp("there are no options for the j-th solver");
