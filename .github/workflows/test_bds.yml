@@ -20,6 +20,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
+        with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
         competitor: [blockwise_direct_search, newuoa, matlab_fminsearch, matlab_fminunc]
 
@@ -54,9 +55,10 @@ jobs:
         uses: actions/cache@v3.3.1
         with:
           path: ${{ runner.tool_cache }}/MATLAB
-          key: ${{ matrix.os }}-${{ matrix.matlab }}
+          key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
 
       - name: Set up MATLAB with optimization toolbox
+        if: ${{ matrix.with_optim_toolbox == 'yes' }}
         uses: matlab-actions/setup-matlab@v2-beta
         with:
           release: ${{ matrix.matlab }}
@@ -72,45 +74,18 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Check the installation
-            help matcutest, which('macup'), which('decup'), which('secup')
-
+            % Compile prima
             path_prima = fullfile(root_dir, 'prima');
             cd(path_prima);
             setup
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
-            old_path = cd(path_tests)
+            cd(path_tests)
             parameters.blocks_strategy = ["Gauss-Seidel", "Randomized_array"];
             parameters.parallel = true;
-            if strcmp('${{ matrix.competitor }}', 'blockwise_direct_search')
-                parameters.solvers_invoke = ["${{ matrix.solver }}", "blockwise_direct_search"];
-                parameters.solvers_label = ["GS", "Randomized(array)"];
-                parameters.solvers_tag = ["GS", "Randomized_array"];
-                parameters.nb_tag = ["n", "n"];
-                testbds_input(parameters);
-            elseif strcmp('${{ matrix.competitor }}', 'newuoa')
-                parameters.solvers_invoke = ["${{ matrix.solver }}", "newuoa"];
-                parameters.solvers_label = ["GS", "newuoa"];
-                parameters.solvers_tag = ["GS", "newuoa"];
-                parameters.nb_tag = ["n", "no"];
-                testbds_input(parameters);
-            elseif strcmp('${{ matrix.competitor }}', 'matlab_fminsearch')
-                parameters.solvers_invoke = ["${{ matrix.solver }}", "matlab_fminsearch"];
-                parameters.solvers_label = ["GS", "simplex"];
-                parameters.solvers_tag = ["GS", "simplex"];
-                parameters.nb_tag = ["n", "no"];
-                testbds_input(parameters);
-            elseif strcmp('${{ matrix.competitor }}', 'matlab_fminunc')
-                parameters.solvers_invoke = ["${{ matrix.solver }}", "matlab_fminunc"];
-                parameters.solvers_label = ["GS", "bfgs"];
-                parameters.solvers_tag = ["GS", "bfgs"];
-                parameters.nb_tag = ["n", "no"];
-                testbds_input(parameters);
-            end
-            path_artifact = fullfile(path_tests, 'testdata');
-            cd(path_artifact);
+            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            testbds_input(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2

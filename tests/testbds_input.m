@@ -32,27 +32,9 @@ path_competitors = fullfile(path_tests, 'competitors');
 addpath(path_competitors);
 parameters.path_competitors = path_competitors;
 
-% The number of solvers. In case that no parameters are input.
-if ~isfield(parameters, "num_solvers")
-    num_solvers = get_default_testparameters("num_solvers");
-else
-    num_solvers = parameters.num_solvers;
-end
+assert(isfield(parameters, "solvers_invoke"));
 
-if ~isfield(parameters, "solvers_invoke")
-    parameters.solvers_invoke = [];
-    for i = 1:num_solvers
-        parameters.solvers_invoke = [parameters.solvers_invoke get_default_testparameters("solvers_invoke")];
-    end
-end
-
-
-if ~isfield(parameters, "solvers_label")
-    parameters.solvers_label = [];
-    for i = 1:num_solvers
-        parameters.solvers_label = [parameters.solvers_label get_default_testparameters("solvers_label")];
-    end
-end
+num_solvers = length(parameters.solvers_invoke);
 
 if ~isfield(parameters, "memory")
     parameters.memory = [];
@@ -79,13 +61,6 @@ if ~isfield(parameters, "cycling_inner")
     parameters.cycling_inner = [];
     for i = 1:num_solvers
         parameters.cycling_inner = [parameters.cycling_inner get_default_testparameters("cycling_inner")];
-    end
-end
-
-if ~isfield(parameters, "solvers_tag")
-    parameters.solvers_tag = [];
-    for i = 1:num_solvers
-        parameters.solvers_tag = [parameters.solvers_tag get_default_testparameters("solvers_tag")];
     end
 end
 
@@ -155,13 +130,23 @@ if ~isfield(parameters, "noise_type")
     parameters.noise_type = "gaussian";
 end
 
+parameters.solvers_legend = [];
+for i = 1:num_solvers
+     parameters.solvers_legend = [parameters.solvers_legend get_legend(parameters, i)];
+end
+
+parameters.solvers_stamp = [];
+for i = 1:num_solvers
+     parameters.solvers_stamp = [parameters.solvers_stamp get_stamp(parameters, i)];
+end
+
 pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers
     if i > 1
        pdfname = strcat(pdfname, "_"); 
     end
-    pdfname = strcat(pdfname, parameters.solvers_tag(i), "_", parameters.nb_tag(i),...
+    pdfname = strcat(pdfname, parameters.solvers_stamp(i), "_", ...
          "_",  num2str(parameters.cycling_inner(i)));
 end
 pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_", num2str(parameters.problems_maxdim));

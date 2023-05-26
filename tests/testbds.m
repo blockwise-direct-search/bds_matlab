@@ -1,6 +1,6 @@
 function [output] = testbds(parameters)
 % output: performance profile;
-% parameters: name; solvers_label; memory; cycling; polling_inner; polling_outer; nb_generator;
+% parameters: name; solvers_legend; memory; cycling; polling_inner; polling_outer; nb_generator;
 % maxfun_dim; maxfun; problems_type; problems_mindim; problems_maxidim; tau;
 % clear
 % clc
@@ -59,7 +59,7 @@ options_solvers.ftarget = -inf;
 options.feature_and_time = "nb";
 
 % acquire fmin and frec
-% The difference between solvers_label and name is that solvers_label must be
+% The difference between solvers_legend and name is that solvers_legend must be
 % different from each other.
 options_solvers.solvers = parameters.solvers_invoke;
 num_solvers = length(options_solvers.solvers);
@@ -84,7 +84,7 @@ options_test.scaling_matrix_factor = 5;
 options_solvers.blocks_strategy = parameters.blocks_strategy;
 options_solvers.cycling_inner = parameters.cycling_inner;
 options_solvers.polling_inner = parameters.polling_inner;
-options_solvers.solvers_label = parameters.solvers_label;
+options_solvers.solvers_legend = parameters.solvers_legend;
 options_solvers.nb_generator = parameters.nb_generator;
 options_solvers.memory = parameters.memory;
 options_solvers.direction = parameters.direction;
@@ -164,7 +164,7 @@ tau = parameters.tau; % Tolerance of convergence test in performance profile
 tau_length = length(tau);
 options_perf.outdir = options.outdir;
 options_perf.stamp = time;
-options_perf.solvers = parameters.solvers_label;
+options_perf.solvers = parameters.solvers_legend;
 for l = 1:tau_length
     options_perf.tau = tau(l);
     output = perfprof(frec, fmin, options_perf);

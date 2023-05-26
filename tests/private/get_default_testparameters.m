@@ -41,9 +41,9 @@ switch constant_name
         constant_value = 2;
     case {"solvers_invoke"}
         constant_value = "blockwise_direct_search";
-    case {"solvers_label"}
-        constant_value = "no-label";
-    case {"solvers_tag"}
+    case {"solvers_legend"}
+        constant_value = "no-legend";
+    case {"solvers_stamp"}
         constant_value = "none";
     case {"tau_minimum"}
         constant_value = -10;
