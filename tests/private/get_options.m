@@ -75,8 +75,9 @@ elseif name_solver == "matlab_fminsearch"
     oldopts = optimset('MaxFunEvals', maxfun);
     options = optimset(oldopts, 'MaxIter', maxfun);
     
-elseif name_solver == "matlab_fminunc"    
-    options = optimoptions(@fminunc,'MaxFunctionEvaluations', maxfun, 'MaxIterations', maxfun, 'StepTolerance', 1e-12);
+elseif name_solver == "matlab_fminunc"
+    options = optimoptions(options_solvers.fminunc_type, 'MaxFunctionEvaluations', maxfun,...
+        'MaxIterations', maxfun, 'StepTolerance', 1e-12, 'OptimalityTolerance', 1e-12);
     
 else
     disp("there are no options for the j-th solver");

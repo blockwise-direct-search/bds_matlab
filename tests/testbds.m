@@ -81,6 +81,7 @@ options_test.noise_type = parameters.noise_type;
 options_test.scaling_matrix = false;
 options_test.scaling_matrix_factor = 5;
 
+options_solvers.fminunc_type = parameters.fminunc_type;
 options_solvers.blocks_strategy = parameters.blocks_strategy;
 options_solvers.cycling_inner = parameters.cycling_inner;
 options_solvers.polling_inner = parameters.polling_inner;
@@ -188,7 +189,7 @@ for l = 1:tau_length
 end
 
 
-cd(options.outdir)
+cd(options.outdir);
 
 % Initialize string variable.
 pdfFiles = dir(fullfile(options.outdir, '*.pdf'));

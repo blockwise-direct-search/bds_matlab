@@ -140,6 +140,10 @@ for i = 1:num_solvers
      parameters.solvers_stamp = [parameters.solvers_stamp get_stamp(parameters, i)];
 end
 
+if ~isfield(parameters, "fminunc_type")
+    parameters.fminunc_type = 'bfgs';
+end
+
 pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers
