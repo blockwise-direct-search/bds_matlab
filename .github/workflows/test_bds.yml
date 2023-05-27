@@ -22,7 +22,85 @@ jobs:
         matlab: [latest]
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
-        competitor: [matlab_patternsearch]
+        solver_blocks_strategy: [Gauss-Seidel]
+        competitor: [blockwise_direct_search, matlab_fminunc, matlab_fminsearch]
+        competitor_type: [none, bfgs, lbfgs, dfp, steepdesc]
+        competitor_blocks_strategy: [none, Randomized_array]
+        exclude:
+          - competitor: blockwise_direct_search
+            competitor_type: bfgs
+            competitor_blocks_strategy: none
+          - competitor: blockwise_direct_search
+            competitor_type: bfgs
+            competitor_blocks_strategy: Randomized_array
+          - competitor: blockwise_direct_search
+            competitor_type: lbfgs
+            competitor_blocks_strategy: none
+          - competitor: blockwise_direct_search
+            competitor_type: lbfgs
+            competitor_blocks_strategy: Randomized_array
+          - competitor: blockwise_direct_search
+            competitor_type: dfp
+            competitor_blocks_strategy: none
+          - competitor: blockwise_direct_search
+            competitor_type: dfp
+            competitor_blocks_strategy: Randomized_array
+          - competitor: blockwise_direct_search
+            competitor_type: steepdesc
+            competitor_blocks_strategy: none
+          - competitor: blockwise_direct_search
+            competitor_type: steepdesc
+            competitor_blocks_strategy: Randomized_array
+          - competitor: blockwise_direct_search
+            competitor_type: none
+            competitor_blocks_strategy: none
+
+          - competitor: matlab_fminunc
+            competitor_type: none
+            competitor_blocks_strategy: none
+          - competitor: matlab_fminunc
+            competitor_type: none
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminunc
+            competitor_type: bfgs
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminunc
+            competitor_type: lbfgs
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminunc
+            competitor_type: dfp
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminunc
+            competitor_type: steepdesc
+            competitor_blocks_strategy: Randomized_array
+
+          - competitor: matlab_fminsearch
+            competitor_type: bfgs
+            competitor_blocks_strategy: none
+          - competitor: matlab_fminsearch
+            competitor_type: bfgs
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminsearch
+            competitor_type: lbfgs
+            competitor_blocks_strategy: none
+          - competitor: matlab_fminsearch
+            competitor_type: lbfgs
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminsearch
+            competitor_type: dfp
+            competitor_blocks_strategy: none
+          - competitor: matlab_fminsearch
+            competitor_type: dfp
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminsearch
+            competitor_type: steepdesc
+            competitor_blocks_strategy: none
+          - competitor: matlab_fminsearch
+            competitor_type: steepdesc
+            competitor_blocks_strategy: Randomized_array
+          - competitor: matlab_fminsearch
+            competitor_type: none
+            competitor_blocks_strategy: Randomized_array
 
     steps:
       - name: Check out repository
@@ -84,7 +162,9 @@ jobs:
             cd(path_tests)
             parameters.blocks_strategy = ["Gauss-Seidel", "Randomized_array"];
             parameters.parallel = true;
+            parameters.fminunc_type = "${{ matrix.competitor_type }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "${{ matrix.competitor_blocks_strategy }}"];
             testbds_input(parameters);
 
       - name: Upload artifact

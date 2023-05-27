@@ -72,8 +72,8 @@ elseif name_solver == "prima"
     % options.classical = true;
     
 elseif name_solver == "matlab_fminsearch"
-    oldopts = optimset('MaxFunEvals', maxfun);
-    options = optimset(oldopts, 'MaxIter', maxfun);
+    options = optimset('MaxFunEvals', maxfun, 'MaxIter', maxfun, 'TolFun',...
+        options_solvers.tol, 'TolX', options_solvers.tol);
     
 elseif name_solver == "matlab_fminunc"
     options = optimoptions('fminunc', 'Algorithm', 'quasi-newton', ...
