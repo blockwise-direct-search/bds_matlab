@@ -101,7 +101,7 @@ jobs:
             testbds_input(parameters);
 
   test2:
-    needs: cache-matlab
+    needs: Cache MATLAB
     name: Profile blockwise direct search.
     runs-on: ubuntu-latest
     strategy:
