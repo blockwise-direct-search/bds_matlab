@@ -124,7 +124,7 @@ jobs:
         needs: test1
         with:
           jobs: test1  
-          steps: cache-matlab
+          step-id: cache-matlab
 
       - name: Run test2
         uses: matlab-actions/run-command@v1.2.0
