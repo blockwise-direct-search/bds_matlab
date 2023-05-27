@@ -22,19 +22,8 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
         solver_blocks_strategy: [Gauss-Seidel]
-        competitor: [matlab_fminunc, matlab_fminsearch]
-        competitor_type: [none, bfgs, lbfgs, dfp, steepdesc]
-        exclude:
-          - competitor: matlab_fminunc
-            competitor_type: none
-          - competitor: matlab_fminsearch
-            competitor_type: bfgs
-          - competitor: matlab_fminsearch
-            competitor_type: lbfgs
-          - competitor: matlab_fminsearch
-            competitor_type: dfp
-          - competitor: matlab_fminsearch
-            competitor_type: steepdesc
+        competitor: [matlab_fminsearch]
+        competitor_type: [none]
 
     steps:
       - name: Check out repository
@@ -76,7 +65,7 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
-      - name: Run tests
+      - name: Run test1
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
@@ -118,7 +107,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
         dim: [small, big]
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
@@ -129,7 +117,7 @@ jobs:
         competitor_blocks_strategy: [none]
 
     steps:
-      - name: Run tests
+      - name: Run test2
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
