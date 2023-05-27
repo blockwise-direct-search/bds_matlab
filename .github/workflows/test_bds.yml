@@ -101,7 +101,6 @@ jobs:
             testbds_input(parameters);
 
   test2:
-    needs: test1
     name: Profile blockwise direct search.
     runs-on: ubuntu-latest
     strategy:
@@ -119,7 +118,7 @@ jobs:
 
     steps:
       - name: Run test2
-        needs: cache-matlab 
+        needs: cache-matlab
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
