@@ -119,6 +119,7 @@ jobs:
 
     steps:
       - name: Cache MATLAB
+        run: echo "Cache matlab"
         needs: test1
         with:
         steps: cache-matlab
