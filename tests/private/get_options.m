@@ -76,12 +76,17 @@ elseif name_solver == "matlab_fminsearch"
     options = optimset(oldopts, 'MaxIter', maxfun);
     
 elseif name_solver == "matlab_fminunc"
-    %options = optimoptions('fminunc', 'Algorithm', 'trust-region', 'HessUpdate', 'bfgs', 'MaxIter', 1000);
     options = optimoptions('fminunc', 'Algorithm', 'quasi-newton', ...
         'HessUpdate', options_solvers.fminunc_type, 'MaxFunctionEvaluations', maxfun,...
         'MaxIterations', maxfun, 'StepTolerance', options_solvers.tol, 'OptimalityTolerance', options_solvers.tol);
     
+elseif name_solver == "matlab_patternsearch"
+    options = optimoptions('patternsearch','MaxIterations', maxfun,...
+    'MaxFunctionEvaluations', maxfun, 'FunctionTolerance', options_solvers.tol,...
+        'TolMesh', options_solvers.tol, 'StepTolerance', options_solvers.tol);  
+
 else
+    fprintf("%s\n", name_solver)
     disp("there are no options for the j-th solver");
 end
 

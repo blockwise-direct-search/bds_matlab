@@ -22,8 +22,7 @@ jobs:
         matlab: [latest]
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
-        competitor: [matlab_fminunc]
-        competitor_type: [bfgs, lbfgs, dfp, steepdesc]
+        competitor: [matlab_patternsearch]
 
     steps:
       - name: Check out repository
@@ -86,7 +85,6 @@ jobs:
             parameters.blocks_strategy = ["Gauss-Seidel", "Randomized_array"];
             parameters.parallel = true;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.fminunc_type = '${{ matrix.competitor_type }}';
             testbds_input(parameters);
 
       - name: Upload artifact

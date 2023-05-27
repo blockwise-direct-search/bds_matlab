@@ -24,5 +24,10 @@ if ~isempty(find(prima_list == parameters.solvers_invoke(j), 1))
     solver_stamp = parameters.solvers_invoke(j);
 end
 
+% Patternsearch
+if strcmp(parameters.solvers_invoke(j), "matlab_patternsearch")
+    solver_stamp = "patternsearch";
+end
+
 end
 

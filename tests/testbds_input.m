@@ -130,6 +130,10 @@ if ~isfield(parameters, "noise_type")
     parameters.noise_type = "gaussian";
 end
 
+if ~isfield(parameters, "fminunc_type")
+    parameters.fminunc_type = 'bfgs';
+end
+
 parameters.solvers_legend = [];
 for i = 1:num_solvers
      parameters.solvers_legend = [parameters.solvers_legend get_legend(parameters, i)];
@@ -138,10 +142,6 @@ end
 parameters.solvers_stamp = [];
 for i = 1:num_solvers
      parameters.solvers_stamp = [parameters.solvers_stamp get_stamp(parameters, i)];
-end
-
-if ~isfield(parameters, "fminunc_type")
-    parameters.fminunc_type = 'bfgs';
 end
 
 pdfname = "";
