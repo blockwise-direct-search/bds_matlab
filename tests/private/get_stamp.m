@@ -8,6 +8,11 @@ elseif strcmp(parameters.solvers_invoke(j), "blockwise_direct_search") && strcmp
     solver_stamp = "Randomized_array";
 end
 
+% Bds_polling
+if strcmp(parameters.solvers_invoke(j), "bds_polling")
+    solver_stamp = "bds_polling";
+end
+
 % Matlab_fminsearch
 if strcmp(parameters.solvers_invoke(j), "matlab_fminsearch")
     solver_stamp = "simplex";

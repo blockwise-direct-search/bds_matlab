@@ -8,6 +8,11 @@ elseif strcmp(parameters.solvers_invoke(j), "blockwise_direct_search") && strcmp
     solver_legend = "Randomized(array)";
 end
 
+% Bds_polling
+if strcmp(parameters.solvers_invoke(j), "bds_polling")
+    solver_legend = "bds(polling)";
+end
+
 % Matlab_fminsearch
 if strcmp(parameters.solvers_invoke(j), "matlab_fminsearch")
     solver_legend = "simplex";

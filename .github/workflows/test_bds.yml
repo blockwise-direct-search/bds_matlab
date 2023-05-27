@@ -20,6 +20,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
+        dim: [small, big]
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
         solver_blocks_strategy: [Gauss-Seidel]
@@ -160,6 +161,13 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
+            if "${{ matrix.dim }}" == "small"
+                parameters.problems_mindim = 1;
+                parameters.problems_maxdim = 5;
+            elseif "${{ matrix.dim }}" == "big"
+                parameters.problems_mindim = 6;
+                parameters.problems_maxdim = 100;
+            end
             parameters.blocks_strategy = ["Gauss-Seidel", "Randomized_array"];
             parameters.parallel = true;
             parameters.fminunc_type = "${{ matrix.competitor_type }}";
