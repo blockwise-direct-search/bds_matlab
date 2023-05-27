@@ -11,7 +11,7 @@ env:
 
 jobs:
 
-  test:
+  test1:
 
     name: Profile blockwise direct search.
     runs-on: ${{matrix.os }}
@@ -24,84 +24,19 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
         solver_blocks_strategy: [Gauss-Seidel]
-        competitor: [blockwise_direct_search, matlab_fminunc, matlab_fminsearch]
+        competitor: [matlab_fminunc, matlab_fminsearch]
         competitor_type: [none, bfgs, lbfgs, dfp, steepdesc]
-        competitor_blocks_strategy: [none, Randomized_array]
         exclude:
-          - competitor: blockwise_direct_search
-            competitor_type: bfgs
-            competitor_blocks_strategy: none
-          - competitor: blockwise_direct_search
-            competitor_type: bfgs
-            competitor_blocks_strategy: Randomized_array
-          - competitor: blockwise_direct_search
-            competitor_type: lbfgs
-            competitor_blocks_strategy: none
-          - competitor: blockwise_direct_search
-            competitor_type: lbfgs
-            competitor_blocks_strategy: Randomized_array
-          - competitor: blockwise_direct_search
-            competitor_type: dfp
-            competitor_blocks_strategy: none
-          - competitor: blockwise_direct_search
-            competitor_type: dfp
-            competitor_blocks_strategy: Randomized_array
-          - competitor: blockwise_direct_search
-            competitor_type: steepdesc
-            competitor_blocks_strategy: none
-          - competitor: blockwise_direct_search
-            competitor_type: steepdesc
-            competitor_blocks_strategy: Randomized_array
-          - competitor: blockwise_direct_search
-            competitor_type: none
-            competitor_blocks_strategy: none
-
-          - competitor: matlab_fminunc
-            competitor_type: none
-            competitor_blocks_strategy: none
-          - competitor: matlab_fminunc
-            competitor_type: none
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminunc
-            competitor_type: bfgs
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminunc
-            competitor_type: lbfgs
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminunc
-            competitor_type: dfp
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminunc
-            competitor_type: steepdesc
-            competitor_blocks_strategy: Randomized_array
-
-          - competitor: matlab_fminsearch
-            competitor_type: bfgs
-            competitor_blocks_strategy: none
-          - competitor: matlab_fminsearch
-            competitor_type: bfgs
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminsearch
-            competitor_type: lbfgs
-            competitor_blocks_strategy: none
-          - competitor: matlab_fminsearch
-            competitor_type: lbfgs
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminsearch
-            competitor_type: dfp
-            competitor_blocks_strategy: none
-          - competitor: matlab_fminsearch
-            competitor_type: dfp
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminsearch
-            competitor_type: steepdesc
-            competitor_blocks_strategy: none
-          - competitor: matlab_fminsearch
-            competitor_type: steepdesc
-            competitor_blocks_strategy: Randomized_array
-          - competitor: matlab_fminsearch
-            competitor_type: none
-            competitor_blocks_strategy: Randomized_array
+          -competitor: matlab_fminunc
+          -competitor_type: none
+          -competitor: matlab_fminsearch 
+          -competitor_type: bfgs 
+          -competitor: matlab_fminsearch 
+          -competitor_type: lbfgs 
+          -competitor: matlab_fminsearch 
+          -competitor_type: dfp 
+          -competitor: matlab_fminsearch 
+          -competitor_type: steepdesc 
 
     steps:
       - name: Check out repository
@@ -161,6 +96,7 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
+
             if "${{ matrix.dim }}" == "small"
                 parameters.problems_mindim = 1;
                 parameters.problems_maxdim = 5;
@@ -168,12 +104,57 @@ jobs:
                 parameters.problems_mindim = 6;
                 parameters.problems_maxdim = 100;
             end
-            parameters.blocks_strategy = ["Gauss-Seidel", "Randomized_array"];
+
             parameters.parallel = true;
             parameters.fminunc_type = "${{ matrix.competitor_type }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "${{ matrix.competitor_blocks_strategy }}"];
+
             testbds_input(parameters);
+      
+  - test2:
+
+      needs: test1
+        name: Profile blockwise direct search.
+        runs-on: ${{matrix.os }}
+        strategy:
+          fail-fast: false
+          matrix:
+            os: [ubuntu-latest]
+            matlab: [latest]
+            dim: [small, big]
+            with_optim_toolbox: [yes]
+            solver: [blockwise_direct_search]
+            solver_blocks_strategy: [Gauss-Seidel]
+            solver_nb_generator: [n]
+            competitor: [bds_polling]
+            competitor_nb_generator: [one n half_n quarter_n half_quarter_n] 
+            competitor_blocks_strategy: [none]
+
+        steps:
+          - name: Run tests
+            uses: matlab-actions/run-command@v1.2.0
+            with:
+              command: |
+                root_dir = pwd()
+  
+                % Conduct your tests
+                path_tests = fullfile(root_dir, 'tests');
+                cd(path_tests)
+
+                if "${{ matrix.dim }}" == "small"
+                    parameters.problems_mindim = 1;
+                    parameters.problems_maxdim = 5;
+                elseif "${{ matrix.dim }}" == "big"
+                    parameters.problems_mindim = 6;
+                    parameters.problems_maxdim = 100;
+                end
+
+                parameters.parallel = true;
+                parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+                parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "none"];
+                parameters.nb_generator = ["${{ matrix.solver_nb_generator }}", "${{ matrix.competitor_nb_generator }}"];
+                testbds_input(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
