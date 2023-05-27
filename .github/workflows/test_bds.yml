@@ -123,6 +123,7 @@ jobs:
         if: always()
         needs: test1
         with:
+          jobs: test1  
           steps: cache-matlab
 
       - name: Run test2
