@@ -73,7 +73,6 @@ else
     nb_generator = parameters.nb_generator;
     parameters.nb_generator = get_nb(nb_generator);
 end
-keyboard
 
 if ~isfield(parameters, "nb_tag")
     parameters.nb_tag = [];
