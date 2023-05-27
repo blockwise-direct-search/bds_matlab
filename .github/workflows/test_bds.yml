@@ -120,9 +120,10 @@ jobs:
     steps:
       - name: Cache MATLAB
         run: echo "Cache matlab"
+        if: always()
         needs: test1
         with:
-        steps: cache-matlab
+          steps: cache-matlab
 
       - name: Run test2
         uses: matlab-actions/run-command@v1.2.0
