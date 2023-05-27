@@ -27,14 +27,14 @@ jobs:
         exclude:
           -competitor: matlab_fminunc
           -competitor_type: none
-          -competitor: matlab_fminsearch 
-          -competitor_type: bfgs 
-          -competitor: matlab_fminsearch 
-          -competitor_type: lbfgs 
-          -competitor: matlab_fminsearch 
-          -competitor_type: dfp 
-          -competitor: matlab_fminsearch 
-          -competitor_type: steepdesc 
+          -competitor: matlab_fminsearch
+          -competitor_type: bfgs
+          -competitor: matlab_fminsearch
+          -competitor_type: lbfgs
+          -competitor: matlab_fminsearch
+          -competitor_type: dfp
+          -competitor: matlab_fminsearch
+          -competitor_type: steepdesc
 
     steps:
       - name: Check out repository
@@ -109,11 +109,11 @@ jobs:
             parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "${{ matrix.competitor_blocks_strategy }}"];
 
             testbds_input(parameters);
-      
+
   test2:
     needs: test1
     name: Profile blockwise direct search.
-    runs-on: ${{matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
@@ -125,7 +125,7 @@ jobs:
         solver_blocks_strategy: [Gauss-Seidel]
         solver_nb_generator: [n]
         competitor: [bds_polling]
-        competitor_nb_generator: [one n half_n quarter_n half_quarter_n] 
+        competitor_nb_generator: [one n half_n quarter_n half_quarter_n]
         competitor_blocks_strategy: [none]
 
       steps:
@@ -134,7 +134,7 @@ jobs:
           with:
             command: |
               root_dir = pwd()
-  
+
               % Conduct your tests
               path_tests = fullfile(root_dir, 'tests');
               cd(path_tests)
