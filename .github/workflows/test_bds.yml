@@ -102,9 +102,6 @@ jobs:
 
   test2:
     name: Profile blockwise direct search.
-    needs: test1
-    with:
-    steps: Cache-matlab
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -121,6 +118,9 @@ jobs:
 
     steps:
       - name: Run test2
+        needs: test1
+        with:
+        steps: Cache-matlab
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
