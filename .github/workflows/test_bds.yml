@@ -26,15 +26,15 @@ jobs:
         competitor_type: [none, bfgs, lbfgs, dfp, steepdesc]
         exclude:
           -competitor: matlab_fminunc
-          -competitor_type: none
+           competitor_type: none
           -competitor: matlab_fminsearch
-          -competitor_type: bfgs
+           competitor_type: bfgs
           -competitor: matlab_fminsearch
-          -competitor_type: lbfgs
+           competitor_type: lbfgs
           -competitor: matlab_fminsearch
-          -competitor_type: dfp
+           competitor_type: dfp
           -competitor: matlab_fminsearch
-          -competitor_type: steepdesc
+           competitor_type: steepdesc
 
     steps:
       - name: Check out repository
