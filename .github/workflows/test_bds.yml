@@ -86,7 +86,7 @@ jobs:
             cd(path_tests)
 
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = false;
+            parameters.parallel = true;
             parameters.fminunc_type = "${{ matrix.competitor_type }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "${{ matrix.competitor_blocks_strategy }}"];
