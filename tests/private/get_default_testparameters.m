@@ -30,7 +30,7 @@ switch constant_name
     case {"memory"}
         constant_value = true;
     case {"nb_generator"}
-        constant_value = 0;
+        constant_value = 0.5;
     case {"nb_tag"}
         constant_value = "none";
     case {"problems_type"}

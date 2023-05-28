@@ -221,7 +221,6 @@ for iter = 1 : maxit
     
     block_indices = permutate(block_indices, options);
     options.permutation_indicator = false;
-    terminate = false;
     
     for i = 1:nb
         % In case of permutation.
