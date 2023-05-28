@@ -49,6 +49,12 @@ jobs:
           repository: equipez/matcutest_compiled
           path: matcutest
 
+      - name: Clone PRIMA
+        uses: actions/checkout@v3
+        with:
+          repository: libprima/prima
+          path: prima
+
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/link_gfortran ${{ env.GFORTRAN_VERSION }}
@@ -131,6 +137,12 @@ jobs:
         with:
           repository: equipez/matcutest_compiled
           path: matcutest
+
+      - name: Clone Prima
+        uses: actions/checkout@v3
+        with:
+          repository: libprima/prima
+          path: prima
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
