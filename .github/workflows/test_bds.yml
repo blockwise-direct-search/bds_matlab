@@ -191,6 +191,12 @@ jobs:
             parameters.nb_generator = ["${{ matrix.solver_nb_generator }}", "${{ matrix.competitor_nb_generator }}"];
             testbds_input(parameters);
 
+       -name: Upload artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: my-artifacts
+          path: ./tests/testdata
+
   test3:
     name: Profile blockwise direct search.
     needs: test2
