@@ -120,7 +120,7 @@ jobs:
         solver_blocks_strategy: [Gauss-Seidel]
         solver_nb_generator: [n]
         competitor: [bds_polling]
-        competitor_nb_generator: [one n half_n quarter_n half_quarter_n]
+        competitor_nb_generator: [one, n, half_n, quarter_n, half_quarter_n]
         competitor_blocks_strategy: [none]
 
     steps:
@@ -184,8 +184,100 @@ jobs:
             parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "none"];
             parameters.nb_generator = ["${{ matrix.solver_nb_generator }}", "${{ matrix.competitor_nb_generator }}"];
             testbds_input(parameters);
+
+  test3:
+    name: Profile blockwise direct search.
+    needs: test2 
+    runs-on: ${{matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        matlab: [latest]
+        dim: [small, big]
+        with_optim_toolbox: [yes]
+        solver: [blockwise_direct_search]
+        solver_blocks_strategy: [Gauss-Seidel]
+        competitor: [matlab_fminsearch, matlab_fminunc]
+        competitor_type: [none, bfgs, lbfgs, dfp, steepdesc]
+        competitor_blocks_strategy: [none]
+        exclude:
+          - competitor: matlab_fminsearch 
+            competitor_type: bfgs 
+          - competitor: matlab_fminsearch 
+            competitor_type: lbfgs 
+          - competitor: matlab_fminsearch 
+            competitor_type: dfp 
+          - competitor: matlab_fminsearch 
+            competitor_type: steepdesc 
+          - competitor: matlab_fminunc 
+            competitor_type: none 
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Clone PRIMA
+        uses: actions/checkout@v3
+        with:
+          repository: libprima/prima
+          path: prima
+
+      - name: Clone MatCUTEst
+        uses: actions/checkout@v3
+        with:
+          repository: equipez/matcutest_compiled
+          path: matcutest
+
+      - name: Link gfortran for MATLAB on Linux
+        if: startsWith(matrix.os, 'ubuntu')
+        run: bash .github/scripts/link_gfortran ${{ env.GFORTRAN_VERSION }}
+
+      - name: Install epstopdf and ghostscript
+        if: startsWith(matrix.os, 'ubuntu')
+        run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
+
+      - name: Cache MATLAB
+        id: cache-matlab
+        uses: actions/cache@v3.3.1
+        with:
+          path: ${{ runner.tool_cache }}/MATLAB
+          key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
+
+      - name: Set up MATLAB with optimization toolbox
+        if: ${{ matrix.with_optim_toolbox == 'yes' }}
+        uses: matlab-actions/setup-matlab@v2-beta
+        with:
+          release: ${{ matrix.matlab }}
+          products: Optimization_Toolbox
+
+      - name: Run test1
+        uses: matlab-actions/run-command@v1.2.0
+        with:
+          command: |
+            root_dir = pwd()
+            % Install MatCUTEst
+            cd(fullfile(root_dir, 'matcutest'));
+            install(); cd(root_dir);
+            % Compile prima
+            path_prima = fullfile(root_dir, 'prima');
+            cd(path_prima);
+            setup
+            % Conduct your tests
+            path_tests = fullfile(root_dir, 'tests');
+            cd(path_tests)
+            parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.parallel = false;
+            parameters.fminunc_type = "${{ matrix.competitor_type }}";
+            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "${{ matrix.competitor_blocks_strategy }}"];
+            testbds_input(parameters);
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           name: my-artifacts
           path: ./tests/testdata
+
+      
