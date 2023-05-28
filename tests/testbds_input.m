@@ -169,9 +169,8 @@ end
 pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers
-    pdfname = get_pdf_name(parameters, i);
-    pdfname = strcat(pdfname, parameters.solvers_stamp(i), ...
-         "_",  num2str(parameters.cycling_inner(i)));
+    pdfname_solver = get_pdf_name(parameters, i);
+    pdfname = strcat(pdfname, "_", pdfname_solver);
 end
 
 pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_", num2str(parameters.problems_maxdim));

@@ -50,7 +50,7 @@ debug_flag = is_debugging();
 if debug_flag
     precondition_bds(fun, x0, options);
 end
-
+keyboard
 % Set options to an empty structure if it is not supplied.
 if nargin < 3
     options = struct();

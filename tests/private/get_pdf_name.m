@@ -3,7 +3,7 @@ function [pdfname] = get_pdf_name(parameters, i)
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
 if parameters.solvers_invoke(i) == "blockwise_direct_search"
-    pdfname = strcat(parameters.solvers_invoke(i), "_", parameters.blocks_strategy);
+    pdfname = parameters.solvers_stamp(i);
 elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
     pdfname = parameters.solvers_invoke(i);
 elseif parameters.solvers_invoke(i) == "matlab_fminsearch"    
