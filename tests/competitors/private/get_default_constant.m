@@ -4,7 +4,7 @@ function constant_value = get_default_constant(constant_name)
 %   of the constant named CONSTANT_NAMED.
 switch constant_name
     case {"maxfun"}
-        constant_value = 1e4;
+        constant_value = 1e5;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}

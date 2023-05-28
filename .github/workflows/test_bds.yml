@@ -155,7 +155,6 @@ jobs:
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
-            2+3
             root_dir = pwd()
 
             % Install MatCUTEst
