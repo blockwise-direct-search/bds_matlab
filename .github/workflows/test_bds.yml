@@ -26,28 +26,22 @@ jobs:
         competitor_type: [none, bfgs, lbfgs, dfp, steepdesc]
         competitor_blocks_strategy: [none]
         exclude:
-          - competitor: matlab_fminsearch 
-            competitor_type: bfgs 
-          - competitor: matlab_fminsearch 
-            competitor_type: lbfgs 
-          - competitor: matlab_fminsearch 
-            competitor_type: dfp 
-          - competitor: matlab_fminsearch 
-            competitor_type: steepdesc 
-          - competitor: matlab_fminunc 
-            competitor_type: none 
+          - competitor: matlab_fminsearch
+            competitor_type: bfgs
+          - competitor: matlab_fminsearch
+            competitor_type: lbfgs
+          - competitor: matlab_fminsearch
+            competitor_type: dfp
+          - competitor: matlab_fminsearch
+            competitor_type: steepdesc
+          - competitor: matlab_fminunc
+            competitor_type: none
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
           submodules: recursive
-
-      - name: Clone PRIMA
-        uses: actions/checkout@v3
-        with:
-          repository: libprima/prima
-          path: prima
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v3
@@ -82,13 +76,11 @@ jobs:
         with:
           command: |
             root_dir = pwd()
+
             % Install MatCUTEst
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
+
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
@@ -129,12 +121,6 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Clone PRIMA
-        uses: actions/checkout@v3
-        with:
-          repository: libprima/prima
-          path: prima
-
       - name: Clone MatCUTEst
         uses: actions/checkout@v3
         with:
@@ -168,13 +154,11 @@ jobs:
         with:
           command: |
             root_dir = pwd()
+
             % Install MatCUTEst
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
+
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
@@ -187,7 +171,7 @@ jobs:
 
   test3:
     name: Profile blockwise direct search.
-    needs: test2 
+    needs: test2
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -198,20 +182,8 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
         solver_blocks_strategy: [Gauss-Seidel]
-        competitor: [matlab_fminsearch, matlab_fminunc]
-        competitor_type: [none, bfgs, lbfgs, dfp, steepdesc]
+        competitor: [cobyla, uobyqa, newuoa, bobyqa, lincoa]
         competitor_blocks_strategy: [none]
-        exclude:
-          - competitor: matlab_fminsearch 
-            competitor_type: bfgs 
-          - competitor: matlab_fminsearch 
-            competitor_type: lbfgs 
-          - competitor: matlab_fminsearch 
-            competitor_type: dfp 
-          - competitor: matlab_fminsearch 
-            competitor_type: steepdesc 
-          - competitor: matlab_fminunc 
-            competitor_type: none 
 
     steps:
       - name: Check out repository
@@ -253,31 +225,32 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
-      - name: Run test1
+      - name: Run test3
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
             root_dir = pwd()
+
             % Install MatCUTEst
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
+
             % Compile prima
             path_prima = fullfile(root_dir, 'prima');
             cd(path_prima);
             setup
+
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = false;
-            parameters.fminunc_type = "${{ matrix.competitor_type }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "${{ matrix.competitor_blocks_strategy }}"];
             testbds_input(parameters);
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           name: my-artifacts
           path: ./tests/testdata
-
-      
