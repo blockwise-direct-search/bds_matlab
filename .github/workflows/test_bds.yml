@@ -155,6 +155,7 @@ jobs:
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
+            2+3
             root_dir = pwd()
 
             % Install MatCUTEst
@@ -162,14 +163,14 @@ jobs:
             install(); cd(root_dir);
 
             % Compile prima
-            path_prima = fullfile(root_dir, 'prima'));
+            path_prima = fullfile(root_dir, 'prima');
             cd(path_prima);
-            setup 
+            setup
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            
+
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
