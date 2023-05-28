@@ -36,17 +36,26 @@ assert(isfield(parameters, "solvers_invoke"));
 
 num_solvers = length(parameters.solvers_invoke);
 
-if ~isfield(parameters, "memory")
-    parameters.memory = [];
-    for i = 1:num_solvers
-        parameters.memory = [parameters.memory get_default_testparameters("memory")];
-    end
-end
-
+% Set polling_outer for bds_polling.
 if ~isfield(parameters, "polling_outer")
     parameters.polling_outer = [];
     for i = 1:num_solvers
         parameters.polling_outer = [parameters.polling_outer get_default_testparameters("polling_outer")];
+    end
+end
+
+if ~isfield(parameters, "cycling_outer")
+    parameters.cycling_outer = [];
+    for i = 1:num_solvers
+        parameters.cycling_outer = [parameters.cycling_outer get_default_testparameters("cycling_outer")];
+    end
+end
+
+% Set memory, polling_inner and cycling_inner for inner_direct_search.
+if ~isfield(parameters, "memory")
+    parameters.memory = [];
+    for i = 1:num_solvers
+        parameters.memory = [parameters.memory get_default_testparameters("memory")];
     end
 end
 
@@ -64,6 +73,7 @@ if ~isfield(parameters, "cycling_inner")
     end
 end
 
+% Set nb_generator and nb_tag
 if ~isfield(parameters, "nb_generator")
     parameters.nb_generator = [];
     for i = 1:num_solvers
@@ -74,13 +84,10 @@ else
     parameters.nb_generator = get_nb(nb_generator);
 end
 
-if ~isfield(parameters, "nb_tag")
-    parameters.nb_tag = [];
-    for i = 1:num_solvers
-        parameters.nb_tag = [parameters.nb_tag get_default_testparameters("nb_tag")];
-    end
-end
+parameters.nb_tag = [];
+parameters.nb_tag = [parameters.nb_tag get_nb_tag(parameters.nb_generator)];
 
+% Set parameters for cutest problems.
 if ~isfield(parameters, "problems_type")
     parameters.problems_type = get_default_testparameters("problems_type");
 end
@@ -110,6 +117,7 @@ if ~isfield(parameters, "maxfun_dim")
     end
 end
 
+% Set tau for performance profile.
 if ~isfield(parameters, "tau_minimum")
     parameters.tau = 10.^(-1:-1:get_default_testparameters("tau_minimum"));
 else
@@ -127,6 +135,7 @@ if ~isfield(parameters, "parallel")
     parameters.parallel = false;
 end
 
+% Set parameters for noise test.
 if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = false;
 end
@@ -160,12 +169,11 @@ end
 pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers
-    if i > 1
-       pdfname = strcat(pdfname, "_"); 
-    end
+    pdfname = get_pdf_name(parameters, i);
     pdfname = strcat(pdfname, parameters.solvers_stamp(i), ...
          "_",  num2str(parameters.cycling_inner(i)));
 end
+
 pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_", num2str(parameters.problems_maxdim));
 parameters.pdfname = pdfname;
 testbds(parameters);

@@ -239,16 +239,9 @@ else
     alpha_all = ones(nb, 1);
 end
 
-if cycling_outer == 5 && strcmpi(options.polling_outer, "opportunistic") && nb ~= 1
-    block_indices = [1:nb nb-1:-1:2];
-end
-
 % Divide the indices of the polling directions for each block.
 % TODO: Tell Zaikun that Tom disagrees with this name.
-searching_set_indices = divide_searching_set(m, nb, cycling_outer, options.polling_inner);
-if cycling_outer == 5
-    cycling_outer = 3;
-end
+searching_set_indices = divide_searching_set(m, nb);
 
 % Initialize the computations.
 fhist = NaN(1, maxfun); % history of function values
@@ -280,17 +273,6 @@ end
 
 % Start the actual computations.
 for k = 1 : maxit
-    
-%     alpha_tmp = NaN(nb, 1);
-%     for i = 1:nb
-%         if options.cycling ~= 5
-%             index_tmp = find(block_indices == i);
-%             alpha_tmp(i) = alpha_all(index_tmp(1));
-%         else
-%             alpha_tmp(i) = alpha(i);
-%         end
-%     end
-%     alpha_hist = [alpha_hist alpha_tmp];
 
     % Let xbase be the point from which the polling directions are
     % employed. In one iteration, all the block use the same base point.

@@ -17,18 +17,22 @@ switch constant_name
         constant_value = 1e-12;
     case {"ftarget"}
         constant_value = -inf;
-    case {"polling_inner"}
-        constant_value = "opportunistic";
     case {"block_strategy"}
         constant_value = "Gauss-Seidel";
+    case {"polling_outer"}
+        constant_value = "opportunistic";
+    case {"cycling_outer"}
+        constant_value = 3;
+    case {"polling_inner"}
+        constant_value = "opportunistic";
     case {"cycling_inner"}
         constant_value = 1;
     case {"memory"}
         constant_value = true;
     case {"nb_generator"}
-        constant_value = 0.5;
+        constant_value = 0;
     case {"nb_tag"}
-        constant_value = "n";
+        constant_value = "none";
     case {"problems_type"}
         constant_value = "u";
     case {"problems_mindim"}

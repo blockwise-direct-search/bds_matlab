@@ -44,21 +44,22 @@ function array = cycling(array, index, strategy, memory)
 %   be 3 4 1 2 5 after cycling; for nonmemory situaion, index will be 2, 
 %   sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
 %
-%   5 Use the idea of symmetric Gauss-Seidel to change array first. If
-%   array is 2 3 4 5, then array will be 2 3 4 5 4 3 2 when cycling is 5.
-%   Then use the strategy of cycling 4 on the new array that we get.
 %
-%   EXAMPLE
-%   array is 1 2 3 4 5, then array will be changed to 1 2 3 4 5 4 3 2 1
-%   initially. If index = 3, array will be 4 5 4 3 2 1 1 2 3. If index = 2,
-%   for memory situation, array will be 4 3 2 1 1 2 3 4 5; for nonmemory
-%   situation, array will be 4 3 2 1 1 2 3 4 5.
+
 
 % Precondition: If debug_flag is true, then pre-conditions is operated on
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    precondition_cycling(array, index, strategy, memory);
+    % Assert array is a real vector.
+    [isrv, ~]  = isrealvector(array);
+    assert(isrv);
+    % Assert index is an integer.
+    assert(isintegerscalar(index));
+    % Assert strategy is a positive integer and less than or equal to 4.
+    assert(isintegerscalar(strategy) && 0<=strategy && strategy<=4);
+    % Assert memory is boolean value.
+    assert(islogicalscalar(memory));
 end
 
 %   If index < 0, then there is no "success_index" and there is no
@@ -71,25 +72,8 @@ end
 % cycling_strategy will be operated on the array after sorting. In this case,
 % the value of index will be the index corresponding to the array after sorting.
 if ~memory
-    if strategy ~= 5
-        [array, indices] = sort(array);
-        index = find(indices == index);
-    else
-        if length(array) ~= 1
-            index_max = max(array);
-            index_min = min(array);
-            % get the real value of index
-            index_real = array(index);
-            % return the index of the real value
-            index_tmp = find(array == index_real);
-            % index_times is the times of index_tmp == index_real, 1 or 2
-            index_times = find(index_tmp == index);
-            % Initialize array
-            array = [index_min:1:index_max index_max-1:-1:index_min];
-            index_tmp_new = find(array == index_real);
-            index = index_tmp_new(index_times);
-        end
-    end
+    [array, indices] = sort(array);
+    index = find(indices == index);
 end
 
 switch strategy
@@ -130,13 +114,11 @@ switch strategy
     case {4}
         if index ~= length(array)
             array(1:index+1) = array([index+1, 1:index]);
-        end
-    case {5}
-        array = array([index+1:end, 1:index]);        
+        end       
 end
 
 if debug_flag
-    postcondition_cycling(array);
-end
-
+    % Assert array is a vector.
+    [isrv, ~]  = isrealvector(array);
+    assert(isrv);
 end
