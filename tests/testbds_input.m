@@ -106,7 +106,7 @@ if isfield(parameters, "problems_dim")
         parameters.problems_maxdim = 5;
     elseif strcmp(parameters.problems_dim, "big")
         parameters.problems_mindim = 6;
-        parameters.problems_maxdim = 10;
+        parameters.problems_maxdim = 100;
     end
 end
 
