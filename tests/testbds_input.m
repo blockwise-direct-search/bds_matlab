@@ -93,6 +93,16 @@ if ~isfield(parameters, "problems_maxdim")
     parameters.problems_maxdim = get_default_testparameters("problems_maxdim");
 end
 
+if isfield(parameters, "problems_dim")
+    if strcmp(parameters.problems_dim, "small")
+        parameters.problems_mindim = 1;
+        parameters.problems_maxdim = 5;
+    elseif strcmp(parameters.problems_dim, "big")
+        parameters.problems_mindim = 6;
+        parameters.problems_maxdim = 10;
+    end
+end
+
 if ~isfield(parameters, "maxfun_dim")
     parameters.maxfun_dim = get_default_testparameters("maxfun_dim");
     if ~isfield(parameters, "maxfun")

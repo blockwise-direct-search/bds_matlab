@@ -85,14 +85,7 @@ jobs:
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
 
-            if "${{ matrix.dim }}" == "small"
-                parameters.problems_mindim = 1;
-                parameters.problems_maxdim = 5;
-            elseif "${{ matrix.dim }}" == "big"
-                parameters.problems_mindim = 6;
-                parameters.problems_maxdim = 10;
-            end
-
+            parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.fminunc_type = "${{ matrix.competitor_type }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
@@ -164,18 +157,20 @@ jobs:
           command: |
             root_dir = pwd()
 
+            % Install MatCUTEst
+            cd(fullfile(root_dir, 'matcutest'));
+            install(); cd(root_dir);
+
+            % Compile prima
+            path_prima = fullfile(root_dir, 'prima'));
+            cd(path_prima);
+            setup 
+
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-
-            if "${{ matrix.dim }}" == "small"
-                parameters.problems_mindim = 1;
-                parameters.problems_maxdim = 5;
-            elseif "${{ matrix.dim }}" == "big"
-                parameters.problems_mindim = 6;
-                parameters.problems_maxdim = 10;
-            end
-
+            
+            parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.blocks_strategy = ["${{ matrix.solver_blocks_strategy }}", "none"];
