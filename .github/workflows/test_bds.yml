@@ -25,17 +25,6 @@ jobs:
         competitor: [matlab_fminsearch, matlab_fminunc]
         competitor_type: [none, bfgs, lbfgs, dfp, steepdesc];
         competitor_blocks_strategy: [none]
-        exclude:
-          - competitor: matlab_fminsearch 
-            competitor_type: bfgs 
-          - competitor: matlab_fminsearch 
-            competitor_type: lbfgs 
-          - competitor: matlab_fminsearch 
-            competitor_type: dfp 
-          - competitor: matlab_fminsearch 
-            competitor_type: steepdesc 
-          - competitor: matlab_fminunc 
-            competitor_type: none 
 
     steps:
       - name: Check out repository
@@ -192,7 +181,7 @@ jobs:
 
   test3:
     name: Profile blockwise direct search.
-    needs: test2 
+    needs: test2
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -271,4 +260,4 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: my-artifacts
-          path: ./tests/testdata          
+          path: ./tests/testdata
