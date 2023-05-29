@@ -32,7 +32,11 @@ path_competitors = fullfile(path_tests, 'competitors');
 addpath(path_competitors);
 parameters.path_competitors = path_competitors;
 
+
 assert(isfield(parameters, "solvers_invoke"));
+
+% Specify parameters by parameters.solvers_invoke.
+parameters = get_solvers(parameters);
 
 num_solvers = length(parameters.solvers_invoke);
 
@@ -74,18 +78,26 @@ if ~isfield(parameters, "cycling_inner")
 end
 
 % Set nb_generator and nb_tag
+
 if ~isfield(parameters, "nb_generator")
     parameters.nb_generator = [];
     for i = 1:num_solvers
         parameters.nb_generator = [parameters.nb_generator get_default_testparameters("nb_generator")];
     end
-else
-    nb_generator = parameters.nb_generator;
-    parameters.nb_generator = get_nb(nb_generator);
 end
 
-parameters.nb_tag = [];
-parameters.nb_tag = [parameters.nb_tag get_nb_tag(parameters.nb_generator)];
+bds_list = ["blockwise_direct_search", "bds_polling"];
+if ~isfield(parameters, "nb_tag")
+    parameters.nb_tag = strings(1, num_solvers);
+    for i = 1:num_solvers
+        nb_generator = parameters.nb_generator(i);
+        if contains(bds_list, parameters.solvers_invoke(i))
+            parameters.nb_tag(i) = get_nb_tag(nb_generator);
+        else
+            parameters.nb_tag(i) = "none";
+        end
+    end
+end
 
 % Set parameters for cutest problems.
 if ~isfield(parameters, "problems_type")
@@ -106,10 +118,16 @@ if isfield(parameters, "problems_dim")
         parameters.problems_maxdim = 5;
     elseif strcmp(parameters.problems_dim, "big")
         parameters.problems_mindim = 6;
-        parameters.problems_maxdim = 10;
+        parameters.problems_maxdim = 100;
     end
 end
 
+if contains(parameters.solvers_invoke, "cobyla")
+    parameters.problems_maxdim = 60;
+end
+
+
+% Set maxfun and maxfun_dim
 if ~isfield(parameters, "maxfun_dim")
     parameters.maxfun_dim = get_default_testparameters("maxfun_dim");
     if ~isfield(parameters, "maxfun")
@@ -166,11 +184,14 @@ for i = 1:num_solvers
      parameters.solvers_stamp = [parameters.solvers_stamp get_stamp(parameters, i)];
 end
 
-pdfname = "";
 % Name pdf automatically (not manually).
 for i = 1:num_solvers
     pdfname_solver = get_pdf_name(parameters, i);
-    pdfname = strcat(pdfname, "_", pdfname_solver);
+    if i == 1
+        pdfname = pdfname_solver;
+    else
+        pdfname = strcat(pdfname, "_", pdfname_solver);
+    end
 end
 
 pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_", num2str(parameters.problems_maxdim));

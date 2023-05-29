@@ -7,7 +7,7 @@ if parameters.solvers_invoke(i) == "blockwise_direct_search"
 elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
     pdfname = parameters.solvers_invoke(i);
 elseif parameters.solvers_invoke(i) == "matlab_fminsearch"    
-    pdfname = "simplex";
+    pdfname = strcat("fminsearch", "_", "simplex");
 elseif parameters.solvers_invoke(i) == "matlab_fminunc"
     pdfname = strcat("fminunc", "_", parameters.fminunc_type);
 elseif parameters.solvers_invoke(i) == "bds_polling"
