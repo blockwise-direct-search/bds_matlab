@@ -25,6 +25,8 @@ elseif parameters.solvers_invoke(i) == "bds_polling"
     pdfname = strcat("bds_polling", "_", parameters.nb_tag(i), "_",... 
     polling_outer, num2str(parameters.cycling_outer(i)), polling_inner,...
     num2str(parameters.cycling_inner(i)));
+elseif parameters.solvers_invoke(i) == "ds_randomized"
+    pdfname = strcat("ds", "_", parameters.randomized_strategy(i));
 end
 
 end

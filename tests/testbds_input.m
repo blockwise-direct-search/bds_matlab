@@ -78,7 +78,6 @@ if ~isfield(parameters, "cycling_inner")
 end
 
 % Set nb_generator and nb_tag
-
 if ~isfield(parameters, "nb_generator")
     parameters.nb_generator = [];
     for i = 1:num_solvers
@@ -91,7 +90,7 @@ if ~isfield(parameters, "nb_tag")
     parameters.nb_tag = strings(1, num_solvers);
     for i = 1:num_solvers
         nb_generator = parameters.nb_generator(i);
-        if contains(bds_list, parameters.solvers_invoke(i))
+        if any(contains(bds_list, parameters.solvers_invoke(i)))
             parameters.nb_tag(i) = get_nb_tag(nb_generator);
         else
             parameters.nb_tag(i) = "none";
@@ -125,7 +124,6 @@ end
 if contains(parameters.solvers_invoke, "uobyqa")
     parameters.problems_maxdim = 60;
 end
-
 
 % Set maxfun and maxfun_dim
 if ~isfield(parameters, "maxfun_dim")

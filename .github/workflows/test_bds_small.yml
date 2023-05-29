@@ -21,7 +21,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [Gauss-Seidel]
-        competitor: [Randomized_array, simplex, bfgs, lbfgs, dfp, steepdesc, cobyla, uobyqa, newuoa, bobyqa, lincoa, one, n, half_n, quarter_n, half_quarter_n]
+        competitor: [Randomized_array, simplex, bfgs, lbfgs, dfp, steepdesc, cobyla, uobyqa, newuoa, bobyqa, lincoa, one, n, half_n, quarter_n, half_quarter_n, Randomized_once, Randomized_always]
 
     steps:
       - name: Check out repository

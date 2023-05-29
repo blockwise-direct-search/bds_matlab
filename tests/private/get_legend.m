@@ -10,7 +10,27 @@ end
 
 % Bds_polling
 if strcmp(parameters.solvers_invoke(i), "bds_polling")
-    solver_legend = "bds(polling)";
+    if parameters.polling_outer(i) == "complete"
+        polling_outer = "com";
+    else
+        polling_outer = "opp";
+    end
+    if parameters.polling_inner(i) == "complete"
+        polling_inner = "com";
+    else
+        polling_inner = "opp";
+    end
+    solver_legend = strcat(polling_outer, num2str(parameters.cycling_outer(i)), polling_inner, ...
+        num2str(parameters.cycling_inner(i)));
+end
+
+% ds_randomized
+if strcmp(parameters.solvers_invoke(i), "ds_randomized")
+    if parameters.randomized_strategy(i) == "Randomized_once"
+        solver_legend = "Randomized-once";
+    elseif parameters.randomized_strategy(i) == "Randomized_always"
+        solver_legend = "Randomized-always";
+    end
 end
 
 % Matlab_fminsearch

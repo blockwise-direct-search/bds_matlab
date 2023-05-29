@@ -61,7 +61,13 @@ elseif name_solver == "bds_polling"
     options.memory = options_solvers.memory(j);
     options.cycling_inner = options_solvers.cycling_inner(j);
     options.direction = options_solvers.direction(j);    
-    
+
+elseif name_solver == "ds_randomized"    
+% Strategy of memory, cycling and polling_inner (Memory vs Nonmemory when cycling)
+options.memory = options_solvers.memory(j);
+options.cycling_inner = options_solvers.cycling_inner(j);    
+options.randomized_strategy = options_solvers.randomized_strategy(j);    
+
 elseif name_solver == "prima"
     options.output_xhist = true;
     % An indicator: it can attain 0, 1, 2, 3, -1, -2, -3. Default value is

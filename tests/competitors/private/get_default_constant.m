@@ -21,10 +21,12 @@ switch constant_name
         constant_value = "opportunistic";
     case {"polling_outer"}
         constant_value = "opportunistic";
-    case {"cycling_outer"}
+    case {"cycling"}
         constant_value = 3;
     case {"cycling_inner"}
-        constant_value = 1;
+        constant_value = 1; 
+    case {"cycling_outer"}
+        constant_value = 3;
     case {"memory"}
         constant_value = true;
     otherwise

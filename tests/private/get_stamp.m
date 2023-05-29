@@ -13,6 +13,11 @@ if strcmp(parameters.solvers_invoke(j), "bds_polling")
     solver_stamp = "bds_polling";
 end
 
+% Ds_randomized
+if strcmp(parameters.solvers_invoke(j), "ds_randomized")
+    solver_stamp = "ds_randomized";
+end
+
 % Matlab_fminsearch
 if strcmp(parameters.solvers_invoke(j), "matlab_fminsearch")
     solver_stamp = "simplex";

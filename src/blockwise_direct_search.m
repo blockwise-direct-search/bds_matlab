@@ -83,7 +83,7 @@ nb = min(m, nb);
 block_indices = 1:nb;
 
 % Set maxfun to the maximum number of function evaluations. The default
-% value is 1e4.
+% value is 1e5.
 if isfield(options, "maxfun_dim")
     maxfun = options.maxfun_dim*n;
     if isfield(options, "maxfun")

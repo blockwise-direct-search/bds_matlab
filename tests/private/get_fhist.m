@@ -20,9 +20,15 @@ if isfield(options_solvers, "maxfun_dim")
 end
 
 [options] = get_options(p, j, name_solver, options_solvers, options);
-
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+if ~isempty(find(prima_list == name_solver, 1))
+    warnoff(name_solver);
+end
 [~, ~, ~, output] = solver(@(x)objective(x, p, k, sigma, options_test),p.x0,...
     options);
+if ~isempty(find(prima_list == name_solver, 1))
+    warnoff(name_solver);
+end
 % In case meeting simple decrease but not sufficient decrease.
 fval = min(output.fhist);
 fhist_length = length(output.fhist); % length of fhist and ghist

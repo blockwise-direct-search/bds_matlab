@@ -82,11 +82,22 @@ options_test.scaling_matrix = false;
 options_test.scaling_matrix_factor = 5;
 
 options_solvers.fminunc_type = parameters.fminunc_type;
-options_solvers.blocks_strategy = parameters.blocks_strategy;
+
+if isfield(parameters, "blocks_strategy")
+    options_solvers.blocks_strategy = parameters.blocks_strategy;
+end
+
+if isfield(parameters, "nb_generator")
+    options_solvers.nb_generator = parameters.nb_generator;
+end
+
+if isfield(parameters, "randomized_strategy")
+    options_solvers.randomized_strategy = parameters.randomized_strategy;
+end
+
 options_solvers.cycling_inner = parameters.cycling_inner;
 options_solvers.polling_inner = parameters.polling_inner;
 options_solvers.solvers_legend = parameters.solvers_legend;
-options_solvers.nb_generator = parameters.nb_generator;
 options_solvers.memory = parameters.memory;
 options_solvers.direction = parameters.direction;
 
