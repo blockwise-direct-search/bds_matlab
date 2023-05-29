@@ -196,7 +196,7 @@ jobs:
         with:
           name: my-artifacts
           path: ./tests/testdata
-            
+
 
   test3:
     name: Profile blockwise direct search.
@@ -211,7 +211,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [blockwise_direct_search]
         solver_blocks_strategy: [Gauss-Seidel]
-        competitor: [cobyla, uobyqa, newuoa, bobyqa, lincoa]
+        competitor: [cobyla, uobyqa, newuoa, bobyqa]
         competitor_blocks_strategy: [none]
 
     steps:
