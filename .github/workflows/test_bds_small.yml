@@ -1,4 +1,4 @@
-name: Performance profile of blockwise_direct_search
+name: Performance profiles on problems with small dimensions
 
 on:
   # Trigger the workflow on push or pull request
@@ -10,7 +10,7 @@ env:
     GFORTRAN_VERSION: 12
 
 jobs:
-  test1:
+  test:
     name: Profile blockwise direct search.
     runs-on: ${{matrix.os }}
     strategy:
@@ -63,7 +63,7 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
-      - name: Run test1
+      - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |

@@ -1,4 +1,4 @@
-name: Performance profile of blockwise_direct_search
+name: Performance profiles of problems with big dimensions
 
 on:
   # Trigger the workflow on push or pull request
@@ -63,7 +63,7 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
-      - name: Run test1
+      - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
@@ -77,7 +77,7 @@ jobs:
             path_prima = fullfile(root_dir, 'prima');
             cd(path_prima);
             setup
-            
+
             % Turn off all warnings.
             warning('off','all');
 
