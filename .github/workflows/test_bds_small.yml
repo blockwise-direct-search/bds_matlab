@@ -78,6 +78,9 @@ jobs:
             cd(path_prima);
             setup
 
+            % turn off all warnings
+            warning('off','all');
+
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
