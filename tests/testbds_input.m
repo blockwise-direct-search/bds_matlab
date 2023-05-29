@@ -122,7 +122,7 @@ if isfield(parameters, "problems_dim")
     end
 end
 
-if contains(parameters.solvers_invoke, "cobyla")
+if contains(parameters.solvers_invoke, "uobyqa")
     parameters.problems_maxdim = 60;
 end
 
