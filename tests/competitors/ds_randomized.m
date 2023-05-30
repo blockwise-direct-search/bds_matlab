@@ -1,25 +1,25 @@
 function [xval, fval, exitflag, output] = ds_randomized(fun, x0, options)
 
-% direct_search Unconstrained nonlinear minimization (direct search without blocks).
+% Probabilistic direct_search for nconstrained nonlinear minimization (without blocks).
 
-% XVAL = DIRECT_SEARCH(FUN, X0) starts at X0 and attempts to find local
+% XVAL = DS_RANDOMIZED(FUN, X0) starts at X0 and attempts to find local
 % minimizer X of the function FUN.  FUN is a function handle. FUN
 % accepts input X and returns a scalar function value F evaluated at X.
 % X0 should be a vector.
 %
-% XVAL = DIRECT_SEARCH(FUN, X0, OPTIONS) minimizes with the default
+% XVAL = DS_RANDOMIZED(FUN, X0, OPTIONS) minimizes with the default
 % optimization parameters replaced by values in the structure OPTIONS.
 % DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 % expand, shrink, sufficient decrease factor, tol, ftarget, polling,
 % memory, cycling.
 %
-% [XVAL, FVAL] = DIRECT_SEARCH(...) returns the value of the objective
+% [XVAL, FVAL] = DS_RANDOMIZED(...) returns the value of the objective
 % function, described in FUN, at XVAL.
 %
-% [XVAL, FVAL, EXITFLAG] = DIRECT_SEARCH(...) returns an EXITFLAG
+% [XVAL, FVAL, EXITFLAG] = DS_RANDOMIZED(...) returns an EXITFLAG
 % that describes the exit condition.
 %
-% [XVAL, FVAL, EXITFLAG, OUTPUT] = DIRECT_SEARCH(...) returns a OUTPUT
+% [XVAL, FVAL, EXITFLAG, OUTPUT] = DS_RANDOMIZED(...) returns a OUTPUT
 % with the number of function evaluations in OUTPUT.funcCount, history of
 % function evaluation in OUTPUT.fhist, the history of points in
 % OUTPUT.xhist and the l2-norm of gradient in OUTPUT.ghist (only for CUTEST
@@ -37,10 +37,22 @@ exitflag = NaN;
 % Transpose x0 if it is a row.
 x0 = double(x0(:));
 
-% Set the polling directions in D.
+% Set the directions in D.
 n = length(x0);
-D = searching_set(n, options);
+% Generate a vector which follows uniform distribution on the sphere of a unit ball.
+rv = NaN(n, 1);
+for i = 1:n 
+%     seed = 1e8 * sin(i) + 500 * i;
+%     rng(seed);
+    rv(i) = randn(1);
+%     rng(seed);
+end
+[Q, ~] = qr(rv);
+D = [Q, -Q];
 m = size(D, 2); % number of directions
+
+% Set the initial indices and initial step sizes.
+indices = 1:m;
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e5.
@@ -123,9 +135,6 @@ else
     memory = get_default_constant("memory");
 end
 
-% Set the initial indices and initial step sizes.
-indices = 1:m;
-
 % Set initial step size and alpha_hist to store the history of step size.
 alpha_hist = NaN(1, maxit);
 if isfield(options, "alpha")
@@ -147,37 +156,25 @@ xhist(:, nf) = xval;
 % Check whether ftarget is reached by fval. If this is the case, the
 % computations afterwards should NOT be done.
 if  fval < ftarget
-    terminate = true;
     information = "FTARGET_REACHED";
     exitflag = get_exitflag(information);
-else
-    terminate = false;
+    % The target function value has been reached at the very first function
+    % evaluation. In this case, no further computation should be
+    % entertained, and hence, no iteration should be run.
+    maxit = 0;
 end
 
-% Generate a vector which follows uniform distribution on the sphere of a unit ball.
-rv = NaN(n, 1);
-for i = 1:n 
-%     seed = 1e8 * sin(i) + 500 * i;
-%     rng(seed);
-    rv(i) = randn(1);
-%     rng(seed);
-end
-[Q, ~] = qr(rv);
-D = [Q, -Q];
 
 % Initialize success. It is the index of the indices where a
 % success occurred and is hence a value between 1 and m. When no
 % sufficient decrease is observed for all directions, we set
 % success_index to -1, which will be more easier to port into python or C.
 success_index = -1;
-for k = 1 : maxit
 
-    % If fval is small than ftarget by using only one function evaluation, then
-    % there is no need to compute any more. Except above situation, the
-    % code paragraph below will never execute break.
-    if terminate
-        break;
-    end
+% Initialize terminate.
+terminate = false;
+
+for k = 1 : maxit
 
     % Initialize success and only update when a direction provided a sufficient
     % decrease with opportunistic polling.
@@ -191,13 +188,14 @@ for k = 1 : maxit
 
     % Cycle the indices in the opportunistic case, following the
     % strategy given in options.polling, cycling, and memory.
-    if ~strcmpi(options.polling, 'complete')
+    if ~strcmpi(options.polling, 'complete') && options.randomized_strategy == "Randomized_once"
         indices = cycling(indices, success_index, cycling_strategy, memory);
     end
 
-    % We need to ensure that success_index = 0 before entering the next
+    % We need to ensure that success_index <= 0 before entering the next
     % iteration, otherwise success_index will be inherited from last iteration, which is wrong.
     success_index = -1;
+    
     for i = 1 : m
         i_real = indices(i); % acquire indices
         xnew = xbase+alpha*D(:,i_real);
