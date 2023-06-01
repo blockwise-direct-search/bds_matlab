@@ -191,7 +191,20 @@ for k = 1 : maxit
     if ~strcmpi(options.polling, 'complete') && options.randomized_strategy == "Randomized_once"
         indices = cycling(indices, success_index, cycling_strategy, memory);
     end
-
+ 
+    if options.randomized_strategy == "Randomized_always"
+        % Generate a vector which follows uniform distribution on the sphere of a unit ball.
+        rv = NaN(n, 1);
+        for i = 1:n
+            % seed = 1e8 * sin(i) + 500 * i;
+            % rng(seed);
+            rv(i) = randn(1);
+            % rng(seed);
+        end
+        [Q, ~] = qr(rv);
+        D = [Q, -Q];
+    end
+      
     % We need to ensure that success_index <= 0 before entering the next
     % iteration, otherwise success_index will be inherited from last iteration, which is wrong.
     success_index = -1;
@@ -265,21 +278,6 @@ for k = 1 : maxit
     if terminate
         break;
     end
-    
-    if options.randomized_strategy == "Randomized_always"
-        % Generate a vector which follows uniform distribution on the sphere of a unit ball.
-        rv = NaN(n, 1);
-        for i = 1:n
-            % seed = 1e8 * sin(i) + 500 * i;
-            % rng(seed);
-            rv(i) = randn(1);
-            % rng(seed);
-        end
-        [Q, ~] = qr(rv);
-        D = [Q, -Q];
-    end
-    
-    
     
     % Set the exit flag corresponding to "MAXIT_REACHED" on the last
     % iteration. Note that it should be set at last, because another
