@@ -194,6 +194,7 @@ tau_length = length(tau);
 options_perf.outdir = options.outdir;
 options_perf.stamp = time;
 options_perf.solvers = parameters.solvers_legend;
+options_perf.natural_stop = false;
 for l = 1:tau_length
     options_perf.tau = tau(l);
     output = perfprof(frec, fmin, options_perf);

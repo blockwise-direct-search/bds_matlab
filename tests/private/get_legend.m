@@ -3,9 +3,9 @@ function [solver_legend] = get_legend(parameters, i)
 
 % Blockwise_direct_search
 if strcmp(parameters.solvers_invoke(i), "blockwise_direct_search") && strcmp(parameters.blocks_strategy(i), "Gauss-Seidel")
-    solver_legend = "GS";
+    solver_legend = "bds-GS";
 elseif strcmp(parameters.solvers_invoke(i), "blockwise_direct_search") && strcmp(parameters.blocks_strategy(i), "Randomized_array")
-    solver_legend = "Randomized(array)";
+    solver_legend = "bds-Randomized(array)";
 end
 
 % Bds_polling
@@ -27,9 +27,9 @@ end
 % ds_randomized
 if strcmp(parameters.solvers_invoke(i), "ds_randomized")
     if parameters.randomized_strategy(i) == "Randomized_once"
-        solver_legend = "Randomized-once";
+        solver_legend = "ds-Randomized-once";
     elseif parameters.randomized_strategy(i) == "Randomized_always"
-        solver_legend = "Randomized-always";
+        solver_legend = "ds-Randomized-always";
     end
 end
 
