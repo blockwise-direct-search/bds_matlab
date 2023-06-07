@@ -12,7 +12,7 @@ switch constant_name
     case {"shrink"}
         constant_value = 0.5;
     case {"sufficient_decrease_factor"}
-        constant_value = 1e-5;
+        constant_value = 1e-3;
     case {"tol"}
         constant_value = 1e-12;
     case {"ftarget"}

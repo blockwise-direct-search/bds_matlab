@@ -1,11 +1,14 @@
 function output = perfprof(frec, fmin, options)
 %This function plots the performance profiles of solvers.
-% frec: trajectory of function values; frec(ip, is, ir, k) is the function value of the ip-th problem
-% obtained by the is-th solver at the ir-th random run at the k-th iteration.
-% fmin: the minimal function values; fmin(ip) is the minimal function value of the ip-th problem.
+% frec: trajectory of function values; frec(ip, is, ir, k) is the function 
+% value of the ip-th obtained by the -s-th solver at the ir-th random run
+% at the k-th iteration.
+% fmin: the minimal function values; either fmin(ip) is the minimal 
+% function value of the ip-th problem, or fmin(ip, ir) is the minimal 
+% function value of the ip-th for the ir-th run.
 % tau: the tolerance of convergence.
 % solvers: the list of solvers.
-%output = [];
+
 % Parameters.
 delsame = 0;
 penalty = 2;
@@ -116,7 +119,7 @@ for is = 1:ns
     perf_prof{is} = [x'; y'];
     plot(x, y, lines{is}, 'Color', colors{is},  'Linewidth', linewidth);
     hold on;
-% 
+%
 %     % Evaluate the success rate.
 %     if ~any(x > 0 & x < penalty_ratio)
 %         success_rate{is} = ones(1,3);
@@ -129,8 +132,8 @@ for is = 1:ns
 %     success_rate{is} = NaN(1,3);
 %     success_rate{is}(1) = yy(1);  % The success rate corresponding to NF/NFMIN = 1 (i.e., NF=NFMIN).
 %     success_rate{is}(3) = yy(end);  % The success rate with "infinite budget".
-% 
-% 
+%
+%
 %     % The following lines calculates the average success rate.
 %     k = floor(length(xx)/2);  % In theory, length(xx) is even
 %     % The following line calculates the simple average
@@ -182,14 +185,17 @@ set(gca,'FontSize',fontsize);
 if int32(-log10(tau)) < 10
     fignamebase = strcat(options.stamp, '_', 'perf_', '0', int2str(int32(-log10(tau))));
 else
-    fignamebase = strcat(options.stamp, '_', 'perf_', int2str(int32(-log10(tau))));   
+    fignamebase = strcat(options.stamp, '_', 'perf_', int2str(int32(-log10(tau))));
 end
 
-figname = fullfile(options.outdir, strcat(fignamebase,'.fig'));
-pdfname = fullfile(options.outdir, strcat(fignamebase,'.pdf'));
-saveas(hfig, figname, 'fig');
-saveas(hfig, pdfname);
-%saveas(gcf,'myfig.jpg');
+% figname = fullfile(options.outdir, strcat(fignamebase,'.fig'));
+% pdfname = fullfile(options.outdir, strcat(fignamebase,'.pdf'));
+% % saveas(hfig, figname, 'fig');
+% % saveas(hfig, pdfname);
+% saveas(hfig, figname, 'fig');
+% set(gcf, 'PaperPositionMode', 'auto');
+% print(gcf, '-dpdf', '-r0', pdfname);
+% % saveas(hfig, pdfname);
 
 %system(strcat('epstopdf ',epsname));
 %system(('epstopdf '+epsname));
@@ -199,3 +205,9 @@ saveas(hfig, pdfname);
 % catch
 %     % Do nothing in case of failure.
 % end
+
+epsname = fullfile(options.outdir, strcat(fignamebase,'.eps'));
+saveas(hfig, epsname, 'epsc2');
+
+% Try converting the eps to pdf.
+system(('epstopdf '+epsname));

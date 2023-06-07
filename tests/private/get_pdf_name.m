@@ -8,6 +8,8 @@ elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
     pdfname = parameters.solvers_invoke(i);
 elseif parameters.solvers_invoke(i) == "matlab_fminsearch"    
     pdfname = strcat("fminsearch", "_", "simplex");
+elseif parameters.solvers_invoke(i) == "matlab_patternsearch"    
+    pdfname = strcat("patternsearch", "_", "gps");    
 elseif parameters.solvers_invoke(i) == "matlab_fminunc"
     pdfname = strcat("fminunc", "_", parameters.fminunc_type);
 elseif parameters.solvers_invoke(i) == "bds_polling"
