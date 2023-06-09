@@ -1,4 +1,4 @@
-name: Performance profiles of problems with big dimensions
+name: Performance profiles of blockwise direct search on problems with big dimensions
 
 on:
   # Trigger the workflow on push or pull request
@@ -77,9 +77,6 @@ jobs:
             path_prima = fullfile(root_dir, 'prima');
             cd(path_prima);
             setup
-
-            % Turn off all warnings.
-            warning('off','all');
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');

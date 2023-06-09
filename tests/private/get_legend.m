@@ -20,7 +20,7 @@ if strcmp(parameters.solvers_invoke(i), "bds_polling")
     else
         polling_inner = "opp";
     end
-    solver_legend = strcat(polling_outer, num2str(parameters.cycling_outer(i)), polling_inner, ...
+    solver_legend = strcat("ds","_",polling_outer, num2str(parameters.cycling_outer(i)), polling_inner, ...
         num2str(parameters.cycling_inner(i)));
 end
 
@@ -43,11 +43,16 @@ if strcmp(parameters.solvers_invoke(i), "matlab_fminunc")
     solver_legend = parameters.fminunc_type;
 end
 
-% Prima
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+% Prima and mnewuoa
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
 if ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
-    solver_legend = parameters.solvers_invoke(i);
+    if strcmp(parameters.solvers_invoke(i), "mnewuoa_wrapper")
+        solver_legend = "mnewuoa";
+    else
+        solver_legend = parameters.solvers_invoke(i);
+    end
 end
+
 
 % Patternsearch
 if strcmp(parameters.solvers_invoke(i), "matlab_patternsearch")

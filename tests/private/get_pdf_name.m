@@ -1,11 +1,15 @@
 function [pdfname] = get_pdf_name(parameters, i)
 
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
 
 if parameters.solvers_invoke(i) == "blockwise_direct_search"
     pdfname = parameters.solvers_stamp(i);
 elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
-    pdfname = parameters.solvers_invoke(i);
+    if strcmp(parameters.solvers_invoke(i), "mnewuoa_wrapper")
+        pdfname = "mnewuoa";
+    else
+        pdfname = parameters.solvers_invoke(i);
+    end
 elseif parameters.solvers_invoke(i) == "matlab_fminsearch"    
     pdfname = strcat("fminsearch", "_", "simplex");
 elseif parameters.solvers_invoke(i) == "matlab_patternsearch"    

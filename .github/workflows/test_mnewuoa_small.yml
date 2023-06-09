@@ -1,4 +1,4 @@
-name: Performance profiles of blockwise direct search on problems with small dimensions
+name: Performance profiles of mnewuoa on problems with small dimensions
 
 on:
   # Trigger the workflow on push or pull request
@@ -11,7 +11,7 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Profile mnewuoa
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -20,8 +20,8 @@ jobs:
         matlab: [latest]
         dim: [small]
         with_optim_toolbox: [yes]
-        solver: [Gauss-Seidel]
-        competitor: [Randomized_array, simplex, bfgs, lbfgs, dfp, steepdesc, cobyla, uobyqa, newuoa, bobyqa, lincoa, one, n, half_n, quarter_n, half_quarter_n, Randomized_once, Randomized_always]
+        solver: [mnewuoa_wrapper]
+        competitor: [Gauss-Seidel, newuoa]
 
     steps:
       - name: Check out repository

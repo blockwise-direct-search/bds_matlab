@@ -29,9 +29,13 @@ if strcmp(parameters.solvers_invoke(j), "matlab_fminunc")
 end
 
 % Prima
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
 if ~isempty(find(prima_list == parameters.solvers_invoke(j), 1))
-    solver_stamp = parameters.solvers_invoke(j);
+    if strcmp(parameters.solvers_invoke(j), "mnewuoa_wrapper")
+        solver_stamp = "mnewuoa";
+    else
+        solver_stamp = parameters.solvers_invoke(j);
+    end
 end
 
 % Patternsearch

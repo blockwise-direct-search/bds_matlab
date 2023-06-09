@@ -1,6 +1,6 @@
 function [options] = get_options(p, j, name_solver, options_solvers, options)
 
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
 if ~isempty(find(prima_list == name_solver, 1))
     name_solver = "prima";
 end

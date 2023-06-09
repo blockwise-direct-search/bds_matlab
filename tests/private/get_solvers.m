@@ -9,7 +9,7 @@ bds_polling_list = ["one", "n", "half_n", "quarter_n", "half_quarter_n"];
 % ds_randomized
 ds_randomized_list = ["Randomized_once", "Randomized_always"];
 % Prima
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
 % Fminunc
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
 
