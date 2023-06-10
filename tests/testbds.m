@@ -48,15 +48,31 @@ end
 maxfun = options_solvers.maxfun;
 
 % Termination of stepsize
-options_solvers.tol = eps; 
-options_solvers.sufficient_decrease_factor = 1e-3;
-options_solvers.expand = 2;
-options_solvers.shrink = 0.5;
+if isfield(parameters, "tol")
+    options_solvers.tol = parameters.tol;
+else
+    options_solvers.tol = get_default_testparameters("tol");
+end
+
+if isfield(parameters, "sufficient_decrease_factor")
+    options_solvers.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
+else
+    options_solvers.sufficient_decrease_factor = get_default_testparameters("sufficient_decrease_factor");
+end
+
+if isfield(parameters, "expand")
+    options_solvers.expand = parameters.expand;
+else
+    options_solvers.expand = get_default_testparameters("expand");
+end
+
+if isfield(parameters, "shrink")
+    options_solvers.shrink = parameters.shrink;
+else
+    options_solvers.shrink = get_default_testparameters("shrink");
+end
 
 options_solvers.ftarget = -inf;
-% TODO: give a reasonable value of the options below.
-% TODO: Use consistent way of "" or ''.
-options.feature_and_time = "nb";
 
 % acquire fmin and frec
 % The difference between solvers_legend and name is that solvers_legend must be
