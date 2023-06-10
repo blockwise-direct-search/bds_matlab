@@ -133,6 +133,27 @@ if ~isfield(parameters, "maxfun_dim")
     end
 end
 
+% Set parameters of stepsize
+if ~isfield(parameters, "tol")
+    parameters.tol = get_default_testparameters("tol");
+end
+
+if ~isfield(parameters, "sufficient_decrease_factor")
+    parameters.sufficient_decrease_factor = get_default_testparameters("sufficient_decrease_factor");
+end
+
+if ~isfield(parameters, "expand")
+    parameters.expand = get_default_testparameters("expand");
+end
+
+if ~isfield(parameters, "shrink")
+    parameters.shrink = get_default_testparameters("shrink");
+end
+
+if ~isfield(parameters, "alpha_init")
+    parameters.alpha_init = get_default_testparameters("alpha_init");
+end
+
 % Set tau for performance profile.
 if ~isfield(parameters, "tau_minimum")
     parameters.tau = 10.^(-1:-1:get_default_testparameters("tau_minimum"));

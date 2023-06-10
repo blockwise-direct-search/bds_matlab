@@ -47,30 +47,12 @@ if isfield(parameters, "maxfun_dim")
 end
 maxfun = options_solvers.maxfun;
 
-% Termination of stepsize
-if isfield(parameters, "tol")
-    options_solvers.tol = parameters.tol;
-else
-    options_solvers.tol = get_default_testparameters("tol");
-end
-
-if isfield(parameters, "sufficient_decrease_factor")
-    options_solvers.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
-else
-    options_solvers.sufficient_decrease_factor = get_default_testparameters("sufficient_decrease_factor");
-end
-
-if isfield(parameters, "expand")
-    options_solvers.expand = parameters.expand;
-else
-    options_solvers.expand = get_default_testparameters("expand");
-end
-
-if isfield(parameters, "shrink")
-    options_solvers.shrink = parameters.shrink;
-else
-    options_solvers.shrink = get_default_testparameters("shrink");
-end
+% Parameters of stepsize
+options_solvers.tol = parameters.tol;
+options_solvers.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
+options_solvers.expand = parameters.expand;
+options_solvers.shrink = parameters.shrink;
+options_solvers.alpha_init = parameters.alpha_init;
 
 options_solvers.ftarget = -inf;
 

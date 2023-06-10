@@ -171,8 +171,8 @@ end
 
 % Set initial step size and alpha_hist to store the history of step size.
 alpha_hist = NaN(nb, maxit);
-if isfield(options, "alpha_all")
-    alpha_all = options.alpha_all*ones(nb, 1);
+if isfield(options, "alpha_init")
+    alpha_all = options.alpha_init*ones(nb, 1);
 else
     alpha_all = ones(nb, 1);
 end

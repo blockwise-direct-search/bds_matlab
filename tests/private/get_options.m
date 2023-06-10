@@ -35,6 +35,13 @@ if name_solver == "blockwise_direct_search"
     options.direction = options_solvers.direction(j);
     options.blocks_strategy = options_solvers.blocks_strategy(j);
     
+    % Options of step size
+    options.tol = options_solvers.tol;
+    options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
+    options.expand = options_solvers.expand;
+    options.shrink = options_solvers.shrink;
+    options.alpha_init = options_solvers.alpha_init;
+    
 elseif name_solver == "bds_polling"
     
     % Polling strategies should be defined in the loop!!!
@@ -62,11 +69,25 @@ elseif name_solver == "bds_polling"
     options.cycling_inner = options_solvers.cycling_inner(j);
     options.direction = options_solvers.direction(j);    
 
+    % Options of step size
+    options.tol = options_solvers.tol;
+    options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
+    options.expand = options_solvers.expand;
+    options.shrink = options_solvers.shrink;
+    options.alpha_init = options_solvers.alpha_init;
+    
 elseif name_solver == "ds_randomized"    
-% Strategy of memory, cycling and polling_inner (Memory vs Nonmemory when cycling)
-options.memory = options_solvers.memory(j);
-options.cycling_inner = options_solvers.cycling_inner(j);    
-options.randomized_strategy = options_solvers.randomized_strategy(j);    
+    % Strategy of memory, cycling and polling_inner (Memory vs Nonmemory when cycling)
+    options.memory = options_solvers.memory(j);
+    options.cycling_inner = options_solvers.cycling_inner(j);
+    options.randomized_strategy = options_solvers.randomized_strategy(j);
+    
+    % Options of step size
+    options.tol = options_solvers.tol;
+    options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
+    options.expand = options_solvers.expand;
+    options.shrink = options_solvers.shrink;
+    options.alpha_init = options_solvers.alpha_init;
 
 elseif name_solver == "prima"
     options.output_xhist = true;
@@ -76,6 +97,10 @@ elseif name_solver == "prima"
     % printed on command window and will be stored in a file.
     options.iprint = 0;
     % options.classical = true;
+    
+    % Options of trust region radius
+    options.rhobeg = options_solvers.alpha_init;
+    options.rhoend = options_solvers.tol;
     
 elseif name_solver == "matlab_fminsearch"
     options = optimset('MaxFunEvals', maxfun, 'MaxIter', maxfun, 'TolFun',...

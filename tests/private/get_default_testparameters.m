@@ -7,6 +7,8 @@ switch constant_name
         constant_value = 1000;
     case {"maxfun"}
         constant_value = 1e5;
+    case {"alpha_init"}
+        constant_value = 1;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}
@@ -14,7 +16,7 @@ switch constant_name
     case {"sufficient_decrease_factor"}
         constant_value = 1e-3;
     case {"tol"}
-        constant_value = 1e-12;
+        constant_value = eps;
     case {"ftarget"}
         constant_value = -inf;
     case {"block_strategy"}

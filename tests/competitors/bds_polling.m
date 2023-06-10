@@ -233,8 +233,8 @@ end
 % Set the initial block indices and the corresponding initial step sizes.
 block_indices = 1:nb;
 
-if isfield(options, "alpha_all")
-    alpha_all = options.alpha_all*ones(nb, 1);
+if isfield(options, "alpha_init")
+    alpha_all = options.alpha_init*ones(nb, 1);
 else
     alpha_all = ones(nb, 1);
 end
