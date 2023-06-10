@@ -31,7 +31,10 @@ addpath(path_src);
 path_competitors = fullfile(path_tests, 'competitors');
 addpath(path_competitors);
 parameters.path_competitors = path_competitors;
-
+path_competitors_mnewuoa = fullfile(path_competitors, 'mnewuoa');
+addpath(path_competitors_mnewuoa);
+path_competitors_matlab_functions = fullfile(path_competitors, 'matlab_functions');
+addpath(path_competitors_matlab_functions);
 
 assert(isfield(parameters, "solvers_invoke"));
 
@@ -154,6 +157,11 @@ if ~isfield(parameters, "alpha_init")
     parameters.alpha_init = get_default_testparameters("alpha_init");
 end
 
+% Set parameters of ftarget
+if ~isfield(parameters, "ftarget")
+    parameters.ftarget = get_default_testparameters("ftarget");
+end
+
 % Set tau for performance profile.
 if ~isfield(parameters, "tau_minimum")
     parameters.tau = 10.^(-1:-1:get_default_testparameters("tau_minimum"));
@@ -221,6 +229,8 @@ rmpath(path_tests);
 rmpath(path_bds);
 rmpath(path_src);
 rmpath(path_competitors);
+rmpath(path_competitors_mnewuoa);
+rmpath(path_competitors_matlab_functions);
 
 end
 

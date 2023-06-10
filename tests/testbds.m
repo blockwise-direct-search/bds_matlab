@@ -54,7 +54,8 @@ options_solvers.expand = parameters.expand;
 options_solvers.shrink = parameters.shrink;
 options_solvers.alpha_init = parameters.alpha_init;
 
-options_solvers.ftarget = -inf;
+% Parameters of ftarget
+options_solvers.ftarget = parameters.ftarget;
 
 % acquire fmin and frec
 % The difference between solvers_legend and name is that solvers_legend must be
@@ -157,33 +158,29 @@ mkdir(path_outdir, 'src');
 path_src = fullfile(path_outdir, 'src');
 mkdir(path_outdir, 'tests');
 path_tests = fullfile(path_outdir, 'tests');
+path_competitors = fullfile(path_tests, 'competitors');
+mkdir(path_competitors);
+path_tests_private = fullfile(path_tests, 'private');
+mkdir(path_tests_private);
 
 % Copy the source code and test code to path_outdir.
 copyfile(fullfile(parameters.path_src, '*'), path_src);
 parameters.path_competitors = fullfile(parameters.path_tests, 'competitors');
-copyfile(fullfile(parameters.path_competitors, '*'), path_tests);
-copyfile(fullfile(parameters.path_tests, 'private', '*'), path_tests);
+copyfile(fullfile(parameters.path_competitors, '*'), path_competitors);
+copyfile(fullfile(parameters.path_tests, 'private', '*'), path_tests_private);
 
-% Define current path and target path.
-currentPath = parameters.path_tests;
-targetPath = path_tests; 
+source_folder = parameters.path_tests;
+destination_folder = path_tests;
 
-% Get all files under currentPath.
-files = dir(fullfile(currentPath, '*'));
- 
-% Loop all files
-for i = 1:length(files)
-    if ~files(i).isdir % If it is files, not folders.
-        % Construct path of source files and target files
-        sourceFile = fullfile(currentPath, files(i).name);
-        targetFile = fullfile(targetPath, files(i).name);
-        
-        % Duplicate files
-        copyfile(sourceFile, targetFile);
-        
-        % Move files
-        movefile(targetFile, currentPath);
-    end
+% Get all files in the source folder.
+file_list = dir(fullfile(source_folder, '*.*'));
+file_list = file_list(~[file_list.isdir]);
+
+% Copy all files (excluding subfolders) to the destination folder.
+for i = 1:numel(file_list)
+    source_file = fullfile(source_folder, file_list(i).name);
+    destination_file = fullfile(destination_folder, file_list(i).name);
+    copyfile(source_file, destination_file);
 end
 
 % performance profile

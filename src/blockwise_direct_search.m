@@ -208,7 +208,7 @@ end
 % The number of blocks having been visited. When we store alpha_hist, this
 % parameter is needed.
 nb_visited = 0;
-options.permutation_indicator = false;
+
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
@@ -275,7 +275,6 @@ for iter = 1 : maxit
         
         % Update the step sizes and store the history of step sizes.
         if success
-            options.permutation_indicator = true;
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
             alpha_all(i_real) = shrink * alpha_all(i_real);
