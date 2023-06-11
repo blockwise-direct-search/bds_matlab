@@ -181,6 +181,10 @@ if ~isfield(parameters, "parallel")
 end
 
 % Set parameters for noise test.
+if ~isfield(parameters, "num_random")
+    parameters.num_random = 1;
+end
+
 if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = false;
 end
@@ -221,7 +225,16 @@ for i = 1:num_solvers
     end
 end
 
-pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_", num2str(parameters.problems_maxdim));
+if ~parameters.is_noisy
+    pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+        num2str(parameters.problems_maxdim));
+else
+    pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+        num2str(parameters.problems_maxdim),"_",num2str(parameters.num_random),...
+        "_", parameters.noise_abs, "_", parameters.noise_type, ...
+        "_", num2str(log10(parameters.noise_level)));
+end
+
 parameters.pdfname = pdfname;
 testbds(parameters);
 % Delete the path to recover

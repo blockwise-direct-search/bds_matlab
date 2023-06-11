@@ -1,4 +1,4 @@
-name: Performance profiles of blockwise direct search on problems with big dimensions
+name: Performance profiles of blockwise direct search on problems of big dimensions
 
 on:
   # Trigger the workflow on push or pull request

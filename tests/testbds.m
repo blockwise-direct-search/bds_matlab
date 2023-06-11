@@ -63,11 +63,11 @@ options_solvers.ftarget = parameters.ftarget;
 options_solvers.solvers = parameters.solvers_invoke;
 num_solvers = length(options_solvers.solvers);
 num_problems = length(problem_names); % Number of problems
-num_random = 1; % Number of random tests(If num_random = 1, it means no random test.)
+num_random = parameters.num_random; % Number of random tests(If num_random = 1, it means no random test.)
 % The matrix that passed into perfprof.m
 frec = NaN(num_problems,num_solvers,num_random,maxfun);
 % Store minimum value of the problems of the random test
-random_fmin = NaN(num_problems,num_random);
+fmin = NaN(num_problems, num_random);
 
 % Some temporary options for test
 % noise
@@ -76,6 +76,7 @@ options_test.noise_level = parameters.noise_level;
 % relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
 options_test.noise_abs = parameters.noise_abs;
 options_test.noise_type = parameters.noise_type;
+options_test.num_random = parameters.num_random;
 
 options_test.scaling_matrix = false;
 options_test.scaling_matrix_factor = 5;
@@ -113,7 +114,7 @@ if parameters.parallel == true
                 fval_tmp(j) = fval;
                 frec(i,j,r,:) = fhist;
             end
-            [random_fmin(i,r), I] = min(fval_tmp);
+            [fmin(i,r), I] = min(fval_tmp);
             fprintf('%d %s\n', I, p.name);
         end
     end
@@ -128,16 +129,10 @@ else
                 fval_tmp(j) = fval;
                 frec(i,j,r,:) = fhist;
             end
-            [random_fmin(i,r), I] = min(fval_tmp);
+            [fmin(i,r), I] = min(fval_tmp);
             fprintf('%d %s\n', I, p.name);
         end
     end
-end
-
-if num_random == 1
-    fmin = random_fmin;
-else
-    fmin = min(random_fmin.');
 end
 
 % Use time to distinguish

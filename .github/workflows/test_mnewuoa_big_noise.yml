@@ -1,4 +1,4 @@
-name: Performance profiles of mnewuoa on problems of small dimensions
+name: Performance profiles of mnewuoa on problems of big dimensions with noise
 
 on:
   # Trigger the workflow on push or pull request
@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [small]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [mnewuoa_wrapper]
         competitor: [Gauss-Seidel, newuoa]
@@ -83,7 +83,9 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            arameters.tol = eps;
+            parameters.tol = eps;
+            parameters.is_noisy = true;
+            parameters.num_random = 5;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             testbds_input(parameters);
 

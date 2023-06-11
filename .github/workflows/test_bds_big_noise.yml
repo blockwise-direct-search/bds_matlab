@@ -1,4 +1,4 @@
-name: Performance profiles of mnewuoa on problems of small dimensions
+name: Performance profiles of blockwise direct search on problems of big dimensions with noise
 
 on:
   # Trigger the workflow on push or pull request
@@ -11,17 +11,17 @@ env:
 
 jobs:
   test:
-    name: Profile mnewuoa
+    name: Profile blockwise direct search.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [small]
+        dim: [big]
         with_optim_toolbox: [yes]
-        solver: [mnewuoa_wrapper]
-        competitor: [Gauss-Seidel, newuoa]
+        solver: [Gauss-Seidel]
+        competitor: [Randomized_array, simplex, bfgs, lbfgs, dfp, steepdesc, cobyla, newuoa, bobyqa, lincoa, one, n, half_n, quarter_n, half_quarter_n, Randomized_once, Randomized_always]
 
     steps:
       - name: Check out repository
@@ -83,7 +83,9 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            arameters.tol = eps;
+            parameters.tol = eps;
+            parameters.is_noisy = true;
+            parameters.num_random = 5;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             testbds_input(parameters);
 

@@ -1,4 +1,4 @@
-name: Performance profiles of mnewuoa on problems with big dimensions
+name: Performance profiles of mnewuoa on problems of big dimensions
 
 on:
   # Trigger the workflow on push or pull request

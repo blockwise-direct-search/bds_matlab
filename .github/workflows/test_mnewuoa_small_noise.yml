@@ -1,4 +1,4 @@
-name: Performance profiles of mnewuoa on problems of small dimensions
+name: Performance profiles of mnewuoa on problems of small dimensions with noise
 
 on:
   # Trigger the workflow on push or pull request
@@ -83,7 +83,9 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            arameters.tol = eps;
+            parameters.tol = eps;
+            parameters.is_noisy = true;
+            parameters.num_random = 5;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             testbds_input(parameters);
 

@@ -1,10 +1,10 @@
-function [fhist, fval] = get_fhist(p, maxfun, j, k, options_solvers, options_test)
+function [fhist_perfprof, fval] = get_fhist(p, maxfun, j, k, options_solvers, options_test)
 % Get fhist and related information of j-th solver on p problem.
 
 % Gradient will be affected by sigma
 name_solver = options_solvers.solvers(j);
 solver = str2func(name_solver);
-fhist = NaN(maxfun,1);
+fhist_perfprof = NaN(maxfun,1);
 
 % Scaling_matrix
 % Find better way to deal with scaling_matrix
@@ -20,18 +20,40 @@ if isfield(options_solvers, "maxfun_dim")
 end
 
 [options] = get_options(p, j, name_solver, options_solvers, options);
+
+% Turn off warning to save computation resource.
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if ~isempty(find(prima_list == name_solver, 1))
     warnoff(name_solver);
 end
+
+% Experimence with noise (if num_random == 1, then the experiment has no noise)
 [~, ~, ~, output] = solver(@(x)objective(x, p, k, sigma, options_test),p.x0,...
     options);
+if options_test.num_random ~= 1
+[~, ~, ~, output_noise] = solver(@(x)objective_noise(x, p, k, sigma, options_test),p.x0,...
+    options);   
+end
+
+% Turn off warning is a very dangerous thing. So it must be set a loop to
+% trun on after ending the computation.
 if ~isempty(find(prima_list == name_solver, 1))
     warnoff(name_solver);
 end
-% In case meeting simple decrease but not sufficient decrease.
+
+if exist('output_noise', 'var')
+    output_perfprof = output_noise;
+else
+    output_perfprof = output;
+end
+
+
+% In case meeting simple decrease but not sufficient decrease. Also, fval
+% should always be the one without noise!
 fval = min(output.fhist);
-fhist_length = length(output.fhist); % length of fhist and ghist
+
+% length of fhist and ghist
+fhist_length = length(output_perfprof.fhist); 
 % if isfield(output, "xhist")
 %     g_hist = NaN(1,fhist_length);
 %     for eval_g = 1:fhist_length
@@ -41,15 +63,20 @@ fhist_length = length(output.fhist); % length of fhist and ghist
 %     gval = min(g_hist);
 %     gval_relative = gval/g_hist(1);
 % end
-fhist(1:fhist_length) = output.fhist(1:fhist_length);
+fhist_perfprof(1:fhist_length) = output_perfprof.fhist(1:fhist_length);
 if  fhist_length < maxfun
-    fhist(fhist_length+1:maxfun) = fhist(fhist_length);
+    fhist_perfprof(fhist_length+1:maxfun) = fhist_perfprof(fhist_length);
 else
-    fhist = output.fhist(1:maxfun);
+    fhist_perfprof = output_perfprof.fhist(1:maxfun);
 end
 end
 
-function FUN = objective(x, p, k, sigma, options_test)
+function FUN = objective(x, p, ~, ~, ~)
+FUN = p.objective(x);
+end 
+
+
+function FUN = objective_noise(x, p, k, sigma, options_test)
 if ~options_test.scaling_matrix
     FUN = p.objective(x);
 else
@@ -74,3 +101,4 @@ if options_test.is_noisy
 end
 return
 end 
+
