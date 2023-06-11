@@ -1,4 +1,4 @@
-function [fhist_perfprof, fval] = get_fhist(p, maxfun, j, k, options_solvers, options_test)
+function [fhist_perfprof, fval] = get_fhist(p, maxfun, j, r, options_solvers, options_test)
 % Get fhist and related information of j-th solver on p problem.
 
 % Gradient will be affected by sigma
@@ -28,10 +28,10 @@ if ~isempty(find(prima_list == name_solver, 1))
 end
 
 % Experimence with noise (if num_random == 1, then the experiment has no noise)
-[~, ~, ~, output] = solver(@(x)objective(x, p, k, sigma, options_test),p.x0,...
+[~, ~, ~, output] = solver(@(x)objective(x, p, r, sigma, options_test),p.x0,...
     options);
 if options_test.num_random ~= 1
-[~, ~, ~, output_noise] = solver(@(x)objective_noise(x, p, k, sigma, options_test),p.x0,...
+[~, ~, ~, output_noise] = solver(@(x)objective_noise(x, p, r, sigma, options_test),p.x0,...
     options);   
 end
 
@@ -84,7 +84,7 @@ else
 end
 % What is is_noisy, noise_type, noise_level, seed?
 if options_test.is_noisy
-    seed = length(x) + 1e8 * sin(k) + 500 * k;
+    seed = length(x) + abs(ceil(1e4 * sin(k))) + 5000 * k;
     rng(seed)
     if ~strcmpi(options_test.noise_type, 'uniform')
        noise = rand(1); 
