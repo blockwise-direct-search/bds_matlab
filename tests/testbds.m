@@ -74,7 +74,7 @@ fmin = NaN(num_problems, num_random);
 options_test.is_noisy = parameters.is_noisy;
 options_test.noise_level = parameters.noise_level;
 % relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
-options_test.noise_abs = parameters.noise_abs;
+options_test.is_abs_noise = parameters.is_abs_noise;
 options_test.noise_type = parameters.noise_type;
 options_test.num_random = parameters.num_random;
 

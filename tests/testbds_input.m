@@ -193,8 +193,8 @@ if ~isfield(parameters, "noise_level")
     parameters.noise_level = 1e-3;
 end
 
-if ~isfield(parameters, "noise_abs")
-    parameters.noise_abs = "relative";
+if ~isfield(parameters, "is_abs_noise")
+    parameters.is_abs_noise = false;
 end
 
 if ~isfield(parameters, "noise_type")
