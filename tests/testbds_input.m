@@ -231,8 +231,7 @@ if ~parameters.is_noisy
 else
     pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
         num2str(parameters.problems_maxdim),"_",num2str(parameters.num_random),...
-        "_", parameters.is_abs_noise, "_", parameters.noise_type, ...
-        "_", num2str(log10(parameters.noise_level)));
+         "_", parameters.noise_type, "_", num2str(log10(parameters.noise_level)));
 end
 
 parameters.pdfname = pdfname;
