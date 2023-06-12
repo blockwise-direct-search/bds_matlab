@@ -56,7 +56,7 @@ fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
 if  fhist_length < maxfun
     fhist_perfprof(fhist_length+1:maxfun) = fhist_perfprof(fhist_length);
 else
-    fhist_perfprof = output_perfprof.fhist(1:maxfun);
+    fhist_perfprof = fhist_perfprof(1:maxfun);
 end
 end
 
