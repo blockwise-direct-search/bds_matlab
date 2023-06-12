@@ -41,7 +41,10 @@ if name_solver == "blockwise_direct_search" || name_solver == "bds_powell"
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;
     options.alpha_init = options_solvers.alpha_init;
-    
+    if isfield(parameters, "powell_factor")
+        options.powell_factor = options_solvers.powell_factor;
+    end
+
 elseif name_solver == "bds_polling"
     
     % Polling strategies should be defined in the loop!!!

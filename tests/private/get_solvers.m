@@ -16,21 +16,36 @@ prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
 
 % Set default value of parameters.blocks_strategy.
-str = "none";
-parameters.blocks_strategy = repmat(str, 1, solvers_num);
+if ~isfield(parameters, "blocks_strategy")
+    str = "none";
+    parameters.blocks_strategy = repmat(str, 1, solvers_num);
+end
+
 
 % If there is a solver in bds_polling_list, set default value of
 % parameters.nb_generator.
-if any(ismember(parameters.solvers_invoke, bds_polling_list))
+if ~isfield(parameters, "nb_generator") && any(ismember(parameters.solvers_invoke, bds_polling_list))
     parameters.nb_generator = get_default_testparameters("nb_generator")*ones(1, solvers_num);
 end
 
 % If there is a solver in ds_randomized_list, set default value of
 % parameters.randomized_strategy.
-if any(ismember(parameters.solvers_invoke, ds_randomized_list))
+if ~isfield(parameters, "randomized_strategy") && any(ismember(parameters.solvers_invoke, ds_randomized_list))
     str = "none";
     parameters.randomized_strategy = repmat(str, 1, solvers_num);
 end
+
+if isfield(parameters, "powell_factor_level")
+    powell_factor_level = parameters.powell_factor_level;
+    parameters.powell_factor = get_powell_factor(powell_factor_level);
+end
+% If there is a solver in bds_powell_list, set default value of
+% parameters.powell_factor.
+if ~isfield(parameters, "powell_factor") && any(ismember(parameters.solvers_invoke, bds_powell_list))
+     parameters.powell_factor = get_default_testparameters("powell_factor");
+end
+
+
 
 for i = 1:solvers_num
      % blockwise direct search 
@@ -38,7 +53,6 @@ for i = 1:solvers_num
          parameters.blocks_strategy(i) = parameters.solvers_invoke(i);
          parameters.solvers_invoke(i) = "blockwise_direct_search";
      elseif ~isempty(find(bds_powell_list == parameters.solvers_invoke(i), 1))
-             parameters.blocks_strategy(i) = parameters.solvers_invoke(i);
              parameters.solvers_invoke(i) = "bds_powell";
      % Prima. 
      elseif ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))

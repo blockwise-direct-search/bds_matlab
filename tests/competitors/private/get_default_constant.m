@@ -5,6 +5,10 @@ function constant_value = get_default_constant(constant_name)
 switch constant_name
     case {"maxfun"}
         constant_value = 1e5;
+    case {"powell_factor"}
+        constant_name = 1e-1;
+    case {"alpha_init"}
+        constant_value = 1;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}

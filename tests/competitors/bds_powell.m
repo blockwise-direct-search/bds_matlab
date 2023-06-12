@@ -45,16 +45,16 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %   The history of points is OUTPUT.xhist and 
 %   The l2-norm of gradient in OUTPUT.ghist (only for CUTESTPROBLEM).
 
+% Set options to an empty structure if it is not supplied.
+if nargin < 3
+    options = struct();
+end
+
 % Precondition: If debug_flag is true, then pre-conditions is operated on
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
     precondition_bds(fun, x0, options);
-end
-
-% Set options to an empty structure if it is not supplied.
-if nargin < 3
-    options = struct();
 end
 
 % The exit flag will be set at each possible exit of the algorithm.
@@ -175,7 +175,8 @@ alpha_hist = NaN(nb, maxit);
 if isfield(options, "alpha_init")
     alpha_all = options.alpha_init*ones(nb, 1);
 else
-    alpha_all = ones(nb, 1);
+    options.alpha_init = get_default_constant("alpha_init");
+    alpha_all = options.alpha_init*ones(nb, 1);
 end
 alpha_hist(:, 1) = alpha_all;
 
@@ -210,7 +211,14 @@ end
 % parameter is needed.
 nb_visited = 0;
 
-alpha_threshold = 0.1*alpha_init;
+if ~isfield(options, "powell_factor")
+    powell_factor = get_default_constant("powell_factor");
+else
+    powell_factor = options.powell_factor;
+end
+
+alpha_threshold = powell_factor*options.alpha_init;
+
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
@@ -282,7 +290,7 @@ for iter = 1 : maxit
             blocks_indicator(i_real) = true;
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
-            alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
+            alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold, powell_factor);
         end
         alpha_hist(:, nb_visited+1) = alpha_all;
         
@@ -299,7 +307,7 @@ for iter = 1 : maxit
     end
     
     % Update alpha using powell's technique.
-    [alpha,alpha_threshold] = alpha_update(alpha,alpha_threshold,theta,blocks_indicator);
+    [alpha_all,alpha_threshold] = alpha_update(alpha_all,alpha_threshold,shrink,blocks_indicator);
     
     % After exploring nb blocks, update xval and fval immediately.
     xval = xbase;

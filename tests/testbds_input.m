@@ -157,6 +157,10 @@ if ~isfield(parameters, "alpha_init")
     parameters.alpha_init = get_default_testparameters("alpha_init");
 end
 
+if ~isfield(parameters, "powell_factor")
+    parameters.powell_factor = get_default_testparameters("powell_factor");
+end
+
 % Set parameters of ftarget
 if ~isfield(parameters, "ftarget")
     parameters.ftarget = get_default_testparameters("ftarget");
