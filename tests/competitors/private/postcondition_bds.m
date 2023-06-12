@@ -1,4 +1,4 @@
-function [] = postcondition_bds(fun, xval, fval, exitflag, output)
+function postcondition_bds(fun, xval, fval, exitflag, output)
 
 % Verify whether xval is a real column or scalar
 assert(isnumeric(xval) && isreal(xval) && iscolumn(xval));

@@ -19,14 +19,10 @@ switch constant_name
         constant_value = "opportunistic";
     case {"polling_inner"}
         constant_value = "opportunistic";
-    case {"polling_outer"}
-        constant_value = "opportunistic";
-    case {"cycling"}
-        constant_value = 3;
+    case {"blocks_strategy"}
+        constant_value = "Gauss-Seidel";
     case {"cycling_inner"}
-        constant_value = 1; 
-    case {"cycling_outer"}
-        constant_value = 3;
+        constant_value = 1;
     case {"memory"}
         constant_value = true;
     otherwise

@@ -44,7 +44,7 @@ classdef ScalarFunction < handle
                 is_noisy = false;
             end
             if is_noisy
-                seed = abs(ceil(1e3*sin(1e6*sin(sum(1e8*x))))) + ...
+                seed = abs(ceil(1e5*sin(sum(x)))) + ...
                        abs(ceil(1e4 * sin(1e6*k_run))) + 5000 * k_run;
                 rng(seed)
                 if ~strcmpi(options.noise_type, 'uniform')
