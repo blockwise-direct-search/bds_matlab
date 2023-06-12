@@ -224,6 +224,8 @@ for iter = 1 : maxit
     block_indices = permutate(block_indices, options);
     options.permutation_indicator = false;
     
+    blocks_indicator = false(1, nb);
+    
     for i = 1:nb
         % In case of permutation.
         i_real = block_indices(i);
@@ -277,6 +279,7 @@ for iter = 1 : maxit
         
         % Update the step sizes and store the history of step sizes.
         if success
+            blocks_indicator(i_real) = true;
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
             alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
@@ -295,7 +298,8 @@ for iter = 1 : maxit
         end
     end
     
-    
+    % Update alpha using powell's technique.
+    [alpha,alpha_threshold] = alpha_update(alpha,alpha_threshold,theta,blocks_indicator);
     
     % After exploring nb blocks, update xval and fval immediately.
     xval = xbase;
