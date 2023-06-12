@@ -2,7 +2,7 @@ function [pdfname] = get_pdf_name(parameters, i)
 
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
 
-if parameters.solvers_invoke(i) == "blockwise_direct_search"
+if parameters.solvers_invoke(i) == "blockwise_direct_search" || parameters.solvers_invoke(i) == "bds_powell"
     pdfname = parameters.solvers_stamp(i);
 elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
     if strcmp(parameters.solvers_invoke(i), "mnewuoa_wrapper")

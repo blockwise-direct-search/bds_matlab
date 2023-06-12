@@ -4,6 +4,8 @@ solvers_num = length(parameters.solvers_invoke);
 
 % blockwise_direct_search
 bds_list = ["Gauss-Seidel", "Randomized_array"];
+% blockwise_direct_search
+bds_powell_list = "Gauss-Seidel-Powell";
 % bds_polling
 bds_polling_list = ["one", "n", "half_n", "quarter_n", "half_quarter_n"];
 % ds_randomized
@@ -31,9 +33,13 @@ if any(ismember(parameters.solvers_invoke, ds_randomized_list))
 end
 
 for i = 1:solvers_num
+     % blockwise direct search 
      if ~isempty(find(bds_list == parameters.solvers_invoke(i), 1))
          parameters.blocks_strategy(i) = parameters.solvers_invoke(i);
          parameters.solvers_invoke(i) = "blockwise_direct_search";
+     elseif ~isempty(find(bds_powell_list == parameters.solvers_invoke(i), 1))
+             parameters.blocks_strategy(i) = parameters.solvers_invoke(i);
+             parameters.solvers_invoke(i) = "bds_powell";
      % Prima. 
      elseif ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
          

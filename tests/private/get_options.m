@@ -7,7 +7,7 @@ end
 
 maxfun = options.maxfun;
 
-if name_solver == "blockwise_direct_search"
+if name_solver == "blockwise_direct_search" || name_solver == "bds_powell"
     
     % Polling strategies should be defined in the loop!!!
     options.polling_inner = options_solvers.polling_inner(j);

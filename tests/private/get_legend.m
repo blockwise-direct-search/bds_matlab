@@ -6,6 +6,8 @@ if strcmp(parameters.solvers_invoke(i), "blockwise_direct_search") && strcmp(par
     solver_legend = "bds-GS";
 elseif strcmp(parameters.solvers_invoke(i), "blockwise_direct_search") && strcmp(parameters.blocks_strategy(i), "Randomized_array")
     solver_legend = "bds-Randomized(array)";
+elseif strcmp(parameters.solvers_invoke(i), "bds_powell")
+    solver_legend = "bds-GS-Powell";
 end
 
 % Bds_polling

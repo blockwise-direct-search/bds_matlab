@@ -97,16 +97,16 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 % in OUTPUT.xhist and the l2-norm of gradient in OUTPUT.ghist (only for CUTEST
 % PROBLEM).
 
+% Set options to an empty structure if it is not supplied.
+if nargin < 3
+    options = struct();
+end
+
 % Precondition: If debug_flag is true, then pre-conditions is operated on
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
     precondition_bds(fun, x0, options);
-end
-
-% Set options to an empty structure if it is not supplied.
-if nargin < 3
-    options = struct();
 end
 
 % The exit flag will be set at each possible exit of the algorithm.
