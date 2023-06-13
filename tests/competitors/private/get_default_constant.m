@@ -31,7 +31,7 @@ switch constant_name
         constant_value = 1; 
     case {"cycling_outer"}
         constant_value = 3;
-    case {"memory"}
+    case {"with_memory"}
         constant_value = true;
     otherwise
         constant_value = "Unknown constant name";

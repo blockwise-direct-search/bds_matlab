@@ -58,11 +58,11 @@ if ~isfield(parameters, "cycling_outer")
     end
 end
 
-% Set memory, polling_inner and cycling_inner for inner_direct_search.
-if ~isfield(parameters, "memory")
-    parameters.memory = [];
+% Set with_memory, polling_inner and cycling_inner for inner_direct_search.
+if ~isfield(parameters, "with_memory")
+    parameters.with_memory = [];
     for i = 1:num_solvers
-        parameters.memory = [parameters.memory get_default_testparameters("memory")];
+        parameters.with_memory = [parameters.with_memory get_default_testparameters("with_memory")];
     end
 end
 

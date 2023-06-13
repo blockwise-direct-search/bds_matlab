@@ -1,10 +1,10 @@
 function [solver_stamp] = get_stamp(parameters, j)
 % Get the legend of solver on performance profile.
 
-% Blockwise_direct_search
-if strcmp(parameters.solvers_invoke(j), "blockwise_direct_search") && strcmp(parameters.blocks_strategy(j), "Gauss-Seidel")
+% bds
+if strcmp(parameters.solvers_invoke(j), "bds") && strcmp(parameters.blocks_strategy(j), "Gauss-Seidel")
     solver_stamp = "GS";
-elseif strcmp(parameters.solvers_invoke(j), "blockwise_direct_search") && strcmp(parameters.blocks_strategy(j), "Randomized_array")
+elseif strcmp(parameters.solvers_invoke(j), "bds") && strcmp(parameters.blocks_strategy(j), "Randomized_array")
     solver_stamp = "Randomized_array";
 elseif strcmp(parameters.solvers_invoke(j), "bds_powell")
     solver_stamp = "GS_Powell";

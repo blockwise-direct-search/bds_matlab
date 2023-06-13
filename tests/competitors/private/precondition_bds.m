@@ -35,7 +35,7 @@ if isfield(options, "shrink")
 end
 
 if isfield(options, "tol")
-    assert(isrealscalar(options.tol) && options.tol >= 0);
+    assert(isrealscalar(options.StepTolerance) && options.StepTolerance >= 0);
 end
 
 if isfield(options, "sufficient_decrease_factor")

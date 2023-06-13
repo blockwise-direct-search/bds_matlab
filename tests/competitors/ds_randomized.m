@@ -11,7 +11,7 @@ function [xval, fval, exitflag, output] = ds_randomized(fun, x0, options)
 % optimization parameters replaced by values in the structure OPTIONS.
 % DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 % expand, shrink, sufficient decrease factor, tol, ftarget, polling,
-% memory, cycling.
+% with_memory, cycling.
 %
 % [XVAL, FVAL] = DS_RANDOMIZED(...) returns the value of the objective
 % function, described in FUN, at XVAL.
@@ -97,7 +97,7 @@ end
 % Set the default tolerance of step size. If the step size reaches a value
 % below this tolerance, then the algorithm is stopped.
 if isfield(options, "tol")
-    alpha_tol = options.tol;
+    alpha_tol = options.StepTolerance;
 else
     % TODO: Check whether a "smarter" value is not possible, such as
     % "10 * eps * n" for example.
@@ -129,10 +129,10 @@ end
 
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.
-if isfield(options, "memory")
-    memory = options.memory;
+if isfield(options, "with_memory")
+    with_memory = options.with_memory;
 else
-    memory = get_default_constant("memory");
+    with_memory = get_default_constant("with_memory");
 end
 
 % Set initial step size and alpha_hist to store the history of step size.
@@ -187,9 +187,9 @@ for k = 1 : maxit
     fbase = fval;
 
     % Cycle the indices in the opportunistic case, following the
-    % strategy given in options.polling, cycling, and memory.
+    % strategy given in options.polling, cycling, and with_memory.
     if ~strcmpi(options.polling, 'complete') && options.randomized_strategy == "Randomized_once"
-        indices = cycling(indices, success_index, cycling_strategy, memory);
+        indices = cycling(indices, success_index, cycling_strategy, with_memory);
     end
  
     if options.randomized_strategy == "Randomized_always"

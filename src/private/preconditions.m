@@ -1,4 +1,4 @@
-function [] = precondition_bds(fun, x0, options)
+function [] = preconditions(fun, x0, options)
 % TODO: no return value
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for fun %%%%%%%%%%%%%%%%%
 % FUN should be a function handle or a function name.
@@ -35,7 +35,7 @@ if isfield(options, "shrink")
 end
 
 if isfield(options, "tol")
-    assert(isrealscalar(options.tol) && options.tol >= 0);
+    assert(isrealscalar(options.StepTolerance) && options.StepTolerance >= 0);
 end
 
 if isfield(options, "sufficient_decrease_factor")

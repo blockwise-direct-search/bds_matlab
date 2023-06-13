@@ -11,7 +11,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %   default optimization parameters replaced by values in the structure OPTIONS,
 %   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 %   expand, shrink, sufficient decrease factor, tol, ftarget, polling_inner,
-%   blocks_strategy, memory, cycling.
+%   blocks_strategy, with_memory, cycling.
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
@@ -43,7 +43,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %   The number of function evaluations is OUTPUT.funcCount.
 %   The history of function evaluation is OUTPUT.fhist.
 %   The history of points is OUTPUT.xhist and 
-%   The l2-norm of gradient in OUTPUT.ghist (only for CUTESTPROBLEM).
+%   The l2-norm of gradient in OUTPUT.ghist (only for CUTEst problems).
 
 % Set options to an empty structure if it is not supplied.
 if nargin < 3
@@ -128,7 +128,7 @@ end
 % Set the default tolerance of step size. If the step size reaches a value
 % below this tolerance, then the algorithm is stopped.
 if isfield(options, "tol")
-    alpha_tol = options.tol;
+    alpha_tol = options.StepTolerance;
 else
     % TODO: Check whether a "smarter" value is not possible, such as
     % "10 * eps * n" for example.
@@ -164,10 +164,10 @@ end
 
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.
-if isfield(options, "memory")
-    memory = options.memory;
+if isfield(options, "with_memory")
+    with_memory = options.with_memory;
 else
-    memory = get_default_constant("memory");
+    with_memory = get_default_constant("with_memory");
 end
 
 % Set initial step size and alpha_hist to store the history of step size.
@@ -243,7 +243,7 @@ for iter = 1 : maxit
         suboptions.maxfun = maxfun - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search
         suboptions.cycling = cycling_inner;
-        suboptions.memory = memory;
+        suboptions.with_memory = with_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
@@ -290,10 +290,10 @@ for iter = 1 : maxit
             blocks_indicator(i_real) = true;
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
-            alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold, powell_factor);
+            alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
         end
         alpha_hist(:, nb_visited+1) = alpha_all;
-        
+        keyboard
         % Terminate the computations if the largest step size is below a
         % given tolerance.
         % TODO: Is it normal to check whether "SMALL_ALPHA" is reached
@@ -307,7 +307,8 @@ for iter = 1 : maxit
     end
     
     % Update alpha using powell's technique.
-    [alpha_all,alpha_threshold] = alpha_update(alpha_all,alpha_threshold,shrink,blocks_indicator);
+    [alpha_all,alpha_threshold] = alpha_update(alpha_all,alpha_threshold,...
+        powell_factor,shrink,blocks_indicator);
     
     % After exploring nb blocks, update xval and fval immediately.
     xval = xbase;

@@ -23,7 +23,7 @@ switch constant_name
         constant_value = "Gauss-Seidel";
     case {"cycling_inner"}
         constant_value = 1;
-    case {"memory"}
+    case {"with_memory"}
         constant_value = true;
     otherwise
         constant_value = "Unknown constant name";

@@ -2,9 +2,9 @@ function [parameters] = get_solvers(parameters)
 
 solvers_num = length(parameters.solvers_invoke);
 
-% blockwise_direct_search
+% bds
 bds_list = ["Gauss-Seidel", "Randomized_array"];
-% blockwise_direct_search
+% bds
 bds_powell_list = "Gauss-Seidel-Powell";
 % bds_polling
 bds_polling_list = ["one", "n", "half_n", "quarter_n", "half_quarter_n"];
@@ -45,13 +45,11 @@ if ~isfield(parameters, "powell_factor") && any(ismember(parameters.solvers_invo
      parameters.powell_factor = get_default_testparameters("powell_factor");
 end
 
-
-
 for i = 1:solvers_num
      % blockwise direct search 
      if ~isempty(find(bds_list == parameters.solvers_invoke(i), 1))
          parameters.blocks_strategy(i) = parameters.solvers_invoke(i);
-         parameters.solvers_invoke(i) = "blockwise_direct_search";
+         parameters.solvers_invoke(i) = "bds";
      elseif ~isempty(find(bds_powell_list == parameters.solvers_invoke(i), 1))
              parameters.solvers_invoke(i) = "bds_powell";
      % Prima. 

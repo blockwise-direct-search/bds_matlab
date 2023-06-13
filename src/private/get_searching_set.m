@@ -1,4 +1,4 @@
-function D = searching_set(n, options)
+function D = get_searching_set(n, options)
 %SEARCHING_SET generates the set of polling directions.
 %
 %   D = SEARCHING_SET(N) generates the set of polling directions

@@ -7,7 +7,7 @@ end
 
 maxfun = options.maxfun;
 
-if name_solver == "blockwise_direct_search" || name_solver == "bds_powell"
+if name_solver == "bds" || name_solver == "bds_powell"
     
     % Polling strategies should be defined in the loop!!!
     options.polling_inner = options_solvers.polling_inner(j);
@@ -29,14 +29,14 @@ if name_solver == "blockwise_direct_search" || name_solver == "bds_powell"
         options.nb = ceil(2*dim*options_solvers.nb_generator(j));
     end
     
-    % Strategy of memory, cycling and polling_inner (Memory vs Nonmemory when cycling)
-    options.memory = options_solvers.memory(j);
+    % Strategy of with_memory, cycling and polling_inner (Memory vs Nonwith_memory when cycling)
+    options.with_memory = options_solvers.with_memory(j);
     options.cycling_inner = options_solvers.cycling_inner(j);
     options.direction = options_solvers.direction(j);
     options.blocks_strategy = options_solvers.blocks_strategy(j);
     
     % Options of step size
-    options.tol = options_solvers.tol;
+    options.StepTolerance = options_solvers.tol;
     options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;
@@ -67,26 +67,26 @@ elseif name_solver == "bds_polling"
         options.nb = ceil(2*dim*options_solvers.nb_generator(j));
     end
     
-    % Strategy of memory, cycling and polling_inner (Memory vs Nonmemory when cycling)
-    options.memory = options_solvers.memory(j);
+    % Strategy of with_memory, cycling and polling_inner (Memory vs Nonwith_memory when cycling)
+    options.with_memory = options_solvers.with_memory(j);
     options.cycling_inner = options_solvers.cycling_inner(j);
     options.direction = options_solvers.direction(j);    
 
     % Options of step size
-    options.tol = options_solvers.tol;
+    options.StepTolerance = options_solvers.tol;
     options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;
     options.alpha_init = options_solvers.alpha_init;
     
 elseif name_solver == "ds_randomized"    
-    % Strategy of memory, cycling and polling_inner (Memory vs Nonmemory when cycling)
-    options.memory = options_solvers.memory(j);
+    % Strategy of with_memory, cycling and polling_inner (Memory vs Nonwith_memory when cycling)
+    options.with_memory = options_solvers.with_memory(j);
     options.cycling_inner = options_solvers.cycling_inner(j);
     options.randomized_strategy = options_solvers.randomized_strategy(j);
     
     % Options of step size
-    options.tol = options_solvers.tol;
+    options.StepTolerance = options_solvers.tol;
     options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;

@@ -101,7 +101,7 @@ end
 options_solvers.cycling_inner = parameters.cycling_inner;
 options_solvers.polling_inner = parameters.polling_inner;
 options_solvers.solvers_legend = parameters.solvers_legend;
-options_solvers.memory = parameters.memory;
+options_solvers.with_memory = parameters.with_memory;
 options_solvers.direction = parameters.direction;
 
 % If parallel is true, use parfor to calculate (parallel computation). ...

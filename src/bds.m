@@ -1,16 +1,16 @@
-function [xval, fval, exitflag, output] = blockwise_direct_search(fun, x0, options)
-%BLOCKWISE_DIRECT_SEARCH Unconstrained nonlinear minimization (direct search with blocks).
+function [xval, fval, exitflag, output] = bds(fun, x0, options)
+%   BDS Unconstrained nonlinear minimization (direct search with blocks).
 %
-%   XVAL = BLOCKWISE_DIRECT_SEARCH(FUN, X0) starts at X0 and attempts to find
+%   XVAL = BDS(FUN, X0) starts at X0 and attempts to find
 %   local minimizer X of the function FUN.  FUN is a function handle. FUN
 %   accepts input X and returns a scalar function value F evaluated at X.
 %   X0 should be a vector.
 %
-%   XVAL = BLOCKWISE_DIRECT_SEARCH(FUN, X0, OPTIONS) minimizes with the
+%   XVAL = BDS(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
 %   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 %   expand, shrink, sufficient decrease factor, tol, ftarget, polling_inner,
-%   blocks_strategy, memory, cycling.
+%   blocks_strategy, with_memory, cycling.
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
@@ -24,14 +24,14 @@ function [xval, fval, exitflag, output] = blockwise_direct_search(fun, x0, optio
 %   ftarget - If function value is below ftarget, then the algorithm terminates.
 %   polling_inner - polling strategy of indices in one block
 %
-%   [XVAL, FVAL] = BLOCKWISE_DIRECT_SEARCH(...) returns the value of the
+%   [XVAL, FVAL] = BDS(...) returns the value of the
 %   objective function, described in FUN, at XVAL.
 %
-%   [XVAL, FVAL, EXITFLAG] = BLOCKWISE_DIRECT_SEARCH(...) returns an EXITFLAG
+%   [XVAL, FVAL, EXITFLAG] = BDS(...) returns an EXITFLAG
 %   that describes the exit condition. The information of EXITFLAG will be
 %   given in output.message.
 %
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BLOCKWISE_DIRECT_SEARCH(...) returns a
+%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
 %   structure OUTPUT with fields
 %
 %   fhist      History of function value
@@ -42,13 +42,13 @@ function [xval, fval, exitflag, output] = blockwise_direct_search(fun, x0, optio
 %   The number of function evaluations is OUTPUT.funcCount.
 %   The history of function evaluation is OUTPUT.fhist.
 %   The history of points is OUTPUT.xhist and 
-%   The l2-norm of gradient in OUTPUT.ghist (only for CUTESTPROBLEM).
+%   The l2-norm of gradient in OUTPUT.ghist (only for CUTEst problems).
 
-% Precondition: If debug_flag is true, then pre-conditions is operated on
+% Preconditions: If debug_flag is true, then preconditions is verified on
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    precondition_bds(fun, x0, options);
+    preconditions(fun, x0, options);
 end
 
 % Set options to an empty structure if it is not supplied.
@@ -65,7 +65,7 @@ x0 = double(x0(:));
 
 % Set the polling directions in D.
 n = length(x0);
-D = searching_set(n, options);
+D = get_searching_set(n, options);
 m = size(D, 2); % number of directions
 
 % Set the default number of blocks.
@@ -127,7 +127,7 @@ end
 % Set the default tolerance of step size. If the step size reaches a value
 % below this tolerance, then the algorithm is stopped.
 if isfield(options, "tol")
-    alpha_tol = options.tol;
+    alpha_tol = options.StepTolerance;
 else
     % TODO: Check whether a "smarter" value is not possible, such as
     % "10 * eps * n" for example.
@@ -163,10 +163,10 @@ end
 
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.
-if isfield(options, "memory")
-    memory = options.memory;
+if isfield(options, "with_memory")
+    with_memory = options.with_memory;
 else
-    memory = get_default_constant("memory");
+    with_memory = get_default_constant("with_memory");
 end
 
 % Set initial step size and alpha_hist to store the history of step size.
@@ -231,7 +231,7 @@ for iter = 1 : maxit
         suboptions.maxfun = maxfun - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search
         suboptions.cycling = cycling_inner;
-        suboptions.memory = memory;
+        suboptions.with_memory = with_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
@@ -318,10 +318,10 @@ output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, 1:nf);
 
-% Postcondition: If debug_flag is true, then post-conditions is operated on
+% Postcondition: If debug_flag is true, then postconditions is verified on
 % output. If output_correctness is false, then assert will let code crash.
 if debug_flag
-    postcondition_bds(fun, xval, fval, exitflag, output);
+    postconditions(fun, xval, fval, exitflag, output);
 end
 
 switch exitflag
