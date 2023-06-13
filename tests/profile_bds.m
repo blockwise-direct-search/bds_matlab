@@ -106,7 +106,7 @@ end
 % Parameters of ftarget
 solver_options.ftarget = parameters.ftarget;
 
-% acquire fmin and frec
+% Initialize fmin and frec
 % The difference between solvers_legend and name is that solvers_legend must be
 % different from each other.
 solver_options.solvers = parameters.solvers_invoke;
