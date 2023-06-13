@@ -1,4 +1,4 @@
-function [block_indices] = permutate(block_indices, options)
+function [block_indices] = permutation(block_indices, options)
 % If strategy is randomized_array, then permutate block_indices.
 
 

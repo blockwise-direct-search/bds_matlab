@@ -219,7 +219,7 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;   
     
-    block_indices = permutate(block_indices, options);
+    block_indices = permutation(block_indices, options);
     options.permutation_indicator = false;
     
     for i = 1:nb
