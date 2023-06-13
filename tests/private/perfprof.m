@@ -4,7 +4,7 @@ function output = perfprof(frec, fmin, options)
 % problem obtained by the is-th solver at the ir-th random run at the k-th iteration.
 % fmin: the minimal function values; either fmin(ip) is the minimal function value of the ip-th
 % problem, or fmin(ip, ir) is the minimal function value of the ip-th problem for the ir-th run.
-% tau: the StepToleranceerance of convergence.
+% tau: the StepTolerance of convergence.
 % solvers: the list of solvers.
 
 % Parameters.
@@ -50,7 +50,7 @@ for ip = 1:np
 end
 
 % T(ip, is, ir) is the number of function evaluations that the is-th solver needs to solve the ip-th
-% problem (up to StepToleranceerance tau) at the ir-th random run.
+% problem (up to StepTolerance tau) at the ir-th random run.
 T = NaN(np, ns, nr);
 f0 = -Inf(np, nr);
 for ip = 1:np
@@ -198,7 +198,7 @@ grid on;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Legends and title should be added.
-%title(sprintf('Performance Profile with StepToleranceerance $\\tau=10^{%d}$', int32(log10(tau))), 'interpreter', 'latex');
+%title(sprintf('Performance Profile with StepTolerance $\\tau=10^{%d}$', int32(log10(tau))), 'interpreter', 'latex');
 solvers = options.solvers;
 for is = 1:ns
     solvers{is} = regexprep(solvers{is}, '_4test', '');

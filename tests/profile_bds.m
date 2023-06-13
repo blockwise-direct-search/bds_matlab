@@ -1,9 +1,49 @@
-function [output] = testbds(parameters)
+function [output] = profile_bds(parameters)
 % output: performance profile;
 % parameters: name; solvers_legend; memory; cycling; polling_inner; polling_outer; nb_generator;
 % maxfun_dim; maxfun; problems_type; problems_mindim; problems_maxidim; tau;
 % clear
 % clc
+
+% Set parameters to an empty structure if it is not supplied.
+if nargin < 1
+    parameters = struct();
+end
+
+restoredefaultpath;
+
+% % The code of the following lines is for using matcutest.
+% path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
+% path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
+%addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
+
+fullpath = mfilename("fullpath");
+[path_tests,~] = fileparts(fullpath);
+parameters.path_tests = path_tests;
+path_bds = fileparts(path_tests);
+parameters.path_bds = path_bds;
+addpath(path_tests);
+% If testdata does not exist, make a new one.
+path_testdata = strcat(path_tests, "/testdata");
+if ~exist(path_testdata, "dir")
+    mkdir(path_testdata);
+end
+
+addpath(path_bds);
+path_src = fullfile(path_bds, "src");
+parameters.path_src = path_src;
+addpath(path_src);
+path_competitors = fullfile(path_tests, "competitors");
+addpath(path_competitors);
+parameters.path_competitors = path_competitors;
+path_competitors_mnewuoa = fullfile(path_competitors, "mnewuoa");
+addpath(path_competitors_mnewuoa);
+path_competitors_matlab_functions = fullfile(path_competitors, "matlab_functions");
+addpath(path_competitors_matlab_functions);
+
+assert(isfield(parameters, "solvers_invoke"));
+
+parameters = get_profile_options(parameters);
 
 % Tell MATLAB where to find MatCUTEst.
 locate_matcutest();
@@ -31,6 +71,7 @@ s.blacklist = [{'LRCOVTYPE'},{'LRIJCNN1'},{'PARKCH'},{'STRATEC'}];
 %     {'PALMER1C'}, {'PALMER2C'}, {'PALMER3C'}, {'PALMER4C'}, {'PALMER6C'}, ...
 %     {'PALMER7C'}, {'PALMER8C'}, {'VESUVIALS'}, {'VESUVIOLS'}, {'VESUVIOULS'}, ...    
 %     {'VIBRBEAM'}
+
 problem_names = secup(s);
 
 % list = list(1:min(20,length(list)));
@@ -41,35 +82,35 @@ fprintf("We will load %d problems\n\n", length(problem_names))
 % Floating-Point Arithmetic; stability and accuracy numerical(written by Higham).
 
 % Maxfun and maxfun_dim
-options_solvers.maxfun = parameters.maxfun; % Maximum of function evaluation
+solver_options.maxfun = parameters.maxfun; % Maximum of function evaluation
 if isfield(parameters, "maxfun_dim")
-    options_solvers.maxfun_dim = parameters.maxfun_dim;
+    solver_options.maxfun_dim = parameters.maxfun_dim;
 end
-maxfun = options_solvers.maxfun;
+maxfun = solver_options.maxfun;
 
 % Parameters of stepsize
-options_solvers.StepTolerance = parameters.StepTolerance;
-options_solvers.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
-options_solvers.expand = parameters.expand;
-options_solvers.shrink = parameters.shrink;
-options_solvers.alpha_init = parameters.alpha_init;
+solver_options.StepTolerance = parameters.StepTolerance;
+solver_options.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
+solver_options.expand = parameters.expand;
+solver_options.shrink = parameters.shrink;
+solver_options.alpha_init = parameters.alpha_init;
 
 if isfield(parameters, "powell_factor")
-    options_solvers.powell_factor = parameters.powell_factor;
+    solver_options.powell_factor = parameters.powell_factor;
 end
 
 if isfield(parameters, "accept_simple_decrease")
-    options_solvers.accept_simple_decrease = parameters.accept_simple_decrease;
+    solver_options.accept_simple_decrease = parameters.accept_simple_decrease;
 end
 
 % Parameters of ftarget
-options_solvers.ftarget = parameters.ftarget;
+solver_options.ftarget = parameters.ftarget;
 
 % acquire fmin and frec
 % The difference between solvers_legend and name is that solvers_legend must be
 % different from each other.
-options_solvers.solvers = parameters.solvers_invoke;
-num_solvers = length(options_solvers.solvers);
+solver_options.solvers = parameters.solvers_invoke;
+num_solvers = length(solver_options.solvers);
 num_problems = length(problem_names); % Number of problems
 num_random = parameters.num_random; % Number of random tests(If num_random = 1, it means no random test.)
 % The matrix that passed into perfprof.m
@@ -79,35 +120,35 @@ fmin = NaN(num_problems, num_random);
 
 % Some temporary options for test
 % noise
-options_test.is_noisy = parameters.is_noisy;
-options_test.noise_level = parameters.noise_level;
+test_options.is_noisy = parameters.is_noisy;
+test_options.noise_level = parameters.noise_level;
 % relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
-options_test.is_abs_noise = parameters.is_abs_noise;
-options_test.noise_type = parameters.noise_type;
-options_test.num_random = parameters.num_random;
+test_options.is_abs_noise = parameters.is_abs_noise;
+test_options.noise_type = parameters.noise_type;
+test_options.num_random = parameters.num_random;
 
-options_test.scaling_matrix = false;
-options_test.scaling_matrix_factor = 5;
+test_options.scaling_matrix = false;
+test_options.scaling_matrix_factor = 5;
 
-options_solvers.fminunc_type = parameters.fminunc_type;
+solver_options.fminunc_type = parameters.fminunc_type;
 
 if isfield(parameters, "blocks_strategy")
-    options_solvers.blocks_strategy = parameters.blocks_strategy;
+    solver_options.blocks_strategy = parameters.blocks_strategy;
 end
 
 if isfield(parameters, "nb_generator")
-    options_solvers.nb_generator = parameters.nb_generator;
+    solver_options.nb_generator = parameters.nb_generator;
 end
 
 if isfield(parameters, "randomized_strategy")
-    options_solvers.randomized_strategy = parameters.randomized_strategy;
+    solver_options.randomized_strategy = parameters.randomized_strategy;
 end
 
-options_solvers.cycling_inner = parameters.cycling_inner;
-options_solvers.polling_inner = parameters.polling_inner;
-options_solvers.solvers_legend = parameters.solvers_legend;
-options_solvers.with_memory = parameters.with_memory;
-options_solvers.direction = parameters.direction;
+solver_options.cycling_inner = parameters.cycling_inner;
+solver_options.polling_inner = parameters.polling_inner;
+solver_options.solvers_legend = parameters.solvers_legend;
+solver_options.with_memory = parameters.with_memory;
+solver_options.direction = parameters.direction;
 
 % If parallel is true, use parfor to calculate (parallel computation). ...
 % Otherwise, use for to calculate (sequential computation).
@@ -116,14 +157,14 @@ if parameters.parallel == true
         fval_tmp = NaN(1, num_solvers);
         p = macup(problem_names(1, i));
         for r = 1:num_random
-            fprintf('%d(%d). %s\n', i, r, p.name);
+            fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
-                [fhist,fval] = get_fhist(p, maxfun, j, r, options_solvers, options_test);
+                [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
                 fval_tmp(j) = fval;
                 frec(i,j,r,:) = fhist;
             end
             [fmin(i,r), I] = min(fval_tmp);
-            fprintf('%d %s\n', I, p.name);
+            fprintf("%d %s\n", I, p.name);
         end
     end
 else
@@ -131,14 +172,14 @@ else
         fval_tmp = NaN(1, num_solvers);
         p = macup(problem_names(1, i));
         for r = 1:num_random
-            fprintf('%d(%d). %s\n', i, r, p.name);
+            fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
-                [fhist,fval] = get_fhist(p, maxfun, j, r, options_solvers, options_test);
+                [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
                 fval_tmp(j) = fval;
                 frec(i,j,r,:) = fhist;
             end
             [fmin(i,r), I] = min(fval_tmp);
-            fprintf('%d %s\n', I, p.name);
+            fprintf("%d %s\n", I, p.name);
         end
     end
 end
@@ -150,30 +191,30 @@ time = trim_time(time); % trim the form of time
 tst = sprintf("test_%s",time); % time stamp to rename
 tst = strcat(tst, "_", parameters.pdfname); % rename as mixture of time stamp and parameters
 options.path = parameters.path_tests;
-path_testdata = fullfile(options.path, 'testdata');
-path_outdir = fullfile(options.path, 'testdata', tst);
+path_testdata = fullfile(options.path, "testdata");
+path_testdata_outdir = fullfile(options.path, "testdata", tst);
 
 % mkdir a new folder to save numerical results and source code.
 mkdir(path_testdata, tst);
-mkdir(path_outdir, 'perf');
-options.outdir = fullfile(path_outdir, 'perf');
-mkdir(path_outdir, 'src');
-path_src = fullfile(path_outdir, 'src');
-mkdir(path_outdir, 'tests');
-path_tests = fullfile(path_outdir, 'tests');
-path_competitors = fullfile(path_tests, 'competitors');
-mkdir(path_competitors);
-path_tests_private = fullfile(path_tests, 'private');
-mkdir(path_tests_private);
+mkdir(path_testdata_outdir, "perf");
+options.outdir = fullfile(path_testdata_outdir, "perf");
+mkdir(path_testdata_outdir, "src");
+path_testdata_src = fullfile(path_testdata_outdir, "src");
+mkdir(path_testdata_outdir, "tests");
+path_testdata_tests = fullfile(path_testdata_outdir, "tests");
+path_testdata_competitors = fullfile(path_testdata_tests, "competitors");
+mkdir(path_testdata_competitors);
+path_testdata_private = fullfile(path_testdata_tests, "private");
+mkdir(path_testdata_private);
 
 % Copy the source code and test code to path_outdir.
-copyfile(fullfile(parameters.path_src, '*'), path_src);
-parameters.path_competitors = fullfile(parameters.path_tests, 'competitors');
-copyfile(fullfile(parameters.path_competitors, '*'), path_competitors);
-copyfile(fullfile(parameters.path_tests, 'private', '*'), path_tests_private);
+copyfile(fullfile(parameters.path_src, "*"), path_testdata_src);
+parameters.path_competitors = fullfile(parameters.path_tests, "competitors");
+copyfile(fullfile(parameters.path_competitors, "*"), path_testdata_competitors);
+copyfile(fullfile(parameters.path_tests, "private", "*"), path_testdata_private);
 
 source_folder = parameters.path_tests;
-destination_folder = path_tests;
+destination_folder = path_testdata_tests;
 
 % Get all files in the source folder.
 file_list = dir(fullfile(source_folder, '*.*'));
@@ -198,7 +239,7 @@ for l = 1:tau_length
     output = perfprof(frec, fmin, options_perf);
 end
 
-
+path_temporary = pwd;
 cd(options.outdir);
 
 % Initialize string variable.
@@ -221,6 +262,17 @@ outputfile = 'all.pdf';
 system(['bash ', fullfile(parameters.path_tests, 'private', 'compdf'), ' ', inputfiles, ' -o ', outputfile]);
 % Rename pdf
 movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
+
+% Delete the path to recover
+rmpath(path_tests);
+rmpath(path_bds);
+rmpath(path_src);
+rmpath(path_competitors);
+rmpath(path_competitors_mnewuoa);
+rmpath(path_competitors_matlab_functions);
+
+% Restore the path
+cd(path_temporary);
 
 end
 

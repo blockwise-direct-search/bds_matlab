@@ -12,20 +12,20 @@ assert(isrealscalar(fval));
 assert(isintegerscalar(exitflag));
 
 % Verify whether nf is a postive integer
-assert(isfield(output, 'funcCount'));
+assert(isfield(output, "funcCount"));
 nf = output.funcCount;
 assert(isintegerscalar(nf) && nf > 0);
 
 % Verify whether output is a structure
-assert(isa(output, 'struct'));
+assert(isa(output, "struct"));
 
 % Verify whether output.fhist exists
-assert(isfield(output, 'fhist'));
+assert(isfield(output, "fhist"));
 fhist = output.fhist;
 nhist = length(fhist);
 
 % Verify whether output.xhist exists
-assert(isfield(output, 'xhist'));
+assert(isfield(output, "xhist"));
 xhist = output.xhist;
 % Verify whether xhist is a real matrix of size
 assert(isrealmatrix(xhist) && any(size(xhist) == [length(xval), nhist]));

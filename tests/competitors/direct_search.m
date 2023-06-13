@@ -86,14 +86,14 @@ else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
 
-% Set the default StepToleranceerance of step size. If the step size reaches a value
-% below this StepToleranceerance, then the algorithm is stopped.
+% Set the default StepTolerance of step size. If the step size reaches a value
+% below this StepTolerance, then the algorithm is stopped.
 if isfield(options, "StepTolerance")
-    alpha_StepTolerance = options.StepTolerance;
+    alpha_tol = options.StepTolerance;
 else
     % TODO: Check whether a "smarter" value is not possible, such as
     % "10 * eps * n" for example.
-    alpha_StepTolerance = get_default_constant("StepTolerance");
+    alpha_tol = get_default_constant("StepTolerance");
 end
 
 % Set the target on the objective function. If an evaluation of the
@@ -184,7 +184,7 @@ for k = 1 : maxit
 
     % Cycle the indices in the opportunistic case, following the
     % strategy given in options.polling, cycling, and with_memory.
-    if ~strcmpi(options.polling, 'complete')
+    if ~strcmpi(options.polling, "complete")
         indices = cycling(indices, success_index, cycling_strategy, with_memory);
     end
 
@@ -237,7 +237,7 @@ for k = 1 : maxit
         % function evaluations and the target value on the objective
         % function have not been reached. We then entertain a normal
         % iteration.
-        if success && ~strcmpi(options.polling, 'complete')
+        if success && ~strcmpi(options.polling, "complete")
             success_index = i;
             break;
         end
@@ -252,8 +252,8 @@ for k = 1 : maxit
     end
 
     % Terminate the computations if the largest step size is below a
-    % given StepToleranceerance.
-    if alpha < alpha_StepTolerance
+    % given StepTolerance.
+    if alpha < alpha_tol
         information = "SMALL_ALPHA";
         terminate = true;
         exitflag = get_exitflag(information);
@@ -280,7 +280,7 @@ output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
-        output.message = "The StepToleranceerance on the step size is reached";
+        output.message = "The StepTolerance on the step size is reached";
     case {get_exitflag("MAXFUN_REACHED")}
         output.message = "Maximum number of function evaluation performed";
     case {get_exitflag("FTARGET_REACHED")}

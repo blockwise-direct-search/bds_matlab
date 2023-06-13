@@ -125,16 +125,19 @@ output.terminate = terminate;
 end
 
 function array = cycling(array, index, strategy, with_memory)
-%CYCLING Permutation an array with index and different options
-%   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array
-%   using cycling_strategy and with_memory with index. ARRAY can be a vevtor.
-%   MEMORY is boolean value. STRATEGY is a nonnegative integer from 0 to 4.
-%   INDEX is a nonnegative number from -1, 1, ..., length(array).
-%   If INDEX = -1, then there is no permutation.
-%   with_memory - If with_memory is true, permutation will be executed on the array of last
-%           iteration, otherwise, permutation will be executed on the initial array.
-%   cycling_strategy - Possible values of cycling and the corresponding conditions
-%                      are listed below. 
+%CYCLING Permute an array according to different options
+%   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array 
+%   that is a permutation of ARRAY according to INDEX, STRATEGY, and MEMORY. 
+%   
+%   ARRAY is the array to permute. It must be a vector. 
+%   INDEX is a number from -1, 1, ..., length(array). If INDEX = -1, then there is 
+%   no permutation.
+%   MEMORY is a boolean value. If MEMORY is true, then the output ARRAY will
+%   be obtained by permitting the ARRAY; otherwise, the input ARRAY will be 
+%   discarded and the output ARRAY will be obtained by permuting sort(ARRAY). 
+%   STRATEGY is a nonnegative integer from 0 to 4, indicating the strategy of the
+%   permutation as follows.
+%
 %
 %   0  No permutation. 
 %
@@ -184,7 +187,7 @@ if debug_flag
     assert(isintegerscalar(index));
     % Assert strategy is a positive integer and less than or equal to 4.
     assert(isintegerscalar(strategy) && 0<=strategy && strategy<=4);
-    % Assert with_memory is boolean value.
+    % Assert with_memory is a boolean value.
     assert(islogicalscalar(with_memory));
 end
 

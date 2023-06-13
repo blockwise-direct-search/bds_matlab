@@ -37,7 +37,7 @@ end
 
 if isfield(parameters, "powell_factor_level")
     powell_factor_level = parameters.powell_factor_level;
-    parameters.powell_factor = get_powell_factor(powell_factor_level);
+    parameters.powell_factor = get_powell_factor(powell_factor_level)*ones(1,solvers_num);
 end
 % If there is a solver in bds_powell_list, set default value of
 % parameters.powell_factor.

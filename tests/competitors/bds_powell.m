@@ -20,7 +20,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %   expand - expanding factor of step size
 %   shrink - shrinking factor of step size
 %   sufficient_decrease_factor - factor of sufficient decrease condition
-%   StepTolerance - StepToleranceerance of step size. If step size is below StepToleranceerance, then the
+%   StepTolerance - StepTolerance of step size. If step size is below StepTolerance, then the
 %        algorithm terminates.
 %   ftarget - If function value is below ftarget, then the algorithm terminates.
 %   polling_inner - polling strategy of indices in one block
@@ -135,14 +135,14 @@ else
     accept_simple_decrease = get_default_constant("accept_simple_decrease");
 end
 
-% Set the default StepToleranceerance of step size. If the step size reaches a value
-% below this StepToleranceerance, then the algorithm is stopped.
+% Set the default StepTolerance of step size. If the step size reaches a value
+% below this StepTolerance, then the algorithm is stopped.
 if isfield(options, "StepTolerance")
-    alpha_StepTolerance = options.StepTolerance;
+    alpha_tol = options.StepTolerance;
 else
     % TODO: Check whether a "smarter" value is not possible, such as
     % "10 * eps * n" for example.
-    alpha_StepTolerance = get_default_constant("StepTolerance");
+    alpha_tol = get_default_constant("StepTolerance");
 end
 
 % Set the target on the objective function. If an evaluation of the
@@ -306,11 +306,11 @@ for iter = 1 : maxit
         alpha_hist(:, nb_visited+1) = alpha_all;
         
         % Terminate the computations if the largest step size is below a
-        % given StepToleranceerance.
+        % given StepTolerance.
         % TODO: Is it normal to check whether "SMALL_ALPHA" is reached
         % directly after updating the step sizes, or should be do one more
         % iteration with the last value of the step sizes?
-        if max(alpha_all) < alpha_StepTolerance
+        if max(alpha_all) < alpha_tol
             terminate = true;
             exitflag = get_exitflag("SMALL_ALPHA");
             break
@@ -354,7 +354,7 @@ end
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
-        output.message = "The StepToleranceerance on the step size is reached";
+        output.message = "The StepTolerance on the step size is reached";
     case {get_exitflag("MAXFUN_REACHED")}
         output.message = "The maximum number of function evaluations is reached";
     case {get_exitflag("FTARGET_REACHED")}

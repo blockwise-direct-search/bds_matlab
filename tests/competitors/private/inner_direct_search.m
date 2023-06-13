@@ -128,7 +128,7 @@ function array = cycling(array, index, strategy, with_memory)
 %CYCLING Permutation an array with index and different options
 %   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array
 %   using cycling_strategy and with_memory with index. ARRAY can be a vevtor.
-%   MEMORY is boolean value. STRATEGY is a nonnegative integer from 0 to 4.
+%   MEMORY is a boolean value. STRATEGY is a nonnegative integer from 0 to 4.
 %   INDEX is a nonnegative number from -1, 1, ..., length(array).
 %   If INDEX = -1, then there is no permutation.
 %   with_memory - If with_memory is true, permutation will be executed on the array of last
@@ -184,7 +184,7 @@ if debug_flag
     assert(isintegerscalar(index));
     % Assert strategy is a positive integer and less than or equal to 4.
     assert(isintegerscalar(strategy) && 0<=strategy && strategy<=4);
-    % Assert with_memory is boolean value.
+    % Assert with_memory is a boolean value.
     assert(islogicalscalar(with_memory));
 end
 

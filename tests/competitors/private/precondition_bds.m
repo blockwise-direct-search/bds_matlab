@@ -3,7 +3,7 @@ function [] = precondition_bds(fun, x0, options)
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for fun %%%%%%%%%%%%%%%%%
 % FUN should be a function handle or a function name.
 % TODO: When detecting string, use str2func to convert.
-assert(ischarstr(fun) || isa(fun, 'function_handle'));
+assert(ischarstr(fun) || isa(fun, "function_handle"));
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for x0 %%%%%%%%%%%%%%%%%
 [isrv, ~]  = isrealvector(x0);

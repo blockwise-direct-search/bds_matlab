@@ -6,7 +6,7 @@ function tests = bds_unit_test
 %
 %       https://www.mathworks.com/help/matlab/matlab_prog/write-simple-test-case-with-functions.html
 
-fullpath = mfilename('fullpath'); 
+fullpath = mfilename("fullpath"); 
 [path, ~] = fileparts(fullpath);
 cd(path);
 cd ../src/private

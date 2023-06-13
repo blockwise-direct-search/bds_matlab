@@ -1,42 +1,4 @@
-function [] = testbds_input(parameters)
-
-% Set parameters to an empty structure if it is not supplied.
-if nargin < 1
-    parameters = struct();
-end
-
-restoredefaultpath;
-
-% % The code of the following lines is for using matcutest.
-% path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
-% path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
-%addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
-
-fullpath = mfilename('fullpath');
-[path_tests,~] = fileparts(fullpath);
-parameters.path_tests = path_tests;
-path_bds = fileparts(path_tests);
-parameters.path_bds = path_bds;
-addpath(path_tests);
-% If testdata does not exist, make a new one.
-path_testdata = strcat(path_tests, "/testdata");
-if ~exist(path_testdata, "dir")
-    mkdir(path_testdata);
-end
-
-addpath(path_bds);
-path_src = fullfile(path_bds, 'src');
-parameters.path_src = path_src;
-addpath(path_src);
-path_competitors = fullfile(path_tests, 'competitors');
-addpath(path_competitors);
-parameters.path_competitors = path_competitors;
-path_competitors_mnewuoa = fullfile(path_competitors, 'mnewuoa');
-addpath(path_competitors_mnewuoa);
-path_competitors_matlab_functions = fullfile(path_competitors, 'matlab_functions');
-addpath(path_competitors_matlab_functions);
-
-assert(isfield(parameters, "solvers_invoke"));
+function parameters = get_profile_options(parameters)
 
 % Specify parameters by parameters.solvers_invoke.
 parameters = get_solvers(parameters);
@@ -212,7 +174,7 @@ if ~isfield(parameters, "noise_type")
 end
 
 if ~isfield(parameters, "fminunc_type")
-    parameters.fminunc_type = 'bfgs';
+    parameters.fminunc_type = "bfgs";
 end
 
 parameters.solvers_legend = [];
@@ -245,14 +207,6 @@ else
 end
 
 parameters.pdfname = pdfname;
-testbds(parameters);
-% Delete the path to recover
-rmpath(path_tests);
-rmpath(path_bds);
-rmpath(path_src);
-rmpath(path_competitors);
-rmpath(path_competitors_mnewuoa);
-rmpath(path_competitors_matlab_functions);
 
 end
 

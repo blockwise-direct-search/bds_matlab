@@ -1,8 +1,8 @@
 function [exitflag] = get_exitflag(information)
 % To get exitflag of variable situations.
-%     SMALL_ALPHA     Step size is below StepToleranceerance. For the case of variable
+%     SMALL_ALPHA     Step size is below StepTolerance. For the case of variable
 %                     step sizes, it indicates the maximum of step sizes is below
-%                     StepToleranceerance.
+%                     StepTolerance.
 %     MAXFUN_REACHED  The number of function evaluations equal to the maxfun.
 %     FTARGET_REACHED Function value is less or equal to ftarget.
 %     MAXIT_REACHED   The number of iterations equal to maxit.  
@@ -20,7 +20,7 @@ break_conditions = ["SMALL_ALPHA";"MAXFUN_REACHED";"FTARGET_REACHED";"MAXIT_REAC
 exitflag = find(break_conditions == information) - 1;
 if isempty(exitflag)
     exitflag = -1;
-    disp('New break condition happens.'); 
+    disp("New break condition happens."); 
 end
 
 %====== Function body ends ======%
