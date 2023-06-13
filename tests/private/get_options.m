@@ -41,8 +41,13 @@ if name_solver == "bds" || name_solver == "bds_powell"
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;
     options.alpha_init = options_solvers.alpha_init;
+    
     if isfield(options_solvers, "powell_factor")
-        options.powell_factor = options_solvers.powell_factor;
+        options.powell_factor = options_solvers.powell_factor(j);
+    end
+    
+    if isfield(options_solvers, "accept_simple_decrease")
+        options.accept_simple_decrease = options_solvers.accept_simple_decrease(j);
     end
 
 elseif name_solver == "bds_polling"

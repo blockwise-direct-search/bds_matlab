@@ -158,7 +158,13 @@ if ~isfield(parameters, "alpha_init")
 end
 
 if ~isfield(parameters, "powell_factor")
-    parameters.powell_factor = get_default_testparameters("powell_factor");
+    powell_factor = get_default_testparameters("powell_factor");
+    parameters.powell_factor = repmat(powell_factor, 1, num_solvers);
+end
+
+if ~isfield(parameters, "accept_simple_decrease")
+    accept_simple_decrease = get_default_testparameters("accept_simple_decrease");
+    parameters.accept_simple_decrease = repmat(accept_simple_decrease, 1, num_solvers);
 end
 
 % Set parameters of ftarget

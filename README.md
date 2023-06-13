@@ -1,2 +1,1 @@
-# blockwise direct search under new framework
-# Test problems are cutest.
+# Blockwise Direct Search methods for unconstrained optimization problems.

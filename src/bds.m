@@ -10,7 +10,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   default optimization parameters replaced by values in the structure OPTIONS,
 %   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 %   expand, shrink, sufficient decrease factor, tol, ftarget, polling_inner,
-%   blocks_strategy, with_memory, cycling.
+%   blocks_strategy, with_memory, cycling, accept_simple_decrease.
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
@@ -44,16 +44,16 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   The history of points is OUTPUT.xhist and 
 %   The l2-norm of gradient in OUTPUT.ghist (only for CUTEst problems).
 
+% Set options to an empty structure if it is not supplied.
+if nargin < 3
+    options = struct();
+end
+
 % Preconditions: If debug_flag is true, then preconditions is verified on
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
     preconditions(fun, x0, options);
-end
-
-% Set options to an empty structure if it is not supplied.
-if nargin < 3
-    options = struct();
 end
 
 % The exit flag will be set at each possible exit of the algorithm.
@@ -122,6 +122,16 @@ if isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+end
+
+% Set the default boolean value of accept_simple_decrease. If
+% accept_simple_decrease is set to be true, it means the algorithm accepts 
+% simple decrease to update xval and fval. However, alpha is always updated
+% by whether meeting sufficient decrease.
+if isfield(options, "accept_simple_decrease")
+    accept_simple_decrease = options.accept_simple_decrease;
+else
+    accept_simple_decrease = get_default_constant("accept_simple_decrease");
 end
 
 % Set the default tolerance of step size. If the step size reaches a value
@@ -235,6 +245,7 @@ for iter = 1 : maxit
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
+        suboptions.accept_simple_decrease = accept_simple_decrease;
         
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, xbase, fbase, D(:, direction_indices), direction_indices,...

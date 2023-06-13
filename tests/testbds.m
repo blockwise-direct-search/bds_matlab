@@ -53,8 +53,13 @@ options_solvers.sufficient_decrease_factor = parameters.sufficient_decrease_fact
 options_solvers.expand = parameters.expand;
 options_solvers.shrink = parameters.shrink;
 options_solvers.alpha_init = parameters.alpha_init;
+
 if isfield(parameters, "powell_factor")
     options_solvers.powell_factor = parameters.powell_factor;
+end
+
+if isfield(parameters, "accept_simple_decrease")
+    options_solvers.accept_simple_decrease = parameters.accept_simple_decrease;
 end
 
 % Parameters of ftarget

@@ -94,13 +94,15 @@ for j = 1 : num_directions
     %    directions before it.
     % 2. What if we update fnew and xnew whenever there is a smple decrease?
     %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
-
-    if fnew < fbase - sufficient_decrease_factor * alpha^2 / 2
+    
+    sufficient_decrease = fnew < fbase - sufficient_decrease_factor * alpha^2 / 2;
+    if sufficient_decrease
         success = true;
-        if fnew < fval
-            xval = xnew;
-            fval = fnew;
-        end
+    end
+    
+    if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
+        xval = xnew;
+        fval = fnew;
     end
 
     % In the opportunistic case, if the current iteration is successful,
