@@ -22,7 +22,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [bds_powell]
         competitor: [Gauss-Seidel]
-        powell_factor_level: [one, two, three, four, five, six, seven, eight, nine, ten];
+        powell_factor_level: [one, two, three, four, five, six, seven, eight, nine, ten]
 
     steps:
       - name: Check out repository
@@ -85,7 +85,7 @@ jobs:
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.tol = eps;
-            parameters.powell_factor_level = "${{ matrix.powell_factor_level }}"; 
+            parameters.powell_factor_level = "${{ matrix.powell_factor_level }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             testbds_input(parameters);
 

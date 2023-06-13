@@ -22,7 +22,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [bds_powell]
         competitor: [Gauss-Seidel]
-        powell_factor_level: [one, two, three, four, five, six, seven, eight, nine, ten];
+        powell_factor_level: [one, two, three, four, five, six, seven, eight, nine, ten]
 
     steps:
       - name: Check out repository
