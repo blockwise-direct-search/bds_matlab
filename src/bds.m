@@ -131,7 +131,7 @@ end
 if isfield(options, "accept_simple_decrease")
     accept_simple_decrease = options.accept_simple_decrease;
 else
-    accept_simple_decrease = get_default_constant("accept_simple_decrease");
+    accept_simple_decrease = get_default_constant("with_memory");
 end
 
 % Set the default tolerance of step size. If the step size reaches a value
