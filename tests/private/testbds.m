@@ -48,7 +48,7 @@ end
 maxfun = options_solvers.maxfun;
 
 % Parameters of stepsize
-options_solvers.tol = parameters.tol;
+options_solvers.StepTolerance = parameters.StepTolerance;
 options_solvers.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
 options_solvers.expand = parameters.expand;
 options_solvers.shrink = parameters.shrink;

@@ -83,7 +83,7 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            parameters.tol = eps;
+            parameters.StepTolerance = eps;
             parameters.is_noisy = true;
             parameters.num_random = 3;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];

@@ -9,9 +9,9 @@
 The purpose is to verify the correctness and robustness of the algorithm.
 There are two basic types of verifications.
 -- Normal verification. With CUTEst problem and *reasonably* randomized input (x0, alpha0, maxfun),
-test that the returned x is "optimized" up to a certain tolerance. For example,
-check that the returned gradient is below a tolerance (relative to the initial one).
-The tolerance may be set to different values according to the problems (1.0e-8 for easy problems,
+test that the returned x is "optimized" up to a certain StepToleranceerance. For example,
+check that the returned gradient is below a StepToleranceerance (relative to the initial one).
+The StepToleranceerance may be set to different values according to the problems (1.0e-8 for easy problems,
  1.0-e-4, 1.0e-2, 1.0e-1, fval < f(x0).
 
 -- Tough tests

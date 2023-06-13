@@ -2,7 +2,6 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, xbase, fbase, D, direction_indices, alpha, options)
 % inner_direct_search subfunction of blockwise_direct_search (direct search
 % without blocks).
-% TODO: one small paragraph to explain what inner_direct_search does.
 %
 % XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, XBASE, FBASE, D, ...
 % DIRECTION_INDICES, ALPHA) attempts to find a XVAL to satifsy sufficient
@@ -46,8 +45,10 @@ else
    ftarget = get_default_constant("ftarget");
 end
 
-% TODO: Explain why NaN is good. It is possible that this function returns
-% with exitflag=NaN and this is NOT a bug. This is because ...
+% Explain why NaN is good. It is possible that this function returns
+% with exitflag=NaN and this is NOT a bug. This is because other situatons
+% are corresponding to other normal values. Easy to see whether there is
+% some bug related to exitflag.
 exitflag = NaN;
 
 % Initialize the computations.

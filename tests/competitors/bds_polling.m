@@ -11,7 +11,7 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %   XVAL = BLOCKWISE_DIRECT_SEARCH(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
 %   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
-%   expand, shrink, sufficient decrease factor, tol, ftarget, polling_inner,
+%   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
 %   polling_outer, with_memory, cycling.
 %
 %   nb - number of blocks
@@ -21,7 +21,7 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %   expand - expanding factor of step size
 %   shrink - shrinking factor of step size
 %   sufficient_decrease_factor - factor of sufficient decrease condition
-%   tol - tolerance of step size. If step size is below tolerance, then the
+%   StepTolerance - StepToleranceerance of step size. If step size is below StepToleranceerance, then the
 %        algorithm terminates.
 %   ftarget - If function value is below ftarget, then the algorithm terminates.
 %   polling_inner - polling strategy of indices in one block
@@ -176,14 +176,24 @@ else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
 
-% Set the default tolerance of step size. If the step size reaches a value
-% below this tolerance, then the algorithm is stopped.
-if isfield(options, "tol")
-    alpha_tol = options.StepTolerance;
+% Set the default boolean value of accept_simple_decrease. If
+% accept_simple_decrease is set to be true, it means the algorithm accepts 
+% simple decrease to update xval and fval. However, alpha is always updated
+% by whether meeting sufficient decrease.
+if isfield(options, "accept_simple_decrease")
+    accept_simple_decrease = options.accept_simple_decrease;
+else
+    accept_simple_decrease = get_default_constant("accept_simple_decrease");
+end
+
+% Set the default StepToleranceerance of step size. If the step size reaches a value
+% below this StepToleranceerance, then the algorithm is stopped.
+if isfield(options, "StepTolerance")
+    alpha_StepTolerance = options.StepTolerance;
 else
     % TODO: Check whether a "smarter" value is not possible, such as
     % "10 * eps * n" for example.
-    alpha_tol = get_default_constant("tol");
+    alpha_StepTolerance = get_default_constant("StepTolerance");
 end
 
 % Set the target on the objective function. If an evaluation of the
@@ -297,6 +307,7 @@ for k = 1 : maxit
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
+        suboptions.accept_simple_decrease = accept_simple_decrease;
 
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, xbase, fbase, D(:, direction_indices), direction_indices,...
@@ -332,11 +343,11 @@ for k = 1 : maxit
         end
 
         % Terminate the computations if the largest step size is below a
-        % given tolerance.
+        % given StepToleranceerance.
         % TODO: Is it normal to check whether "SMALL_ALPHA" is reached
         % directly after updating the step sizes, or should be do one more
         % iteration with the last value of the step sizes?
-        if max(alpha_all) < alpha_tol
+        if max(alpha_all) < alpha_StepTolerance
             terminate = true;
             exitflag = get_exitflag("SMALL_ALPHA");
             break
@@ -386,7 +397,7 @@ end
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
-        output.message = "The tolerance on the step size is reached";
+        output.message = "The StepToleranceerance on the step size is reached";
     case {get_exitflag("MAXFUN_REACHED")}
         output.message = "The maximum number of function evaluations is reached";
     case {get_exitflag("FTARGET_REACHED")}

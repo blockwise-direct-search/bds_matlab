@@ -15,7 +15,7 @@ switch constant_name
         constant_value = "relative";
     case {"scaling_matrix"}
         constant_value = false;
-    case {"tol"}
+    case {"StepTolerance"}
         constant_value = 1e-4;
     case {"minip"}
         constant_value = 1;

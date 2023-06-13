@@ -84,7 +84,7 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            parameters.tol = eps;
+            parameters.StepTolerance = eps;
             parameters.powell_factor_level = "${{ matrix.powell_factor_level }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             testbds_input(parameters);

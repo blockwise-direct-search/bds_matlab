@@ -36,7 +36,7 @@ if name_solver == "bds" || name_solver == "bds_powell"
     options.blocks_strategy = options_solvers.blocks_strategy(j);
     
     % Options of step size
-    options.StepTolerance = options_solvers.tol;
+    options.StepTolerance = options_solvers.StepTolerance;
     options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;
@@ -78,7 +78,7 @@ elseif name_solver == "bds_polling"
     options.direction = options_solvers.direction(j);    
 
     % Options of step size
-    options.StepTolerance = options_solvers.tol;
+    options.StepTolerance = options_solvers.StepTolerance;
     options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;
@@ -91,7 +91,7 @@ elseif name_solver == "ds_randomized"
     options.randomized_strategy = options_solvers.randomized_strategy(j);
     
     % Options of step size
-    options.StepTolerance = options_solvers.tol;
+    options.StepTolerance = options_solvers.StepTolerance;
     options.sufficient_decrease_factor = options_solvers.sufficient_decrease_factor;
     options.expand = options_solvers.expand;
     options.shrink = options_solvers.shrink;
@@ -108,22 +108,22 @@ elseif name_solver == "prima"
     
     % Options of trust region radius
     options.rhobeg = options_solvers.alpha_init;
-    options.rhoend = options_solvers.tol;
+    options.rhoend = options_solvers.StepTolerance;
     
 elseif name_solver == "matlab_fminsearch"
     options = optimset('MaxFunEvals', maxfun, 'MaxIter', maxfun, 'TolFun',...
-        options_solvers.tol, 'TolX', options_solvers.tol);
+        options_solvers.StepTolerance, 'TolX', options_solvers.StepTolerance);
     
 elseif name_solver == "matlab_fminunc"
     options = optimoptions('fminunc', 'Algorithm', 'quasi-newton', ...
         'HessUpdate', options_solvers.fminunc_type, 'MaxFunctionEvaluations',... 
     maxfun, 'MaxIterations', maxfun, 'ObjectiveLimit', options_solvers.ftarget,...
-    'StepTolerance', options_solvers.tol, 'OptimalityTolerance', options_solvers.tol);
+    'StepTolerance', options_solvers.StepTolerance, 'OptimalityTolerance', options_solvers.StepTolerance);
     
 elseif name_solver == "matlab_patternsearch"
     options = optimoptions('patternsearch','MaxIterations', maxfun,...
-    'MaxFunctionEvaluations', maxfun, 'FunctionTolerance', options_solvers.tol,...
-        'TolMesh', options_solvers.tol, 'StepTolerance', options_solvers.tol);  
+    'MaxFunctionEvaluations', maxfun, 'FunctionTolerance', options_solvers.StepTolerance,...
+        'TolMesh', options_solvers.StepTolerance, 'StepTolerance', options_solvers.StepTolerance);  
 
 else
     fprintf("%s\n", name_solver)

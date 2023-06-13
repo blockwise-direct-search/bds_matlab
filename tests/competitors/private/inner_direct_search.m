@@ -2,7 +2,6 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, xbase, fbase, D, direction_indices, alpha, options)
 % inner_direct_search subfunction of blockwise_direct_search (direct search
 % without blocks).
-% TODO: one small paragraph to explain what inner_direct_search does.
 %
 % XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, XBASE, FBASE, D, ...
 % DIRECTION_INDICES, ALPHA) attempts to find a XVAL to satifsy sufficient
@@ -46,8 +45,10 @@ else
    ftarget = get_default_constant("ftarget");
 end
 
-% TODO: Explain why NaN is good. It is possible that this function returns
-% with exitflag=NaN and this is NOT a bug. This is because ...
+% Explain why NaN is good. It is possible that this function returns
+% with exitflag=NaN and this is NOT a bug. This is because other situatons
+% are corresponding to other normal values. Easy to see whether there is
+% some bug related to exitflag.
 exitflag = NaN;
 
 % Initialize the computations.
@@ -94,13 +95,15 @@ for j = 1 : num_directions
     %    directions before it.
     % 2. What if we update fnew and xnew whenever there is a smple decrease?
     %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
-
-    if fnew < fbase - sufficient_decrease_factor * alpha^2 / 2
+    
+    sufficient_decrease = fnew < fbase - sufficient_decrease_factor * alpha^2 / 2;
+    if sufficient_decrease
         success = true;
-        if fnew < fval
-            xval = xnew;
-            fval = fnew;
-        end
+    end
+    
+    if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
+        xval = xnew;
+        fval = fnew;
     end
 
     % In the opportunistic case, if the current iteration is successful,

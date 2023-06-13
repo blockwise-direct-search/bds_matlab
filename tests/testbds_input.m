@@ -137,8 +137,8 @@ if ~isfield(parameters, "maxfun_dim")
 end
 
 % Set parameters of stepsize
-if ~isfield(parameters, "tol")
-    parameters.tol = get_default_testparameters("tol");
+if ~isfield(parameters, "StepTolerance")
+    parameters.StepTolerance = get_default_testparameters("StepTolerance");
 end
 
 if ~isfield(parameters, "sufficient_decrease_factor")

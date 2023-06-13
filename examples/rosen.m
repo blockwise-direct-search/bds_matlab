@@ -1,5 +1,5 @@
 options.maxfun = 1e4;
-options.tol = eps;
+options.StepTolerance = eps;
 
 fullpath = mfilename('fullpath');
 [path_examples,~] = fileparts(fullpath);

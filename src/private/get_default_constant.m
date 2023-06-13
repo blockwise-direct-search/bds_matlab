@@ -13,7 +13,7 @@ switch constant_name
         constant_value = 1e-3;
     case {"accept_simple_decrease"}
         constant_value = true;
-    case {"tol"}
+    case {"StepTolerance"}
         constant_value = eps;
     case {"ftarget"}
         constant_value = -inf;

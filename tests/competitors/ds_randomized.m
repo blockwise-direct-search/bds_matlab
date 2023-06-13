@@ -10,7 +10,7 @@ function [xval, fval, exitflag, output] = ds_randomized(fun, x0, options)
 % XVAL = DS_RANDOMIZED(FUN, X0, OPTIONS) minimizes with the default
 % optimization parameters replaced by values in the structure OPTIONS.
 % DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
-% expand, shrink, sufficient decrease factor, tol, ftarget, polling,
+% expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling,
 % with_memory, cycling.
 %
 % [XVAL, FVAL] = DS_RANDOMIZED(...) returns the value of the objective
@@ -94,14 +94,14 @@ else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
 
-% Set the default tolerance of step size. If the step size reaches a value
-% below this tolerance, then the algorithm is stopped.
-if isfield(options, "tol")
-    alpha_tol = options.StepTolerance;
+% Set the default StepToleranceerance of step size. If the step size reaches a value
+% below this StepToleranceerance, then the algorithm is stopped.
+if isfield(options, "StepTolerance")
+    alpha_StepTolerance = options.StepTolerance;
 else
     % TODO: Check whether a "smarter" value is not possible, such as
     % "10 * eps * n" for example.
-    alpha_tol = get_default_constant("tol");
+    alpha_StepTolerance = get_default_constant("StepTolerance");
 end
 
 % Set the target on the objective function. If an evaluation of the
@@ -266,8 +266,8 @@ for k = 1 : maxit
     end
 
     % Terminate the computations if the largest step size is below a
-    % given tolerance.
-    if alpha < alpha_tol
+    % given StepToleranceerance.
+    if alpha < alpha_StepTolerance
         information = "SMALL_ALPHA";
         terminate = true;
         exitflag = get_exitflag(information);
@@ -304,7 +304,7 @@ end
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
-        output.message = "The tolerance on the step size is reached";
+        output.message = "The StepToleranceerance on the step size is reached";
     case {get_exitflag("MAXFUN_REACHED")}
         output.message = "The maximum number of function evaluations is reached";
     case {get_exitflag("FTARGET_REACHED")}

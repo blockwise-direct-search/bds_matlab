@@ -113,7 +113,7 @@ constant_name = "sufficient_decrease_factor";
 constant_value = 1e-3;
 verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
-constant_name = "tol";
+constant_name = "StepTolerance";
 constant_value = 1e-12;
 verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 

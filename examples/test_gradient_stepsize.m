@@ -1,5 +1,5 @@
 options.maxfun = 1e6;
-options.tol = eps;
+options.StepTolerance = eps;
 
 fullpath = mfilename('fullpath');
 [path_examples,~] = fileparts(fullpath);
@@ -8,7 +8,7 @@ path_src = fullfile(path_bds, 'src');
 addpath(path_src)
 
 p = macup('akiva');
-options.tol = 1e-10;
+options.StepTolerance = 1e-10;
 
 [x, fval, exitflag, output] = blockwise_direct_search(p.objective, p.x0, options);
 
@@ -19,7 +19,7 @@ for eval_g = 1:fhist_length
     g_hist(eval_g) = norm(gradient);
 end
 gval = min(g_hist);
-ratio = abs(gval)/options.tol
+ratio = abs(gval)/options.StepTolerance
 
 rmpath(path_src)
 

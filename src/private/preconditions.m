@@ -34,7 +34,7 @@ if isfield(options, "shrink")
     assert(isrealscalar(options.shrink) && options.shrink < 1);
 end
 
-if isfield(options, "tol")
+if isfield(options, "StepTolerance")
     assert(isrealscalar(options.StepTolerance) && options.StepTolerance >= 0);
 end
 
