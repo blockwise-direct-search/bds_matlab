@@ -1,5 +1,6 @@
 function block_index = get_block(nb, hist, blocks_strategy, block_indices)
 
+% Our new framework is not under get_block, this function is no use now.
 % Extreme case: How about nb = 1? 
 
 block_array_init = 1:nb;
