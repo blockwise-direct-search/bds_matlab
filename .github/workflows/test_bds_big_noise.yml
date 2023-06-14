@@ -85,6 +85,7 @@ jobs:
             parameters.parallel = true;
             parameters.StepTolerance = eps;
             parameters.is_noisy = true;
+            parameters.noise_level = 1e-6;
             parameters.num_random = 3;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);

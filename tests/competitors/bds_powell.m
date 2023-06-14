@@ -320,7 +320,7 @@ for iter = 1 : maxit
             exitflag = get_exitflag("SMALL_ALPHA");
             break
         end
-        alpha_all = shrink*alpha_all;
+        %alpha_all = shrink*alpha_all;
         alpha_threshold = powell_factor*alpha_threshold;
         alpha_all = max(alpha_all, alpha_threshold);
     end
