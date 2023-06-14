@@ -87,7 +87,7 @@ jobs:
             parameters.StepTolerance = eps;
             parameters.powell_factor_level = "${{ matrix.powell_factor_level }}";
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            profile_bds_input(parameters);
+            profile_bds(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
