@@ -85,7 +85,7 @@ jobs:
             parameters.parallel = true;
             parameters.StepTolerance = eps;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            testbds_input(parameters);
+            profile_bds_input(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2

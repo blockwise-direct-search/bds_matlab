@@ -5,6 +5,8 @@ function constant_value = get_default_constant(constant_name)
 switch constant_name
     case {"maxfun"}
         constant_value = 1e5;
+    case {"maxfun_dim"}
+        constant_value = 1e3;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}
@@ -31,4 +33,3 @@ switch constant_name
         constant_value = "Unknown constant name";
 end
 end
-

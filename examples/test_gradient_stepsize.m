@@ -1,16 +1,18 @@
-options.maxfun = 1e6;
-options.StepTolerance = eps;
-
 fullpath = mfilename('fullpath');
 [path_examples,~] = fileparts(fullpath);
 [path_bds, ~, ~] = fileparts(path_examples);
 path_src = fullfile(path_bds, 'src');
+path_competitors = fullfile(path_bds, 'tests', 'competitors');
 addpath(path_src)
+addpath(path_competitors)
 
 p = macup('akiva');
+p = macup('PALMER5C');
+p = macup('HEART6LS');
+p = macup('LANCZOS1LS');
 options.StepTolerance = 1e-10;
 
-[x, fval, exitflag, output] = blockwise_direct_search(p.objective, p.x0, options);
+[x, fval, exitflag, output] = bds(p.objective, p.x0, options);
 
 fhist_length = length(output.fhist);
 g_hist = NaN(1,fhist_length);
@@ -22,5 +24,4 @@ gval = min(g_hist);
 ratio = abs(gval)/options.StepTolerance
 
 rmpath(path_src)
-
-
+rmpath(path_competitors)

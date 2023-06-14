@@ -42,7 +42,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %
 %   The number of function evaluations is OUTPUT.funcCount.
 %   The history of function evaluation is OUTPUT.fhist.
-%   The history of points is OUTPUT.xhist and 
+%   The history of points is OUTPUT.xhist and
 %   The l2-norm of gradient in OUTPUT.ghist (only for CUTEst problems).
 
 % Set options to an empty structure if it is not supplied.
@@ -85,15 +85,15 @@ block_indices = 1:nb;
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e5.
-if isfield(options, "maxfun_dim")
+
+if isfield(options, "maxfun_dim") && isfield(options, "maxfun")
+    maxfun = min(options.maxfun_dim*n, options.maxfun);
+elseif isfield(options, "maxfun_dim")
     maxfun = options.maxfun_dim*n;
-    if isfield(options, "maxfun")
-        maxfun = min(options.maxfun, maxfun);
-    end
 elseif isfield(options, "maxfun")
     maxfun = options.maxfun;
 else
-    maxfun = get_default_constant("maxfun");
+    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_dim")*n);
 end
 
 % Set the maximum of iterations. If complete polling is used, then the
@@ -126,7 +126,7 @@ else
 end
 
 % Set the default boolean value of accept_simple_decrease. If
-% accept_simple_decrease is set to be true, it means the algorithm accepts 
+% accept_simple_decrease is set to be true, it means the algorithm accepts
 % simple decrease to update xval and fval. However, alpha is always updated
 % by whether meeting sufficient decrease.
 if isfield(options, "accept_simple_decrease")
@@ -227,29 +227,36 @@ else
     powell_factor = options.powell_factor;
 end
 
-alpha_threshold = powell_factor*options.alpha_init;
+alpha_threshold = powell_factor^2*options.alpha_init;
 
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
-    
+
+
+    alpha_hist(:, iter) = alpha_all;
+
     % Let xbase be the point from which the polling directions are
     % employed. In one iteration, all the block use the same base point.
     % The corresponding value of the objective function is stored in fbase.
     xbase = xval(:);
-    fbase = fval;   
-    
+    fbase = fval;
+
     block_indices = permutate(block_indices, options);
     options.permutation_indicator = false;
-    
-    blocks_indicator = false(1, nb);
-    
+
+    any_success = false;
+
     for i = 1:nb
         % In case of permutation.
         i_real = block_indices(i);
-        
+
+        if alpha_all(i_real) <= alpha_threshold
+            continue;
+        end
+
         direction_indices = searching_set_indices{i_real}; % get indices in the i-th block
-        
+
         suboptions.maxfun = maxfun - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search
         suboptions.cycling = cycling_inner;
@@ -258,29 +265,29 @@ for iter = 1 : maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;
-        
+
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, xbase, fbase, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
-        
+
         % After exploring one block, update xbase and fbase immediately.
         xbase = xval;
         fbase = fval;
-                
+
         % The i-th block has been visited recently.
         hist.block(iter) = i_real;
         % Update the history of step size.
         alpha_hist(:, iter) = alpha_all;
         % Update the number of blocks having been visited.
         nb_visited = nb_visited + 1;
-        
+
         % Store the history of the evaluations performed by
         % inner_direct_search, and adjust the number of function
         % evaluations.
         fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
         xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
         nf = nf+suboutput.nf;
-        
+
         % If suboutput.terminate is true, then inner_direct_search returned
         % because either the maximum number of function evaluations or the
         % target on the objective function value is reached. In both cases,
@@ -290,41 +297,38 @@ for iter = 1 : maxit
             exitflag = sub_exitflag;
             break;
         end
-        
+
         % Retrieve the order the polling direction and check whether a
         % sufficient decrease has been achieved in inner_direct_search.
         searching_set_indices{i_real} = suboutput.direction_indices;
-        success = suboutput.success;
-        
+
         % Update the step sizes and store the history of step sizes.
-        if success
-            blocks_indicator(i_real) = true;
+        if suboutput.success
+            any_success = true;
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
             alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
         end
-        alpha_hist(:, nb_visited+1) = alpha_all;
-        
+    end
+
+    % Update alpha using powell's technique.
+    if (max(alpha_all) <= alpha_threshold) && ~any_success
         % Terminate the computations if the largest step size is below a
         % given StepTolerance.
-        % TODO: Is it normal to check whether "SMALL_ALPHA" is reached
-        % directly after updating the step sizes, or should be do one more
-        % iteration with the last value of the step sizes?
-        if max(alpha_all) < alpha_tol
+        if alpha_threshold <= alpha_tol
             terminate = true;
             exitflag = get_exitflag("SMALL_ALPHA");
             break
         end
+        alpha_all = shrink*alpha_all;
+        alpha_threshold = powell_factor*alpha_threshold;
+        alpha_all = max(alpha_all, alpha_threshold);
     end
-    
-    % Update alpha using powell's technique.
-    [alpha_all,alpha_threshold] = alpha_update(alpha_all,alpha_threshold,...
-        powell_factor,shrink,blocks_indicator);
-    
+
     % After exploring nb blocks, update xval and fval immediately.
     xval = xbase;
     fval = fbase;
-    
+
     % The following case can be reached (SMALL_ALPHA, MAXFUN_REACHED,
     % FTARGET_REACHED).
     if terminate
@@ -344,7 +348,7 @@ end
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
-output.alpha_hist = alpha_hist(:, 1:nf);
+output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
 
 % Postcondition: If debug_flag is true, then post-conditions is operated on
 % output. If output_correctness is false, then assert will let code crash.

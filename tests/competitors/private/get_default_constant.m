@@ -5,6 +5,8 @@ function constant_value = get_default_constant(constant_value)
 switch constant_value
     case {"maxfun"}
         constant_value = 1e5;
+    case {"maxfun_dim"}
+        constant_value = 1e3;
     case {"powell_factor"}
         constant_value = 1e-1;
     case {"alpha_init"}

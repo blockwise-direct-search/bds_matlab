@@ -87,7 +87,7 @@ jobs:
             parameters.is_noisy = true;
             parameters.num_random = 3;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            testbds_input(parameters);
+            profile_bds_input(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
