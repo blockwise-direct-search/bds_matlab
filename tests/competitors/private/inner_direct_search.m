@@ -23,6 +23,18 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 % the history of function evaluation in OUTPUT.fhist, the history of points
 % in OUTPUT.xhist, boolean value of success, boolean value of terminate and
 % direction_indices.
+%
+% success: success is initialized to be false. If success is updated to be true,
+% it means that there at least exists some direction satisfying sufficient decrease.
+%
+% terminate: terminate is initialized to be false. If terminate is updated to be true,
+% it means that either function evaluation is exhausted, or ftarget is reached. Then
+% the function is ended.
+%
+% direction_indices: indices of the directions in this block, which is taken from outside.  
+
+
+
 
 % Set options to an empty structure if it is not supplied.
 if nargin < 9
@@ -96,9 +108,11 @@ for j = 1 : num_directions
     % 2. What if we update fnew and xnew whenever there is a smple decrease?
     %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
 
-    sufficient_decrease = fnew + sufficient_decrease_factor * alpha^2 / 2 < fbase;
+    sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2 / 2 < fbase);
+    % Success is initialized to be false. Once there exists some direction satisfying sufficient
+    % decrease, success will always be true.
     if sufficient_decrease
-        success = true;
+        success = (success || sufficient_decrease);
     end
 
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
@@ -106,7 +120,7 @@ for j = 1 : num_directions
         fval = fnew;
     end
 
-    % In the opportunistic case, if the current iteration is successful,
+    % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling
     % directions.
     if success && ~strcmpi(options.polling_inner, "complete")

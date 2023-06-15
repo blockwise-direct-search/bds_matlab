@@ -8,20 +8,20 @@ path_competitors = fullfile(path_bds, 'tests', 'competitors');
 addpath(path_src)
 addpath(path_competitors)
 
-path_temporary = pwd;
+old_dir = pwd;
 cd(path_tests_private)
 % Tell matlab where to find prima.
 locate_prima();
-cd(pwd)
+cd(old_dir)
 
 p = macup(function_name);
 options.maxfun = min(1e5, 1e3*length(p.x0));
-options.StepTolerance = 1e-10;
+options.StepTolerance = 0;
 options.rhoend = options.StepTolerance;
 fun = @(x) (1+1e-6*randn(1))*p.objective(x);
 
-[x, fval, exitflag, output] = matlab_fminsearch(fun, p.x0, options)
-[x, fval, exitflag, output] = newuoa(fun, p.x0, options)
+[x, fval, exitflag, output] = bds(p.objective, p.x0, options)
+%[x, fval, exitflag, output] = newuoa(p.objective, p.x0, options)
 
 if isfield(output, 'xhist')
     fhist_length = length(output.fhist);
@@ -34,5 +34,6 @@ if isfield(output, 'xhist')
     ratio = abs(gval)/options.StepTolerance
 end
 
+cd(old_dir)
 rmpath(path_src)
 rmpath(path_competitors)

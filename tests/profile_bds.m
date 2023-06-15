@@ -241,7 +241,7 @@ for l = 1:tau_length
     output = perfprof(frec, fmin, options_perf);
 end
 
-path_temporary = pwd;
+old_dir = pwd;
 cd(options.outdir);
 
 % Initialize string variable.
@@ -274,6 +274,6 @@ rmpath(path_competitors_mnewuoa);
 rmpath(path_competitors_matlab_functions);
 
 % Restore the path
-cd(path_temporary);
+cd(old_dir);
 
 end

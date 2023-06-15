@@ -1,13 +1,13 @@
 function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
-    xval, fval, xbase, fbase, D, direction_indices, alpha, options)
+    xval, fval, D, direction_indices, alpha, options)
 % inner_direct_search subfunction of blockwise_direct_search (direct search
 % without blocks).
 %
-% XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, XBASE, FBASE, D, ...
+% XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
 % DIRECTION_INDICES, ALPHA) attempts to find a XVAL to satifsy sufficient
 % decrease condition.
 %
-% XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, XBASE, FBASE, D, ...
+% XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
 % DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS.
 % INNER_DIRECT_SEARCH uses these options: sufficient decrease factor,
 % ftarget, polling, with_memory, cycling.
@@ -23,9 +23,18 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 % the history of function evaluation in OUTPUT.fhist, the history of points
 % in OUTPUT.xhist, boolean value of success, boolean value of terminate and
 % direction_indices.
+%
+% success: success is initialized to be false. If success is updated to be true,
+% it means that there at least exists some direction satisfying sufficient decrease.
+%
+% terminate: terminate is initialized to be false. If terminate is updated to be true,
+% it means that either function evaluation is exhausted, or ftarget is reached.
+%
+% direction_indices: indices of directions of this block in D.
+
 
 % Set options to an empty structure if it is not supplied.
-if nargin < 9
+if nargin < 7
     options = struct();
 end
 
@@ -57,10 +66,14 @@ num_directions = length(direction_indices);
 fhist = NaN(1, num_directions);
 xhist = NaN(n, num_directions);
 
-% Start the main computations.
+% Initialize some parameters before entering the main computations.
 nf = 0; % number of (inner) function evaluations
 success = false; % the sufficient decrease condition is achieved
+fbase = fval;
+xbase = xval;
 terminate = false;
+
+% Start the main computations.
 for j = 1 : num_directions
     % Stop the computations if no more function evaluation can be
     % performed. Note that this should be checked only before evaluating
@@ -96,9 +109,11 @@ for j = 1 : num_directions
     % 2. What if we update fnew and xnew whenever there is a smple decrease?
     %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
 
-    sufficient_decrease = fnew + sufficient_decrease_factor * alpha^2/2 < fbase;
+    sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+    % Success is initialized to be false. Once there exists some direction satisfying sufficient
+    % decrease, success will always be true.
     if sufficient_decrease
-        success = true;
+        success = (success || sufficient_decrease);
     end
 
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
@@ -106,7 +121,7 @@ for j = 1 : num_directions
         fval = fnew;
     end
 
-    % In the opportunistic case, if the current iteration is successful,
+    % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling
     % directions.
     if success && ~strcmpi(options.polling_inner, "complete")

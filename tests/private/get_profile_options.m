@@ -161,18 +161,18 @@ if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = false;
 end
 
-if ~isfield(parameters, "noise_level") && ~isfield(parameters, "noise_intensity")
+if ~isfield(parameters, "noise_level") && ~isfield(parameters, "noise_classification")
     parameters.noise_level = 1e-3;
 else
-    if isfield(parameters, "noise_intensity")
-        if parameters.noise_intensity == "small"
+    if isfield(parameters, "noise_classification")
+        if parameters.noise_classification == "small"
             parameters.noise_level = 1e-9;
-        elseif parameters.noise_intensity == "medium"
+        elseif parameters.noise_classification == "medium"
             parameters.noise_level = 1e-6;
         else
             parameters.noise_level = 1e-3;
-        end 
-    end 
+        end
+    end
 end
 
 if ~isfield(parameters, "is_abs_noise")
@@ -219,4 +219,3 @@ end
 parameters.pdfname = pdfname;
 
 end
-

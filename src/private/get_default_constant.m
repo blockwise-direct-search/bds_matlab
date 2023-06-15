@@ -1,5 +1,5 @@
 function constant_value = get_default_constant(constant_name)
-%GET_DEFAULT_OPTIONS Get the constants needed by BDS.
+%GET_DEFAULT_CONSTANT Get the default value of options needed by BDS.
 %   CONSTANT_VALUE = GET_DEFAULT_CONSTANT(CONSTANT_NAME) returns the value
 %   of the constant named CONSTANT_NAMED.
 switch constant_name

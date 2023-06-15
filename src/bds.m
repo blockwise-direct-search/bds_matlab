@@ -49,11 +49,11 @@ if nargin < 3
     options = struct();
 end
 
-% Preconditions: If debug_flag is true, then preconditions is verified on
+% Verify_preconditions: If debug_flag is true, then verify_preconditions is to verify
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    preconditions(fun, x0, options);
+    verify_preconditions(fun, x0, options);
 end
 
 % The exit flag will be set at each possible exit of the algorithm.
@@ -245,14 +245,10 @@ for iter = 1 : maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;
-
+        
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
-            fval, xbase, fbase, D(:, direction_indices), direction_indices,...
+            fval, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
-
-        % After exploring one block, update xbase and fbase immediately.
-        xbase = xval;
-        fbase = fval;
 
         % The i-th block has been visited recently.
         hist.block(iter) = i_real;
@@ -299,11 +295,6 @@ for iter = 1 : maxit
         end
     end
 
-
-    % After exploring nb blocks, update xval and fval immediately.
-    xval = xbase;
-    fval = fbase;
-
     % The following case can be reached (SMALL_ALPHA, MAXFUN_REACHED,
     % FTARGET_REACHED).
     if terminate
@@ -325,10 +316,10 @@ output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
 
-% Postcondition: If debug_flag is true, then postconditions is verified on
-% output. If output_correctness is false, then assert will let code crash.
+% Verify_postconditions: If debug_flag is true, then verify_postconditions is
+% to verify output. If output_correctness is false, then assert will let code crash.
 if debug_flag
-    postconditions(fun, xval, fval, exitflag, output);
+    verify_postconditions(fun, xval, fval, exitflag, output);
 end
 
 switch exitflag

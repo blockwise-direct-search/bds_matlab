@@ -1,4 +1,4 @@
-function [] = preconditions(fun, x0, options)
+function [] = verify_preconditions(fun, x0, options)
 % TODO: no return value
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for fun %%%%%%%%%%%%%%%%%
 % FUN should be a function handle or a function name.
@@ -7,7 +7,7 @@ assert(ischarstr(fun) || isa(fun, "function_handle"));
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for x0 %%%%%%%%%%%%%%%%%
 [isrv, ~]  = isrealvector(x0);
-assert(isrv);  
+assert(isrv);
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for options %%%%%%%%%%%%%%%%%
 if isfield(options, "nb")
