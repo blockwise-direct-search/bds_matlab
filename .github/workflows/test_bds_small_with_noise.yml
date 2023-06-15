@@ -22,7 +22,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [Gauss-Seidel]
         competitor: [Randomized_array, simplex, bfgs, lbfgs, uobyqa, newuoa, bobyqa, lincoa]
-        noise_classification: [neglibible, low, medium, high]
+        noise_level: [neglibible, low, medium, high]
 
     steps:
       - name: Check out repository
@@ -86,7 +86,7 @@ jobs:
             parameters.parallel = true;
             parameters.StepTolerance = eps;
             parameters.is_noisy = true;
-            parameters.noise_classification = "${{ matrix.noise_classification }}";
+            parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.num_random = 5;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
