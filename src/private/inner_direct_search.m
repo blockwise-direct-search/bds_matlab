@@ -95,12 +95,12 @@ for j = 1 : num_directions
     %    directions before it.
     % 2. What if we update fnew and xnew whenever there is a smple decrease?
     %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
-    
-    sufficient_decrease = fnew < fbase - sufficient_decrease_factor * alpha^2 / 2;
+
+    sufficient_decrease = fnew + sufficient_decrease_factor * alpha^2/2 < fbase;
     if sufficient_decrease
         success = true;
     end
-    
+
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
         fval = fnew;
@@ -126,51 +126,51 @@ end
 
 function array = cycling(array, index, strategy, with_memory)
 %CYCLING Permute an array according to different options
-%   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array 
-%   that is a permutation of ARRAY according to INDEX, STRATEGY, and MEMORY. 
-%   
-%   ARRAY is the array to permute. It must be a vector. 
-%   INDEX is a number from -1, 1, ..., length(array). If INDEX = -1, then there is 
+%   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array
+%   that is a permutation of ARRAY according to INDEX, STRATEGY, and MEMORY.
+%
+%   ARRAY is the array to permute. It must be a vector.
+%   INDEX is a number from -1, 1, ..., length(array). If INDEX = -1, then there is
 %   no permutation.
 %   MEMORY is a boolean value. If MEMORY is true, then the output ARRAY will
-%   be obtained by permitting the ARRAY; otherwise, the input ARRAY will be 
-%   discarded and the output ARRAY will be obtained by permuting sort(ARRAY). 
+%   be obtained by permitting the ARRAY; otherwise, the input ARRAY will be
+%   discarded and the output ARRAY will be obtained by permuting sort(ARRAY).
 %   STRATEGY is a nonnegative integer from 0 to 4, indicating the strategy of the
 %   permutation as follows.
 %
 %
-%   0  No permutation. 
+%   0  No permutation.
 %
 %   1  The element of the index will be moved to the first element of array.
 %
-%   EXAMPLE 
-%   When array is 3 1 2 4 5, if index = 3, for with_memory situation, 
-%   array will be 2 3 1 4 5 after cycling; for nonwith_memory situaion, index 
-%   will be 2, sort(index) is 1 2 3 4 5 and array will be 2 1 3 4 5 after 
+%   EXAMPLE
+%   When array is 3 1 2 4 5, if index = 3, for with_memory situation,
+%   array will be 2 3 1 4 5 after cycling; for nonwith_memory situaion, index
+%   will be 2, sort(index) is 1 2 3 4 5 and array will be 2 1 3 4 5 after
 %   cycling.
 %
 %   2  The element of the index and the following ones until end will be
 %      moved ahead of array.
 %
 %   EXAMPLE
-%   When array is 2 1 4 5 3, if index = 3, for with_memory situation, 
-%   array will be 4 5 3 2 1 after cycling; for nonwith_memory situaion, index 
-%   will be 4, sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after 
+%   When array is 2 1 4 5 3, if index = 3, for with_memory situation,
+%   array will be 4 5 3 2 1 after cycling; for nonwith_memory situaion, index
+%   will be 4, sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after
 %   cycling.
 %
-%   3  The element of the following ones after index until end will be 
+%   3  The element of the following ones after index until end will be
 %      moved ahead of array.
-%   
-%   EXAMPLE 
-%   When array is 2 1 4 5 3 and index = 3, for with_memory situation, 
+%
+%   EXAMPLE
+%   When array is 2 1 4 5 3 and index = 3, for with_memory situation,
 %   array will be 5 3 2 1 4 after cycling; for nonwith_memory situaion, index will
 %   be 4, sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
-%   
+%
 %   4  The element of the following one after index will be moved ahead of array.
-%   
-%   EXAMPLE  
-%   array is 4 1 2 3 5, if index = 3, for with_memory situation, array will 
-%   be 3 4 1 2 5 after cycling; for nonwith_memory situaion, index will be 2, 
+%
+%   EXAMPLE
+%   array is 4 1 2 3 5, if index = 3, for with_memory situation, array will
+%   be 3 4 1 2 5 after cycling; for nonwith_memory situaion, index will be 2,
 %   sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
 %
 %
@@ -206,44 +206,44 @@ if ~with_memory
 end
 
 switch strategy
-    % If cycling_strategy is 1, the element of the index will be moved to 
-    % the first element of array. For example, if index = 3, array is 1 2 3 4 5, 
-    % then array will be 3 1 2 4 5 after cycling. For the case where 
-    % array is 3 1 2 4 5, if index = 3, for with_memory situation, array will 
-    % be 2 3 1 4 5 after cycling; for nonwith_memory situaion, index will 
-    % be 2 after executing the code paragraph above, sort(index) 
+    % If cycling_strategy is 1, the element of the index will be moved to
+    % the first element of array. For example, if index = 3, array is 1 2 3 4 5,
+    % then array will be 3 1 2 4 5 after cycling. For the case where
+    % array is 3 1 2 4 5, if index = 3, for with_memory situation, array will
+    % be 2 3 1 4 5 after cycling; for nonwith_memory situaion, index will
+    % be 2 after executing the code paragraph above, sort(index)
     %is 1 2 3 4 5 and array will be 2 1 3 4 5 after cycling.
     case {1}
         array(1:index) = array([index, 1:index-1]);
-    % If cycling_strategy is 2, the element of the index and the following 
-    % ones until end will be moved ahead of array. For example, if index = 3, 
-    % array is 1 2 3 4 5, then array will be 3 4 5 1 2 after cycling. 
-    % When array is 2 1 4 5 3, if index = 3, for with_memory 
-    % situation, array will be 4 5 3 2 1 after cycling; for nonwith_memory 
-    % situaion, index will be 4 after executing the paragraph above, 
+    % If cycling_strategy is 2, the element of the index and the following
+    % ones until end will be moved ahead of array. For example, if index = 3,
+    % array is 1 2 3 4 5, then array will be 3 4 5 1 2 after cycling.
+    % When array is 2 1 4 5 3, if index = 3, for with_memory
+    % situation, array will be 4 5 3 2 1 after cycling; for nonwith_memory
+    % situaion, index will be 4 after executing the paragraph above,
     % sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after cycling.
     case {2}
         array = array([index:end, 1:index-1]);
     % If cycling_strategy is 3, the element of the following ones after index
-    % until end will be moved ahead of array. For example, if index = 3, array 
-    % is 1 2 3 4 5, then array will be 4 5 1 2 3 after cycling. 
-    % When array is 2 1 4 5 3 and index = 3, for with_memory 
-    % situation, array will be 5 3 2 1 4 after cycling; for nonwith_memory 
-    % situaion, index will be 4 after executing the paragraph above, 
+    % until end will be moved ahead of array. For example, if index = 3, array
+    % is 1 2 3 4 5, then array will be 4 5 1 2 3 after cycling.
+    % When array is 2 1 4 5 3 and index = 3, for with_memory
+    % situation, array will be 5 3 2 1 4 after cycling; for nonwith_memory
+    % situaion, index will be 4 after executing the paragraph above,
     % sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
     case {3}
         array = array([index+1:end, 1:index]);
     % If cycling_strategy is 4, the element of the following one after index
-    % will be moved ahead of array. For example, if index = 3, array 
-    % is 1 2 3 4 5, then array will be 4 1 2 3 5 after cycling. 
-    % For the case where array is 4 1 2 3 5, if index = 3, for with_memory 
-    % situation, array will be 3 4 1 2 5 after cycling; for nonwith_memory 
-    % situaion, index will be 2 after executing the paragraph above, 
+    % will be moved ahead of array. For example, if index = 3, array
+    % is 1 2 3 4 5, then array will be 4 1 2 3 5 after cycling.
+    % For the case where array is 4 1 2 3 5, if index = 3, for with_memory
+    % situation, array will be 3 4 1 2 5 after cycling; for nonwith_memory
+    % situaion, index will be 2 after executing the paragraph above,
     % sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
     case {4}
         if index ~= length(array)
             array(1:index+1) = array([index+1, 1:index]);
-        end       
+        end
 end
 
 if debug_flag
@@ -253,5 +253,3 @@ if debug_flag
 end
 
 end
-
-

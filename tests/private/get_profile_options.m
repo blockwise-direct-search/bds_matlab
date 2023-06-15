@@ -161,8 +161,18 @@ if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = false;
 end
 
-if ~isfield(parameters, "noise_level")
+if ~isfield(parameters, "noise_level") && ~isfield(parameters, "noise_intensity")
     parameters.noise_level = 1e-3;
+else
+    if isfield(parameters, "noise_intensity")
+        if parameters.noise_intensity == "small"
+            parameters.noise_level = 1e-9;
+        elseif parameters.noise_intensity == "medium"
+            parameters.noise_level = 1e-6;
+        else
+            parameters.noise_level = 1e-3;
+        end 
+    end 
 end
 
 if ~isfield(parameters, "is_abs_noise")

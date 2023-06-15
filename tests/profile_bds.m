@@ -69,7 +69,7 @@ s.blacklist = [s.blacklist, {}];
 s.blacklist = [{'LRCOVTYPE'},{'LRIJCNN1'},{'PARKCH'},{'STRATEC'}];
 %    {'GAUSS1LS'}, {'GAUSS2LS'}, {'GAUSS3LS'}, {'HEART8LS'}, ...
 %     {'PALMER1C'}, {'PALMER2C'}, {'PALMER3C'}, {'PALMER4C'}, {'PALMER6C'}, ...
-%     {'PALMER7C'}, {'PALMER8C'}, {'VESUVIALS'}, {'VESUVIOLS'}, {'VESUVIOULS'}, ...    
+%     {'PALMER7C'}, {'PALMER8C'}, {'VESUVIALS'}, {'VESUVIOLS'}, {'VESUVIOULS'}, ...
 %     {'VIBRBEAM'}
 
 problem_names = secup(s);
@@ -160,11 +160,12 @@ if parameters.parallel == true
             fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
                 [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
-                fval_tmp(j) = fval;
+                fval_tmp(j) = fval
                 frec(i,j,r,:) = fhist;
             end
-            [fmin(i,r), I] = min(fval_tmp);
-            fprintf("%d %s\n", I, p.name);
+             [fmin(i,r), I] = min(fval_tmp);
+            index_min = find(fval_tmp <= fmin(i,r));
+            fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
         end
     end
 else
@@ -179,7 +180,8 @@ else
                 frec(i,j,r,:) = fhist;
             end
             [fmin(i,r), I] = min(fval_tmp);
-            fprintf("%d %s\n", I, p.name);
+            index_min = find(fval_tmp <= fmin(i,r));
+            fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
         end
     end
 end
@@ -251,7 +253,7 @@ for i = 1:numel(pdfFiles)
     pdfNamesCell{i} = pdfFiles(i).name;
 end
 
-% Use the strjoin function to concatenate the elements in a cell array into a single string. 
+% Use the strjoin function to concatenate the elements in a cell array into a single string.
 inputfiles = strjoin(pdfNamesCell, ' ');
 
 % Remove spaces at the beginning of a string.
@@ -275,4 +277,3 @@ rmpath(path_competitors_matlab_functions);
 cd(path_temporary);
 
 end
-

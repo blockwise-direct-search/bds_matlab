@@ -5,7 +5,8 @@ prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper
 if parameters.solvers_invoke(i) == "bds"
     pdfname = parameters.solvers_stamp(i);
 elseif parameters.solvers_invoke(i) == "bds_powell"
-    pdfname = parameters.solvers_stamp(i);
+    powell_factor_stamp = int2str(int32(-log10(parameters.powell_factor(i))));
+    pdfname = strcat(parameters.solvers_stamp(i), "_", powell_factor_stamp);
 elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
     if strcmp(parameters.solvers_invoke(i), "mnewuoa_wrapper")
         pdfname = "mnewuoa";

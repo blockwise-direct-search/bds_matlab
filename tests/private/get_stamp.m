@@ -1,5 +1,5 @@
 function [solver_stamp] = get_stamp(parameters, j)
-% Get the legend of solver on performance profile.
+% Get the stamp of solver on performance profile.
 
 % bds
 if strcmp(parameters.solvers_invoke(j), "bds") && strcmp(parameters.blocks_strategy(j), "Gauss-Seidel")

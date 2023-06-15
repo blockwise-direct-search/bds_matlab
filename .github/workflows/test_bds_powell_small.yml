@@ -92,5 +92,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: my-artifacts
+          name: test_bds_powell_small
           path: ./tests/testdata
