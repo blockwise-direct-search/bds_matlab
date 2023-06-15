@@ -161,18 +161,23 @@ if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = false;
 end
 
-if ~isfield(parameters, "noise_level") && ~isfield(parameters, "noise_classification")
+if ~isfield(parameters, "noise_level")
     parameters.noise_level = 1e-3;
-else
-    if isfield(parameters, "noise_classification")
-        if parameters.noise_classification == "small"
-            parameters.noise_level = 1e-9;
-        elseif parameters.noise_classification == "medium"
-            parameters.noise_level = 1e-6;
-        else
-            parameters.noise_level = 1e-3;
-        end
-    end
+elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "string")
+    switch lower(parameters.noise_level)
+        case "negligible"
+                parameters.noise_level = 1.0e-7;
+         case "low"
+                parameters.noise_level = 1.0e-5;
+         case "medium"
+                parameters.noise_level = 1.0e-3;
+         case "high"
+                parameters.noise_level = 1.0e-1;
+         case "excessive"
+                parameters.noise_level = 2.0e-1;              
+         otherwise
+                error("Unkown noise level %s", parameters.noise_level);
+     end 
 end
 
 if ~isfield(parameters, "is_abs_noise")

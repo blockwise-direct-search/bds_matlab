@@ -112,9 +112,7 @@ for j = 1 : num_directions
     sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
     % decrease, success will always be true.
-    if sufficient_decrease
-        success = (success || sufficient_decrease);
-    end
+    success = (success || sufficient_decrease);
 
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;

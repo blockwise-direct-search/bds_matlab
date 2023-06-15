@@ -245,7 +245,7 @@ for iter = 1 : maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;
-        
+
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
@@ -316,11 +316,6 @@ output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
 
-% Verify_postconditions: If debug_flag is true, then verify_postconditions is
-% to verify output. If output_correctness is false, then assert will let code crash.
-if debug_flag
-    verify_postconditions(fun, xval, fval, exitflag, output);
-end
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
@@ -333,4 +328,10 @@ switch exitflag
         output.message = "The maximum number of iterations is reached";
     otherwise
         output.message = "Unknown exitflag";
+end
+
+% Verify_postconditions: If debug_flag is true, then verify_postconditions is
+% to verify output. If output_correctness is false, then assert will let code crash.
+if debug_flag
+    verify_postconditions(fun, xval, fval, exitflag, output);
 end
