@@ -37,7 +37,7 @@ for i = 1:solvers_num
      if strcmp(parameters.solvers_invoke(i), "GSDS")...
              || strcmp(parameters.solvers_invoke(i), "SBDS" )
          parameters.solvers_invoke(i) = "bds";
-     elseif ~isempty(find(bds_powell_list == parameters.solvers_invoke(i), 1))
+     elseif ~isempty(find(BDS_Powell_list == parameters.solvers_invoke(i), 1))
              parameters.solvers_invoke(i) = "bds_powell";
      % Prima.
      elseif ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
