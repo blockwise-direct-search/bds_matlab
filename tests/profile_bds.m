@@ -132,8 +132,8 @@ test_options.scaling_matrix_factor = 5;
 
 solver_options.fminunc_type = parameters.fminunc_type;
 
-if isfield(parameters, "blocks_strategy")
-    solver_options.blocks_strategy = parameters.blocks_strategy;
+if isfield(parameters, "Algorithm")
+    solver_options.Algorithm = parameters.Algorithm;
 end
 
 if isfield(parameters, "nb_generator")

@@ -114,6 +114,9 @@ for j = 1 : num_directions
     % decrease, success will always be true.
     success = (success || sufficient_decrease);
 
+    % For complete polling, fbase is fixed during all iterations in the block. So there is some case
+    % where sufficient_decrease is true and fnew >= fval. For opportunistic polling, as long as
+    % sufficient decrease is true, then the following points will not be explored.
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
         fval = fnew;

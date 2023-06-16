@@ -2,12 +2,15 @@ function [solver_legend] = get_legend(parameters, i)
 % Get the legend of solver on performance profile.
 
 % Blockwise_direct_search
-if strcmp(parameters.solvers_invoke(i), "bds") && strcmp(parameters.blocks_strategy(i), "Gauss-Seidel")
-    solver_legend = "bds-GS";
-elseif strcmp(parameters.solvers_invoke(i), "bds") && strcmp(parameters.blocks_strategy(i), "Randomized_array")
-    solver_legend = "bds-Randomized(array)";
+if strcmp(parameters.solvers_invoke(i), "bds")
+    if strcmp(parameters.Algorithm(i), "SBDS")
+        solver_legend = "SBDS";
+    else
+       strcmp(parameters.Algorithm(i), "GSDS")
+        solver_legend = "GSDS";
+    end
 elseif strcmp(parameters.solvers_invoke(i), "bds_powell")
-    solver_legend = "bds-GS-Powell";
+    solver_legend = "GSDS-Powell";
 end
 
 % Bds_polling
@@ -22,16 +25,16 @@ if strcmp(parameters.solvers_invoke(i), "bds_polling")
     else
         polling_inner = "opp";
     end
-    solver_legend = strcat("ds","_",polling_outer, num2str(parameters.cycling_outer(i)), polling_inner, ...
+    solver_legend = strcat("CBDS","_",polling_outer, num2str(parameters.cycling_outer(i)), polling_inner, ...
         num2str(parameters.cycling_inner(i)));
 end
 
 % ds_randomized
 if strcmp(parameters.solvers_invoke(i), "ds_randomized")
     if parameters.randomized_strategy(i) == "Randomized_once"
-        solver_legend = "ds-Randomized-once";
+        solver_legend = "DSPD-Randomized-once";
     elseif parameters.randomized_strategy(i) == "Randomized_always"
-        solver_legend = "ds-Randomized-always";
+        solver_legend = "DSPD-Randomized-always";
     end
 end
 
@@ -62,4 +65,3 @@ if strcmp(parameters.solvers_invoke(i), "matlab_patternsearch")
 end
 
 end
-

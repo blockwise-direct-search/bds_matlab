@@ -50,19 +50,6 @@ if ~isfield(parameters, "nb_generator")
     end
 end
 
-bds_list = ["blockwise_direct_search", "bds_polling"];
-if ~isfield(parameters, "nb_tag")
-    parameters.nb_tag = strings(1, num_solvers);
-    for i = 1:num_solvers
-        nb_generator = parameters.nb_generator(i);
-        if any(contains(bds_list, parameters.solvers_invoke(i)))
-            parameters.nb_tag(i) = get_nb_tag(nb_generator);
-        else
-            parameters.nb_tag(i) = "none";
-        end
-    end
-end
-
 % Set parameters for cutest problems.
 if ~isfield(parameters, "problems_type")
     parameters.problems_type = get_default_testparameters("problems_type");
@@ -166,18 +153,18 @@ if ~isfield(parameters, "noise_level")
 elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "string")
     switch lower(parameters.noise_level)
         case "negligible"
-                parameters.noise_level = 1.0e-7;
-         case "low"
-                parameters.noise_level = 1.0e-5;
-         case "medium"
-                parameters.noise_level = 1.0e-3;
-         case "high"
-                parameters.noise_level = 1.0e-1;
-         case "excessive"
-                parameters.noise_level = 2.0e-1;              
-         otherwise
-                error("Unkown noise level %s", parameters.noise_level);
-     end 
+            parameters.noise_level = 1.0e-7;
+        case "low"
+            parameters.noise_level = 1.0e-5;
+        case "medium"
+            parameters.noise_level = 1.0e-3;
+        case "high"
+            parameters.noise_level = 1.0e-1;
+        case "excessive"
+            parameters.noise_level = 2.0e-1;
+        otherwise
+            error("Unkown noise level %s", parameters.noise_level);
+     end
 end
 
 if ~isfield(parameters, "is_abs_noise")

@@ -3,10 +3,10 @@ function [pdfname] = get_pdf_name(parameters, i)
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
 
 if parameters.solvers_invoke(i) == "bds"
-    pdfname = parameters.solvers_stamp(i);
+    pdfname = parameters.Algorithm(i);
 elseif parameters.solvers_invoke(i) == "bds_powell"
     powell_factor_stamp = int2str(int32(-log10(parameters.powell_factor(i))));
-    pdfname = strcat(parameters.solvers_stamp(i), "_", powell_factor_stamp);
+    pdfname = strcat("GSDS_Powell", "_", powell_factor_stamp);
 elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
     if strcmp(parameters.solvers_invoke(i), "mnewuoa_wrapper")
         pdfname = "mnewuoa";
@@ -19,7 +19,7 @@ elseif parameters.solvers_invoke(i) == "matlab_patternsearch"
     pdfname = strcat("patternsearch", "_", "gps");
 elseif parameters.solvers_invoke(i) == "matlab_fminunc"
     pdfname = strcat("fminunc", "_", parameters.fminunc_type);
-elseif parameters.solvers_invoke(i) == "bds_polling"
+elseif parameters.solvers_invoke(i) == "CBDS"
     if parameters.polling_outer == "complete"
         polling_outer = "com";
     else
@@ -31,11 +31,11 @@ elseif parameters.solvers_invoke(i) == "bds_polling"
         polling_inner = "opp";
     end
 
-    pdfname = strcat("bds_polling", "_", parameters.nb_tag(i), "_",...
+    pdfname = strcat("CBDS", "_", parameters.nb_tag(i), "_",...
     polling_outer, num2str(parameters.cycling_outer(i)), polling_inner,...
     num2str(parameters.cycling_inner(i)));
-elseif parameters.solvers_invoke(i) == "ds_randomized"
-    pdfname = strcat("ds", "_", parameters.randomized_strategy(i));
+elseif parameters.solvers_invoke(i) == "DSPD"
+    pdfname = strcat("DSPD", "_", parameters.randomized_strategy(i));
 end
 
 end

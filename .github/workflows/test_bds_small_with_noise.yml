@@ -20,9 +20,9 @@ jobs:
         matlab: [latest]
         dim: [small]
         with_optim_toolbox: [yes]
-        solver: [Gauss-Seidel]
-        competitor: [Randomized_array, simplex, bfgs, lbfgs, uobyqa, newuoa, bobyqa, lincoa]
-        noise_level: [neglibible, low, medium, high]
+        solver: [GSDS]
+        competitor: [SBDS, simplex, bfgs, lbfgs, uobyqa, newuoa, bobyqa, lincoa]
+        noise_level: [negligible, low, medium, high]
 
     steps:
       - name: Check out repository

@@ -2,22 +2,20 @@ function [solver_stamp] = get_stamp(parameters, j)
 % Get the stamp of solver on performance profile.
 
 % bds
-if strcmp(parameters.solvers_invoke(j), "bds") && strcmp(parameters.blocks_strategy(j), "Gauss-Seidel")
-    solver_stamp = "GS";
-elseif strcmp(parameters.solvers_invoke(j), "bds") && strcmp(parameters.blocks_strategy(j), "Randomized_array")
-    solver_stamp = "Randomized_array";
+if strcmp(parameters.solvers_invoke(j), "bds")
+    solver_stamp = parameters.Algorithm(j);
 elseif strcmp(parameters.solvers_invoke(j), "bds_powell")
-    solver_stamp = "GS_Powell";
+    solver_stamp = "GSDS_Powell";
 end
 
 % Bds_polling
 if strcmp(parameters.solvers_invoke(j), "bds_polling")
-    solver_stamp = "bds_polling";
+    solver_stamp = "CBDS";
 end
 
 % Ds_randomized
 if strcmp(parameters.solvers_invoke(j), "ds_randomized")
-    solver_stamp = "ds_randomized";
+    solver_stamp = "DSPD";
 end
 
 % Matlab_fminsearch
@@ -46,4 +44,3 @@ if strcmp(parameters.solvers_invoke(j), "matlab_patternsearch")
 end
 
 end
-

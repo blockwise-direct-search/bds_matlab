@@ -168,6 +168,11 @@ else
     cycling_inner = get_default_constant("cycling_inner");
 end
 
+% Set default value of shuffle_period.
+shuffle_period = get_default_constant("shuffle_period");
+if strcmp(options.Algorithm, "SBDS")
+    shuffle_period = nb;
+end
 
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.
@@ -211,10 +216,6 @@ if fval <= ftarget
     maxit = 0;
 end
 
-% The number of blocks having been visited. When we store alpha_hist, this
-% parameter is needed.
-nb_visited = 0;
-
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
 
@@ -228,8 +229,11 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;
 
-    block_indices = permutation(block_indices, options);
-    options.permutation_indicator = false;
+    % Why iter-1? Because iter = nb_visited + 1.
+    if strcmpi(options.Algorithm, "sbds") && mod(iter - 1, shuffle_period) == 0
+    % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
+    block_indices = randperm(nb);
+    end
 
     for i = 1:nb
         % In case of permutation.
@@ -250,12 +254,8 @@ for iter = 1 : maxit
             fval, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
 
-        % The i-th block has been visited recently.
-        hist.block(iter) = i_real;
         % Update the history of step size.
         alpha_hist(:, iter) = alpha_all;
-        % Update the number of blocks having been visited.
-        nb_visited = nb_visited + 1;
 
         % Store the history of the evaluations performed by
         % inner_direct_search, and adjust the number of function

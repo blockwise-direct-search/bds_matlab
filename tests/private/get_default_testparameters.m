@@ -23,8 +23,6 @@ switch constant_name
         constant_value = eps;
     case {"ftarget"}
         constant_value = -inf;
-    case {"block_strategy"}
-        constant_value = "Gauss-Seidel";
     case {"polling_outer"}
         constant_value = "opportunistic";
     case {"cycling_outer"}
@@ -47,10 +45,6 @@ switch constant_name
         constant_value = 60;
     case {"direction"}
         constant_value = "canonical";
-    case {"num_solvers"}
-        constant_value = 2;
-    case {"solvers_invoke"}
-        constant_value = "blockwise_direct_search";
     case {"solvers_legend"}
         constant_value = "no-legend";
     case {"solvers_stamp"}
@@ -61,4 +55,3 @@ switch constant_name
         constant_value = "Unknown constant name";
 end
 end
-

@@ -20,8 +20,8 @@ jobs:
         matlab: [latest]
         dim: [big]
         with_optim_toolbox: [yes]
-        solver: [Gauss-Seidel]
-        competitor: [Randomized_array, simplex, bfgs, lbfgs, newuoa, bobyqa, lincoa]
+        solver: [GSDS]
+        competitor: [SBDS, simplex, bfgs, lbfgs, newuoa, bobyqa, lincoa]
 
     steps:
       - name: Check out repository
