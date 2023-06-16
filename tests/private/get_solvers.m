@@ -16,20 +16,17 @@ prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
 
 % If there is a solver called "SBDS", set default value of Algorithm.
-if any(contains(parameters.solvers_invoke, "SBDS")) && any(contains(parameters.solvers_invoke, "GSDS"))
+if any(contains(parameters.solvers_invoke, "SBDS")) || any(contains(parameters.solvers_invoke, "GSDS"))
     Algorithm_list = repmat("default", 1, solvers_num);
     parameters.Algorithm = Algorithm_list;
-    indices_SBDS = find(contains(BDS_list, "SBDS"));
-    indices_GSDS = find(contains(BDS_list, "GSDS"));
 
-    for i = 1:length(indices_SBDS)
-        parameters.Algorithm(indices_SBDS(i)) = "SBDS";
+    for i = 1:solvers_num
+        if strcmp(parameters.solvers_invoke(i), "SBDS")
+            parameters.Algorithm(i) = "SBDS";
+        elseif strcmp(parameters.solvers_invoke(i), "GSDS")
+            parameters.Algorithm(i) = "GSDS";
+        end
     end
-
-    for i = 1:length(indices_GSDS)
-        parameters.Algorithm(indices_GSDS(i)) = "GSDS";
-    end
-
 end
 
 for i = 1:solvers_num
