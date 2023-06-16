@@ -73,7 +73,7 @@ m = size(D, 2); % number of directions
 if isfield(options, "nb")
     nb = options.nb;
 else
-    % TODO: this default value is good for canonical with 2n directions. For
+    % Default value is set as n, which is good for canonical with 2n directions. For
     % other situations, other value may be good.
     nb = n;
 end
@@ -85,7 +85,6 @@ block_indices = 1:nb;
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e5.
-
 if isfield(options, "maxfun_dim") && isfield(options, "maxfun")
     maxfun = min(options.maxfun_dim*n, options.maxfun);
 elseif isfield(options, "maxfun_dim")
@@ -154,11 +153,6 @@ else
    ftarget = get_default_constant("ftarget");
 end
 
-% Set the default blocks_strategy. Default one is Gauss-Seidel.
-if ~isfield(options, "blocks_strategy")
-    options.blocks_strategy = get_default_constant("blocks_strategy");
-end
-
 % Set the default inner polling strategy. This is the polling strategy
 % employed within one block.
 if ~isfield(options, "polling_inner")
@@ -191,7 +185,6 @@ end
 alpha_hist(:, 1) = alpha_all;
 
 % Divide the indices of the polling directions for each block.
-% TODO: Tell Zaikun that Tom disagrees with this name.
 searching_set_indices = divide_searching_set(m, nb);
 
 % Initialize the computations.
@@ -217,10 +210,6 @@ if fval <= ftarget
     maxit = 0;
 end
 
-% The number of blocks having been visited. When we store alpha_hist, this
-% parameter is needed.
-nb_visited = 0;
-
 if ~isfield(options, "powell_factor")
     powell_factor = get_default_constant("powell_factor");
 else
@@ -232,8 +221,7 @@ alpha_threshold = powell_factor^2*options.alpha_init;
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
-
-
+    % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
 
     % Let xbase be the point from which the polling directions are
@@ -242,10 +230,12 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;
 
-    block_indices = permutate(block_indices, options);
-    options.permutation_indicator = false;
 
-    any_success = false;
+    % Why iter-1? Because iter = nb_visited + 1.
+    if strcmpi(options.Algorithm, "sbds") && mod(iter - 1, shuffle_period) == 0
+    % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
+    block_indices = randperm(nb);
+    end
 
     for i = 1:nb
         % In case of permutation.
@@ -274,12 +264,8 @@ for iter = 1 : maxit
         xbase = xval;
         fbase = fval;
 
-        % The i-th block has been visited recently.
-        hist.block(iter) = i_real;
         % Update the history of step size.
         alpha_hist(:, iter) = alpha_all;
-        % Update the number of blocks having been visited.
-        nb_visited = nb_visited + 1;
 
         % Store the history of the evaluations performed by
         % inner_direct_search, and adjust the number of function
@@ -350,12 +336,6 @@ output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
 
-% Postcondition: If debug_flag is true, then post-conditions is operated on
-% output. If output_correctness is false, then assert will let code crash.
-if debug_flag
-    postcondition_bds(fun, xval, fval, exitflag, output);
-end
-
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
         output.message = "The StepTolerance on the step size is reached";
@@ -367,4 +347,10 @@ switch exitflag
         output.message = "The maximum number of iterations is reached";
     otherwise
         output.message = "Unknown exitflag";
+end
+
+% Postcondition: If debug_flag is true, then post-conditions is operated on
+% output. If output_correctness is false, then assert will let code crash.
+if debug_flag
+    postcondition_bds(fun, xval, fval, exitflag, output);
 end
