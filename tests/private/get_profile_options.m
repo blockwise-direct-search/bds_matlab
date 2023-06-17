@@ -64,10 +64,10 @@ if ~isfield(parameters, "problems_maxdim")
 end
 
 if isfield(parameters, "problems_dim")
-    if strcmp(parameters.problems_dim, "small")
+    if strcmpi(parameters.problems_dim, "small")
         parameters.problems_mindim = 1;
         parameters.problems_maxdim = 5;
-    elseif strcmp(parameters.problems_dim, "big")
+    elseif strcmpi(parameters.problems_dim, "big")
         parameters.problems_mindim = 6;
         parameters.problems_maxdim = 100;
     end

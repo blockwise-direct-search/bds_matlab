@@ -21,6 +21,8 @@ switch constant_value
         constant_value = true;
     case {"StepTolerance"}
         constant_value = eps;
+    case {"shuffle_period"}
+        constant_value = 1;
     case {"ftarget"}
         constant_value = -inf;
     case {"polling"}
@@ -32,7 +34,7 @@ switch constant_value
     case {"cycling"}
         constant_value = 3;
     case {"cycling_inner"}
-        constant_value = 1; 
+        constant_value = 1;
     case {"cycling_outer"}
         constant_value = 3;
     case {"with_memory"}

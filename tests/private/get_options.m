@@ -8,7 +8,7 @@ end
 
 maxfun = options.maxfun;
 
-if ~isempty(find(bds_list == name_solver, 1))
+if any(contains(bds_list, name_solver, 'IgnoreCase', true))
 
     % Polling strategies should be defined in the loop!!!
     options.polling_inner = solver_options.polling_inner(j);

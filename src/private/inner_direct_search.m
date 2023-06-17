@@ -125,7 +125,7 @@ for j = 1 : num_directions
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling
     % directions.
-    if success && ~strcmpii(options.polling_inner, "complete")
+    if success && ~strcmpi(options.polling_inner, "complete")
        direction_indices = cycling(direction_indices, j, options.cycling, options.with_memory);
        break;
     end

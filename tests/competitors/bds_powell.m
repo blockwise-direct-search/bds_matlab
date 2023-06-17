@@ -165,6 +165,15 @@ else
     cycling_inner = get_default_constant("cycling_inner");
 end
 
+% Set default value of shuffle_period. Default value of shuffle_period
+% should be set 1 since the algorithm visits nb blocks for every iteration.
+if strcmpi(options.Algorithm, "sbds")
+    if (isfield(options, "shuffle_period"))
+       shuffle_period = options.shufle_period;
+    else
+       shuffle_period = get_default_constant("shuffle_period");
+    end
+end
 
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.

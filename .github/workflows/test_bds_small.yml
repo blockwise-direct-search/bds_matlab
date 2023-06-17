@@ -21,7 +21,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [GSDS]
-        competitor: [SBDS, simplex, bfgs, lbfgs, cobyla, uobyqa, newuoa, bobyqa, lincoa]
+        competitor: [RBDS, SBDS, simplex, bfgs, lbfgs, cobyla, uobyqa, newuoa, bobyqa, lincoa]
 
     steps:
       - name: Check out repository
