@@ -114,7 +114,7 @@ for j = 1 : num_directions
     % decrease, success will always be true.
     success = (success || sufficient_decrease);
 
-    % For complete polling, fbase is fixed during all iterations in the block. So there is some case
+    % For complete polling, fbase is fixed during all iterations in the block. It may happen that
     % where sufficient_decrease is true and fnew >= fval. For opportunistic polling, as long as
     % sufficient decrease is true, then the following points will not be explored.
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
@@ -125,7 +125,7 @@ for j = 1 : num_directions
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling
     % directions.
-    if success && ~strcmpi(options.polling_inner, "complete")
+    if success && ~strcmpii(options.polling_inner, "complete")
        direction_indices = cycling(direction_indices, j, options.cycling, options.with_memory);
        break;
     end

@@ -162,10 +162,14 @@ else
     cycling_inner = get_default_constant("cycling_inner");
 end
 
-% Set default value of shuffle_period.
-shuffle_period = get_default_constant("shuffle_period");
-if strcmp(options.Algorithm, "SBDS")
-    shuffle_period = nb;
+% Set default value of shuffle_period. Default value of shuffle_period
+% should be set 1 since the algorithm visits nb blocks for every iteration.
+if strcmpi(options.Algorithm, "sbds")
+    if (isfield(options, "shuffle_period"))
+       shuffle_period = options.shufle_period;
+    else
+       shuffle_period = get_default_constant("shuffle_period");
+    end
 end
 
 % Set the default value for the boolean indicating whether the cycling
@@ -222,7 +226,7 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;
 
-    % Why iter-1? Because iter = nb_visited + 1.
+    % Why iter-1? Because iter = the number of blocks being visited + 1.
     if strcmpi(options.Algorithm, "SBDS") && mod(iter - 1, shuffle_period) == 0
     % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
     block_indices = randperm(nb);

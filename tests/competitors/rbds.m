@@ -41,19 +41,19 @@ function [xval, fval, exitflag, output] = rbds(fun, x0, options)
 %
 %   The number of function evaluations is OUTPUT.funcCount.
 %   The history of function evaluation is OUTPUT.fhist.
-%   The history of points is OUTPUT.xhist and 
+%   The history of points is OUTPUT.xhist and
 %   The l2-norm of gradient in OUTPUT.ghist (only for CUTESTPROBLEM).
+
+% Set options to an empty structure if it is not supplied.
+if nargin < 3
+    options = struct();
+end
 
 % Verify_preconditions: If debug_flag is true, then verify_preconditions is to verify
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    verify_preconditions(fun, x0, options);
-end
-
-% Set options to an empty structure if it is not supplied.
-if nargin < 3
-    options = struct();
+    precondition_bds(fun, x0, options);
 end
 
 % The exit flag will be set at each possible exit of the algorithm.
@@ -123,13 +123,23 @@ else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
 
+% Set the default boolean value of accept_simple_decrease. If
+% accept_simple_decrease is set to be true, it means the algorithm accepts
+% simple decrease to update xval and fval. However, alpha is always updated
+% by whether meeting sufficient decrease.
+if isfield(options, "accept_simple_decrease")
+    accept_simple_decrease = options.accept_simple_decrease;
+else
+    accept_simple_decrease = get_default_constant("accept_simple_decrease");
+end
+
 % Set the default tolerance of step size. If the step size reaches a value
 % below this tolerance, then the algorithm is stopped.
-if isfield(options, "tol")
-    alpha_tol = options.tol;
+if isfield(options, "StepTolerance")
+    alpha_tol = options.StepTolerance;
 else
     % "10 * eps * n" for example.
-    alpha_tol = get_default_constant("tol");
+    alpha_tol = get_default_constant("StepTolerance");
 end
 
 % Set the target on the objective function. If an evaluation of the
@@ -208,7 +218,7 @@ for iter = 1 : maxit
     % The corresponding value of the objective function is stored in fbase.
     xbase = xval(:);
     fbase = fval;
-    
+
     % Get the block that we are going to visit.
     i = randi([1, nb]);
 
@@ -217,23 +227,23 @@ for iter = 1 : maxit
     suboptions.maxfun = maxfun - nf;
     % Memory and cycling are needed since we permutate indices in inner_direct_search
     suboptions.cycling = cycling_inner;
-    suboptions.memory = memory;
+    suboptions.with_memory = with_memory;
     suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
     suboptions.ftarget = ftarget;
     suboptions.polling_inner = options.polling_inner;
     suboptions.accept_simple_decrease = accept_simple_decrease;
-    
+
     [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
         fval, xbase, fbase, D(:, direction_indices), direction_indices,...
         alpha_all(i), suboptions);
-    
+
     % The i-th block has been visited recently.
     hist.block(iter) = i;
     % Update the history of step size.
     alpha_hist(:, iter) = alpha_all;
     % Update the number of blocks having been visited.
     nb_visited = nb_visited+1;
-    
+
     % Store the history of the evaluations performed by
     % inner_direct_search, and adjust the number of function
     % evaluations.
@@ -262,7 +272,7 @@ for iter = 1 : maxit
     else
         alpha_all(i) = shrink * alpha_all(i);
     end
-    
+
     % Terminate the computations if the largest step size is below a
     % given tolerance.
     if max(alpha_all) < alpha_tol
@@ -290,6 +300,7 @@ output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, iter+1);
+output.nb_visited = nb_visited;
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}

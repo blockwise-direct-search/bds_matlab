@@ -12,6 +12,7 @@ old_dir = pwd;
 cd(path_tests_private)
 % Tell matlab where to find prima.
 locate_prima();
+locate_matcutest();
 cd(old_dir)
 
 p = macup(function_name);
@@ -20,7 +21,7 @@ options.StepTolerance = 0;
 options.rhoend = options.StepTolerance;
 fun = @(x) (1+1e-6*randn(1))*p.objective(x);
 
-[x, fval, exitflag, output] = bds(p.objective, p.x0, options)
+[x, fval, exitflag, output] = rbds(p.objective, p.x0, options)
 %[x, fval, exitflag, output] = newuoa(p.objective, p.x0, options)
 
 if isfield(output, 'xhist')
