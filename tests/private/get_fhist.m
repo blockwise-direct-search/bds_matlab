@@ -29,7 +29,7 @@ end
 
 % Experimence with noise (if num_random == 1, then the experiment has no noise)
 obj = ScalarFunction(p);
-solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options),p.x0, options);
+solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 
 % Turn off warning is a very dangerous thing. So it must be set a loop to
 % trun on after ending the computation.
