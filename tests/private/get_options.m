@@ -1,7 +1,7 @@
 function [options] = get_options(p, j, name_solver, solver_options, options)
 
-bds_list = ["bds", "bds_powell", "bds_polling"];
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
+bds_list = ["bds", "bds_powell"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if ~isempty(find(prima_list == name_solver, 1))
     name_solver = "prima";
 end
@@ -51,19 +51,6 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     if isfield(solver_options, "accept_simple_decrease")
         options.accept_simple_decrease = solver_options.accept_simple_decrease(j);
     end
-
-elseif name_solver == "ds_randomized"
-    % Strategy of with_memory, cycling and polling_inner (Memory vs Nonwith_memory when cycling)
-    options.with_memory = solver_options.with_memory(j);
-    options.cycling_inner = solver_options.cycling_inner(j);
-    options.randomized_strategy = solver_options.randomized_strategy(j);
-
-    % Options of step size
-    options.StepTolerance = solver_options.StepTolerance;
-    options.sufficient_decrease_factor = solver_options.sufficient_decrease_factor;
-    options.expand = solver_options.expand;
-    options.shrink = solver_options.shrink;
-    options.alpha_init = solver_options.alpha_init;
 
 elseif name_solver == "prima"
     options.output_xhist = true;

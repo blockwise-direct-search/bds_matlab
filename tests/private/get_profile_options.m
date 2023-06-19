@@ -181,6 +181,7 @@ end
 
 parameters.solvers_legend = [];
 for i = 1:num_solvers
+     keyboard
      parameters.solvers_legend = [parameters.solvers_legend get_legend(parameters, i)];
 end
 

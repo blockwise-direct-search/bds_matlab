@@ -5,22 +5,7 @@ function [solver_stamp] = get_stamp(parameters, j)
 if strcmpi(parameters.solvers_invoke(j), "bds")
     solver_stamp = parameters.Algorithm(j);
 elseif strcmpi(parameters.solvers_invoke(j), "bds_powell")
-    solver_stamp = "GSDS_Powell";
-end
-
-% Bds_polling
-if strcmpi(parameters.solvers_invoke(j), "bds_polling")
-    solver_stamp = "CBDS";
-end
-
-% Ds_randomized
-if strcmpi(parameters.solvers_invoke(j), "ds_randomized")
-    solver_stamp = "DSPD";
-end
-
-% rbds
-if strcmpi(parameters.solvers_invoke(j), "rbds")
-    solver_stamp = "RBDS";
+    solver_stamp = "CBDS_Powell";
 end
 
 % Matlab_fminsearch

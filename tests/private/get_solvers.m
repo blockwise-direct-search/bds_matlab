@@ -2,32 +2,31 @@ function [parameters] = get_solvers(parameters)
 
 solvers_num = length(parameters.solvers_invoke);
 
-% BDS(GSDS, SBDS)
-BDS_list = ["GSDS", "SBDS"];
-% BDS_Powell
-BDS_Powell_list = "GSDS-Powell";
-% Cyclic Blockwise Direct Search
-CBDS_list = "CBDS";
-% Randomized Blockwise Direct Search
-RBDS_list = "RBDS";
-% Direct search based on probabilistic descent (DSPD)
-DSPD_list = "DSPD";
+% bds_list(RBDS, DSPD, CBDS, DS, )
+% RBDS: Randomized Blockwise Direct Search
+% DSPD: Direct Search based on probabilistic descent
+% CBDS: Cyclic Blockwise Direct Search
+% DS: Direct search without blocks
+BDS_list = ["DS", "DSPD", "CBDS", "GSDS", "SBDS"];
 % Prima
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 % Fminunc
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
 
 % If there is a solver called "SBDS", set default value of Algorithm.
-if any(contains(parameters.solvers_invoke, 'SBDS', 'IgnoreCase', true)) || any(contains(parameters.solvers_invoke, 'GSDS', 'IgnoreCase', true)) ...
-    || any(contains(parameters.solvers_invoke, 'GSDS-Powell', 'IgnoreCase', true))
+if any(ismember(parameters.solvers_invoke, BDS_list))
     Algorithm_list = repmat("default", 1, solvers_num);
     parameters.Algorithm = Algorithm_list;
 
     for i = 1:solvers_num
-        if strcmpi(parameters.solvers_invoke(i), "SBDS")
-            parameters.Algorithm(i) = "SBDS";
-        elseif strcmpi(parameters.solvers_invoke(i), "GSDS")
-            parameters.Algorithm(i) = "GSDS";
+        if strcmpi(parameters.solvers_invoke(i), "sbds")
+            parameters.Algorithm(i) = "sbds";
+        elseif strcmpi(parameters.solvers_invoke(i), "gsds")
+            parameters.Algorithm(i) = "gsds";
+        elseif strcmpi(parameters.solvers_invoke(i), "ds")
+            parameters.Algorithm(i) = "ds";
+        elseif strcmpi(parameters.solvers_invoke(i), "dspd")
+            parameters.Algorithm(i) = "dspd";
         end
     end
 end
@@ -41,8 +40,7 @@ end
 
 for i = 1:solvers_num
      % Blockwise Direct Search
-     if strcmpi(parameters.solvers_invoke(i), "GSDS")...
-             || strcmpi(parameters.solvers_invoke(i), "SBDS" )
+     if any(contains(BDS_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
          parameters.solvers_invoke(i) = "bds";
      % Blockwise Direct Search with Powell's technique.
      elseif strcmpi(parameters.solvers_invoke(i), "GSDS-Powell")
@@ -59,12 +57,6 @@ for i = 1:solvers_num
      % fminsearch
      elseif parameters.solvers_invoke(i) == "simplex"
              parameters.solvers_invoke(i) = "matlab_fminsearch";
-     % CBDS
-     elseif strcmpi(parameters.solvers_invoke(i), "CBDS")
-             parameters.solvers_invoke(i) = "bds_polling";
-     % DSPD
-     elseif strcmpi(parameters.solvers_invoke(i), "DSPD")
-                 parameters.solvers_invoke(i) = "ds_randomized";
      end
 end
 

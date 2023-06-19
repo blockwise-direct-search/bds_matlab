@@ -22,23 +22,6 @@ elseif parameters.solvers_invoke(i) == "matlab_patternsearch"
     pdfname = strcat("patternsearch", "_", "gps");
 elseif parameters.solvers_invoke(i) == "matlab_fminunc"
     pdfname = strcat("fminunc", "_", parameters.fminunc_type);
-elseif parameters.solvers_invoke(i) == "bds"
-        if parameters.polling_outer == "complete"
-            polling_outer = "com";
-        else
-            polling_outer = "opp";
-        end
-        if parameters.polling_inner == "complete"
-            polling_inner = "com";
-        else
-            polling_inner = "opp";
-        end
-
-    pdfname = strcat("CBDS", "_", parameters.nb_tag(i), "_",...
-    polling_outer, num2str(parameters.cycling_outer(i)), polling_inner,...
-    num2str(parameters.cycling_inner(i)));
-elseif parameters.solvers_invoke(i) == "ds_randomized"
-    pdfname = strcat("DSPD", "_", parameters.randomized_strategy(i));
 end
 
 end

@@ -65,16 +65,29 @@ x0 = double(x0(:));
 
 % Set the polling directions in D.
 n = length(x0);
-D = get_searching_set(n, options);
+if strcmpi(options.Algorithm, "gsds") || strcmpi(options.Algorithm, "sbds") || strcmpi(options.Algorithm, "ds")
+    D = get_searching_set(n, options);
+elseif strcmpi(options.Algorithm, "dspd")
+        % Generate a vector which follows uniform distribution on the sphere of a unit ball.
+        rv = NaN(n, 1);
+        for i = 1:n
+            rv(i) = randn(1);
+        end
+        [Q, ~] = qr(rv);
+        D = [Q, -Q];
+end
+
 m = size(D, 2); % number of directions
 
 % Set the default number of blocks.
 if isfield(options, "nb")
     nb = options.nb;
-else
-    % Default value is set as n, which is good for canonical with 2n directions. For
-    % other situations, other value may be good.
-    nb = n;
+elseif strcmpi(options.Algorithm, "gsds") || strcmpi(options.Algorithm, "sbds")
+        % Default value is set as n, which is good for canonical with 2n directions. For
+        % other situations, other value may be good.
+        nb = n;
+elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorihm, "ds")
+        nb = 1;
 end
 
 % If number of directions is less than number of blocks, then the number of
@@ -224,13 +237,13 @@ for iter = 1 : maxit
     xbase = xval(:);
     fbase = fval;
 
-    % Why iter-1? Because iter = the number of blocks being visited + 1.
+    % Why iter-1? Because the number of blocks being visited = (iter-1)*nb.
     if strcmpi(options.Algorithm, "sbds") && mod(iter - 1, shuffle_period) == 0
     % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
         block_indices = randperm(nb);
     end
 
-    for i = 1:nb
+    for i = 1:length(block_indices)
         % In case of permutation.
         i_real = block_indices(i);
 
