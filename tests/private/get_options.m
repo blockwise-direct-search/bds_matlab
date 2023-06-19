@@ -1,6 +1,6 @@
 function [options] = get_options(p, j, name_solver, solver_options, options)
 
-bds_list = ["bds", "bds_powell"];
+bds_list = ["bds", "bds_powell", "rbds"];
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
 maxfun = options.maxfun;

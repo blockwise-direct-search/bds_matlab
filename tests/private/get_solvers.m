@@ -14,7 +14,7 @@ prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
 
 % If there is a solver called "SBDS", set default value of Algorithm.
-if any(ismember(parameters.solvers_invoke, BDS_list))
+if any(ismember(lower(parameters.solvers_invoke), lower(BDS_list)))
     Algorithm_list = repmat("default", 1, solvers_num);
     parameters.Algorithm = Algorithm_list;
 
