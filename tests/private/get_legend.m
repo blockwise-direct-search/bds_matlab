@@ -51,14 +51,16 @@ if strcmpi(parameters.solvers_invoke(i), "matlab_fminunc")
 end
 
 % Prima and mnewuoa
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
-    if strcmpi(parameters.solvers_invoke(i), "mnewuoa_wrapper")
-        solver_legend = "mnewuoa";
-    else
-        solver_legend = parameters.solvers_invoke(i);
+    solver_legend = parameters.solvers_invoke(i);
+    if isfield(parameters, "version")
+        if strcmpi(parameters.version, "old")
+            solver_legend = strcat(parameters.solvers_invoke(i), "-", "classical");
+        end
     end
 end
+
 
 
 % Patternsearch

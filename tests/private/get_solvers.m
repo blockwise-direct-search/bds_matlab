@@ -32,6 +32,13 @@ if any(contains(parameters.solvers_invoke, 'SBDS', 'IgnoreCase', true)) || any(c
     end
 end
 
+% If parameters.version is set to be old, then options of classical of Prima is true.
+if isfield(parameters, "version")
+    if strcmpi(parameters.version, "old")
+        parameters.classical = true;
+    end
+end
+
 for i = 1:solvers_num
      % Blockwise Direct Search
      if strcmpi(parameters.solvers_invoke(i), "GSDS")...

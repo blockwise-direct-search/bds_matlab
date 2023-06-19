@@ -20,7 +20,7 @@ jobs:
         matlab: [latest]
         dim: [small]
         with_optim_toolbox: [yes]
-        solver: [GSDS_Powell]
+        solver: [GSDS-Powell]
         competitor: [GSDS]
         powell_factor_level: [one, two, three, four, five, six, seven, eight, nine, ten]
 

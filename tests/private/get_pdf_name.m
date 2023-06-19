@@ -1,6 +1,6 @@
 function [pdfname] = get_pdf_name(parameters, i)
 
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "mnewuoa_wrapper"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
 if parameters.solvers_invoke(i) == "bds"
     pdfname = parameters.Algorithm(i);
@@ -9,12 +9,13 @@ elseif parameters.solvers_invoke(i) == "bds_powell"
     pdfname = strcat("GSDS_Powell", "_", powell_factor_stamp);
 elseif strcmpi(parameters.solvers_invoke(i), "RBDS")
     pdfname = parameters.solvers_invoke(i);
-elseif any(strcmp(prima_list, parameters.solvers_invoke(i)))
-    if strcmp(parameters.solvers_invoke(i), "mnewuoa_wrapper")
-        pdfname = "mnewuoa";
-    else
+elseif any(strcmpi(prima_list, parameters.solvers_invoke(i)))
         pdfname = parameters.solvers_invoke(i);
-    end
+        if isfield(parameters, "version")
+            if strcmpi(parameters.version, "old")
+                pdfname = strcat(parameters.solvers_invoke(i), "_", "classical");
+            end
+        end
 elseif parameters.solvers_invoke(i) == "matlab_fminsearch"
     pdfname = strcat("fminsearch", "_", "simplex");
 elseif parameters.solvers_invoke(i) == "matlab_patternsearch"

@@ -22,7 +22,29 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [GSDS]
         competitor: [RBDS, SBDS, simplex, bfgs, lbfgs, uobyqa, newuoa, bobyqa, lincoa]
+        version: [old, new]
         noise_level: [negligible, low, medium, high]
+        exclude:
+          - competitor: RBDS
+            version: old
+          - competitor: RBDS
+            version: now   
+          - competitor: SBDS
+            version: old  
+          - competitor: SBDS
+            version: new   
+          - competitor: simplex 
+            version: old  
+          - competitor: simplex 
+            version: new   
+          - competitor: bfgs 
+            version: old  
+          - competitor: bfgs 
+            version: new   
+          - competitor: lbfgs 
+            version: old  
+          - competitor: lbfgs 
+            version: new   
 
     steps:
       - name: Check out repository

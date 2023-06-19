@@ -1,4 +1,4 @@
-name: Performance profiles of blockwise direct search with Powell's technique on problems of big dimensions
+name: Performance profiles of Prima on problems of big dimensions with noise
 
 on:
   # Trigger the workflow on push or pull request
@@ -11,7 +11,7 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search with Powell's technique.
+    name: Profile blockwise direct search.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -20,9 +20,10 @@ jobs:
         matlab: [latest]
         dim: [big]
         with_optim_toolbox: [yes]
-        solver: [GSDS-Powell]
-        competitor: [GSDS]
-        powell_factor_level: [one, two, three, four, five, six, seven, eight, nine, ten]
+        solver: [bobyqa]
+        competitor: [newuoa, lincoa]
+        noise_level: [negligible, low, medium, high]
+        version: [old, now]
 
     steps:
       - name: Check out repository
@@ -85,12 +86,15 @@ jobs:
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.StepTolerance = eps;
-            parameters.powell_factor_level = "${{ matrix.powell_factor_level }}";
+            parameters.version = "${{ matrix.version }}";
+            parameters.is_noisy = true;
+            parameters.noise_level = "${{ matrix.noise_level }}";
+            parameters.num_random = 3;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_powell_big
+          name: test_bds_big_with_noise
           path: ./tests/testdata
