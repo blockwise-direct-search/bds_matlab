@@ -2,9 +2,6 @@ function [options] = get_options(p, j, name_solver, solver_options, options)
 
 bds_list = ["bds", "bds_powell"];
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-if ~isempty(find(prima_list == name_solver, 1))
-    name_solver = "prima";
-end
 
 maxfun = options.maxfun;
 
@@ -44,6 +41,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
 
     if isfield(solver_options, "Algorithm")
         options.Algorithm = solver_options.Algorithm(j);
+    end
     if isfield(solver_options, "powell_factor")
         options.powell_factor = solver_options.powell_factor(j);
     end
@@ -52,14 +50,17 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
         options.accept_simple_decrease = solver_options.accept_simple_decrease(j);
     end
 
-elseif name_solver == "prima"
+elseif any(contains(prima_list, name_solver, 'IgnoreCase', true))
     options.output_xhist = true;
     % An indicator: it can attain 0, 1, 2, 3, -1, -2, -3. Default value is
     % 0. More absolute value of iprint, more information will be printed on command
     % window. When the value of iprint is negative, no information will be
     % printed on command window and will be stored in a file.
     options.iprint = 0;
-    % options.classical = true;
+
+    if isfield(solver_options, "classical")
+        options.classical = solver_options.classical;
+    end
 
     % Options of trust region radius
     options.rhobeg = solver_options.alpha_init;

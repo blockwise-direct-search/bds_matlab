@@ -144,6 +144,10 @@ if isfield(parameters, "randomized_strategy")
     solver_options.randomized_strategy = parameters.randomized_strategy;
 end
 
+if isfield(parameters, "classical")
+    solver_options.classical = parameters.classical;
+end
+
 solver_options.cycling_inner = parameters.cycling_inner;
 solver_options.polling_inner = parameters.polling_inner;
 solver_options.solvers_legend = parameters.solvers_legend;
