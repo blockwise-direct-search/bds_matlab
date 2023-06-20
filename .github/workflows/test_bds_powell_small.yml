@@ -2,7 +2,7 @@ name: Performance profiles of blockwise direct search with Powell's technique on
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 * * *'
