@@ -101,6 +101,7 @@ jobs:
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.StepTolerance = eps;
+            parameters.version = "${{ matrix.version }}";
             parameters.is_noisy = true;
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.num_random = 5;
