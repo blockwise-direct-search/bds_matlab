@@ -1,7 +1,8 @@
 function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, D, direction_indices, alpha, options)
-% inner_direct_search subfunction of blockwise_direct_search (direct search
-% without blocks).
+% inner_direct_search peforms a single iteration of traditional non-block 
+% direct search within a given block, for which the searching direction 
+% set is D.
 %
 % XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
 % DIRECTION_INDICES, ALPHA) attempts to find a XVAL to satifsy sufficient
