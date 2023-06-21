@@ -2,8 +2,8 @@ classdef ScalarFunction < handle
     %SCALARFUNCTION Scalar function.
     %   This class defines a scalar function f : R^n -> R and stores
     %   information related to its evaluations.
-    
-    
+
+
     properties (Access = private)
         userFun  % the function provided by the user
         storeHist  % whether to store the history
@@ -12,7 +12,7 @@ classdef ScalarFunction < handle
         nEval      % number of function evaluations
         valHist    % history of function evaluations
     end
-    
+
     methods
         function obj = ScalarFunction(varargin)
             %SCALARFUNCTION Construct an instance of this class.
@@ -30,7 +30,7 @@ classdef ScalarFunction < handle
             obj.nEval = 0;
             obj.valHist = [];
         end
-        
+
         function f = fun(obj,x,is_noisy,k_run,options)
             %FUN Evaluation the scalar function.
             %
@@ -48,11 +48,11 @@ classdef ScalarFunction < handle
                 seed = abs(ceil(1e5*sin(sum(x)))) + ...
                        abs(ceil(1e4 * sin(1e3*k_run))) + 5000 * k_run;
                 rng(seed)
-                if ~strcmpi(options.noise_type, 'uniform')
-                   noise = rand(1); 
+                if strcmpi(options.noise_type, 'uniform')
+                   noise = rand(1);
                 end
-                if ~strcmpi(options.noise_type, 'gaussian')
-                   noise = randn(1); 
+                if strcmpi(options.noise_type, 'gaussian')
+                   noise = randn(1);
                 end
                 if options.is_abs_noise
                     f = f+options.noise_level*noise;
@@ -71,4 +71,3 @@ classdef ScalarFunction < handle
         end
     end
 end
-
