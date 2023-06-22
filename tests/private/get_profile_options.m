@@ -175,6 +175,10 @@ if ~isfield(parameters, "noise_type")
     parameters.noise_type = "gaussian";
 end
 
+if ~isfield(parameters, "fmin_type")
+    parameters.fmin_type = "randomized";
+end
+
 if ~isfield(parameters, "fminunc_type")
     parameters.fminunc_type = "bfgs";
 end
@@ -205,7 +209,8 @@ if ~parameters.is_noisy
 else
     pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
         num2str(parameters.problems_maxdim),"_",num2str(parameters.num_random),...
-         "_", parameters.noise_type, "_", num2str(log10(parameters.noise_level)));
+         "_", parameters.fmin_type, "_", "min", "_", parameters.noise_type,...
+         "_", num2str(log10(parameters.noise_level)));
 end
 
 parameters.pdfname = pdfname;

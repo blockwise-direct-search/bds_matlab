@@ -112,11 +112,18 @@ solver_options.ftarget = parameters.ftarget;
 solver_options.solvers = parameters.solvers_invoke;
 num_solvers = length(solver_options.solvers);
 num_problems = length(problem_names); % Number of problems
-num_random = parameters.num_random; % Number of random tests(If num_random = 1, it means no random test.)
-% The matrix that passed into perfprof.m
-frec = NaN(num_problems,num_solvers,num_random,maxfun);
+% Number of random tests(If num_random = 1, it means no random test)
+num_random = parameters.num_random; 
 % Store minimum value of the problems of the random test
-fmin = NaN(num_problems, num_random);
+if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
+    fmin = NaN(num_problems, num_random+1);
+    % The matrix that passed into perfprof.m
+    frec = NaN(num_problems,num_solvers,num_random+1,maxfun);
+else
+    fmin = NaN(num_problems, num_random);
+    % The matrix that passed into perfprof.m
+    frec = NaN(num_problems,num_solvers,num_random,maxfun);
+end 
 
 % Some temporary options for test
 % noise
@@ -167,7 +174,7 @@ if parameters.parallel == true
                 fval_tmp(j) = fval
                 frec(i,j,r,:) = fhist;
             end
-             [fmin(i,r), I] = min(fval_tmp);
+             [fmin(i,r), ~] = min(fval_tmp);
             index_min = find(fval_tmp <= fmin(i,r));
             fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
         end
@@ -183,12 +190,46 @@ else
                 fval_tmp(j) = fval;
                 frec(i,j,r,:) = fhist;
             end
-            [fmin(i,r), I] = min(fval_tmp);
+            [fmin(i,r), ~] = min(fval_tmp);
             index_min = find(fval_tmp <= fmin(i,r));
             fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
         end
     end
 end
+
+if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
+    test_options.is_noisy = false;
+    r = num_random+1;
+    if parameters.parallel == true
+        parfor i = 1:num_problems
+            fval_tmp = NaN(1, num_solvers);
+            p = macup(problem_names(1, i));
+            fprintf("%d(%d). %s\n", i, r, p.name);
+            for j = 1:num_solvers
+                [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
+                fval_tmp(j) = fval;
+                frec(i,j,r,:) = fhist;
+            end
+            [fmin(i,r), ~] = min(fval_tmp);
+            index_min = find(fval_tmp <= fmin(i,r));
+            fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
+        end
+    else
+        for i = 1:num_problems
+            fval_tmp = NaN(1, num_solvers);
+            p = macup(problem_names(1, i));
+            fprintf("%d(%d). %s\n", i, r, p.name);
+            for j = 1:num_solvers
+                [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
+                fval_tmp(j) = fval;
+                frec(i,j,r,:) = fhist;
+            end
+            [fmin(i,r), ~] = min(fval_tmp);
+            index_min = find(fval_tmp <= fmin(i,r));
+            fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
+        end    
+    end
+end 
 
 % Use time to distinguish
 % In matlab, one way to add path is to modify startup.m (Run "which startup.m" to find the location)
@@ -240,6 +281,9 @@ options_perf.outdir = options.outdir;
 options_perf.stamp = time;
 options_perf.solvers = parameters.solvers_legend;
 options_perf.natural_stop = false;
+if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
+    fmin = min(fmin');
+end  
 for l = 1:tau_length
     options_perf.tau = tau(l);
     output = perfprof(frec, fmin, options_perf);

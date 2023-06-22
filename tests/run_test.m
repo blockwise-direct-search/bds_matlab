@@ -1,6 +1,10 @@
-parameters.solvers_invoke = ["bobyqa", "lincoa"];
-parameters.problems_mindim = 6;
-parameters.problems_maxdim = 100;
-parameters.version = "old";
+parameters.solvers_invoke = ["gsds", "lincoa"];
+parameters.problems_mindim = 1;
+parameters.problems_maxdim = 5;
+parameters.is_noisy = true;
+parameters.noise_level = 1e-4;
+parameters.num_random = 5;
 parameters.parallel = true;
+parameters.version = "now";
+parameters.fmin_type = "real-randomized";
 profile_bds(parameters);
