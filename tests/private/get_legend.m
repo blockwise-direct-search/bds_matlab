@@ -3,7 +3,7 @@ function [solver_legend] = get_legend(parameters, i)
 
 % Blockwise_direct_search
 if strcmpi(parameters.solvers_invoke(i), "bds")
-    solver_legend = parameters.Algorithm(i);
+    solver_legend = upper(parameters.Algorithm(i));
 elseif strcmpi(parameters.solvers_invoke(i), "bds_powell")
     solver_legend = "GSDS-Powell";
 elseif strcmpi(parameters.solvers_invoke(i), "rbds")
@@ -12,21 +12,21 @@ end
 
 % Matlab_fminsearch
 if strcmpi(parameters.solvers_invoke(i), "matlab_fminsearch")
-    solver_legend = "simplex";
+    solver_legend = "Nelder-Mead";
 end
 
 % Matlab_fminunc
 if strcmpi(parameters.solvers_invoke(i), "matlab_fminunc")
-    solver_legend = parameters.fminunc_type;
+    solver_legend = upper(parameters.fminunc_type);
 end
 
 % Prima and mnewuoa
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-if ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
-    solver_legend = parameters.solvers_invoke(i);
+if any(contains(prima_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
+    solver_legend = upper(parameters.solvers_invoke(i));
     if isfield(parameters, "version")
         if strcmpi(parameters.version, "old")
-            solver_legend = strcat(parameters.solvers_invoke(i), "-", "classical");
+            solver_legend = strcat(upper(parameters.solvers_invoke(i)), "-", "classical");
         end
     end
 end

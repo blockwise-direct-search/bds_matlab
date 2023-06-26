@@ -78,7 +78,6 @@ elseif strcmpi(options.Algorithm, "dspd")
 end
 
 m = size(D, 2); % number of directions
-
 % Set the default number of blocks.
 if isfield(options, "nb")
     nb = options.nb;
@@ -86,7 +85,7 @@ elseif strcmpi(options.Algorithm, "gsds") || strcmpi(options.Algorithm, "sbds")
         % Default value is set as n, which is good for canonical with 2n directions. For
         % other situations, other value may be good.
         nb = n;
-elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorihm, "ds")
+elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorithm, "ds")
         nb = 1;
 end
 
@@ -230,12 +229,6 @@ end
 for iter = 1 : maxit
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
-
-    % Let xbase be the point from which the polling directions are
-    % employed. In one iteration, all the block use the same base point.
-    % The corresponding value of the objective function is stored in fbase.
-    xbase = xval(:);
-    fbase = fval;
 
     % Why iter-1? Because the number of blocks being visited = (iter-1)*nb.
     if strcmpi(options.Algorithm, "sbds") && mod(iter - 1, shuffle_period) == 0

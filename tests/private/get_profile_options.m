@@ -42,14 +42,6 @@ if ~isfield(parameters, "cycling_inner")
     end
 end
 
-% Set nb_generator and nb_tag
-if ~isfield(parameters, "nb_generator")
-    parameters.nb_generator = [];
-    for i = 1:num_solvers
-        parameters.nb_generator = [parameters.nb_generator get_default_testparameters("nb_generator")];
-    end
-end
-
 % Set parameters for cutest problems.
 if ~isfield(parameters, "problems_type")
     parameters.problems_type = get_default_testparameters("problems_type");

@@ -16,17 +16,18 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     % 2.5 is warning!
     x0 = p.x0;
     dim = length(x0);
-    if solver_options.nb_generator(j) >= 1
-        if ceil(solver_options.nb_generator(j)) == solver_options.nb_generator(j)
-            options.nb = solver_options.nb_generator(j);
+    if isfield(solver_options, "nb_generator")
+        if solver_options.nb_generator(j) >= 1
+            if ceil(solver_options.nb_generator(j)) == solver_options.nb_generator(j)
+                options.nb = solver_options.nb_generator(j);
+            else
+                options.nb = ceil(solver_options.nb_generator(j));
+                disp("Wrong input of nb_generator");
+            end
         else
-            options.nb = ceil(solver_options.nb_generator(j));
-            disp("Wrong input of nb_generator");
+            options.nb = ceil(2*dim*solver_options.nb_generator(j));
         end
-    else
-        options.nb = ceil(2*dim*solver_options.nb_generator(j));
     end
-
     % Strategy of with_memory, cycling and polling_inner (Memory vs Nonwith_memory when cycling)
     options.with_memory = solver_options.with_memory(j);
     options.cycling_inner = solver_options.cycling_inner(j);

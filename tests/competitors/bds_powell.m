@@ -225,7 +225,8 @@ else
     powell_factor = options.powell_factor;
 end
 
-alpha_threshold = powell_factor^2*options.alpha_init;
+alpha_threshold = powell_factor*options.alpha_init;
+%alpha_threshold = 0;
 
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
@@ -250,9 +251,10 @@ for iter = 1 : maxit
         % In case of permutation.
         i_real = block_indices(i);
 
-        if alpha_all(i_real) <= alpha_threshold
-            continue;
-        end
+        %if alpha_all(i_real) <= alpha_threshold
+        %if alpha_all(i_real) <= 0.01*alpha_threshold
+        %   continue;
+        %end
 
         direction_indices = searching_set_indices{i_real}; % get indices in the i-th block
 
@@ -302,12 +304,14 @@ for iter = 1 : maxit
             any_success = true;
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
-            alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
+            %alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
+            alpha_all(i_real) = shrink * alpha_all(i_real);
         end
     end
 
-    % Update alpha using powell's technique.
-    if (max(alpha_all) <= alpha_threshold) && ~any_success
+    % Update alpha using Powell's technique.
+    %if (max(alpha_all) <= alpha_threshold) && ~any_success
+    if (max(alpha_all) <= alpha_threshold)
         % Terminate the computations if the largest step size is below a
         % given StepTolerance.
         if alpha_threshold <= alpha_tol
@@ -315,9 +319,10 @@ for iter = 1 : maxit
             exitflag = get_exitflag("SMALL_ALPHA");
             break
         end
+        alpha_all = alpha_threshold*ones(nb, 1);
         %alpha_all = shrink*alpha_all;
         alpha_threshold = powell_factor*alpha_threshold;
-        alpha_all = max(alpha_all, alpha_threshold);
+        %alpha_all = max(alpha_all, alpha_threshold);
     end
 
     % After exploring nb blocks, update xval and fval immediately.

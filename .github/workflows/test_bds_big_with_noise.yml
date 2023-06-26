@@ -2,8 +2,10 @@ name: Performance profiles of blockwise direct search on problems of big dimensi
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
+  schedule:
+    - cron: '0 20 * * *'
   workflow_dispatch:
 
 env:

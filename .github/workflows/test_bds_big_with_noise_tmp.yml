@@ -1,11 +1,9 @@
-name: Performance profiles of blockwise direct search on problems of small dimensions with noise
+name: Performance profiles of blockwise direct search on problems of big dimensions with noise for temporary
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
-  schedule:
-    - cron: '0 20 * * *'
   workflow_dispatch:
 
 env:
@@ -20,27 +18,12 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [small]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [GSDS]
-        competitor: [RBDS, SBDS, simplex, bfgs, lbfgs, uobyqa, newuoa, bobyqa, lincoa]
-        version: [old, new]
-        noise_level: [negligible, low, medium, high]
-        exclude:
-          - competitor: RBDS
-            version: old
-          - competitor: SBDS
-            version: old
-          - competitor: simplex
-            version: old
-          - competitor: bfgs
-            version: old
-          - competitor: lbfgs
-            version: old
-          - competitor: bobyqa
-            version: old
-          - competitor: uobyqa
-            version: old
+        competitor: [simplex, bfgs, newuoa]
+        noise_level: [medium]
+        version: [now]
 
     steps:
       - name: Check out repository
@@ -107,12 +90,12 @@ jobs:
             parameters.is_noisy = true;
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "real-randomized";
-            parameters.num_random = 5;
+            parameters.num_random = 10;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_small_with_noise
+          name: test_bds_big_with_noise
           path: ./tests/testdata

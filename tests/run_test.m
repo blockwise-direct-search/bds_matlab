@@ -1,10 +1,11 @@
-parameters.solvers_invoke = ["gsds", "lincoa"];
-parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
-parameters.is_noisy = true;
-parameters.noise_level = 1e-4;
-parameters.num_random = 5;
+parameters.solvers_invoke = ["newuoa", "ds"];
+parameters.problems_mindim = 6;
+parameters.problems_maxdim = 100;
+%parameters.powell_factor = [0, 1e-2];
+parameters.is_noisy = false;
+parameters.noise_level = 1e-5;
+%parameters.num_random = 5;
 parameters.parallel = true;
 parameters.version = "now";
-parameters.fmin_type = "real-randomized";
+parameters.fmin_type = "randomized";
 profile_bds(parameters);
