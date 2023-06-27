@@ -1,5 +1,5 @@
-parameters.solvers_invoke = ["newuoa", "ds"];
-parameters.problems_mindim = 6;
+parameters.solvers_invoke = ["newuoa", "GSDS"];
+parameters.problems_mindim = 1;
 parameters.problems_maxdim = 100;
 %parameters.powell_factor = [0, 1e-2];
 parameters.is_noisy = false;
