@@ -99,12 +99,13 @@ jobs:
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.StepTolerance = eps;
+            parameters.sufficient_decrease_factor = [0, 0];
             parameters.version = "${{ matrix.version }}";
             parameters.is_noisy = true;
             parameters.noise_level = "${{ matrix.noise_level }}";
-            parameters.fmin_type = "real-randomized";
+            parameters.fmin_type = "randomized";
             parameters.num_random = 3;
-            parameters.noise_initial_point = true;
+            parameters.noise_initial_point = false;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
 
