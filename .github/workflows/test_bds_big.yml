@@ -65,9 +65,6 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
-      - name: Install TeX Live
-        run: sudo apt-get install -y texlive-full
-
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
