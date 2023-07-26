@@ -83,7 +83,10 @@ if ~isfield(parameters, "StepTolerance")
 end
 
 if ~isfield(parameters, "sufficient_decrease_factor")
-    parameters.sufficient_decrease_factor = get_default_testparameters("sufficient_decrease_factor");
+    for i = 1:num_solvers
+        parameters.sufficient_decrease_factor = [parameters.sufficient_decrease_factor...
+            get_default_testparameters("sufficient_decrease_factor")];
+    end
 end
 
 if ~isfield(parameters, "expand")
@@ -166,6 +169,11 @@ end
 if ~isfield(parameters, "noise_type")
     parameters.noise_type = "gaussian";
 end
+
+if ~isfield(parameters, "noise_initial_point")
+    parameters.noise_initial_point = false;
+end 
+
 
 if ~isfield(parameters, "fmin_type")
     parameters.fmin_type = "randomized";

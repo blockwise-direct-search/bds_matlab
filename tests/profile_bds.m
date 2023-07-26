@@ -161,20 +161,28 @@ solver_options.solvers_legend = parameters.solvers_legend;
 solver_options.with_memory = parameters.with_memory;
 solver_options.direction = parameters.direction;
 
-% If parallel is true, use parfor to calculate (parallel computation). ...
-% Otherwise, use for to calculate (sequential computation).
+% parameters.fmintype is set to be "randomized" defaultly, then there is no need to test 
+% without noise, which makes the curve of performance profile more higher.
+% If parallel is true, use parfor to calculate (parallel computation), otherwise, 
+% use for to calculate (sequential computation).
 if parameters.parallel == true
     parfor i = 1:num_problems
         fval_tmp = NaN(1, num_solvers);
         p = macup(problem_names(1, i));
         for r = 1:num_random
+            if parameters.noise_initial_point
+                dim = length(p.x0);
+                rr = randn(dim, 1);
+                rr = randn(dim, 1) / norm(rr);
+                p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+            end
             fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
                 [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
                 fval_tmp(j) = fval
                 frec(i,j,r,:) = fhist;
             end
-             [fmin(i,r), ~] = min(fval_tmp);
+            [fmin(i,r), ~] = min(fval_tmp);
             index_min = find(fval_tmp <= fmin(i,r));
             fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
         end
@@ -184,6 +192,12 @@ else
         fval_tmp = NaN(1, num_solvers);
         p = macup(problem_names(1, i));
         for r = 1:num_random
+            if parameters.noise_initial_point
+                dim = length(p.x0);
+                rr = randn(dim, 1);
+                rr = randn(dim, 1) / norm(rr);
+                p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+            end
             fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
                 [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
@@ -197,6 +211,8 @@ else
     end
 end
 
+% If parameters.fmintype = "real-randomized", then test without noise
+% should be conducted, which makes curves of performance profile more lower.
 if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
     test_options.is_noisy = false;
     r = num_random+1;
@@ -204,6 +220,12 @@ if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
         parfor i = 1:num_problems
             fval_tmp = NaN(1, num_solvers);
             p = macup(problem_names(1, i));
+            if parameters.noise_initial_point
+                dim = length(p.x0);
+                rr = randn(dim, 1);
+                rr = randn(dim, 1) / norm(rr);
+                p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+            end
             fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
                 [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
@@ -218,6 +240,12 @@ if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
         for i = 1:num_problems
             fval_tmp = NaN(1, num_solvers);
             p = macup(problem_names(1, i));
+            if parameters.noise_initial_point
+                dim = length(p.x0);
+                rr = randn(dim, 1);
+                rr = randn(dim, 1) / norm(rr);
+                p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+            end
             fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
                 [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);

@@ -204,7 +204,6 @@ searching_set_indices = divide_searching_set(m, nb);
 % Initialize the computations.
 fhist = NaN(1, maxfun); % history of function values
 xhist = NaN(n, maxfun); % history of points having been visited
-hist.block = zeros(1, maxfun); % history of blocks having been visited
 xval = x0; % current iterate
 fval = fun(xval);
 nf = 1; % number of function evaluations

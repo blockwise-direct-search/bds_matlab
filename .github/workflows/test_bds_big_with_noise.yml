@@ -2,7 +2,7 @@ name: Performance profiles of blockwise direct search on problems of big dimensi
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 * * *'
@@ -78,6 +78,12 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
+      - name: Install TeX Live
+        run: sudo apt-get install -y texlive-full
+
+      - name: Add kpsewhich to PATH
+        run: echo "::add-path::/usr/bin"
+
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
@@ -104,6 +110,7 @@ jobs:
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "real-randomized";
             parameters.num_random = 3;
+            parameters.noise_initial_point = true;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
 
