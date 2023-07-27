@@ -68,13 +68,13 @@ n = length(x0);
 if strcmpi(options.Algorithm, "gsds") || strcmpi(options.Algorithm, "sbds") || strcmpi(options.Algorithm, "ds")
     D = get_searching_set(n, options);
 elseif strcmpi(options.Algorithm, "dspd")
-        % Generate a vector which follows uniform distribution on the sphere of a unit ball.
-        rv = NaN(n, 1);
-        for i = 1:n
-            rv(i) = randn(1);
-        end
-        [Q, ~] = qr(rv);
-        D = [Q, -Q];
+    % Generate a vector which follows uniform distribution on the sphere of a unit ball.
+    rv = NaN(n, 1);
+    for i = 1:n
+        rv(i) = randn(1);
+    end
+    [Q, ~] = qr(rv);
+    D = [Q, -Q];
 end
 
 m = size(D, 2); % number of directions
@@ -82,11 +82,11 @@ m = size(D, 2); % number of directions
 if isfield(options, "nb")
     nb = options.nb;
 elseif strcmpi(options.Algorithm, "gsds") || strcmpi(options.Algorithm, "sbds")
-        % Default value is set as n, which is good for canonical with 2n directions. For
-        % other situations, other value may be good.
-        nb = n;
+    % Default value is set as n, which is good for canonical with 2n directions. For
+    % other situations, other value may be good.
+    nb = n;
 elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorithm, "ds")
-        nb = 1;
+    nb = 1;
 end
 
 % If number of directions is less than number of blocks, then the number of
@@ -157,9 +157,9 @@ end
 % objective function is below the target (the problem is unconstrained),
 % then the algorithm is stopped.
 if isfield(options, "ftarget")
-   ftarget = options.ftarget;
+    ftarget = options.ftarget;
 else
-   ftarget = get_default_constant("ftarget");
+    ftarget = get_default_constant("ftarget");
 end
 
 % Set the default inner polling strategy. This is the polling strategy
@@ -215,7 +215,7 @@ xhist(:, nf) = xval;
 if fval <= ftarget
     information = "FTARGET_REACHED";
     exitflag = get_exitflag(information);
-
+    
     % The target function value has been reached at the very first function
     % evaluation. In this case, no further computation should be
     % entertained, and hence, no iteration should be run.
@@ -228,19 +228,19 @@ end
 for iter = 1 : maxit
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
-
+    
     % Why iter-1? Because the number of blocks being visited = (iter-1)*nb.
     if strcmpi(options.Algorithm, "sbds") && mod(iter - 1, shuffle_period) == 0
-    % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
+        % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
         block_indices = randperm(nb);
     end
-
+    
     for i = 1:length(block_indices)
         % In case of permutation.
         i_real = block_indices(i);
-
+        
         direction_indices = searching_set_indices{i_real}; % get indices in the i-th block
-
+        
         suboptions.maxfun = maxfun - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search
         suboptions.cycling = cycling_inner;
@@ -249,21 +249,21 @@ for iter = 1 : maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;
-
+        
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
-
+        
         % Update the history of step size.
         alpha_hist(:, iter) = alpha_all;
-
+        
         % Store the history of the evaluations performed by
         % inner_direct_search, and adjust the number of function
         % evaluations.
         fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
         xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
         nf = nf+suboutput.nf;
-
+        
         % If suboutput.terminate is true, then inner_direct_search returned
         % because either the maximum number of function evaluations or the
         % target on the objective function value is reached. In both cases,
@@ -273,19 +273,19 @@ for iter = 1 : maxit
             exitflag = sub_exitflag;
             break;
         end
-
+        
         % Retrieve the order the polling direction and check whether a
         % sufficient decrease has been achieved in inner_direct_search.
         searching_set_indices{i_real} = suboutput.direction_indices;
         success = suboutput.success;
-
+        
         % Update the step sizes and store the history of step sizes.
         if success
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
             alpha_all(i_real) = shrink * alpha_all(i_real);
         end
-
+        
         % Terminate the computations if the largest step size is below a
         % given StepTolerance.
         if max(alpha_all) < alpha_tol
@@ -294,20 +294,20 @@ for iter = 1 : maxit
             break
         end
     end
-
+    
     % The following case can be reached (SMALL_ALPHA, MAXFUN_REACHED,
     % FTARGET_REACHED).
     if terminate
         break;
     end
-
+    
     % Set the exit flag corresponding to "MAXIT_REACHED" on the last
     % iteration. Note that it should be set at last, because another
     % stopping criterion may be reached at the last iteration.
     if iter == maxit
         exitflag = get_exitflag("MAXIT_REACHED");
     end
-
+    
 end
 
 % Set useful pieces on information about the solver's history in output.

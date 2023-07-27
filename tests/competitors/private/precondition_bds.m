@@ -40,7 +40,7 @@ end
 
 if isfield(options, "sufficient_decrease_factor")
     assert(isrealscalar(options.sufficient_decrease_factor));
-    assert(options.sufficient_decrease_factor > 0);
+    assert(options.sufficient_decrease_factor >= 0);
 end
 
 if isfield(options, "polling_outer")

@@ -159,7 +159,7 @@ elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "stri
             parameters.noise_level = 2.0e-1;
         otherwise
             error("Unkown noise level %s", parameters.noise_level);
-     end
+    end
 end
 
 if ~isfield(parameters, "is_abs_noise")
@@ -172,7 +172,7 @@ end
 
 if ~isfield(parameters, "noise_initial_point")
     parameters.noise_initial_point = false;
-end 
+end
 
 
 if ~isfield(parameters, "fmin_type")
@@ -185,12 +185,12 @@ end
 
 parameters.solvers_legend = [];
 for i = 1:num_solvers
-     parameters.solvers_legend = [parameters.solvers_legend get_legend(parameters, i)];
+    parameters.solvers_legend = [parameters.solvers_legend get_legend(parameters, i)];
 end
 
 parameters.solvers_stamp = [];
 for i = 1:num_solvers
-     parameters.solvers_stamp = [parameters.solvers_stamp get_stamp(parameters, i)];
+    parameters.solvers_stamp = [parameters.solvers_stamp get_stamp(parameters, i)];
 end
 
 % Name pdf automatically (not manually).
@@ -204,13 +204,18 @@ for i = 1:num_solvers
 end
 
 if ~parameters.is_noisy
-    pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-        num2str(parameters.problems_maxdim));
+    if ~parameters.noise_initial_point
+        pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+            num2str(parameters.problems_maxdim));
+    else
+        pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+            num2str(parameters.problems_maxdim), "_", num2str(parameters.num_random));
+    end
 else
     pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
         num2str(parameters.problems_maxdim),"_",num2str(parameters.num_random),...
-         "_", parameters.fmin_type, "_", "min", "_", parameters.noise_type,...
-         "_", num2str(log10(parameters.noise_level)));
+        "_", parameters.fmin_type, "_", "min", "_", parameters.noise_type,...
+        "_", num2str(log10(parameters.noise_level)));
 end
 
 parameters.pdfname = pdfname;

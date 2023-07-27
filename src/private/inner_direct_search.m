@@ -1,7 +1,7 @@
 function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, D, direction_indices, alpha, options)
-% inner_direct_search peforms a single iteration of traditional non-block 
-% direct search within a given block, for which the searching direction 
+% inner_direct_search peforms a single iteration of traditional non-block
+% direct search within a given block, for which the searching direction
 % set is D.
 %
 % XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
@@ -50,9 +50,9 @@ end
 % objective function is below the target (the problem is unconstrained),
 % then the algorithm is stopped.
 if isfield(options, "ftarget")
-   ftarget = options.ftarget;
+    ftarget = options.ftarget;
 else
-   ftarget = get_default_constant("ftarget");
+    ftarget = get_default_constant("ftarget");
 end
 
 % Explain why NaN is good. It is possible that this function returns
@@ -84,14 +84,14 @@ for j = 1 : num_directions
         exitflag = get_exitflag("MAXFUN_REACHED");
         break;
     end
-
+    
     % Evaluate the objective function for the current polling direction.
     xnew = xbase+alpha*D(:, j);
     fnew = fun(xnew);
     nf = nf+1;
     fhist(nf) = fnew;
     xhist(:, nf) = xnew;
-
+    
     % Stop the computations if the target value on the objective function
     % is achieved. Note that the comparison is done here because fnew may
     % be below ftarget without achieving a sufficient decrease.
@@ -103,18 +103,18 @@ for j = 1 : num_directions
         exitflag = get_exitflag(information);
         break;
     end
-
+    
     % 1. Comment why the following line is wrong: if the following line is right, the complete
     %    polling will only receive success of the last direction, even if there exists success
     %    directions before it.
     % 2. What if we update fnew and xnew whenever there is a smple decrease?
     %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
-
+    
     sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
     % decrease, success will always be true.
     success = (success || sufficient_decrease);
-
+    
     % For complete polling, fbase is fixed during all iterations in the block. It may happen that
     % where sufficient_decrease is true and fnew >= fval. For opportunistic polling, if
     % sufficient decrease is true, then the following points will not be explored.
@@ -122,13 +122,13 @@ for j = 1 : num_directions
         xval = xnew;
         fval = fnew;
     end
-
+    
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling
     % directions.
     if success && ~strcmpi(options.polling_inner, "complete")
-       direction_indices = cycling(direction_indices, j, options.cycling, options.with_memory);
-       break;
+        direction_indices = cycling(direction_indices, j, options.cycling, options.with_memory);
+        break;
     end
 end
 
@@ -232,31 +232,31 @@ switch strategy
     %is 1 2 3 4 5 and array will be 2 1 3 4 5 after cycling.
     case {1}
         array(1:index) = array([index, 1:index-1]);
-    % If cycling_strategy is 2, the element of the index and the following
-    % ones until end will be moved ahead of array. For example, if index = 3,
-    % array is 1 2 3 4 5, then array will be 3 4 5 1 2 after cycling.
-    % When array is 2 1 4 5 3, if index = 3, for with_memory
-    % situation, array will be 4 5 3 2 1 after cycling; for nonwith_memory
-    % situaion, index will be 4 after executing the paragraph above,
-    % sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after cycling.
+        % If cycling_strategy is 2, the element of the index and the following
+        % ones until end will be moved ahead of array. For example, if index = 3,
+        % array is 1 2 3 4 5, then array will be 3 4 5 1 2 after cycling.
+        % When array is 2 1 4 5 3, if index = 3, for with_memory
+        % situation, array will be 4 5 3 2 1 after cycling; for nonwith_memory
+        % situaion, index will be 4 after executing the paragraph above,
+        % sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after cycling.
     case {2}
         array = array([index:end, 1:index-1]);
-    % If cycling_strategy is 3, the element of the following ones after index
-    % until end will be moved ahead of array. For example, if index = 3, array
-    % is 1 2 3 4 5, then array will be 4 5 1 2 3 after cycling.
-    % When array is 2 1 4 5 3 and index = 3, for with_memory
-    % situation, array will be 5 3 2 1 4 after cycling; for nonwith_memory
-    % situaion, index will be 4 after executing the paragraph above,
-    % sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
+        % If cycling_strategy is 3, the element of the following ones after index
+        % until end will be moved ahead of array. For example, if index = 3, array
+        % is 1 2 3 4 5, then array will be 4 5 1 2 3 after cycling.
+        % When array is 2 1 4 5 3 and index = 3, for with_memory
+        % situation, array will be 5 3 2 1 4 after cycling; for nonwith_memory
+        % situaion, index will be 4 after executing the paragraph above,
+        % sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
     case {3}
         array = array([index+1:end, 1:index]);
-    % If cycling_strategy is 4, the element of the following one after index
-    % will be moved ahead of array. For example, if index = 3, array
-    % is 1 2 3 4 5, then array will be 4 1 2 3 5 after cycling.
-    % For the case where array is 4 1 2 3 5, if index = 3, for with_memory
-    % situation, array will be 3 4 1 2 5 after cycling; for nonwith_memory
-    % situaion, index will be 2 after executing the paragraph above,
-    % sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
+        % If cycling_strategy is 4, the element of the following one after index
+        % will be moved ahead of array. For example, if index = 3, array
+        % is 1 2 3 4 5, then array will be 4 1 2 3 5 after cycling.
+        % For the case where array is 4 1 2 3 5, if index = 3, for with_memory
+        % situation, array will be 3 4 1 2 5 after cycling; for nonwith_memory
+        % situaion, index will be 2 after executing the paragraph above,
+        % sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
     case {4}
         if index ~= length(array)
             array(1:index+1) = array([index+1, 1:index]);

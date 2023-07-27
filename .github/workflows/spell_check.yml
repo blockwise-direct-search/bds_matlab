@@ -1,0 +1,56 @@
+name: Check TeX_Bib Spelling
+
+on:
+  push:
+    paths:
+      - '**.tex'
+      - '**.bib'
+      - '**.txt'
+      - '**.yml'
+
+
+jobs:
+  spelling_check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Install Hunspell
+      run: sudo apt-get install hunspell
+
+    - name: Check spelling
+      id: check_spelling
+      run: |
+        find . -type f \( -name "*.tex" -o -name "*.bib" \) ! -name "custom_dictionary.txt" -exec sh -c 'hunspell -l -t -d en_US {} | grep -v -w -f .github/actions/spell_check/custom_dictionary.txt > {}_spelling_errors.txt' \;
+        errors_found=false
+        for file in $(find . -type f -name "*_spelling_errors.txt"); do
+          if [ -s $file ]; then
+            errors_found=true
+            break
+          fi
+        done
+        if [ "$errors_found" = true ]; then
+          echo "Spelling errors summary:" > spelling_errors_summary.txt
+          for file in $(find . -type f -name "*_spelling_errors.txt"); do
+            if [ -s $file ]; then
+              echo "Spelling errors found in $(basename $file _spelling_errors.txt):" >> spelling_errors_summary.txt
+              cat $file >> spelling_errors_summary.txt
+              echo "" >> spelling_errors_summary.txt
+            fi
+          done
+          echo "Please fix the spelling errors listed in 'spelling_errors_summary.txt'."
+          cat spelling_errors_summary.txt
+          exit 1
+        else
+          echo "No spelling errors found."
+          rm *_spelling_errors.txt
+        fi
+
+    - name: Upload spelling errors summary
+      if: ${{ failure() }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: spelling_errors_summary
+        path: spelling_errors_summary.txt

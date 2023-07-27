@@ -1,0 +1,12 @@
+nondecreasing
+htbp
+Lipschitz
+Fubini
+Tonelli
+Borel
+Cantelli
+subadditivity
+Chernoff
+noncon
+pdf
+2q
