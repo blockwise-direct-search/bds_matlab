@@ -209,12 +209,6 @@ for iter = 1 : maxit
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
 
-    % Let xbase be the point from which the polling directions are
-    % employed. In one iteration, all the block use the same base point.
-    % The corresponding value of the objective function is stored in fbase.
-    xbase = xval(:);
-    fbase = fval;
-
     % Get the block that we are going to visit.
     i = randi([1, nb]);
 
@@ -231,7 +225,7 @@ for iter = 1 : maxit
     suboptions.accept_simple_decrease = accept_simple_decrease;
 
     [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
-        fval, xbase, fbase, D(:, direction_indices), direction_indices,...
+        fval, D(:, direction_indices), direction_indices,...
         alpha_all(i), suboptions);
 
     % Update the history of step size.

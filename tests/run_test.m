@@ -1,7 +1,7 @@
-parameters.solvers_invoke = ["newuoa", "sbds"];
+parameters.solvers_invoke = ["sbds", "rbds"];
 parameters.problems_mindim = 1;
 parameters.problems_maxdim = 5;
-parameters.sufficient_decrease_factor = [1e-3, 0];
+parameters.sufficient_decrease_factor = [0, 0];
 %parameters.powell_factor = [0, 1e-2];
 parameters.is_noisy = false;
 parameters.noise_level = 1e-5;
