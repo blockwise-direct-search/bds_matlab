@@ -9,5 +9,5 @@ parameters.num_random = 1;
 parameters.parallel = true;
 parameters.version = "now";
 parameters.fmin_type = "randomized";
-parameters.noise_initial_point = false;
+parameters.noise_initial_point = true;
 profile_bds(parameters);

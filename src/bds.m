@@ -1,5 +1,5 @@
 function [xval, fval, exitflag, output] = bds(fun, x0, options)
-%   BDS Unconstrained nonlinear minimization (direct search with blocks).
+%BDS Unconstrained nonlinear minimization (direct search with blocks).
 %
 %   XVAL = BDS(FUN, X0) starts at X0 and attempts to find
 %   local minimizer X of the function FUN.  FUN is a function handle. FUN
@@ -12,6 +12,16 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
 %   blocks_strategy, with_memory, cycling, accept_simple_decrease.
 %
+%   [XVAL, FVAL] = BDS(...) returns the value of the
+%   objective function, described in FUN, at XVAL.
+%
+%   [XVAL, FVAL, EXITFLAG] = BDS(...) returns an EXITFLAG
+%   that describes the exit condition. The information of EXITFLAG will be
+%   given in output.message.
+%
+%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
+%   structure OUTPUT with fields
+%
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
 %   maxfun_dim - factor of maximum of function evaluation regarding to
@@ -23,16 +33,6 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %        algorithm terminates.
 %   ftarget - If function value is below ftarget, then the algorithm terminates.
 %   polling_inner - polling strategy of indices in one block
-%
-%   [XVAL, FVAL] = BDS(...) returns the value of the
-%   objective function, described in FUN, at XVAL.
-%
-%   [XVAL, FVAL, EXITFLAG] = BDS(...) returns an EXITFLAG
-%   that describes the exit condition. The information of EXITFLAG will be
-%   given in output.message.
-%
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
-%   structure OUTPUT with fields
 %
 %   fhist      History of function value
 %   xhist      History of points that being calculated
@@ -77,7 +77,8 @@ elseif strcmpi(options.Algorithm, "dspd")
     D = [Q, -Q];
 end
 
-m = size(D, 2); % number of directions
+% number of directions
+m = size(D, 2); 
 % Set the default number of blocks.
 if isfield(options, "nb")
     nb = options.nb;
@@ -92,6 +93,7 @@ end
 % If number of directions is less than number of blocks, then the number of
 % blocks is defined as the number of directions.
 nb = min(m, nb);
+% Default indices of blocks are 1:nb.
 block_indices = 1:nb;
 
 % Set maxfun to the maximum number of function evaluations. The default
@@ -175,7 +177,7 @@ else
 end
 
 % Set default value of shuffle_period. Default value of shuffle_period
-% should be set 1 since the algorithm visits nb blocks for every iteration.
+% should be set 1 since the algorithm visits all blocks for every iteration.
 if strcmpi(options.Algorithm, "sbds") && isfield(options, "shuffle_period")
     shuffle_period = options.shuffle_period;
 else
@@ -224,7 +226,6 @@ end
 
 % Start the actual computations.
 % nb blocks have been explored after the number of iteration goes from k to k+1.
-
 for iter = 1 : maxit
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
@@ -239,7 +240,8 @@ for iter = 1 : maxit
         % In case of permutation.
         i_real = block_indices(i);
         
-        direction_indices = searching_set_indices{i_real}; % get indices in the i-th block
+        % get indices in the i-th block
+        direction_indices = searching_set_indices{i_real}; 
         
         suboptions.maxfun = maxfun - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search

@@ -1,16 +1,26 @@
 function [xval, fval, exitflag, output] = rbds(fun, x0, options)
-%BLOCKWISE_DIRECT_SEARCH Unconstrained nonlinear minimization (direct search with blocks).
+%Unconstrained nonlinear minimization (direct search with selecting one block in one iteration
+%randomly).
 %
-%   XVAL = BLOCKWISE_DIRECT_SEARCH(FUN, X0) starts at X0 and attempts to find
+%   XVAL = RBDS(FUN, X0) starts at X0 and attempts to find
 %   local minimizer X of the function FUN.  FUN is a function handle. FUN
 %   accepts input X and returns a scalar function value F evaluated at X.
 %   X0 should be a vector.
 %
-%   XVAL = BLOCKWISE_DIRECT_SEARCH(FUN, X0, OPTIONS) minimizes with the
+%   XVAL = RBDS(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
-%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
-%   expand, shrink, sufficient decrease factor, tol, ftarget, polling_inner,
-%   polling_outer, memory, cycling.
+%   polling_inner - polling strategy of indices in one block
+%
+%   [XVAL, FVAL] = RBDS(...) returns the value of the
+%   objective function, described in FUN, at XVAL.
+%
+%   [XVAL, FVAL, EXITFLAG] = RBDS(...) returns an EXITFLAG
+%   that describes the exit condition. The information of EXITFLAG will be
+%   given in output.message.
+%
+%   [XVAL, FVAL, EXITFLAG, OUTPUT] = RBDS(...) returns a
+%   structure OUTPUT with fields
+%
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
@@ -19,20 +29,10 @@ function [xval, fval, exitflag, output] = rbds(fun, x0, options)
 %   expand - expanding factor of step size
 %   shrink - shrinking factor of step size
 %   sufficient_decrease_factor - factor of sufficient decrease condition
-%   tol - tolerance of step size. If step size is below tolerance, then the
+%   StepTolerance - StepTolerance of step size. If step size is below StepTolerance, then the
 %        algorithm terminates.
 %   ftarget - If function value is below ftarget, then the algorithm terminates.
 %   polling_inner - polling strategy of indices in one block
-%
-%   [XVAL, FVAL] = BLOCKWISE_DIRECT_SEARCH(...) returns the value of the
-%   objective function, described in FUN, at XVAL.
-%
-%   [XVAL, FVAL, EXITFLAG] = BLOCKWISE_DIRECT_SEARCH(...) returns an EXITFLAG
-%   that describes the exit condition. The information of EXITFLAG will be
-%   given in output.message.
-%
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BLOCKWISE_DIRECT_SEARCH(...) returns a
-%   structure OUTPUT with fields
 %
 %   fhist      History of function value
 %   xhist      History of points that being calculated
@@ -42,7 +42,7 @@ function [xval, fval, exitflag, output] = rbds(fun, x0, options)
 %   The number of function evaluations is OUTPUT.funcCount.
 %   The history of function evaluation is OUTPUT.fhist.
 %   The history of points is OUTPUT.xhist and
-%   The l2-norm of gradient in OUTPUT.ghist (only for CUTESTPROBLEM).
+%   The l2-norm of gradient in OUTPUT.ghist (only for CUTEst problems).
 
 % Set options to an empty structure if it is not supplied.
 if nargin < 3
@@ -53,7 +53,7 @@ end
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    precondition_bds(fun, x0, options);
+    verify_preconditions(fun, x0, options);
 end
 
 % The exit flag will be set at each possible exit of the algorithm.
@@ -66,7 +66,8 @@ x0 = double(x0(:));
 % Set the polling directions in D.
 n = length(x0);
 D = searching_set(n, options);
-m = size(D, 2); % number of directions
+% Number of directions
+m = size(D, 2);
 
 % Set the default number of blocks.
 if isfield(options, "nb")
@@ -83,7 +84,6 @@ nb = min(m, nb);
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e5.
-
 if isfield(options, "maxfun_dim") && isfield(options, "maxfun")
     maxfun = min(options.maxfun_dim*n, options.maxfun);
 elseif isfield(options, "maxfun_dim")
@@ -185,7 +185,6 @@ searching_set_indices = divide_searching_set(m, nb);
 % Initialize the computations.
 fhist = NaN(1, maxfun); % history of function values
 xhist = NaN(n, maxfun); % history of points having been visited
-hist.block = zeros(1, maxfun); % history of blocks having been visited
 xval = x0; % current iterate
 fval = fun(xval);
 nf = 1; % number of function evaluations
@@ -204,12 +203,9 @@ if fval <= ftarget
     maxit = 0;
 end
 
-% The number of blocks having been visited.
-nb_visited = 0;
-
 % Start the actual computations.
+% nb blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
-
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
 
@@ -222,7 +218,8 @@ for iter = 1 : maxit
     % Get the block that we are going to visit.
     i = randi([1, nb]);
 
-    direction_indices = searching_set_indices{i}; % get indices in the i-th block
+    % get indices in the i-th block
+    direction_indices = searching_set_indices{i};
 
     suboptions.maxfun = maxfun - nf;
     % Memory and cycling are needed since we permutate indices in inner_direct_search
@@ -237,12 +234,8 @@ for iter = 1 : maxit
         fval, xbase, fbase, D(:, direction_indices), direction_indices,...
         alpha_all(i), suboptions);
 
-    % The i-th block has been visited recently.
-    hist.block(iter) = i;
     % Update the history of step size.
     alpha_hist(:, iter) = alpha_all;
-    % Update the number of blocks having been visited.
-    nb_visited = nb_visited+1;
 
     % Store the history of the evaluations performed by
     % inner_direct_search, and adjust the number of function
@@ -300,7 +293,6 @@ output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, iter+1);
-output.nb_visited = nb_visited;
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
@@ -316,8 +308,8 @@ switch exitflag
 end
 
 
-% Postcondition: If debug_flag is true, then post-conditions is operated on
+% Verify_postconditions: If debug_flag is true, then post-conditions is operated on
 % output. If output_correctness is false, then assert will let code crash.
 if debug_flag
-    postcondition_bds(fun, xval, fval, exitflag, output);
+    verify_postconditions(fun, xval, fval, exitflag, output);
 end

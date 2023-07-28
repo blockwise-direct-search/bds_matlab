@@ -1,7 +1,7 @@
 function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, D, direction_indices, alpha, options)
 % inner_direct_search peforms a single iteration of traditional non-block
-% direct search within a given block, for which the searching direction
+%   direct search within a given block, for which the searching direction
 % set is D.
 %
 % XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
@@ -115,9 +115,10 @@ for j = 1 : num_directions
     % decrease, success will always be true.
     success = (success || sufficient_decrease);
     
-    % For complete polling, fbase is fixed during all iterations in the block. It may happen that
-    % where sufficient_decrease is true and fnew >= fval. For opportunistic polling, if
-    % sufficient decrease is true, then the following points will not be explored.
+    % If options.accept_simple_decrease is true, then we will accept xnew...
+    % and fnew as xval and fval respectively as long as fnew < fval. Otherwise,...
+    % we will only accept xnew and fnew when they meet sufficient decrease and 
+    % fnew < fval simultaneously.
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
         fval = fnew;

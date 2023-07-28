@@ -14,8 +14,8 @@ function index_searching_set = divide_searching_set(m, nb)
 %   INDEX_SEARCHING_SET{3} = [9, 10, 11].
 %
 
-% Preconditions: If debug_flag is true, then preconditions is to verify
-% input. If input_correctness is false, then assert may let the code crash.
+%   Preconditions: If debug_flag is true, then preconditions is to verify
+%   input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
     % Assert m is a positive integer.
@@ -24,11 +24,13 @@ if debug_flag
     assert(isintegerscalar(nb) && nb>0);
     % Assert the number of directions is greater than the number of
     % blocks. (Preprocess it)
-    assert(nb<m);
+    assert(nb<=m);
 end
 
-num_direction_block = floor(m/nb); % Number of directions each block (average)
-if mod(m, nb) == 0 % Every block will have the same length of indices.
+% Number of directions each block (average)
+num_direction_block = floor(m/nb); 
+% Every block will have the same length of indices.
+if mod(m, nb) == 0 
     num_directions = num_direction_block*ones(nb,1);
 else %
     num_directions = [(num_direction_block+1)*ones(mod(m, nb), 1); num_direction_block*ones(nb-mod(m, nb), 1)];
