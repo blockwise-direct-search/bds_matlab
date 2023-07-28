@@ -6,8 +6,6 @@ if strcmpi(parameters.solvers_invoke(j), "bds")
     solver_stamp = upper(parameters.Algorithm(j));
 elseif strcmpi(parameters.solvers_invoke(j), "bds_powell")
     solver_stamp = "CBDS_Powell";
-elseif strcmpi(parameters.solvers_invoke(j), "rbds")
-    solver_stamp = "rbds";
 end
 
 % Matlab_fminsearch

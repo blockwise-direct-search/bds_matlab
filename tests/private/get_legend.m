@@ -7,8 +7,6 @@ if strcmpi(parameters.solvers_invoke(i), "bds")
    %solver_legend = "our method";
 elseif strcmpi(parameters.solvers_invoke(i), "bds_powell")
     solver_legend = "GSDS-Powell";
-elseif strcmpi(parameters.solvers_invoke(i), "rbds")
-    solver_legend = "rbds";
 end
 
 % Matlab_fminsearch

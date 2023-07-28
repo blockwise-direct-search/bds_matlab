@@ -7,8 +7,6 @@ if parameters.solvers_invoke(i) == "bds"
 elseif parameters.solvers_invoke(i) == "bds_powell"
     powell_factor_stamp = int2str(int32(-log10(parameters.powell_factor(i))));
     pdfname = strcat("GSDS_Powell", "_", powell_factor_stamp);
-elseif strcmpi(parameters.solvers_invoke(i), "RBDS")
-    pdfname = parameters.solvers_invoke(i);
 elseif any(strcmpi(prima_list, parameters.solvers_invoke(i)))
         pdfname = parameters.solvers_invoke(i);
         if isfield(parameters, "version")

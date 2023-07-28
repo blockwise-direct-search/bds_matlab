@@ -65,7 +65,8 @@ x0 = double(x0(:));
 
 % Set the polling directions in D.
 n = length(x0);
-if strcmpi(options.Algorithm, "gsds") || strcmpi(options.Algorithm, "sbds") || strcmpi(options.Algorithm, "ds")
+if strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
+        || strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "rbds")
     D = get_searching_set(n, options);
 elseif strcmpi(options.Algorithm, "dspd")
     % Generate a vector which follows uniform distribution on the sphere of a unit ball.
@@ -82,7 +83,8 @@ m = size(D, 2);
 % Set the default number of blocks.
 if isfield(options, "nb")
     nb = options.nb;
-elseif strcmpi(options.Algorithm, "gsds") || strcmpi(options.Algorithm, "sbds")
+elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
+        || strcmpi(options.Algorithm, "rbds")
     % Default value is set as n, which is good for canonical with 2n directions. For
     % other situations, other value may be good.
     nb = n;
@@ -178,7 +180,7 @@ end
 
 % Set default value of shuffle_period. Default value of shuffle_period
 % should be set 1 since the algorithm visits all blocks for every iteration.
-if strcmpi(options.Algorithm, "sbds") && isfield(options, "shuffle_period")
+if strcmpi(options.Algorithm, "pbds") && isfield(options, "shuffle_period")
     shuffle_period = options.shuffle_period;
 else
     shuffle_period = get_default_constant("shuffle_period");
@@ -231,9 +233,14 @@ for iter = 1 : maxit
     alpha_hist(:, iter) = alpha_all;
     
     % Why iter-1? Because the number of blocks being visited = (iter-1)*nb.
-    if strcmpi(options.Algorithm, "sbds") && mod(iter - 1, shuffle_period) == 0
+    if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffle_period) == 0
         % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
         block_indices = randperm(nb);
+    end
+    
+    % Get the block that we are going to visit.
+    if strcmpi(options.Algorithm, "rbds")
+        block_indices = randi([1, nb]);
     end
     
     for i = 1:length(block_indices)

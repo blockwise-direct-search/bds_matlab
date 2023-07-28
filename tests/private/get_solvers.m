@@ -7,7 +7,7 @@ solvers_num = length(parameters.solvers_invoke);
 % DSPD: Direct Search based on probabilistic descent
 % CBDS: Cyclic Blockwise Direct Search
 % DS: Direct search without blocks
-BDS_list = ["DS", "DSPD", "CBDS", "GSDS", "SBDS"];
+BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
 % Prima
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 % Fminunc
@@ -19,14 +19,16 @@ if any(ismember(lower(parameters.solvers_invoke), lower(BDS_list)))
     parameters.Algorithm = Algorithm_list;
 
     for i = 1:solvers_num
-        if strcmpi(parameters.solvers_invoke(i), "sbds")
-            parameters.Algorithm(i) = "sbds";
-        elseif strcmpi(parameters.solvers_invoke(i), "gsds")
-            parameters.Algorithm(i) = "gsds";
-        elseif strcmpi(parameters.solvers_invoke(i), "ds")
+        if strcmpi(parameters.solvers_invoke(i), "ds")
             parameters.Algorithm(i) = "ds";
         elseif strcmpi(parameters.solvers_invoke(i), "dspd")
             parameters.Algorithm(i) = "dspd";
+        elseif strcmpi(parameters.solvers_invoke(i), "cbds")
+            parameters.Algorithm(i) = "cbds";
+        elseif strcmpi(parameters.solvers_invoke(i), "pbds")
+            parameters.Algorithm(i) = "pbds";
+        elseif strcmpi(parameters.solvers_invoke(i), "rbds")
+            parameters.Algorithm(i) = "rbds";
         end
     end
 end
@@ -45,8 +47,6 @@ for i = 1:solvers_num
      % Blockwise Direct Search with Powell's technique.
      elseif strcmpi(parameters.solvers_invoke(i), "GSDS-Powell")
              parameters.solvers_invoke(i) = "bds_powell";
-     elseif strcmpi(parameters.solvers_invoke(i), "RBDS")
-             parameters.solvers_invoke(i) = "rbds";
      % Prima.
      elseif ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
 
