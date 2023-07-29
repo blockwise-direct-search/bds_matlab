@@ -40,9 +40,19 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     options.shrink = solver_options.shrink;
     options.alpha_init = solver_options.alpha_init;
 
+    % Options for the family of bds.
     if isfield(solver_options, "Algorithm")
         options.Algorithm = solver_options.Algorithm(j);
     end
+    
+    if isfield(solver_options, "shuffling_period")
+        options.shuffling_period = solver_options.shuffling_period(j);
+    end
+    
+    if isfield(solver_options, "replacement_delay")
+        options.replacement_delay = solver_options.replacement_delay(j);
+    end
+    
     if isfield(solver_options, "powell_factor")
         options.powell_factor = solver_options.powell_factor(j);
     end

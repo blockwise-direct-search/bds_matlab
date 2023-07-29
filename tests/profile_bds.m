@@ -44,7 +44,6 @@ addpath(path_competitors_matlab_functions);
 assert(isfield(parameters, "solvers_invoke"));
 
 parameters = get_profile_options(parameters);
-
 % Tell MATLAB where to find MatCUTEst.
 locate_matcutest();
 % Tell MATLAB where to find prima.
@@ -101,6 +100,14 @@ end
 
 if isfield(parameters, "accept_simple_decrease")
     solver_options.accept_simple_decrease = parameters.accept_simple_decrease;
+end
+
+if isfield(parameters, "shuffling_period")
+    solver_options.shuffling_period = parameters.shuffling_period;
+end
+
+if isfield(parameters, "replacement_delay")
+    solver_options.replacement_delay = parameters.replacement_delay;
 end
 
 % Parameters of ftarget

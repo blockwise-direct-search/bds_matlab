@@ -83,6 +83,7 @@ if ~isfield(parameters, "StepTolerance")
 end
 
 if ~isfield(parameters, "sufficient_decrease_factor")
+    parameters.sufficient_decrease_factor = [];
     for i = 1:num_solvers
         parameters.sufficient_decrease_factor = [parameters.sufficient_decrease_factor...
             get_default_testparameters("sufficient_decrease_factor")];
@@ -109,6 +110,23 @@ end
 if ~isfield(parameters, "accept_simple_decrease")
     accept_simple_decrease = get_default_testparameters("accept_simple_decrease");
     parameters.accept_simple_decrease = repmat(accept_simple_decrease, 1, num_solvers);
+end
+
+% Set some specific parameters for the family of bds (rbds, pbds...)
+if ~isfield(parameters, "shuffling_period")
+    parameters.shuffling_period = [];
+    for i = 1:num_solvers
+        parameters.shuffling_period = [parameters.shuffling_period...
+            get_default_testparameters("shuffling_period")];
+    end
+end
+
+if ~isfield(parameters, "replacement_delay")
+    for i = 1:num_solvers
+        parameters.replacement_delay = [];
+        parameters.replacement_delay = [parameters.replacement_delay...
+            get_default_testparameters("replacement_delay")];
+    end
 end
 
 % Set parameters of ftarget

@@ -178,12 +178,12 @@ else
     cycling_inner = get_default_constant("cycling_inner");
 end
 
-% Set default value of shuffle_period. Default value of shuffle_period
+% Set default value of shuffling_period. Default value of shuffling_period
 % should be set 1 since the algorithm visits all blocks for every iteration.
-if strcmpi(options.Algorithm, "pbds") && isfield(options, "shuffle_period")
-    shuffle_period = options.shuffle_period;
+if strcmpi(options.Algorithm, "pbds") && isfield(options, "shuffling_period")
+    shuffling_period = options.shuffling_period;
 else
-    shuffle_period = get_default_constant("shuffle_period");
+    shuffling_period = get_default_constant("shuffling_period");
 end
 
 % Set default value of replacement_delay. Default value of
@@ -249,8 +249,8 @@ for iter = 1 : maxit
     % Why iter-1? Because the initial value of iter is 1 and when iter
     % increases by 1, the algorithm will visit nb blocks when 
     % options.Algorithm = "pbds".
-    if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffle_period) == 0
-        % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
+    if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
+        % Make sure that `shuffling_period` is defined when `Algorithm` is "sbds".
         block_indices = randperm(nb);
     end
     
