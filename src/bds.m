@@ -186,6 +186,16 @@ else
     shuffle_period = get_default_constant("shuffle_period");
 end
 
+% Set default value of replacement_delay. Default value of
+% replacement_delay is set to be 0. Also, the value of replacement_delay
+% should be less than or equal to nb-1, otherwise, there will not exist
+% such block going to be visited after nb blocks have been visited.
+if strcmpi(options.Algorithm, "rbds") && isfield(options, "replacement_delay")
+    replacement_delay = min(options.replacement_delay, nb-1);
+else
+    replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
+end
+
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.
 if isfield(options, "with_memory")
@@ -206,8 +216,12 @@ end
 searching_set_indices = divide_searching_set(m, nb);
 
 % Initialize the computations.
-fhist = NaN(1, maxfun); % history of function values
-xhist = NaN(n, maxfun); % history of points having been visited
+% history of function values
+fhist = NaN(1, maxfun);
+% history of points having been visited
+xhist = NaN(n, maxfun); 
+% history of blocks having been visited
+block_hist = NaN(1, maxfun);
 xval = x0; % current iterate
 fval = fun(xval);
 nf = 1; % number of function evaluations
@@ -232,20 +246,41 @@ for iter = 1 : maxit
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
     
-    % Why iter-1? Because the number of blocks being visited = (iter-1)*nb.
+    % Why iter-1? Because the initial value of iter is 1 and when iter
+    % increases by 1, the algorithm will visit nb blocks when 
+    % options.Algorithm = "pbds".
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffle_period) == 0
         % Make sure that `shuffle_period` is defined when `Algorithm` is "sbds".
         block_indices = randperm(nb);
     end
     
-    % Get the block that we are going to visit.
+    % Get the block that are going to be visited in this iteration.
     if strcmpi(options.Algorithm, "rbds")
-        block_indices = randi([1, nb]);
+        if replacement_delay == 0 || sum(~isnan(block_hist)) == 0
+            block_indices = randi([1, nb]);
+        else
+            % Recorder the number of blocks having been visited
+            num_visited = sum(~isnan(block_hist));
+            block_visited_slices_length = min(num_visited, replacement_delay);
+            block_visited_slices = block_hist(num_visited-block_visited_slices_length+1:num_visited);
+            % Set default value of block_indices
+            block_initial_indices = 1:nb;
+            % Remove elements of block_indices appearing in block_visited_slice 
+            block_real_indices = block_initial_indices(~ismember(block_initial_indices, block_visited_slices));
+            % Produce a random index from block_real_indices.
+            idx = randi(length(block_real_indices));
+            block_indices = block_real_indices(idx);
+        end
     end
     
     for i = 1:length(block_indices)
         % In case of permutation.
         i_real = block_indices(i);
+        
+        % Recorder the number of blocks having been visited
+        num_visited = sum(~isnan(block_hist));
+        % Update the block that going to be visited 
+        block_hist(num_visited+1) = i_real;
         
         % get indices in the i-th block
         direction_indices = searching_set_indices{i_real}; 
@@ -324,6 +359,10 @@ output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
+% Recorder the number of blocks visited
+num_blocks_visited = sum(~isnan(block_hist));
+% Update the block that going to be visited
+output.blocks_hist = block_hist(1:num_blocks_visited);
 
 
 switch exitflag

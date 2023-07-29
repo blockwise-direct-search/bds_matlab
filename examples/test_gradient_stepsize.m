@@ -7,10 +7,11 @@ addpath(path_src)
 addpath(path_competitors)
 
 p = macup('akiva');
-p = macup('PALMER5C');
-p = macup('HEART6LS');
-p = macup('LANCZOS1LS');
+% p = macup('PALMER5C');
+% p = macup('HEART6LS');
+% p = macup('LANCZOS1LS');
 options.StepTolerance = 1e-10;
+options.Algorithm = "cbds";
 
 [x, fval, exitflag, output] = bds(p.objective, p.x0, options);
 
