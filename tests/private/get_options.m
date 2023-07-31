@@ -28,7 +28,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
         end
     end
     % Strategy of with_memory, cycling and polling_inner (Memory vs Nonwith_memory when cycling)
-    options.with_memory = solver_options.with_memory(j);
+    options.with_memory = solver_options.with_memory(j)
     options.cycling_inner = solver_options.cycling_inner(j);
     options.direction = solver_options.direction(j);
 
@@ -37,7 +37,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     options.sufficient_decrease_factor = solver_options.sufficient_decrease_factor(j);
     options.expand = solver_options.expand;
     options.shrink = solver_options.shrink;
-    options.alpha_init = solver_options.alpha_init;
+    options.alpha_init = solver_options.alpha_init
 
     % Options for the family of bds.
     if isfield(solver_options, "Algorithm")
@@ -45,19 +45,19 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     end
     
     if isfield(solver_options, "shuffling_period")
-        options.shuffling_period = solver_options.shuffling_period(j);
+        options.shuffling_period = solver_options.shuffling_period(j)
     end
     
     if isfield(solver_options, "replacement_delay")
-        options.replacement_delay = solver_options.replacement_delay(j);
+        options.replacement_delay = solver_options.replacement_delay(j)
     end
     
     if isfield(solver_options, "powell_factor")
-        options.powell_factor = solver_options.powell_factor(j);
+        options.powell_factor = solver_options.powell_factor(j)
     end
 
     if isfield(solver_options, "accept_simple_decrease")
-        options.accept_simple_decrease = solver_options.accept_simple_decrease(j);
+        options.accept_simple_decrease = solver_options.accept_simple_decrease(j)
     end
 
 elseif any(contains(prima_list, name_solver, 'IgnoreCase', true))

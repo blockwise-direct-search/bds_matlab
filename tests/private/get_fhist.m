@@ -28,8 +28,13 @@ if ~isempty(find(prima_list == name_solver, 1))
 end
 
 % Experimence with noise (if num_random == 1, then the experiment has no noise)
+% Try ... catch is to avoid stopping by the collapse of solvers. When some
+% solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
-solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+try
+    solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+catch
+end
 
 % Turn off warning is a very dangerous thing. So it must be set a loop to
 % trun on after ending the computation.
