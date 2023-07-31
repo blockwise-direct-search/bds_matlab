@@ -2,7 +2,7 @@ name: Performance profiles of blockwise direct search on problems of small dimen
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 * * *'
@@ -22,14 +22,14 @@ jobs:
         matlab: [latest]
         dim: [small]
         with_optim_toolbox: [yes]
-        solver: [GSDS]
-        competitor: [RBDS, SBDS, simplex, bfgs, lbfgs, uobyqa, newuoa, bobyqa, lincoa]
+        solver: [CBDS]
+        competitor: [RBDS, PBDS, simplex, bfgs, lbfgs, uobyqa, newuoa, bobyqa, lincoa]
         version: [old, new]
         noise_level: [negligible, low, medium, high]
         exclude:
           - competitor: RBDS
             version: old
-          - competitor: SBDS
+          - competitor: PBDS
             version: old
           - competitor: simplex
             version: old
