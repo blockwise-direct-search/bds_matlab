@@ -180,7 +180,7 @@ if parameters.parallel == true
             if parameters.noise_initial_point
                 dim = length(p.x0);
                 rr = randn(dim, 1);
-                rr = randn(dim, 1) / norm(rr);
+                rr = rr / norm(rr);
                 p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
             end
             fprintf("%d(%d). %s\n", i, r, p.name);
@@ -202,7 +202,7 @@ else
             if parameters.noise_initial_point
                 dim = length(p.x0);
                 rr = randn(dim, 1);
-                rr = randn(dim, 1) / norm(rr);
+                rr = rr / norm(rr);
                 p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
             end
             fprintf("%d(%d). %s\n", i, r, p.name);
@@ -230,7 +230,7 @@ if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
             if parameters.noise_initial_point
                 dim = length(p.x0);
                 rr = randn(dim, 1);
-                rr = randn(dim, 1) / norm(rr);
+                rr = rr / norm(rr);
                 p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
             end
             fprintf("%d(%d). %s\n", i, r, p.name);
@@ -250,7 +250,7 @@ if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
             if parameters.noise_initial_point
                 dim = length(p.x0);
                 rr = randn(dim, 1);
-                rr = randn(dim, 1) / norm(rr);
+                rr = rr / norm(rr);
                 p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
             end
             fprintf("%d(%d). %s\n", i, r, p.name);
