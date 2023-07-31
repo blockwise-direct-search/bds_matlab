@@ -83,13 +83,14 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
+            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = true;
-            parameters.StepTolerance = eps;
             parameters.sufficient_decrease_factor = [0, 0];
             parameters.num_random = 10;
+            parameters.parallel = true;
+            parameters.fmin_type = "randomized";
+            parameters.StepTolerance = eps;
             parameters.noise_initial_point = true;
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
 
       - name: Upload artifact
