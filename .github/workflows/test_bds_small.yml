@@ -51,6 +51,9 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
 
+      - name: Check whether LaTeX is installed
+        run: pdflatex --version
+
       - name: Cache MATLAB
         id: cache-matlab
         uses: actions/cache@v3.3.1

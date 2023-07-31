@@ -2,6 +2,7 @@ function [options] = get_options(p, j, name_solver, solver_options, options)
 solver_options
 j
 name_solver
+keyboard
 bds_list = ["bds", "bds_powell"];
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
