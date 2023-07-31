@@ -2,7 +2,7 @@ name: Performance profiles of blockwise direct search on problems of big dimensi
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 * * *'
@@ -51,6 +51,12 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
 
+      - name: Install Texlive
+        run: sudo apt-get update && sudo apt-get install texlive
+
+      - name: Check whether LaTeX is installed
+        run: pdflatex --version
+
       - name: Cache MATLAB
         id: cache-matlab
         uses: actions/cache@v3.3.1
@@ -83,13 +89,14 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
+            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = true;
-            parameters.StepTolerance = eps;
             parameters.sufficient_decrease_factor = [0, 0];
             parameters.num_random = 5;
+            parameters.parallel = true;
+            parameters.fmin_type = "randomized";
+            parameters.StepTolerance = eps;
             parameters.noise_initial_point = true;
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
 
       - name: Upload artifact
