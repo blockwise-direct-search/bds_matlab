@@ -122,8 +122,8 @@ if ~isfield(parameters, "shuffling_period")
 end
 
 if ~isfield(parameters, "replacement_delay")
+    parameters.replacement_delay = [];
     for i = 1:num_solvers
-        parameters.replacement_delay = [];
         parameters.replacement_delay = [parameters.replacement_delay...
             get_default_testparameters("replacement_delay")];
     end

@@ -1,8 +1,7 @@
 function [options] = get_options(p, j, name_solver, solver_options, options)
 bds_list = ["bds", "bds_powell"];
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-p.name
-j
+
 maxfun = options.maxfun;
 
 if any(contains(bds_list, name_solver, 'IgnoreCase', true))
@@ -32,14 +31,14 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     options.with_memory = solver_options.with_memory(j);
     options.cycling_inner = solver_options.cycling_inner(j);
     options.direction = solver_options.direction(j);
-    solver_options
+    
     % Options of step size
     options.StepTolerance = solver_options.StepTolerance;
     options.sufficient_decrease_factor = solver_options.sufficient_decrease_factor(j);
     options.expand = solver_options.expand;
     options.shrink = solver_options.shrink;
     options.alpha_init = solver_options.alpha_init;
-    solver_options
+    
     % Options for the family of bds.
     if isfield(solver_options, "Algorithm")
         options.Algorithm = solver_options.Algorithm(j);
@@ -60,7 +59,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     if isfield(solver_options, "accept_simple_decrease")
         options.accept_simple_decrease = solver_options.accept_simple_decrease(j);
     end
-    solver_options
+    
 elseif any(contains(prima_list, name_solver, 'IgnoreCase', true))
     options.output_xhist = true;
     % An indicator: it can attain 0, 1, 2, 3, -1, -2, -3. Default value is
