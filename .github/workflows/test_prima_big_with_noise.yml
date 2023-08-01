@@ -53,6 +53,12 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
 
+      - name: Install Texlive
+        run: sudo apt-get update && sudo apt-get install texlive
+
+      - name: Check whether LaTeX is installed
+        run: pdflatex --version
+
       - name: Cache MATLAB
         id: cache-matlab
         uses: actions/cache@v3.3.1
@@ -91,7 +97,7 @@ jobs:
             parameters.version = "${{ matrix.version }}";
             parameters.is_noisy = true;
             parameters.noise_level = "${{ matrix.noise_level }}";
-            parameters.num_random = 3;
+            parameters.num_random = 5;
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             profile_bds(parameters);
 

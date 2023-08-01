@@ -92,7 +92,7 @@ jobs:
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.sufficient_decrease_factor = [0, 0];
-            parameters.num_random = 5;
+            parameters.num_random = 10;
             parameters.parallel = true;
             parameters.fmin_type = "randomized";
             parameters.StepTolerance = eps;
