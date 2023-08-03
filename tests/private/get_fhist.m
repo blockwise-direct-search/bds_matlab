@@ -1,12 +1,14 @@
 function [fhist_perfprof, fval] = get_fhist(p, maxfun, j, r, solver_options, test_options)
-% Get fhist and related information of j-th solver on p problem.
+% Get fhist and related information of j-th solver on the r-th randomized 
+% experiment of problem p.
 
-% Gradient will be affected by scaling_matrix
 name_solver = solver_options.solvers(j);
 solver = str2func(name_solver);
+% Initialze fhist for performance profile.
 fhist_perfprof = NaN(maxfun,1);
 
 % Scaling_matrix
+% Gradient will be affected by scaling_matrix
 % Find better way to deal with scaling_matrix
 % if test_options.scaling_matrix
 %    scaling_matrix = get_scaling_matrix(p,test_options);
@@ -19,6 +21,7 @@ if isfield(solver_options, "maxfun_dim")
    options.maxfun = min(solver_options.maxfun, solver_options.maxfun_dim*length(p.x0));
 end
 
+% Get the necessary options for j-th solver.
 [options] = get_options(p, j, name_solver, solver_options, options);
 
 % Turn off warning to save computation resource.
@@ -50,6 +53,9 @@ fval = min(obj.valHist);
 fhist_length = obj.nEval;
 fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
 
+% Trim fhist for performance profile. If the length of fhist is less than maxfun,
+% then the prolonged parts will be imparted the value of the last function evaluation 
+% that we get eventually.
 if  fhist_length < maxfun
     fhist_perfprof(fhist_length+1:maxfun) = fhist_perfprof(fhist_length);
 else

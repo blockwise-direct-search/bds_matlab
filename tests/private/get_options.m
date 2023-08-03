@@ -1,7 +1,9 @@
 function [options] = get_options(p, j, name_solver, solver_options, options)
+% Get the options that needed by j-th solver on problem p.
 bds_list = ["bds", "bds_powell"];
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
+% Each solver should receive the same maxfun on the same problem p.
 maxfun = options.maxfun;
 
 if any(contains(bds_list, name_solver, 'IgnoreCase', true))

@@ -1,7 +1,6 @@
 function constant_value = get_default_testoptions(constant_name)
-%GET_DEFAULT_OPTIONS Get the constants needed by TEST_BDS.
-%   CONSTANT_VALUE = GET_DEFAULT_TESTOPTIONS(CONSTANT_NAME) returns the value
-%   of the constant named CONSTANT_VALUE.
+% GET_DEFAULT_OPTIONS Get the values of parameters for test, including 
+% noise, scaling_matrix, StepTolerance and the dimension of problem sets.
 switch constant_name
     case {"isnoisy"}
         constant_value = true;

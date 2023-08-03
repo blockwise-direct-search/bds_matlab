@@ -1,4 +1,5 @@
 function [parameters] = get_solvers(parameters)
+% Indicate the solvers that we invoke from its family. 
 
 solvers_num = length(parameters.solvers_invoke);
 

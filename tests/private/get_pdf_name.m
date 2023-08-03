@@ -1,5 +1,5 @@
 function [pdfname] = get_pdf_name(parameters, i)
-
+% Get the part of pdfname for the i-th solver respectively.
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
 if parameters.solvers_invoke(i) == "bds"

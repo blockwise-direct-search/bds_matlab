@@ -1,4 +1,7 @@
 function parameters = get_profile_options(parameters)
+% Get the parameters that the test needs: set default value of the parameters
+% that are not input, save the parameters that have been input in correct
+% form.
 
 % Specify parameters by parameters.solvers_invoke.
 parameters = get_solvers(parameters);

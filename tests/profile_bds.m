@@ -1,5 +1,5 @@
 function [output] = profile_bds(parameters)
-% output: performance profile;
+% Draw performance profiles.
 
 % Set parameters to an empty structure if it is not supplied.
 if nargin < 1
@@ -39,7 +39,7 @@ addpath(path_competitors_matlab_functions);
 assert(isfield(parameters, "solvers_invoke"));
 
 % Get the parameters that the test needs: set default value of the parameters
-% that are not input, trim the parameters that have been input in correct
+% that are not input, save the parameters that have been input in correct
 % form.
 parameters = get_profile_options(parameters);
 % Tell MATLAB where to find MatCUTEst.

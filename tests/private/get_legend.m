@@ -1,7 +1,7 @@
 function [solver_legend] = get_legend(parameters, i)
 % Get the legend of solver on performance profile.
 
-% Blockwise_direct_search
+% Family of blockwise direct search
 if strcmpi(parameters.solvers_invoke(i), "bds")
    solver_legend = upper(parameters.Algorithm(i));
    %solver_legend = "our method";

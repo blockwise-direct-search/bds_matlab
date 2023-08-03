@@ -1,7 +1,5 @@
 function constant_value = get_default_testparameters(constant_name)
-%GET_DEFAULT_PARAMETERS Get the constants needed by TESTBDS_INPUT.
-%   CONSTANT_VALUE = GET_DEFAULT_TESTPARAMETERS(CONSTANT_NAME) returns the value
-%   of the constant named CONSTANT_VALUE.
+%GET_DEFAULT_PARAMETERS Get the default value of paramters for solvers.
 switch constant_name
     case {"maxfun_dim"}
         constant_value = 1000;

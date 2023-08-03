@@ -1,3 +1,4 @@
+% This script is for test.
 parameters.solvers_invoke = ["cbds", "newuoa"];
 parameters.problems_mindim = 1;
 parameters.problems_maxdim = 1;
