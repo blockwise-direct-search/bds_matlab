@@ -1,9 +1,5 @@
 function [output] = profile_bds(parameters)
 % output: performance profile;
-% parameters: name; solvers_legend; memory; cycling; polling_inner; polling_outer; nb_generator;
-% maxfun_dim; maxfun; problems_type; problems_mindim; problems_maxidim; tau;
-% clear
-% clc
 
 % Set parameters to an empty structure if it is not supplied.
 if nargin < 1
@@ -12,18 +8,16 @@ end
 
 restoredefaultpath;
 
-% % The code of the following lines is for using matcutest.
-% path_matcutest_server = '/home/htl/local/matcutest/mtools/src';
-% path_matcutest_local =  '/home/lhtian97/local/matcutest/mtools/src';
-%addpath('/home/lhtian97/bds_new_framework/tests/competitors/prima/matlab/interfaces/');
-
+% Add the paths that we need to use in the performance profile into the MATLAB
+% search path.
 fullpath = mfilename("fullpath");
 [path_tests,~] = fileparts(fullpath);
 parameters.path_tests = path_tests;
 path_bds = fileparts(path_tests);
 parameters.path_bds = path_bds;
 addpath(path_tests);
-% If testdata does not exist, make a new one.
+
+% If the folder of testdata does not exist, make a new one.
 path_testdata = strcat(path_tests, "/testdata");
 if ~exist(path_testdata, "dir")
     mkdir(path_testdata);
@@ -41,8 +35,12 @@ addpath(path_competitors_mnewuoa);
 path_competitors_matlab_functions = fullfile(path_competitors, "matlab_functions");
 addpath(path_competitors_matlab_functions);
 
+% In case of there does not exist solvers being input.
 assert(isfield(parameters, "solvers_invoke"));
 
+% Get the parameters that the test needs: set default value of the parameters
+% that are not input, trim the parameters that have been input in correct
+% form.
 parameters = get_profile_options(parameters);
 % Tell MATLAB where to find MatCUTEst.
 locate_matcutest();
@@ -114,33 +112,33 @@ end
 solver_options.ftarget = parameters.ftarget;
 
 % Initialize fmin and frec
-% The difference between solvers_legend and name is that solvers_legend must be
-% different from each other.
 solver_options.solvers = parameters.solvers_invoke;
 num_solvers = length(solver_options.solvers);
-num_problems = length(problem_names); % Number of problems
+% Number of problems
+num_problems = length(problem_names); 
 % Number of random tests(If num_random = 1, it means no random test)
 num_random = parameters.num_random; 
 % Store minimum value of the problems of the random test
 if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
     fmin = NaN(num_problems, num_random+1);
     % The matrix that passed into perfprof.m
-    frec = NaN(num_problems,num_solvers,num_random+1,maxfun);
+    frec = NaN(num_problems, num_solvers, num_random+1, maxfun);
 else
     fmin = NaN(num_problems, num_random);
     % The matrix that passed into perfprof.m
-    frec = NaN(num_problems,num_solvers,num_random,maxfun);
+    frec = NaN(num_problems, num_solvers, num_random, maxfun);
 end 
 
 % Some temporary options for test
-% noise
+% Noise
 test_options.is_noisy = parameters.is_noisy;
 test_options.noise_level = parameters.noise_level;
-% relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
+% Relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
 test_options.is_abs_noise = parameters.is_abs_noise;
 test_options.noise_type = parameters.noise_type;
 test_options.num_random = parameters.num_random;
 
+% Scaling matrix
 test_options.scaling_matrix = false;
 test_options.scaling_matrix_factor = 5;
 
@@ -168,10 +166,12 @@ solver_options.solvers_legend = parameters.solvers_legend;
 solver_options.with_memory = parameters.with_memory;
 solver_options.direction = parameters.direction;
 
-% parameters.fmintype is set to be "randomized" defaultly, then there is no need to test 
-% without noise, which makes the curve of performance profile more higher.
-% If parallel is true, use parfor to calculate (parallel computation), otherwise, 
-% use for to calculate (sequential computation).
+% If parameters.noise_initial_point is true, then initial point will be 
+% selected for each problem num_random times.
+% parameters.fmintype is set to be "randomized" defaultly, then there is
+% no need to test without noise, which makes the curve of performance profile
+% more higher. If parallel is true, use parfor to calculate (parallel computation), 
+% otherwise, use for to calculate (sequential computation).
 if parameters.parallel == true
     parfor i = 1:num_problems
         fval_tmp = NaN(1, num_solvers);
@@ -219,7 +219,8 @@ else
 end
 
 % If parameters.fmintype = "real-randomized", then test without noise
-% should be conducted, which makes curves of performance profile more lower.
+% should be conducted and fmin might be smaller, which makes curves
+%  of performance profile more lower.
 if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
     test_options.is_noisy = false;
     r = num_random+1;
@@ -267,16 +268,20 @@ if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
 end 
 
 % Use time to distinguish
-% In matlab, one way to add path is to modify startup.m (Run "which startup.m" to find the location)
-time = datestr(now,31);
-time = trim_time(time); % trim the form of time
-tst = sprintf("test_%s",time); % time stamp to rename
-tst = strcat(tst, "_", parameters.pdfname); % rename as mixture of time stamp and parameters
+time = datetime("now");
+time_str = sprintf('%04d-%02d-%02d %02d:%02d:%02.0f', year(time), ...
+    month(time), day(time), hour(time), minute(time), second(time));
+% Trim the form of time
+time_str = trim_time(time_str); 
+% Time stamp to rename
+tst = sprintf("test_%s", time_str); 
+% Rename as mixture of time stamp and parameters
+tst = strcat(tst, "_", parameters.pdfname); 
 options.path = parameters.path_tests;
 path_testdata = fullfile(options.path, "testdata");
 path_testdata_outdir = fullfile(options.path, "testdata", tst);
 
-% mkdir a new folder to save numerical results and source code.
+% Make a new folder to save numerical results and source code.
 mkdir(path_testdata, tst);
 mkdir(path_testdata_outdir, "perf");
 options.outdir = fullfile(path_testdata_outdir, "perf");
@@ -310,10 +315,11 @@ for i = 1:numel(file_list)
 end
 
 % performance profile
-tau = parameters.tau; % Tolerance of convergence test in performance profile
+% Tolerance of convergence test in performance profile
+tau = parameters.tau; 
 tau_length = length(tau);
 options_perf.outdir = options.outdir;
-options_perf.stamp = time;
+options_perf.stamp = time_str;
 options_perf.solvers = parameters.solvers_legend;
 options_perf.natural_stop = false;
 if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")

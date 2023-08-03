@@ -220,7 +220,6 @@ ylabel('$\pi_s(\alpha)$', 'fontsize', fontsize, 'interpreter', 'latex');
 %set(xlabh,'Position',get(xlabh,'Position') - [0 .0175 0])
 set(gca,'FontSize',fontsize);
 
-
 % Save the figure as eps.
 if int32(-log10(tau)) < 10
     fignamebase = strcat(options.stamp, '_', 'perf_', '0', int2str(int32(-log10(tau))));
