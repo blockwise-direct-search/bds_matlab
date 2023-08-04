@@ -53,7 +53,7 @@ end
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    verify_preconditions(fun, x0, options);
+    [fun] = verify_preconditions(fun, x0, options);
 end
 
 % The exit flag will be set at each possible exit of the algorithm.

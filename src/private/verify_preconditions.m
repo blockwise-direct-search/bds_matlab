@@ -1,9 +1,12 @@
-function [] = verify_preconditions(fun, x0, options)
-% TODO: no return value
+function [fun] = verify_preconditions(fun, x0, options)
+
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for fun %%%%%%%%%%%%%%%%%
 % FUN should be a function handle or a function name.
-% TODO: When detecting string, use str2func to convert.
+% When detecting string, use str2func to convert.
 assert(ischarstr(fun) || isa(fun, "function_handle"));
+if ischarstr(fun)
+    fun = str2func(fun);
+end
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for x0 %%%%%%%%%%%%%%%%%
 [isrv, ~]  = isrealvector(x0);
