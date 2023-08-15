@@ -211,7 +211,7 @@ if (ns > 3)
     legend(solvers,'Location', 'southeast','Orientation','vertical');
 else
     %legend(solvers,'Location', 'northoutside','Orientation','horizontal');
-    legend(solvers,'Location', 'southeast','Orientation','vertical');
+    legend(solvers,'Location', 'southeast','Orientation','vertical', 'Fontsize', 18);
 end
 
 xlabel('$\log_2(\alpha), \quad \alpha = \mathrm{NF}/\mathrm{NF}_{\min}$', 'fontsize', fontsize, 'interpreter', 'latex');

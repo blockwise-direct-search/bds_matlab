@@ -35,7 +35,7 @@ assert(size(xhist, 2) == nf && length(fhist) == nf);
 % TODO: there is a way to avoid using loop, try to find it.
 fhistx = NaN(1, length(fhist));
 for i = 1:length(fhist)
-    fhistx(i) = fun(xhist(:, i));
+    fhistx(i) = eval_fun(fun, xhist(:, i));
 end
 
 % In case of fhistx(i) = NaN or fhist(i) = NaN.

@@ -13,7 +13,7 @@ p = macup('akiva');
 options.StepTolerance = 1e-10;
 options.Algorithm = "cbds";
 
-[x, fval, exitflag, output] = newuoa(p.objective, p.x0, options);
+[x, fval, exitflag, output] = bds(p.objective, p.x0, options);
 
 fhist_length = length(output.fhist);
 g_hist = NaN(1,fhist_length);
@@ -22,7 +22,7 @@ for eval_g = 1:fhist_length
     g_hist(eval_g) = norm(gradient);
 end
 gval = min(g_hist);
-ratio = abs(gval)/options.StepTolerance;
+ratio = abs(gval)/options.StepTolerance
 
 rmpath(path_src)
 rmpath(path_competitors)

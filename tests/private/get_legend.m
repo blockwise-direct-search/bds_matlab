@@ -11,7 +11,7 @@ end
 
 % Matlab_fminsearch
 if strcmpi(parameters.solvers_invoke(i), "matlab_fminsearch")
-    solver_legend = "Nelder-Mead";
+    solver_legend = "fminsearch";
 end
 
 % Matlab_fminunc

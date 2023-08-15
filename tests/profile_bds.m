@@ -6,8 +6,6 @@ if nargin < 1
     parameters = struct();
 end
 
-restoredefaultpath;
-
 % Add the paths that we need to use in the performance profile into the MATLAB
 % search path.
 fullpath = mfilename("fullpath");

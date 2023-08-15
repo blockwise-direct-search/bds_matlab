@@ -223,7 +223,7 @@ xhist = NaN(n, maxfun);
 % history of blocks having been visited
 block_hist = NaN(1, maxfun);
 xval = x0; % current iterate
-fval = fun(xval);
+fval = eval_fun(fun, xval);
 nf = 1; % number of function evaluations
 fhist(nf) = fval;
 xhist(:, nf) = xval;

@@ -88,7 +88,7 @@ for j = 1 : num_directions
     
     % Evaluate the objective function for the current polling direction.
     xnew = xbase+alpha*D(:, j);
-    fnew = fun(xnew);
+    fnew = eval_fun(fun, xnew);
     nf = nf+1;
     fhist(nf) = fnew;
     xhist(:, nf) = xnew;
