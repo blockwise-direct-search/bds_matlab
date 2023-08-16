@@ -215,10 +215,12 @@ else
 end
 
 xlabel('$\log_2(\alpha), \quad \alpha = \mathrm{NF}/\mathrm{NF}_{\min}$', 'fontsize', fontsize, 'interpreter', 'latex');
-ylabel('$\pi_s(\alpha)$', 'fontsize', fontsize, 'interpreter', 'latex');
+ylabel('Performance profile', 'Fontsize', 18);
+%ylabel('$\pi_s(\alpha)$', 'fontsize', fontsize, 'interpreter', 'latex');
 %xlabh = get(gca,'XLabel');
 %set(xlabh,'Position',get(xlabh,'Position') - [0 .0175 0])
-set(gca,'FontSize',fontsize);
+%set(gca,'FontSize',fontsize);
+set(gca,'FontSize', 18);
 
 % Save the figure as eps.
 if int32(-log10(tau)) < 10
