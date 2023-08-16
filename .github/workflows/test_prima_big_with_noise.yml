@@ -2,7 +2,7 @@ name: Performance profiles of Prima on problems of big dimensions with noise
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 * * *'
