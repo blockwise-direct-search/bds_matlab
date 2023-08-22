@@ -46,8 +46,11 @@ for i = 1:solvers_num
      if any(contains(BDS_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
          parameters.solvers_invoke(i) = "bds";
      % Blockwise Direct Search with Powell's technique.
-     elseif strcmpi(parameters.solvers_invoke(i), "GSDS-Powell")
+     elseif strcmpi(parameters.solvers_invoke(i), "Powell")
              parameters.solvers_invoke(i) = "bds_powell";
+     elseif strcmpi(parameters.solvers_invoke(i), "Cunxin")
+             parameters.solvers_invoke(i) = "bds_cunxin";
+             parameters.Algorithm(i) = "cbds";
      % Prima.
      elseif ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
 

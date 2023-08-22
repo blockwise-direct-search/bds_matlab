@@ -14,7 +14,7 @@ if nargin < 2
 end
 
 % Compute the polling directions.
-
+% Set default searching set.
 D = [eye(n) -eye(n)];
 
 if isfield(options, "direction") && options.direction == "canonical"
@@ -24,14 +24,6 @@ if isfield(options, "direction") && options.direction == "canonical"
     perm(1:2:2*n-1) = 1:n;
     perm(2:2:2*n) = n+1:2*n;
     D = D(:, perm);
-end
-
-if isfield(options, "direction") && options.direction == "random"
-% using size to obtain number of column of D，randperm permutates the order
-% of column
-column_rank = randperm(size(D, 2));  
-% reorder the column of column_rank
-D = D(:, column_rank);              
 end
 
 end

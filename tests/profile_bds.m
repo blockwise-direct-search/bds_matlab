@@ -40,6 +40,7 @@ assert(isfield(parameters, "solvers_invoke"));
 % that are not input, save the parameters that have been input in correct
 % form.
 parameters = get_profile_options(parameters);
+
 % Tell MATLAB where to find MatCUTEst.
 locate_matcutest();
 % Tell MATLAB where to find prima.
@@ -158,11 +159,20 @@ if isfield(parameters, "classical")
     solver_options.classical = parameters.classical;
 end
 
+if isfield(parameters, "cunxin_factor")
+    solver_options.cunxin_factor = parameters.cunxin_factor;
+end
+
+if isfield(parameters, "cunxin_factor_period")
+    solver_options.cunxin_factor_period = parameters.cunxin_factor_period;
+end
+
 solver_options.cycling_inner = parameters.cycling_inner;
 solver_options.polling_inner = parameters.polling_inner;
 solver_options.solvers_legend = parameters.solvers_legend;
 solver_options.with_memory = parameters.with_memory;
 solver_options.direction = parameters.direction;
+
 
 % If parameters.noise_initial_point is true, then initial point will be 
 % selected for each problem num_random times.

@@ -1,4 +1,4 @@
 function iscs = ischarstr(x)
-%ISCHARSTR checks whether an input is a `char` or `string`
+%ISCHARSTR Check whether an input is a 'char' or 'string'.
 
 iscs = (isa(x, "char") || isa(x, "string"));

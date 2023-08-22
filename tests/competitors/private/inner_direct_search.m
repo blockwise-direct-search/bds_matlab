@@ -1,37 +1,37 @@
 function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, D, direction_indices, alpha, options)
-% inner_direct_search peforms a single iteration of traditional non-block
+%inner_direct_search peforms a single iteration of traditional non-block
 %   direct search within a given block, for which the searching direction
-% set is D.
+%   set is D.
 %
-% XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
-% DIRECTION_INDICES, ALPHA) attempts to find a XVAL to satifsy sufficient
-% decrease condition.
+%   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
+%   DIRECTION_INDICES, ALPHA) attempts to find a XVAL to satifsy sufficient
+%   decrease condition.
 %
-% XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
-% DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS.
-% INNER_DIRECT_SEARCH uses these options: sufficient decrease factor,
-% ftarget, polling, with_memory, cycling.
+%   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
+%   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS.
+%   INNER_DIRECT_SEARCH uses these options: sufficient decrease factor,
+%   ftarget, polling, with_memory, cycling.
 %
-% [XVAL, FVAL] = INNER_DIRECT_SEARCH(...) returns the value of the
-% objective function, described in FUN, at XVAL.
+%   [XVAL, FVAL] = INNER_DIRECT_SEARCH(...) returns the value of the
+%   objective function, described in FUN, at XVAL.
 %
-% [XVAL, FVAL, EXITFLAG] = INNER_DIRECT_SEARCH(...) returns an EXITFLAG
-% that describes the exit condition. If it is normal, EXITFLAG will be NaN.
+%   [XVAL, FVAL, EXITFLAG] = INNER_DIRECT_SEARCH(...) returns an EXITFLAG
+%   that describes the exit condition. If it is normal, EXITFLAG will be NaN.
 %
-% [XVAL, FVAL, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(...) returns a
-% structure OUTPUT with the number of function evaluations in OUTPUT.funcCount,
-% the history of function evaluation in OUTPUT.fhist, the history of points
-% in OUTPUT.xhist, boolean value of success, boolean value of terminate and
-% direction_indices.
+%   [XVAL, FVAL, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(...) returns a
+%   structure OUTPUT with the number of function evaluations in OUTPUT.funcCount,
+%   the history of function evaluation in OUTPUT.fhist, the history of points
+%   in OUTPUT.xhist, boolean value of success, boolean value of terminate and
+%   direction_indices.
 %
-% success: success is initialized to be false. If success is updated to be true,
-% it means that there at least exists some direction satisfying sufficient decrease.
+%   success: success is initialized to be false. If success is updated to be true,
+%   it means that there at least exists some direction satisfying sufficient decrease.
 %
-% terminate: terminate is initialized to be false. If terminate is updated to be true,
-% it means that either function evaluation is exhausted, or ftarget is reached.
+%   terminate: terminate is initialized to be false. If terminate is updated to be true,
+%   it means that either function evaluation is exhausted, or ftarget is reached.
 %
-% direction_indices: indices of directions of this block in D.
+%   direction_indices: indices of directions of this block in D.
 
 
 % Set options to an empty structure if it is not supplied.
@@ -39,7 +39,7 @@ if nargin < 7
     options = struct();
 end
 
-% Set the default sufficient decrease factor.
+% Set the default value of sufficient decrease factor.
 if isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 else
@@ -68,7 +68,8 @@ fhist = NaN(1, num_directions);
 xhist = NaN(n, num_directions);
 
 % Initialize some parameters before entering the main computations.
-nf = 0; % number of (inner) function evaluations
+% number of (inner) function evaluations
+nf = 0; 
 success = false; % the sufficient decrease condition is achieved
 fbase = fval;
 xbase = xval;
@@ -87,7 +88,7 @@ for j = 1 : num_directions
     
     % Evaluate the objective function for the current polling direction.
     xnew = xbase+alpha*D(:, j);
-    fnew = fun(xnew);
+    fnew = eval_fun(fun, xnew);
     nf = nf+1;
     fhist(nf) = fnew;
     xhist(:, nf) = xnew;
@@ -104,12 +105,6 @@ for j = 1 : num_directions
         break;
     end
     
-    % 1. Comment why the following line is wrong: if the following line is right, the complete
-    %    polling will only receive success of the last direction, even if there exists success
-    %    directions before it.
-    % 2. What if we update fnew and xnew whenever there is a smple decrease?
-    %success = (fnew <= fbase - sufficient_decrease_factor * alpha^2 / 2);
-    
     sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
     % decrease, success will always be true.
@@ -125,15 +120,14 @@ for j = 1 : num_directions
     end
     
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
-    % stop the computations after cycling the indices of the polling
-    % directions.
+    % stop the computations after cycling the indices of the polling directions.
     if success && ~strcmpi(options.polling_inner, "complete")
         direction_indices = cycling(direction_indices, j, options.cycling, options.with_memory);
         break;
     end
 end
 
-% Set useful pieces on information about the history in output.
+% Return useful pieces on information about the history in output.
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.nf = nf;
@@ -194,7 +188,7 @@ function array = cycling(array, index, strategy, with_memory)
 %
 
 
-% Precondition: If debug_flag is true, then pre-conditions is operated on
+% Precondition: If debug_flag is true, then pre_conditions are operated on
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
@@ -264,6 +258,8 @@ switch strategy
         end
 end
 
+% Postcondition: If debug_flag is true, then post_conditions are operated on
+% input. If input_correctness is false, then assert may let the code crash.
 if debug_flag
     % Assert array is a vector.
     [isrv, ~]  = isrealvector(array);

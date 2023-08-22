@@ -105,9 +105,14 @@ if ~isfield(parameters, "alpha_init")
     parameters.alpha_init = get_default_testparameters("alpha_init");
 end
 
-if ~isfield(parameters, "powell_factor")
-    powell_factor = get_default_testparameters("powell_factor");
-    parameters.powell_factor = repmat(powell_factor, 1, num_solvers);
+if ~isfield(parameters, "cunxin_factor")
+    cunxin_factor = get_default_testparameters("cunxin_factor");
+    parameters.cunxin_factor = repmat({cunxin_factor}, 1, num_solvers);
+end
+
+if ~isfield(parameters, "cunxin_factor_period")
+    cunxin_factor_period = get_default_testparameters("cunxin_factor_period");
+    parameters.cunxin_factor_period = repmat(cunxin_factor_period, 1, num_solvers);
 end
 
 if ~isfield(parameters, "accept_simple_decrease")

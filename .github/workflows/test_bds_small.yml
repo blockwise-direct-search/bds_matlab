@@ -5,7 +5,7 @@ on:
   # push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 22 */3 * *'
   workflow_dispatch:
 
 env:
@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, simplex, bfgs, lbfgs, cobyla, uobyqa, newuoa, bobyqa, lincoa]
+        competitor: [RBDS, PBDS, simplex, bfgs, lbfgs, cobyla, uobyqa, newuoa, bobyqa, lincoa, cunxin]
 
     steps:
       - name: Check out repository

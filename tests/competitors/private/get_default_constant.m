@@ -19,6 +19,12 @@ switch constant_name
         constant_value = eps;
     case {"shuffle_period"}
         constant_value = 1;
+    case {"replacement_delay"}
+        constant_value = 0;
+    case {"powell_factor"}
+        constant_value = [1e-1, 1e-2];
+    case {"powell_factor_period"}
+        constant_value = 5;
     case {"ftarget"}
         constant_value = -inf;
     case {"polling"}

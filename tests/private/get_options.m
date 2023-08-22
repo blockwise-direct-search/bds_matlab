@@ -1,6 +1,6 @@
 function [options] = get_options(p, j, name_solver, solver_options, options)
 % Get the options that needed by j-th solver on problem p.
-bds_list = ["bds", "bds_powell"];
+bds_list = ["bds", "bds_powell", "bds_cunxin"];
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
 % Each solver should receive the same maxfun on the same problem p.
@@ -54,8 +54,12 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
         options.replacement_delay = solver_options.replacement_delay(j);
     end
     
-    if isfield(solver_options, "powell_factor")
-        options.powell_factor = solver_options.powell_factor(j);
+    if isfield(solver_options, "cunxin_factor")
+        options.cunxin_factor = solver_options.cunxin_factor{j};
+    end
+
+    if isfield(solver_options, "cunxin_factor_period")
+        options.cunxin_factor_period = solver_options.cunxin_factor_period(j);
     end
 
     if isfield(solver_options, "accept_simple_decrease")

@@ -1,5 +1,5 @@
 function [exitflag] = get_exitflag(information)
-% To get exitflag of variable situations.
+%To get exitflag of variable situations.
 %     SMALL_ALPHA     Step size is below StepTolerance. For the case of variable
 %                     step sizes, it indicates the maximum of step sizes is below
 %                     StepTolerance.
@@ -7,13 +7,10 @@ function [exitflag] = get_exitflag(information)
 %     FTARGET_REACHED Function value is less or equal to ftarget.
 %     MAXIT_REACHED   The number of iterations equal to maxit.  
 
-% Preconditions
+% Preconditions: information should be a string.
 if is_debugging
     assert(isstring(information));
 end
-
-
-%====== Function body beginds ======%
 
 break_conditions = ["SMALL_ALPHA";"MAXFUN_REACHED";"FTARGET_REACHED";"MAXIT_REACHED"];
 
@@ -23,10 +20,7 @@ if isempty(exitflag)
     disp("New break condition happens."); 
 end
 
-%====== Function body ends ======%
-
-
-% Postcondtions
+% Postcondtions: exitflag should be an integer.
 if is_debugging
     assert(ceil(exitflag) == exitflag);
 end 

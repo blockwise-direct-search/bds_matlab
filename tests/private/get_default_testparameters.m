@@ -5,8 +5,10 @@ switch constant_name
         constant_value = 1000;
     case {"maxfun"}
         constant_value = 1e5;
-    case {"powell_factor"}
-        constant_value = 0.1;
+    case {"cunxin_factor"}
+        constant_value = [1e-1, 1e-2];
+    case {"cunxin_factor_period"}
+        constant_value = 5;
     case {"alpha_init"}
         constant_value = 1;
     case {"expand"}

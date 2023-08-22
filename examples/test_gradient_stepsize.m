@@ -13,7 +13,7 @@ p = macup('akiva');
 options.StepTolerance = 1e-10;
 options.Algorithm = "cbds";
 
-[x, fval, exitflag, output] = bds(p.objective, p.x0, options);
+[x, fval, exitflag, output] = bds_cunxin(p.objective, p.x0, options);
 
 fhist_length = length(output.fhist);
 g_hist = NaN(1,fhist_length);

@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [newuoa]
+        competitor: [cunxin]
 
     steps:
       - name: Check out repository

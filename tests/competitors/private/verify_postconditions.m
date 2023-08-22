@@ -7,8 +7,6 @@ assert(isnumeric(xval) && isreal(xval) && iscolumn(xval));
 assert(isrealscalar(fval));
 
 % Verify whether exitflag is an integer
-% TODO: examine whether the value of exitflag is corresponding to the
-% information
 assert(isintegerscalar(exitflag));
 
 % Verify whether nf is a postive integer
@@ -37,7 +35,7 @@ assert(size(xhist, 2) == nf && length(fhist) == nf);
 % TODO: there is a way to avoid using loop, try to find it.
 fhistx = NaN(1, length(fhist));
 for i = 1:length(fhist)
-    fhistx(i) = fun(xhist(:, i));
+    fhistx(i) = eval_fun(fun, xhist(:, i));
 end
 
 % In case of fhistx(i) = NaN or fhist(i) = NaN.
@@ -47,19 +45,5 @@ assert(all( (isnan(fhist) & isnan(fhistx)) | fhist==fhistx ));
 % Examine whether fval is the minimum of fhist and xval is the
 % corresponding point (when receiving simple decrease)
 % assert(fun(xval) == fval && min(fhist) == fval);
-
-
-
-% for i = 1:length(fhist)
-%     fhistx(i) = fun(xhist(:, i));
-%     % In case of fhistx(i) = NaN or fhist(i) = NaN.
-%     assert(fhistx(i) == fhist(i) || (isnan(fhistx(i)) && isnan(fhist(i))));
-%     if isnan(fhistx(i))
-%         assert(isnan(isnan(fhist(i))));
-%     else
-%        assert(fhistx(i) == fhist(i));
-%     end
-%
-% end
 
 end

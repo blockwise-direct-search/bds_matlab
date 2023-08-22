@@ -6,7 +6,16 @@ if parameters.solvers_invoke(i) == "bds"
     pdfname = parameters.Algorithm(i);
 elseif parameters.solvers_invoke(i) == "bds_powell"
     powell_factor_stamp = int2str(int32(-log10(parameters.powell_factor(i))));
-    pdfname = strcat("GSDS_Powell", "_", powell_factor_stamp);
+    pdfname = strcat("CBDS_Powell", "_", powell_factor_stamp);
+elseif parameters.solvers_invoke(i) == "bds_cunxin"
+    cunxin_factor_tmp = parameters.cunxin_factor{i};
+    cunxin_factor_length = length(cunxin_factor_tmp);
+    cunxin_factor_stamp = [];
+    for j = 1:cunxin_factor_length
+        cunxin_factor_stamp = strcat(cunxin_factor_stamp, "_", ... 
+            int2str(int32(-log10(cunxin_factor_tmp(j)))));
+    end
+    pdfname = strcat("CBDS_Cunxin", "_", cunxin_factor_stamp);
 elseif any(strcmpi(prima_list, parameters.solvers_invoke(i)))
         pdfname = parameters.solvers_invoke(i);
         if isfield(parameters, "version")
