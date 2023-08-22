@@ -116,7 +116,7 @@ jobs:
             profile_bds(parameters);
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3.1.2
+        uses: actions/upload-artifact@v3
         with:
           name: test_bds_big_with_noise
           path: ./tests/testdata
