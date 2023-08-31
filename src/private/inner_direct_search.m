@@ -29,7 +29,7 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %   it means that there at least exists some direction satisfying sufficient decrease.
 %
 %   terminate: terminate is initialized to be false. If terminate is updated to be true,
-%   it means that either function evaluation is exhausted, or ftarget is reached.
+%   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
 %
 %   direction_indices: indices of directions of this block in D.
 
@@ -110,10 +110,13 @@ for j = 1 : num_directions
     % decrease, success will always be true.
     success = (success || sufficient_decrease);
     
-    % If options.accept_simple_decrease is true, then we will accept xnew...
-    % and fnew as xval and fval respectively as long as fnew < fval. Otherwise,...
-    % we will only accept xnew and fnew when they meet sufficient decrease and 
-    % fnew < fval simultaneously.
+    % If options.accept_simple_decrease is true, then we will accept xnew
+    % and fnew as xval and fval respectively as long as fnew < fval. Otherwise,
+    % we will only accept xnew and fnew when they meet both sufficient decrease and 
+    % fnew < fval simultaneously. 
+    % For complete polling, fbase is fixed during all iterations in the block. So there is some case 
+    % where sufficient_decrease is true and fnew >= fval. For opportunistic polling, as long as 
+    % sufficient decrease is true, then the following points will not be explored. 
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
         fval = fnew;
@@ -121,7 +124,7 @@ for j = 1 : num_directions
     
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling directions.
-    if success && ~strcmpi(options.polling_inner, "complete")
+    if sufficient_decrease && ~strcmpi(options.polling_inner, "complete")
         direction_indices = cycling(direction_indices, j, options.cycling, options.with_memory);
         break;
     end
@@ -137,12 +140,12 @@ output.terminate = terminate;
 end
 
 function array = cycling(array, index, strategy, with_memory)
-%CYCLING Permute an array according to different options
+%CYCLING permutes an array according to different options.
 %   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array
 %   that is a permutation of ARRAY according to INDEX, STRATEGY, and MEMORY.
 %
 %   ARRAY is the array to permute. It must be a vector.
-%   INDEX is a number from -1, 1, ..., length(array). If INDEX = -1, then there is
+%   INDEX is a number from -1, 1, 2, ..., length(array). If INDEX = -1, then there is
 %   no permutation.
 %   MEMORY is a boolean value. If MEMORY is true, then the output ARRAY will
 %   be obtained by permitting the ARRAY; otherwise, the input ARRAY will be

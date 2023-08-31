@@ -1,5 +1,5 @@
 function [xval, fval, exitflag, output] = bds(fun, x0, options)
-%BDS Unconstrained nonlinear minimization (direct search with blocks).
+%BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives. 
 %
 %   XVAL = BDS(FUN, X0) starts at X0 and attempts to find
 %   local minimizer X of the function FUN.  FUN is a function handle. FUN
@@ -7,10 +7,10 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   X0 should be a vector.
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) minimizes with the
-%   default optimization parameters replaced by values in the structure OPTIONS,
-%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
+%   default optimization parameters replaced by values in the structure OPTIONS.
+%   OPTIONS includes nb, maxfun, maxfun_dim,
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
-%   blocks_strategy, with_memory, cycling, accept_simple_decrease.
+%   blocks_strategy, with_memory, cycling, accept_simple_decrease, algorithm.
 %
 %   [XVAL, FVAL] = BDS(...) returns the value of the
 %   objective function, described in FUN, at XVAL.
@@ -53,7 +53,12 @@ end
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    [fun] = verify_preconditions(fun, x0, options);
+    verify_preconditions(fun, x0, options);
+end
+
+% Todo: Explain why.
+if ischarstr(fun)
+    fun = str2func(fun);
 end
 
 % The exit flag will be set at each possible exit of the algorithm.
@@ -68,14 +73,6 @@ n = length(x0);
 if strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
         || strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "rbds")
     D = get_searching_set(n, options);
-elseif strcmpi(options.Algorithm, "dspd")
-    % Generate a vector which follows uniform distribution on the sphere of a unit ball.
-    rv = NaN(n, 1);
-    for i = 1:n
-        rv(i) = randn(1);
-    end
-    [Q, ~] = qr(rv);
-    D = [Q, -Q];
 end
 
 % number of directions
@@ -246,9 +243,7 @@ for iter = 1 : maxit
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
     
-    % Why iter-1? Because the initial value of iter is 1 and when iter
-    % increases by 1, the algorithm will visit nb blocks when 
-    % options.Algorithm = "pbds".
+    % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
         % Make sure that `shuffling_period` is defined when `Algorithm` is "sbds".
         block_indices = randperm(nb);
@@ -256,23 +251,39 @@ for iter = 1 : maxit
     
     % Get the block that are going to be visited in this iteration.
     if strcmpi(options.Algorithm, "rbds")
-        if replacement_delay == 0 || sum(~isnan(block_hist)) == 0
+        % If replacement_delay is 0, then the algorithm will select a block randomly 
+        % from block_indices for every iteration. If iter is equal to 1, then the block 
+        % that we are going to visit is selected randomly from block_indices.
+        if replacement_delay == 0 || iter == 1
             block_indices = randi([1, nb]);
         else
-            % Recorder the number of blocks having been visited
+            % Record the number of blocks having been visited.
             num_visited = sum(~isnan(block_hist));
+            % Get the number of blocks that we are going to exlude in the following selection.
             block_visited_slices_length = min(num_visited, replacement_delay);
+            % Get the indices of blocks that we are going to exclude in the following selection.
             block_visited_slices = block_hist(num_visited-block_visited_slices_length+1:num_visited);
-            % Set default value of block_indices
+            % Set default value of initial block_indices.
             block_initial_indices = 1:nb;
-            % Remove elements of block_indices appearing in block_visited_slice 
+            % Remove elements of block_indices appearing in block_visited_slice.
             block_real_indices = block_initial_indices(~ismember(block_initial_indices, block_visited_slices));
-            % Produce a random index from block_real_indices.
+            % Generate a random index from block_real_indices.
             idx = randi(length(block_real_indices));
             block_indices = block_real_indices(idx);
         end
     end
     
+    % Generate the searching set which its directions are uniformly distributed on the unit sphere for every iteration
+    % when options.Algorithm is "dspd".
+    if strcmpi(options.Algorithm, "dspd")
+        rv = NaN(n, 1);
+        for i = 1:n
+             rv(i) = randn(1);
+        end
+        [Q, ~] = qr(rv);
+        D = [Q, -Q];
+    end
+
     for i = 1:length(block_indices)
         % In case of permutation.
         i_real = block_indices(i);

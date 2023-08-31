@@ -16,7 +16,7 @@ parameters.path_bds = path_bds;
 addpath(path_tests);
 
 % If the folder of testdata does not exist, make a new one.
-path_testdata = strcat(path_tests, "/testdata");
+path_testdata = fullfile(path_tests, "testdata");
 if ~exist(path_testdata, "dir")
     mkdir(path_testdata);
 end
@@ -362,7 +362,7 @@ system(['bash ', fullfile(parameters.path_tests, 'private', 'compdf'), ' ', inpu
 % Rename pdf
 movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
 
-% Delete the path to recover
+% Delete the path to recover the environment.
 rmpath(path_tests);
 rmpath(path_bds);
 rmpath(path_src);
@@ -370,7 +370,7 @@ rmpath(path_competitors);
 rmpath(path_competitors_mnewuoa);
 rmpath(path_competitors_matlab_functions);
 
-% Restore the path
+% Go back to the original directory.
 cd(old_dir);
 
 end

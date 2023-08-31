@@ -1,10 +1,10 @@
 function D = get_searching_set(n, options)
-%SEARCHING_SET generates the set of polling directions.
+%GET_SEARCHING_SET generates the set of polling directions.
 %
-%   D = SEARCHING_SET(N) generates the set of polling directions
+%   D = GET_SEARCHING_SET(N) generates the set of polling directions
 %   {e_1, ..., e_n, -e_1,..., -e_n}, represented in matrix format.
 %
-%   D = SEARCHING_SET(N, OPTIONS) allows to supply options to the set
+%   D = GET_SEARCHING_SET(N, OPTIONS) allows to supply options to the set
 %   generation. Set OPTIONS.direction to "canonical" to obtain
 %   {e_1, -e_1, ..., e_n, -e_n}, represented in matrix format.
 
