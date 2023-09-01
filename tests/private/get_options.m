@@ -1,9 +1,9 @@
 function [options] = get_options(p, j, name_solver, solver_options, options)
-% Get the options that needed by j-th solver on problem p.
+% GET_OPTIONS get options that needed by j-th solver on problem p.
 bds_list = ["bds", "bds_powell", "bds_cunxin"];
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
-% Each solver should receive the same maxfun on the same problem p.
+% Each solver should receive the same maxfun on problem p.
 maxfun = options.maxfun;
 
 if any(contains(bds_list, name_solver, 'IgnoreCase', true))
@@ -11,10 +11,10 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     % Polling strategies should be defined in the loop!!!
     options.polling_inner = solver_options.polling_inner(j);
 
-    % Strategy of blocking
-    % If nb_generator<1, nb may be flexible by different
-    % dimensions, otherwise nb is fixed.
-    % 2.5 is warning!
+    % Set strategy of dividing blocks. If nb_generator is greater or equal to 1, then
+    % options.nb is set to be nb_generator. In this case, if nb_generator is not an integer,
+    % then it will be rounded to the nearest integer with warning. If nb_generator is less 
+    % than 1, then options.nb is set to be ceil(2*dim*nb_generator).
     x0 = p.x0;
     dim = length(x0);
     if isfield(solver_options, "nb_generator")
@@ -23,18 +23,17 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
                 options.nb = solver_options.nb_generator(j);
             else
                 options.nb = ceil(solver_options.nb_generator(j));
-                disp("Wrong input of nb_generator");
+                error("Wrong input of nb_generator");
             end
         else
             options.nb = ceil(2*dim*solver_options.nb_generator(j));
         end
     end
-    % Strategy of with_memory, cycling and polling_inner (Memory vs Nonwith_memory when cycling)
+
     options.with_memory = solver_options.with_memory(j);
     options.cycling_inner = solver_options.cycling_inner(j);
     options.direction = solver_options.direction(j);
-    
-    % Options of step size
+
     options.StepTolerance = solver_options.StepTolerance;
     options.sufficient_decrease_factor = solver_options.sufficient_decrease_factor(j);
     options.forcing_function = solver_options.forcing_function(j);
@@ -42,7 +41,6 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     options.shrink = solver_options.shrink;
     options.alpha_init = solver_options.alpha_init;
     
-    % Options for the family of bds.
     if isfield(solver_options, "Algorithm")
         options.Algorithm = solver_options.Algorithm(j);
     end
@@ -79,10 +77,11 @@ elseif any(contains(prima_list, name_solver, 'IgnoreCase', true))
         options.classical = solver_options.classical;
     end
 
-    % Options of trust region radius
+    % In Prima, set initial value of step size as rhobeg and set StepTolerance as rhoend.
     options.rhobeg = solver_options.alpha_init;
     options.rhoend = solver_options.StepTolerance;
 
+% Set options for matlab solvers.
 elseif name_solver == "matlab_fminsearch"
     options = optimset('MaxFunEvals', maxfun, 'maxiter', maxfun, 'tolfun',...
         solver_options.StepTolerance, 'tolx', solver_options.StepTolerance);
