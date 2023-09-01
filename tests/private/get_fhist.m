@@ -1,11 +1,11 @@
 function [fhist_perfprof, fval] = get_fhist(p, maxfun, j, r, solver_options, test_options)
-% Get fhist and related information of j-th solver on the r-th randomized 
+% GET_FHIST gets return value of j-th solver on the r-th randomized 
 % experiment of problem p.
 
 name_solver = solver_options.solvers(j);
 solver = str2func(name_solver);
 % Initialze fhist for performance profile.
-fhist_perfprof = NaN(maxfun,1);
+fhist_perfprof = NaN(maxfun, 1);
 
 % Scaling_matrix
 % Gradient will be affected by scaling_matrix
@@ -16,7 +16,7 @@ fhist_perfprof = NaN(maxfun,1);
 %    scaling_matrix = eye(length(p.x0));
 % end
 
-% Maxfun_dim will be an input.
+% Set maxfun before computing.
 if isfield(solver_options, "maxfun_dim")
    options.maxfun = min(solver_options.maxfun, solver_options.maxfun_dim*length(p.x0));
 end
@@ -30,7 +30,6 @@ if ~isempty(find(prima_list == name_solver, 1))
     warnoff(name_solver);
 end
 
-% Experimence with noise (if num_random == 1, then the experiment has no noise)
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
@@ -45,11 +44,11 @@ if ~isempty(find(prima_list == name_solver, 1))
     warnoff(name_solver);
 end
 
-% In case meeting simple decrease but not sufficient decrease. Also, fval
+% Fval should be the minimum among history of function values. Also, fval
 % should always be the one without noise!
 fval = min(obj.valHist);
 
-% length of fhist and ghist
+% Get length of fhist.
 fhist_length = obj.nEval;
 fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
 
