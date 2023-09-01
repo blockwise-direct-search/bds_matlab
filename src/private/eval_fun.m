@@ -1,11 +1,11 @@
 function [f] = eval_fun(fun, x)
-%EVAL_FUN Summary of this function goes here
-%   Detailed explanation goes here
+%EVAL_FUN Evaluate function fun at point x. If the function is not well defined at x, return NaN. 
 try
     f = fun(x);
 catch
-    f = NaN;  % Is this the best value?
+    % Is this the best value?
+    f = NaN;  
 end
-% Do you need to do something else?
+
 end
 
