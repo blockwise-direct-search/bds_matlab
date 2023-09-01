@@ -8,41 +8,43 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS.
-%   OPTIONS includes nb, maxfun, maxfun_dim,
-%   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
-%   blocks_strategy, with_memory, cycling, accept_simple_decrease, algorithm.
+%   OPTIONS includes nb, maxfun, maxfun_dim, expand, shrink, sufficient decrease factor, 
+%   StepTolerance, ftarget, polling_inner, with_memory, cycling, 
+%   accept_simple_decrease, algorithm, forcing_function.
+%   
+%   nb                          Number of blocks.
+%   maxfun                      Maximum of function evaluation.
+%   maxfun_dim                  Factor of maximum of function evaluation regarding to dimenstions.
+%   expand                      Expanding factor of step size.
+%   shrink                      Shrinking factor of step size.
+%   sufficient_decrease_factor  Factor of sufficient decrease condition.
+%   StepTolerance               StepTolerance of step size. If step size is below StepTolerance,
+%                               then the algorithm terminates.
+%   ftarget                     If function value is below ftarget, then the algorithm terminates.
+%   polling_inner               Polling strategy of each block.
+%   with_memory                 Whether the cycling strategy employed in the opportunistic case
+%                               memorizes the history or not.
+%   cycling                     Cycling strategy employed in the opportunistic case.
+%   accept_simple_decrease      Whether the algorithm accepts simple decrease to update xval and fval.
+%   algorithm                   algorithm of BDS.
+%   forcing_function            type of forcing function.
 %
-%   [XVAL, FVAL] = BDS(...) returns the value of the
-%   objective function, described in FUN, at XVAL.
+%   [XVAL, FVAL] = BDS(FUN, X0, OPTIONS) returns the value of the objective 
+%   function FUN at the solution XVAL.
 %
-%   [XVAL, FVAL, EXITFLAG] = BDS(...) returns an EXITFLAG
+%   [XVAL, FVAL, EXITFLAG] = BDS(FUN, X0, OPTIONS) returns an EXITFLAG
 %   that describes the exit condition. The information of EXITFLAG will be
 %   given in output.message.
 %
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
-%   structure OUTPUT with fields
+%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(FUN, X0, OPTIONS) returns a
+%   structure OUTPUT with fields: fhist, xhist, alpha_hist, blocks_hist, funcCount.
 %
-%   nb - number of blocks
-%   maxfun - maximum of function evaluation
-%   maxfun_dim - factor of maximum of function evaluation regarding to
-%               dimenstions.
-%   expand - expanding factor of step size
-%   shrink - shrinking factor of step size
-%   sufficient_decrease_factor - factor of sufficient decrease condition
-%   StepTolerance - StepTolerance of step size. If step size is below StepTolerance, then the
-%        algorithm terminates.
-%   ftarget - If function value is below ftarget, then the algorithm terminates.
-%   polling_inner - polling strategy of indices in one block
+%   fhist       History of function value
+%   xhist       History of points that being computed
+%   alpha_hist  History of step size every iteration
+%   blocks_hist History of blocks that being visited
+%   funcCount   The number of function evaluations.
 %
-%   fhist      History of function value
-%   xhist      History of points that being calculated
-%   alpha_hist History of step size every iteration
-%   funcCount  The number of function evaluations.
-%
-%   The number of function evaluations is OUTPUT.funcCount.
-%   The history of function evaluation is OUTPUT.fhist.
-%   The history of points is OUTPUT.xhist and
-%   The l2-norm of gradient in OUTPUT.ghist (only for CUTEst problems).
 
 % Set options to an empty structure if it is not supplied.
 if nargin < 3
@@ -56,7 +58,7 @@ if debug_flag
     verify_preconditions(fun, x0, options);
 end
 
-% Todo: Explain why.
+% If fun is a string, then convert it to a function handle.
 if ischarstr(fun)
     fun = str2func(fun);
 end
@@ -75,9 +77,9 @@ if strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
     D = get_searching_set(n, options);
 end
 
-% number of directions
+% Get number of directions.
 m = size(D, 2); 
-% Set the default number of blocks.
+% Get the number of blocks.
 if isfield(options, "nb")
     nb = options.nb;
 elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
@@ -89,14 +91,12 @@ elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorithm, "ds")
     nb = 1;
 end
 
-% If number of directions is less than number of blocks, then the number of
-% blocks is defined as the number of directions.
+% Number of directions should be greater or equal to number of blocks.
 nb = min(m, nb);
-% Default indices of blocks are 1:nb.
+% Set indices of blocks as 1:nb.
 block_indices = 1:nb;
 
-% Set maxfun to the maximum number of function evaluations. The default
-% value is 1e5.
+% Set maxfun to the maximum number of function evaluations.
 if isfield(options, "maxfun_dim") && isfield(options, "maxfun")
     maxfun = min(options.maxfun_dim*n, options.maxfun);
 elseif isfield(options, "maxfun_dim")
@@ -154,7 +154,7 @@ else
 end
 
 % Set the default StepTolerance of step size. If the step size reaches a value
-% below this StepTolerance, then the algorithm is stopped.
+% below StepTolerance, then the algorithm is stopped.
 if isfield(options, "StepTolerance")
     alpha_tol = options.StepTolerance;
 else
@@ -170,12 +170,13 @@ else
     ftarget = get_default_constant("ftarget");
 end
 
-% Set the default inner polling strategy. This is the polling strategy
+% Set the default value of polling_inner. This is the polling strategy
 % employed within one block.
 if ~isfield(options, "polling_inner")
     options.polling_inner = get_default_constant("polling_inner");
 end
 
+% Set the default value of cycling_inner. 
 if isfield(options, "cycling_inner")
     cycling_inner = options.cycling_inner;
 else
@@ -183,7 +184,7 @@ else
 end
 
 % Set default value of shuffling_period. Default value of shuffling_period
-% should be set 1 since the algorithm visits all blocks for every iteration.
+% should be set as 1 since the algorithm visits all blocks for every iteration.
 if strcmpi(options.Algorithm, "pbds") && isfield(options, "shuffling_period")
     shuffling_period = options.shuffling_period;
 else
@@ -220,20 +221,21 @@ end
 searching_set_indices = divide_searching_set(m, nb);
 
 % Initialize the computations.
-% history of function values
+% Initialize history of function values.
 fhist = NaN(1, maxfun);
-% history of points having been visited
+% Initialize history of points having been visited.
 xhist = NaN(n, maxfun); 
-% history of blocks having been visited
+% Initialize history of blocks having been visited.
 block_hist = NaN(1, maxfun);
-xval = x0; % current iterate
+xval = x0; 
 fval = eval_fun(fun, xval);
-nf = 1; % number of function evaluations
+% Set number of function evaluations.
+nf = 1; 
 fhist(nf) = fval;
 xhist(:, nf) = xval;
 
 % Check whether ftarget is reached by fval. If this is the case, the
-% computations afterwards should NOT be done.
+% computations afterwards need NOT be done.
 if fval <= ftarget
     information = "FTARGET_REACHED";
     exitflag = get_exitflag(information);
@@ -290,7 +292,7 @@ for iter = 1 : maxit
         % Calculate the l2-norm of rv.
         norms = sqrt(sum(rv.^2, 1));
         % Normalize rv.
-        rv = rv ./norms;
+        rv = rv ./ norms;
         [Q, ~] = qr(rv);
         D = [Q, -Q];
     end
@@ -299,16 +301,16 @@ for iter = 1 : maxit
         % In case of permutation.
         i_real = block_indices(i);
         
-        % Recorder the number of blocks having been visited
+        % Recorder the number of blocks having been visited.
         num_visited = sum(~isnan(block_hist));
-        % Update the block that going to be visited 
+        % Update the block that going to be visited.
         block_hist(num_visited+1) = i_real;
         
-        % get indices in the i-th block
+        % Get indices in the i-th block.
         direction_indices = searching_set_indices{i_real}; 
         
         suboptions.maxfun = maxfun - nf;
-        % Memory and cycling are needed since we permutate indices in inner_direct_search
+        % Memory and cycling are needed since we may permutate indices in inner_direct_search.
         suboptions.cycling = cycling_inner;
         suboptions.with_memory = with_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
@@ -382,11 +384,10 @@ output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
-% Recorder the number of blocks visited
+% Recorder the number of blocks visited.
 num_blocks_visited = sum(~isnan(block_hist));
-% Update the block that going to be visited
+% Recorder the blocks visited.
 output.blocks_hist = block_hist(1:num_blocks_visited);
-
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
