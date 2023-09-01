@@ -52,7 +52,7 @@ end
 % output. If output_correctness is false, then assert will let code crash.
 if debug_flag
     if length(index_searching_set) ~= nb
-        error('The number of blocks is not correct.');
+        error('The number of blocks of index_searching_set is not correct.');
     end
 end
 
