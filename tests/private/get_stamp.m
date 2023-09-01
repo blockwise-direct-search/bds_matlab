@@ -4,6 +4,7 @@ function [solver_stamp] = get_stamp(parameters, j)
 % bds
 if strcmpi(parameters.solvers_invoke(j), "bds")
     solver_stamp = upper(parameters.Algorithm(j));
+    solver_stamp = strcat(solver_stamp, "_", parameters.forcing_function(j));
 elseif strcmpi(parameters.solvers_invoke(j), "bds_powell")
     solver_stamp = "CBDS_Powell";
 elseif strcmpi(parameters.solvers_invoke(j), "bds_cunxin")

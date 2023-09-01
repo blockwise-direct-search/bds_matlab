@@ -46,6 +46,13 @@ else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
 
+% Set the default parameters of forcing function.
+if isfield(options, "forcing_function")
+    forcing_function = options.forcing_function;
+else
+    forcing_function = get_default_constant("forcing_function");
+end
+
 % Set the target on the objective function. If an evaluation of the
 % objective function is below the target (the problem is unconstrained),
 % then the algorithm is stopped.
@@ -105,7 +112,12 @@ for j = 1 : num_directions
         break;
     end
     
-    sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+    % Check whether the sufficient decrease condition is achieved.
+    if strcmpi(forcing_function, "quadratic")
+        sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+    elseif strcmpi(forcing_function, "zero")
+        sufficient_decrease = (fnew < fbase);
+    end    
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
     % decrease, success will always be true.
     success = (success || sufficient_decrease);

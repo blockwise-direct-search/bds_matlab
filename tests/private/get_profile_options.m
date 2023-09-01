@@ -93,6 +93,14 @@ if ~isfield(parameters, "sufficient_decrease_factor")
     end
 end
 
+if ~isfield(parameters, "forcing_function")
+    parameters.forcing_function = [];
+    for i = 1:num_solvers
+        parameters.forcing_function = [parameters.forcing_function...
+            get_default_testparameters("forcing_function")];
+    end
+end
+
 if ~isfield(parameters, "expand")
     parameters.expand = get_default_testparameters("expand");
 end

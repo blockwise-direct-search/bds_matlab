@@ -115,25 +115,32 @@ end
 % maxit is exhausted and other terminations are not reached.
 maxit = maxfun;
 
-% Set the default expanding factor.
+% Set value of expanding factor.
 if isfield(options, "expand")
     expand = options.expand;
 else
     expand = get_default_constant("expand");
 end
 
-% Set the default shrinking factor.
+% Set value of shrinking factor.
 if isfield(options, "shrink")
     shrink = options.shrink;
 else
     shrink = get_default_constant("shrink");
 end
 
-% Set the default sufficient decrease factor.
+% Set value of sufficient decrease factor.
 if isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+end
+
+% Set type of forcing function.
+if isfield(options, "forcing_function")
+    forcing_function = options.forcing_function;
+else
+    forcing_function = get_default_constant("forcing_function");
 end
 
 % Set the default boolean value of accept_simple_decrease. If
@@ -280,6 +287,10 @@ for iter = 1 : maxit
         for i = 1:n
              rv(i) = randn(1);
         end
+        % Calculate the l2-norm of rv.
+        norms = sqrt(sum(rv.^2, 1));
+        % Normalize rv.
+        rv = rv ./norms;
         [Q, ~] = qr(rv);
         D = [Q, -Q];
     end
@@ -304,6 +315,7 @@ for iter = 1 : maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;
+        suboptions.forcing_function = forcing_function;
         
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...

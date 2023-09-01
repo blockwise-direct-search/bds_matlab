@@ -17,6 +17,8 @@ switch constant_name
         constant_value = 0.5;
     case {"sufficient_decrease_factor"}
         constant_value = 1e-3;
+    case {"forcing_function"}
+        constant_value = "quadratic";
     case {"accept_simple_decrease"}
         constant_value = true;
     case {"shuffling_period"}

@@ -1,8 +1,8 @@
 function index_searching_set = divide_searching_set(m, nb)
 %DIVIDE_SEARCHING_SET Get indices of the searching set in each block.
 %   INDEX_SEARCHING_SET = DIVIDE_SEARCHING_SET(M, NB)
-%   returns a cell that store indices in each block, where M directions and
-%   NB blocks.
+%   returns a cell that record indices of each block, where M is the number of directions
+%   and the number of blocks is NB.
 %
 %   EXamples
 %   M = 11; NB = 3;
@@ -18,25 +18,31 @@ function index_searching_set = divide_searching_set(m, nb)
 %   input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    % Assert m is a positive integer.
-    assert(isintegerscalar(m) && m>0);
-    % Assert nb is a positive integer.
-    assert(isintegerscalar(nb) && nb>0);
-    % Assert the number of directions is greater than or equal to the number of
-    % blocks. 
-    assert(nb<=m);
+    % m should be a positive integer.
+    if ~isintegerscalar(m) || m<=0    
+        error('m is not a positive integer.');
+    end
+    % nb should be a positive integer.
+    if ~isintegerscalar(nb) || nb<=0    
+        error('nb is not a positive integer.');
+    end
+    % The number of directions should be greater than or equal to the number of blocks.
+    if m<nb
+        error('The number of directions should be greater than or equal to the number of blocks.');
+    end
 end
 
-% Number of directions each block (average roughly)
+% Calculate the mumber of directions of each block (average roughly).
 num_direction_block = floor(m/nb); 
-% Every block will have the same length of indices.
+
 if mod(m, nb) == 0 
     num_directions = num_direction_block*ones(nb,1);
-else % The last block may have less directions than others.
+else 
+    % The last block may have less directions than others.
     num_directions = [(num_direction_block+1)*ones(mod(m, nb), 1); num_direction_block*ones(nb-mod(m, nb), 1)];
 end
 
-% Use cell to avoid the situation that each block has different length
+% Use cell instead of matrix in MATLAB to avoid the situation that each block has different length.
 index_searching_set = cell(1,nb);
 for i = 1:nb
     index_searching_set(:,i) = {sum(num_directions(1:i-1))+1:1:sum(num_directions(1:i))};
@@ -45,7 +51,9 @@ end
 % Postconditions: If debug_flag is true, then postconditions are to verify
 % output. If output_correctness is false, then assert will let code crash.
 if debug_flag
-    assert(length(index_searching_set) == nb);
+    if length(index_searching_set) ~= nb
+        error('The number of blocks is not correct.');
+    end
 end
 
 end

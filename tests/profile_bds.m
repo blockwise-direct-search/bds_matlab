@@ -87,6 +87,7 @@ maxfun = solver_options.maxfun;
 % Parameters of stepsize
 solver_options.StepTolerance = parameters.StepTolerance;
 solver_options.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
+solver_options.forcing_function = parameters.forcing_function;
 solver_options.expand = parameters.expand;
 solver_options.shrink = parameters.shrink;
 solver_options.alpha_init = parameters.alpha_init;
