@@ -1,20 +1,19 @@
 function [parameters] = get_solvers(parameters)
-% Indicate the solvers that we invoke from its family. 
+% GET_SOLVERS get the solvers that we invoke. 
 
 solvers_num = length(parameters.solvers_invoke);
 
-% bds_list(RBDS, DSPD, CBDS, DS, )
-% RBDS: Randomized Blockwise Direct Search
-% DSPD: Direct Search based on probabilistic descent
-% CBDS: Cyclic Blockwise Direct Search
-% DS: Direct search without blocks
+% RBDS - Randomized Blockwise Direct Search.
+% DSPD - Direct Search based on probabilistic descent.
+% CBDS - Cyclic Blockwise Direct Search.
+% DS   - Direct search without blocks.
 BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
 % Prima
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-% Fminunc
+% MATLAB_fminunc
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
 
-% If there is a solver called "SBDS", set default value of Algorithm.
+% If there is a solver that we invoke existing in BDS_List, set default value of Algorithm.
 if any(ismember(lower(parameters.solvers_invoke), lower(BDS_list)))
     Algorithm_list = repmat("default", 1, solvers_num);
     parameters.Algorithm = Algorithm_list;
@@ -42,23 +41,24 @@ if isfield(parameters, "version")
 end
 
 for i = 1:solvers_num
-     % Blockwise Direct Search
+     % Set solvers_invoke to be bds if it is in BDS_list.
      if any(contains(BDS_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
          parameters.solvers_invoke(i) = "bds";
-     % Blockwise Direct Search with Powell's technique.
+     % Set solvers_invoke to be bds_powell if it is Powell.
      elseif strcmpi(parameters.solvers_invoke(i), "Powell")
              parameters.solvers_invoke(i) = "bds_powell";
+    % Set solvers_invoke to be bds_cunxin if it is Cunxin.
      elseif strcmpi(parameters.solvers_invoke(i), "Cunxin")
              parameters.solvers_invoke(i) = "bds_cunxin";
              parameters.Algorithm(i) = "cbds";
      % Prima.
      elseif ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
 
-     % fminunc.
+     % Set solvers_invoke to be matlab_fminunc if it is in fminunc_list.
      elseif ~isempty(find(fminunc_list == parameters.solvers_invoke(i), 1))
              parameters.fminunc_type = parameters.solvers_invoke(i);
              parameters.solvers_invoke(i) = "matlab_fminunc";
-     % fminsearch
+    % Set solvers_invoke to be matlab_fminsearch if it is simplex.
      elseif parameters.solvers_invoke(i) == "simplex"
              parameters.solvers_invoke(i) = "matlab_fminsearch";
      end
