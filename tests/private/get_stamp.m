@@ -1,7 +1,7 @@
 function [solver_stamp] = get_stamp(parameters, j)
-% Get the stamp of solver on performance profile.
+% GET_STAMP gets the stamp of j-th solver on performance profile.
 
-% bds
+% Set solver_stamp for BDS family.
 if strcmpi(parameters.solvers_invoke(j), "bds")
     solver_stamp = upper(parameters.Algorithm(j));
     solver_stamp = strcat(solver_stamp, "_", parameters.forcing_function(j));
@@ -11,17 +11,17 @@ elseif strcmpi(parameters.solvers_invoke(j), "bds_cunxin")
     solver_stamp = "CBDS_Cunxin";
 end
 
-% Matlab_fminsearch
+% Set solver_stamp for Matlab_fminsearch.
 if strcmpi(parameters.solvers_invoke(j), "matlab_fminsearch")
     solver_stamp = "simplex";
 end
 
-% Matlab_fminunc
+% Set solver_stamp for Matlab_fminunc.
 if strcmpi(parameters.solvers_invoke(j), "matlab_fminunc")
     solver_stamp = upper(parameters.fminunc_type);
 end
 
-% Prima
+% Set solver_stamp for PRIMA family.
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if any(contains(prima_list, parameters.solvers_invoke(j), 'IgnoreCase', true))
         solver_stamp = upper(parameters.solvers_invoke(j));
@@ -32,7 +32,7 @@ if any(contains(prima_list, parameters.solvers_invoke(j), 'IgnoreCase', true))
         end
 end
 
-% Patternsearch
+% Set solver_stamp for patternsearch.
 if strcmpi(parameters.solvers_invoke(j), "matlab_patternsearch")
     solver_stamp = "patternsearch";
 end
