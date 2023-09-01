@@ -1,7 +1,7 @@
 function [solver_legend] = get_legend(parameters, i)
-% Get the legend of solver on performance profile.
+% GET_LEGEND gets the legend of i-th solver on performance profile.
 
-% Family of blockwise direct search
+% Get legend of algorithm of BDS family.
 if strcmpi(parameters.solvers_invoke(i), "bds")
    solver_legend = upper(parameters.Algorithm(i));
    solver_legend = strcat(solver_legend, "-", parameters.forcing_function(i));
@@ -12,17 +12,17 @@ elseif strcmpi(parameters.solvers_invoke(i), "bds_cunxin")
     solver_legend = "CBDS-Cunxin";
 end
 
-% Matlab_fminsearch
+% Get legend of Matlab_fminsearch.
 if strcmpi(parameters.solvers_invoke(i), "matlab_fminsearch")
     solver_legend = "fminsearch";
 end
 
-% Matlab_fminunc
+% Get legend of algorithm of Matlab_fminunc family.
 if strcmpi(parameters.solvers_invoke(i), "matlab_fminunc")
     solver_legend = upper(parameters.fminunc_type);
 end
 
-% Prima and mnewuoa
+% Get legend of algorithm of Prima family.
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if any(contains(prima_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
     solver_legend = upper(parameters.solvers_invoke(i));
@@ -33,7 +33,7 @@ if any(contains(prima_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
     end
 end
 
-% Patternsearch
+% Get legend of Patternsearch.
 if strcmpi(parameters.solvers_invoke(i), "matlab_patternsearch")
     solver_legend = "patternsearch";
 end
