@@ -1,11 +1,6 @@
 function [output] = profile_bds(parameters)
 % Draw performance profiles.
 
-% Set parameters to an empty structure if it is not supplied.
-if nargin < 1
-    parameters = struct();
-end
-
 % Add the paths that we need to use in the performance profile into the MATLAB
 % search path.
 fullpath = mfilename("fullpath");
@@ -34,11 +29,11 @@ path_competitors_matlab_functions = fullfile(path_competitors, "matlab_functions
 addpath(path_competitors_matlab_functions);
 
 % In case of there does not exist solvers being input.
-assert(isfield(parameters, "solvers_invoke"));
+if ~isfield(parameters, "solvers_invoke")
+    error("There does not exist solvers being input!");
+end
 
-% Get the parameters that the test needs: set default value of the parameters
-% that are not input, save the parameters that have been input in correct
-% form.
+% Get the parameters that the test needs.
 parameters = get_profile_options(parameters);
 
 % Tell MATLAB where to find MatCUTEst.
@@ -77,14 +72,14 @@ fprintf("We will load %d problems\n\n", length(problem_names))
 % TODO: check what is eps. Read two papers:What Every Computer Scientist Should Know About
 % Floating-Point Arithmetic; stability and accuracy numerical(written by Higham).
 
-% Maxfun and maxfun_dim
-solver_options.maxfun = parameters.maxfun; % Maximum of function evaluation
+% Set maxfun and maxfun_dim.
+solver_options.maxfun = parameters.maxfun;
 if isfield(parameters, "maxfun_dim")
     solver_options.maxfun_dim = parameters.maxfun_dim;
 end
 maxfun = solver_options.maxfun;
 
-% Parameters of stepsize
+% Set parameters of stepsize.
 solver_options.StepTolerance = parameters.StepTolerance;
 solver_options.sufficient_decrease_factor = parameters.sufficient_decrease_factor;
 solver_options.forcing_function = parameters.forcing_function;
@@ -108,29 +103,29 @@ if isfield(parameters, "replacement_delay")
     solver_options.replacement_delay = parameters.replacement_delay;
 end
 
-% Parameters of ftarget
+% Set ftarget of objective function.
 solver_options.ftarget = parameters.ftarget;
 
-% Initialize fmin and frec
+% Initialize fmin and frec.
 solver_options.solvers = parameters.solvers_invoke;
 num_solvers = length(solver_options.solvers);
-% Number of problems
+% Get number of problems.
 num_problems = length(problem_names); 
-% Number of random tests(If num_random = 1, it means no random test)
+% Get Number of random tests(If num_random = 1, it means no random test).
 num_random = parameters.num_random; 
-% Store minimum value of the problems of the random test
+% Record minimum value of the problems of the random test.
 if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
     fmin = NaN(num_problems, num_random+1);
-    % The matrix that passed into perfprof.m
+    % Get the matrix that passed into perfprof.m. In this case, test results without noise
+    % also need to be passed.
     frec = NaN(num_problems, num_solvers, num_random+1, maxfun);
 else
+    % Get the matrix that passed into perfprof.m.
     fmin = NaN(num_problems, num_random);
-    % The matrix that passed into perfprof.m
     frec = NaN(num_problems, num_solvers, num_random, maxfun);
 end 
 
-% Some temporary options for test
-% Noise
+% Set noisy parts of test.
 test_options.is_noisy = parameters.is_noisy;
 test_options.noise_level = parameters.noise_level;
 % Relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
@@ -138,7 +133,7 @@ test_options.is_abs_noise = parameters.is_abs_noise;
 test_options.noise_type = parameters.noise_type;
 test_options.num_random = parameters.num_random;
 
-% Scaling matrix
+% Set scaling matrix.
 test_options.scaling_matrix = false;
 test_options.scaling_matrix_factor = 5;
 
@@ -276,15 +271,14 @@ if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
     end
 end 
 
-% Use time to distinguish
+% Use time to distinguish.
 time = datetime("now");
 time_str = sprintf('%04d-%02d-%02d %02d:%02d:%02.0f', year(time), ...
     month(time), day(time), hour(time), minute(time), second(time));
-% Trim the form of time
+% Trim time string.
 time_str = trim_time(time_str); 
-% Time stamp to rename
 tst = sprintf("test_%s", time_str); 
-% Rename as mixture of time stamp and parameters
+% Rename tst as mixture of time stamp and pdfname.
 tst = strcat(tst, "_", parameters.pdfname); 
 options.path = parameters.path_tests;
 path_testdata = fullfile(options.path, "testdata");
@@ -323,8 +317,8 @@ for i = 1:numel(file_list)
     copyfile(source_file, destination_file);
 end
 
-% performance profile
-% Tolerance of convergence test in performance profile
+% Draw performance profiles.
+% Set tolerance of convergence test in performance profile.
 tau = parameters.tau; 
 tau_length = length(tau);
 options_perf.outdir = options.outdir;
@@ -360,7 +354,7 @@ inputfiles = strtrim(inputfiles);
 % Merge pdf.
 outputfile = 'all.pdf';
 system(['bash ', fullfile(parameters.path_tests, 'private', 'compdf'), ' ', inputfiles, ' -o ', outputfile]);
-% Rename pdf
+% Rename pdf.
 movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
 
 % Delete the path to recover the environment.
