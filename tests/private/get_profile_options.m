@@ -1,14 +1,13 @@
 function parameters = get_profile_options(parameters)
-% Get the parameters that the test needs: set default value of the parameters
-% that are not input, save the parameters that have been input in correct
-% form.
+% GET_PROFILE_OPTIONS gets the parameters that the test needs: 
+% set default value of the parameters that are not input, save the parameters that 
+% have been input in correct form.
 
 % Specify parameters by parameters.solvers_invoke.
 parameters = get_solvers(parameters);
 
 num_solvers = length(parameters.solvers_invoke);
 
-% Set polling_outer for bds_polling.
 if ~isfield(parameters, "polling_outer")
     parameters.polling_outer = [];
     for i = 1:num_solvers
@@ -72,7 +71,7 @@ if contains(parameters.solvers_invoke, "uobyqa")
     parameters.problems_maxdim = 60;
 end
 
-% Set maxfun and maxfun_dim
+% Set maxfun and maxfun_dim.
 if ~isfield(parameters, "maxfun_dim")
     parameters.maxfun_dim = get_default_testparameters("maxfun_dim");
     if ~isfield(parameters, "maxfun")
@@ -80,7 +79,7 @@ if ~isfield(parameters, "maxfun_dim")
     end
 end
 
-% Set parameters of stepsize
+% Set StepTolerance of stepsize.
 if ~isfield(parameters, "StepTolerance")
     parameters.StepTolerance = get_default_testparameters("StepTolerance");
 end
