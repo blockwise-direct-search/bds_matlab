@@ -1,23 +1,22 @@
 function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, D, direction_indices, alpha, options)
-%inner_direct_search peforms a single iteration of traditional non-block
+%INNER_DIRECT_SEARCH peforms a single iteration of traditional non-block
 %   direct search within a given block, for which the searching direction
 %   set is D.
 %
-%   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
-%   DIRECTION_INDICES, ALPHA) attempts to find a XVAL to satifsy sufficient
-%   decrease condition.
+%   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, DIRECTION_INDICES, ALPHA, OPTIONS)
+%   attempts to find a XVAL after finishing the single iteration.
 %
 %   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
 %   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS.
 %   INNER_DIRECT_SEARCH uses these options: sufficient decrease factor,
-%   ftarget, polling, with_memory, cycling.
+%   ftarget, polling, with_memory, cycling, forcing_function.
 %
 %   [XVAL, FVAL] = INNER_DIRECT_SEARCH(...) returns the value of the
 %   objective function, described in FUN, at XVAL.
 %
 %   [XVAL, FVAL, EXITFLAG] = INNER_DIRECT_SEARCH(...) returns an EXITFLAG
-%   that describes the exit condition. If it is normal, EXITFLAG will be NaN.
+%   that describes the exit condition.
 %
 %   [XVAL, FVAL, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(...) returns a
 %   structure OUTPUT with the number of function evaluations in OUTPUT.funcCount,
@@ -39,21 +38,21 @@ if nargin < 7
     options = struct();
 end
 
-% Set the default value of sufficient decrease factor.
+% Set the value of sufficient decrease factor.
 if isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
 
-% Set the default parameters of forcing function.
+% Set the type of forcing function.
 if isfield(options, "forcing_function")
     forcing_function = options.forcing_function;
 else
     forcing_function = get_default_constant("forcing_function");
 end
 
-% Set the target on the objective function. If an evaluation of the
+% Set ftarget of objective function. If an evaluation of the
 % objective function is below the target (the problem is unconstrained),
 % then the algorithm is stopped.
 if isfield(options, "ftarget")
@@ -68,23 +67,19 @@ end
 % some bug related to exitflag.
 exitflag = NaN;
 
-% Initialize the computations.
+% Initialize some parameters before entering the loop.
 n = length(xval);
 num_directions = length(direction_indices);
 fhist = NaN(1, num_directions);
 xhist = NaN(n, num_directions);
-
-% Initialize some parameters before entering the main computations.
-% number of (inner) function evaluations
 nf = 0; 
-success = false; % the sufficient decrease condition is achieved
+success = false; 
 fbase = fval;
 xbase = xval;
 terminate = false;
 
-% Start the main computations.
 for j = 1 : num_directions
-    % Stop the computations if no more function evaluation can be
+    % Stop the loop if no more function evaluation can be
     % performed. Note that this should be checked only before evaluating
     % the objective function.
     if nf >= options.maxfun
@@ -102,7 +97,7 @@ for j = 1 : num_directions
     
     % Stop the computations if the target value on the objective function
     % is achieved. Note that the comparison is done here because fnew may
-    % be below ftarget without achieving a sufficient decrease.
+    % be below ftarget without achieving sufficient decrease condition.
     if fnew <= ftarget
         xval = xnew;
         fval = fnew;
@@ -114,7 +109,9 @@ for j = 1 : num_directions
     
     % Check whether the sufficient decrease condition is achieved.
     if strcmpi(forcing_function, "quadratic")
+        % In this case, forcing function is c*alpha^2/2.
         sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+        % In this case, forcing function is 0.
     elseif strcmpi(forcing_function, "zero")
         sufficient_decrease = (fnew < fbase);
     end    
@@ -125,10 +122,10 @@ for j = 1 : num_directions
     % If options.accept_simple_decrease is true, then we will accept xnew
     % and fnew as xval and fval respectively as long as fnew < fval. Otherwise,
     % we will only accept xnew and fnew when they meet both sufficient decrease and 
-    % fnew < fval simultaneously. 
-    % For complete polling, fbase is fixed during all iterations in the block. So there is some case 
-    % where sufficient_decrease is true and fnew >= fval. For opportunistic polling, as long as 
-    % sufficient decrease is true, then the following points will not be explored. 
+    % fnew < fval simultaneously. For complete polling, fbase is fixed during all 
+    % iterations in the block. So there is some case where sufficient_decrease is true 
+    % and fnew >= fval. For opportunistic polling, as long as sufficient decrease is true, 
+    % then the following points will not be explored. 
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
         fval = fnew;
@@ -207,15 +204,23 @@ function array = cycling(array, index, strategy, with_memory)
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
 if debug_flag
-    % Assert array is a real vector.
+    % Array should be a real vector.
     [isrv, ~]  = isrealvector(array);
-    assert(isrv);
-    % Assert index is an integer.
-    assert(isintegerscalar(index));
-    % Assert strategy is a positive integer and less than or equal to 4.
-    assert(isintegerscalar(strategy) && 0<=strategy && strategy<=4);
-    % Assert with_memory is a boolean value.
-    assert(islogicalscalar(with_memory));
+    if ~isrv
+        error("Array is not a real vector.");
+    end
+    % Index should be an integer.
+    if ~isintegerscalar(index)
+        error("Index is not an integer.");
+    end
+    % Strategy should be a positive integer and less than or equal to 4.
+    if ~isintegerscalar(strategy) || strategy < 0 || strategy > 4
+        error("Strategy is not a positive integer or less than or equal to 4.");
+    end
+    % With_memory should be boolean value.
+    if ~islogicalscalar(with_memory)
+        error("With_memory is not a boolean value.");
+    end
 end
 
 %   If index < 0, then there is no "success_index" and there is no
@@ -276,9 +281,11 @@ end
 % Postcondition: If debug_flag is true, then post_conditions are operated on
 % input. If input_correctness is false, then assert may let the code crash.
 if debug_flag
-    % Assert array is a vector.
+    % Array should be a vector.
     [isrv, ~]  = isrealvector(array);
-    assert(isrv);
+    if ~isrv
+        error("Array is not a real vector.");
+    end
 end
 
 end
