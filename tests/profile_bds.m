@@ -28,7 +28,7 @@ addpath(path_competitors_mnewuoa);
 path_competitors_matlab_functions = fullfile(path_competitors, "matlab_functions");
 addpath(path_competitors_matlab_functions);
 
-% In case of there does not exist solvers being input.
+% If there does not exist solvers being input, then throw an error.
 if ~isfield(parameters, "solvers_invoke")
     error("There does not exist solvers being input!");
 end
