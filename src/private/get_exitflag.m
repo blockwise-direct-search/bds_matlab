@@ -24,7 +24,7 @@ end
 
 % Postcondtions: exitflag should be an integer.
 if is_debugging
-    if ~isinteger(exitflag)
+    if ~isintegerscalar(exitflag)
         error("Exitflag is not an integer.");
     end
 end 

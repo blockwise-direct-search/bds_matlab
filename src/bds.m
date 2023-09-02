@@ -54,6 +54,7 @@ end
 % Verify_preconditions: If debug_flag is true, then verify_preconditions is to verify
 % input. If input_correctness is false, then assert may let the code crash.
 debug_flag = is_debugging();
+
 if debug_flag
     verify_preconditions(fun, x0, options);
 end

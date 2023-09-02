@@ -1,11 +1,11 @@
 function verify_preconditions(fun, x0, options)
-
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for fun %%%%%%%%%%%%%%%%%
 % FUN should be a function handle or a function name.
 % When detecting string, use str2func to convert.
-if ~(ischarstr(fun) && isa(str2func(fun), "function_handle"))
-    error("fun is not a function handle or a function name.");
-end
+assert(ischarstr(fun) || isa(fun, "function_handle"));
+% if ~(ischarstr(fun) && isa(str2func(fun), "function_handle"))
+%     error("fun is not a function handle or a function name.");
+% end
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for x0 %%%%%%%%%%%%%%%%%
 [isrv, ~]  = isrealvector(x0);
