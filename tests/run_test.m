@@ -1,7 +1,7 @@
 % This script is for tough test.
 parameters.solvers_invoke = ["cbds", "cbds"];
 parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
+parameters.problems_maxdim = 1;
 parameters.accept_simple_decrease = [true, true];
 parameters.sufficient_decrease_factor = [1e-3, 1e-3];
 parameters.forcing_function = ["quadratic", "zero"];

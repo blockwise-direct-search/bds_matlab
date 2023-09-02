@@ -1,6 +1,12 @@
 function [output] = profile_bds(parameters)
 % Draw performance profiles.
 
+% Record the current path.
+oldpath = path(); 
+% Restore the "right out of the box" path of MATLAB. 
+restoredefaultpath;  
+
+
 % Add the paths that we need to use in the performance profile into the MATLAB
 % search path.
 fullpath = mfilename("fullpath");
@@ -357,15 +363,19 @@ system(['bash ', fullfile(parameters.path_tests, 'private', 'compdf'), ' ', inpu
 % Rename pdf.
 movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
 
-% Delete the path to recover the environment.
-rmpath(path_tests);
-rmpath(path_bds);
-rmpath(path_src);
-rmpath(path_competitors);
-rmpath(path_competitors_mnewuoa);
-rmpath(path_competitors_matlab_functions);
-
+% Restore the path to oldpath.
+setpath(oldpath);  
 % Go back to the original directory.
 cd(old_dir);
+
+% Delete the path to recover the environment.
+% rmpath(path_tests);
+% rmpath(path_bds);
+% rmpath(path_src);
+% rmpath(path_competitors);
+% rmpath(path_competitors_mnewuoa);
+% rmpath(path_competitors_matlab_functions);
+
+
 
 end
