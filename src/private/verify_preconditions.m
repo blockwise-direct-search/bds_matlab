@@ -45,6 +45,12 @@ if isfield(options, "shrink")
     end
 end
 
+if isfield(options, "num_random_vectors")
+    if ~isintegerscalar(options.num_random_vectors) || options.num_random_vectors <= 1
+        error("options.num_random_vectors is not a positive integer greater than or equal to 2.");
+    end
+end
+
 if isfield(options, "StepTolerance")
     if ~isrealscalar(options.StepTolerance) || options.StepTolerance < 0
         error("options.StepTolerance is not a real number greater than or equal to 0.");

@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [cunxin]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, lbfgs, newuoa, bobyqa, lincoa]
 
     steps:
       - name: Check out repository
@@ -91,12 +91,15 @@ jobs:
             cd(path_tests)
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.sufficient_decrease_factor = [0, 0];
-            parameters.num_random = 10;
+            parameters.accept_simple_decrease = [true, true];
+            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
+            parameters.forcing_function = ["quadratic", "quadratic"];
             parameters.parallel = true;
+            parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
-            parameters.StepTolerance = eps;
+            parameters.num_random = 5;
             parameters.noise_initial_point = true;
+
             profile_bds(parameters);
 
       - name: Upload artifact

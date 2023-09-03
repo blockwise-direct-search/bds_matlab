@@ -87,8 +87,31 @@ if strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
     D = get_searching_set(n, options);
 end
 
+% Set the value of expanding factor.
+if isfield(options, "expand")
+    expand = options.expand;
+else
+    expand = get_default_constant("expand");
+end
+
+% Set the value of shrinking factor.
+if isfield(options, "shrink")
+    shrink = options.shrink;
+else
+    shrink = get_default_constant("shrink");
+end
+
 % Get number of directions.
-m = size(D, 2); 
+if strcmpi(options.Algorithm, "dspd")
+    if isfield(options, "num_random_vectors")
+        m = max(options.num_random_vectors, ceil(log2(1-log(shrink))/log(expand)));
+    else
+        m = max(get_default_constant("num_random_vectors"), ceil(log2(1-log(shrink))/log(expand)));
+    end
+else
+    m = size(D, 2);
+end
+ 
 % Get the number of blocks.
 if isfield(options, "nb")
     nb = options.nb;
@@ -120,20 +143,6 @@ end
 
 % Set MAXIT as MAXFUN to avoid exiting with MAXIT being reached.
 maxit = maxfun;
-
-% Set the value of expanding factor.
-if isfield(options, "expand")
-    expand = options.expand;
-else
-    expand = get_default_constant("expand");
-end
-
-% Set the value of shrinking factor.
-if isfield(options, "shrink")
-    shrink = options.shrink;
-else
-    shrink = get_default_constant("shrink");
-end
 
 % Set the value of sufficient decrease factor.
 if isfield(options, "sufficient_decrease_factor")
@@ -279,14 +288,18 @@ for iter = 1 : maxit
     % Generate the searching set whose directions are uniformly distributed on the unit sphere
     % for each iteration when options.Algorithm is "dspd".
     if strcmpi(options.Algorithm, "dspd")
-        rv = NaN(n, 1);
-        for i = 1:n
-             rv(i) = randn(1);
+        if m == 2
+            rv = random("norm", 0, 1, n, 1);
+            % Normalize rv.
+            rv = rv ./ norm(rv);
+            D = [rv, -rv];
+        else
+            for i = 1:m
+                D = random("norm", 0, 1, n, m);
+                % Normalize D.
+                D = normc(D);
+            end
         end
-        % Normalize rv.
-        rv = rv ./ norm(rv);
-        [Q, ~] = qr(rv);
-        D = [Q, -Q];
     end
 
     for i = 1:length(block_indices)

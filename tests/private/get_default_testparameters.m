@@ -15,6 +15,8 @@ switch constant_name
         constant_value = 2;
     case {"shrink"}
         constant_value = 0.5;
+    case {"num_random_vectors"}
+        constant_value = 2;
     case {"sufficient_decrease_factor"}
         constant_value = 1e-3;
     case {"forcing_function"}

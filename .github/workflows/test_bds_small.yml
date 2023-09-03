@@ -2,7 +2,7 @@ name: Performance profiles of blockwise direct search on problems of small dimen
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */3 * *'
@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, simplex, bfgs, lbfgs, cobyla, uobyqa, newuoa, bobyqa, lincoa, cunxin]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, lbfgs, cobyla, uobyqa, newuoa, bobyqa, lincoa]
 
     steps:
       - name: Check out repository
@@ -91,12 +91,15 @@ jobs:
             cd(path_tests)
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.sufficient_decrease_factor = [0, 0];
-            parameters.num_random = 10;
+            parameters.accept_simple_decrease = [true, true];
+            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
+            parameters.forcing_function = ["quadratic", "quadratic"];
             parameters.parallel = true;
+            parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
-            parameters.StepTolerance = eps;
+            parameters.num_random = 10;
             parameters.noise_initial_point = true;
+
             profile_bds(parameters);
 
       - name: Upload artifact

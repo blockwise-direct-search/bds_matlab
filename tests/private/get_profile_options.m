@@ -108,6 +108,11 @@ if ~isfield(parameters, "shrink")
     parameters.shrink = get_default_testparameters("shrink");
 end
 
+if ~isfield(parameters, "num_random_vectors")
+    parameters.num_random_vectors = max(get_default_testparameters("num_random_vectors"), ...
+        ceil(log2(1 - log(parameters.shrink)/log(parameters.expand))));
+end
+
 if ~isfield(parameters, "alpha_init")
     parameters.alpha_init = get_default_testparameters("alpha_init");
 end

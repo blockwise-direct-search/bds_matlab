@@ -1,10 +1,10 @@
 % This script is for test.
-parameters.solvers_invoke = ["cbds", "cbds"];
+parameters.solvers_invoke = ["pbds", "dspd"];
 parameters.problems_mindim = 1;
-parameters.problems_maxdim = 1;
+parameters.problems_maxdim = 5;
 parameters.accept_simple_decrease = [true, true];
 parameters.sufficient_decrease_factor = [1e-3, 1e-3];
-parameters.forcing_function = ["quadratic", "zero"];
+parameters.forcing_function = ["quadratic", "quadratic"];
 % parameters.shuffle_period = [1, 1];
 % parameters.replacement_delay = [0, 0];
 cunxin_factor = [1e-1, 1e-1];

@@ -92,6 +92,7 @@ solver_options.forcing_function = parameters.forcing_function;
 solver_options.expand = parameters.expand;
 solver_options.shrink = parameters.shrink;
 solver_options.alpha_init = parameters.alpha_init;
+solver_options.num_random_vectors = parameters.num_random_vectors;
 
 if isfield(parameters, "powell_factor")
     solver_options.powell_factor = parameters.powell_factor;

@@ -6,7 +6,8 @@ path_competitors = fullfile(path_bds, 'tests', 'competitors');
 addpath(path_src)
 addpath(path_competitors)
 
-p = macup('akiva');
+%p = macup('akiva');
+p = macup('MUONSINELS');
 % p = macup('PALMER5C');
 % p = macup('HEART6LS');
 % p = macup('LANCZOS1LS');

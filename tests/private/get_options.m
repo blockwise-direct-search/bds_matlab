@@ -40,6 +40,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     options.expand = solver_options.expand;
     options.shrink = solver_options.shrink;
     options.alpha_init = solver_options.alpha_init;
+    options.num_random_vectors = solver_options.num_random_vectors;
     
     if isfield(solver_options, "Algorithm")
         options.Algorithm = solver_options.Algorithm(j);
