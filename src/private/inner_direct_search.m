@@ -1,39 +1,34 @@
 function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
     xval, fval, D, direction_indices, alpha, options)
-%INNER_DIRECT_SEARCH peforms a single iteration of traditional non-block
-%   direct search within a given block, for which the searching direction
-%   set is D.
+%INNER_DIRECT_SEARCH peforms a single iteration of classical direct search 
+%   within a given block.
 %
 %   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, DIRECTION_INDICES, ALPHA, OPTIONS)
-%   attempts to find a XVAL after finishing the single iteration.
+%   returns a XVAL.
 %
 %   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
-%   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS.
-%   INNER_DIRECT_SEARCH uses these options: sufficient decrease factor,
-%   ftarget, polling, with_memory, cycling, forcing_function.
+%   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS, which includes
+%   sufficient_decrease_factor, ftarget, polling, with_memory, cycling, forcing_function.
 %
-%   [XVAL, FVAL] = INNER_DIRECT_SEARCH(...) returns the value of the
-%   objective function, described in FUN, at XVAL.
+%   [XVAL, FVAL] = INNER_DIRECT_SEARCH(...) returns the value of the objective function FVAL 
+%   at XVAL.
 %
-%   [XVAL, FVAL, EXITFLAG] = INNER_DIRECT_SEARCH(...) returns an EXITFLAG
-%   that describes the exit condition.
+%   [XVAL, FVAL, EXITFLAG] = INNER_DIRECT_SEARCH(...) returns an EXITFLAG that describes 
+%   the exit condition.
 %
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(...) returns a
-%   structure OUTPUT with the number of function evaluations in OUTPUT.funcCount,
-%   the history of function evaluation in OUTPUT.fhist, the history of points
-%   in OUTPUT.xhist, boolean value of success, boolean value of terminate and
-%   direction_indices.
+%   [XVAL, FVAL, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(...) returns a structure OUTPUT including
+%   funcCount, fhist, xhist, success, terminate, and direction_indices.
 %
-%   success: success is initialized to be false. If success is updated to be true,
+%   SUCCESS is initialized to be false. If success is updated to be true,
 %   it means that there at least exists some direction satisfying sufficient decrease.
 %
-%   terminate: terminate is initialized to be false. If terminate is updated to be true,
+%   TERMINATE is initialized to be false. If terminate is updated to be true,
 %   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
 %
-%   direction_indices: indices of directions of this block in D.
+%   DIRECTION_INDICES is indices of directions of this block in D.
 
 
-% Set options to an empty structure if it is not supplied.
+% Set options to an empty structure if it is not provided.
 if nargin < 7
     options = struct();
 end
@@ -52,9 +47,7 @@ else
     forcing_function = get_default_constant("forcing_function");
 end
 
-% Set ftarget of objective function. If an evaluation of the
-% objective function is below the target (the problem is unconstrained),
-% then the algorithm is stopped.
+% Set ftarget of objective function.
 if isfield(options, "ftarget")
     ftarget = options.ftarget;
 else
@@ -79,9 +72,8 @@ xbase = xval;
 terminate = false;
 
 for j = 1 : num_directions
-    % Stop the loop if no more function evaluation can be
-    % performed. Note that this should be checked only before evaluating
-    % the objective function.
+    % Stop the loop if no more function evaluations can be performed. 
+    % Note that this should be checked before evaluating the objective function.
     if nf >= options.maxfun
         terminate = true;
         exitflag = get_exitflag("MAXFUN_REACHED");
@@ -95,9 +87,8 @@ for j = 1 : num_directions
     fhist(nf) = fnew;
     xhist(:, nf) = xnew;
     
-    % Stop the computations if the target value on the objective function
-    % is achieved. Note that the comparison is done here because fnew may
-    % be below ftarget without achieving sufficient decrease condition.
+    % Stop the computations once the target value of the objective function
+    % is achieved.
     if fnew <= ftarget
         xval = xnew;
         fval = fnew;
@@ -115,17 +106,18 @@ for j = 1 : num_directions
     elseif strcmpi(forcing_function, "zero")
         sufficient_decrease = (fnew < fbase);
     end    
+
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
-    % decrease, success will always be true.
+    % decrease, success will always be true inside this function.
     success = (success || sufficient_decrease);
     
     % If options.accept_simple_decrease is true, then we will accept xnew
     % and fnew as xval and fval respectively as long as fnew < fval. Otherwise,
     % we will only accept xnew and fnew when they meet both sufficient decrease and 
     % fnew < fval simultaneously. For complete polling, fbase is fixed during all 
-    % iterations in the block. So there is some case where sufficient_decrease is true 
+    % iterations in the block. So there are some cases where sufficient_decrease is true 
     % and fnew >= fval. For opportunistic polling, as long as sufficient decrease is true, 
-    % then the following points will not be explored. 
+    % then the remaining polling points will not be explored. 
     if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
         fval = fnew;
@@ -139,7 +131,7 @@ for j = 1 : num_directions
     end
 end
 
-% Return useful pieces on information about the history in output.
+% Truncate FHIST and XHIST into an nf length vector.
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.nf = nf;
@@ -197,11 +189,8 @@ function array = cycling(array, index, strategy, with_memory)
 %   be 3 4 1 2 5 after cycling; for nonwith_memory situaion, index will be 2,
 %   sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
 %
-%
 
-
-% Precondition: If debug_flag is true, then pre_conditions are operated on
-% input. If input_correctness is false, then assert may let the code crash.
+% Check whether input is given in correct type when debug_flag is true. 
 debug_flag = is_debugging();
 if debug_flag
     % Array should be a real vector.
@@ -278,8 +267,7 @@ switch strategy
         end
 end
 
-% Postcondition: If debug_flag is true, then post_conditions are operated on
-% input. If input_correctness is false, then assert may let the code crash.
+% Check whether ARRAY is a vector or not when debug_flag is true.
 if debug_flag
     % Array should be a vector.
     [isrv, ~]  = isrealvector(array);

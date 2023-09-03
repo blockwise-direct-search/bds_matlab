@@ -1,7 +1,7 @@
 function constant_value = get_default_constant(constant_name)
-%GET_DEFAULT_CONSTANT Get the default value of options needed by BDS.
-%   CONSTANT_VALUE = GET_DEFAULT_CONSTANT(CONSTANT_NAME) returns the value
-%   of the constant named CONSTANT_NAMED.
+%GET_DEFAULT_CONSTANT gets the default value of OPTIONS for BDS.
+%
+
 switch constant_name
     case {"maxfun"}
         constant_value = 1e5;

@@ -1,6 +1,6 @@
 function [isrm, m, n] = isrealmatrix(x)
 %ISREALMATRIX checks whether x is a real matrix.
-% N.B.: isrealmatrix([]) = true
+% N.B.: isrealmatrix([]) = true.
 
 if isempty(x)
     isrm = true;

@@ -80,6 +80,31 @@ exitflag = NaN;
 % Transpose x0 if it is a row.
 x0 = double(x0(:));
 
+% Set the polling directions in D.
+n = length(x0);
+if strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
+        || strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "rbds")
+    D = get_searching_set(n, options);
+end
+
+% Get number of directions.
+m = size(D, 2); 
+% Get the number of blocks.
+if isfield(options, "nb")
+    nb = options.nb;
+elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
+        || strcmpi(options.Algorithm, "rbds")
+    % Default value is set as n, which is good for canonical with 2n directions. For
+    % other situations, other value may be good.
+    nb = n;
+elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorithm, "ds")
+    nb = 1;
+end
+
+% Number of directions should be greater or equal to number of blocks.
+nb = min(m, nb);
+
+% Set indices of blocks as 1:nb.
 block_indices = 1:nb;
 
 % Set MAXFUN to the maximum number of function evaluations.

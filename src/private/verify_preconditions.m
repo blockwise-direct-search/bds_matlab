@@ -1,19 +1,14 @@
 function verify_preconditions(fun, x0, options)
-%%%%%%%%%%%%%%%%%%%%%%%% precondition for fun %%%%%%%%%%%%%%%%%
-% FUN should be a function handle or a function name.
-% When detecting string, use str2func to convert.
-assert(ischarstr(fun) || isa(fun, "function_handle"));
-% if ~(ischarstr(fun) && isa(str2func(fun), "function_handle"))
-%     error("fun is not a function handle or a function name.");
-% end
+%VERIFY_PRECONDITIONS verifies the preconditions for the input arguments of the function.
+%
 
-%%%%%%%%%%%%%%%%%%%%%%%% precondition for x0 %%%%%%%%%%%%%%%%%
+assert(ischarstr(fun) || isa(fun, "function_handle"));
+
 [isrv, ~]  = isrealvector(x0);
 if ~isrv
     error("x0 is not a real vector.");
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%% precondition for options %%%%%%%%%%%%%%%%%
 if isfield(options, "nb")
     if ~isintegerscalar(options.nb) || options.nb <= 0
         error("options.nb is not a positive integer.");

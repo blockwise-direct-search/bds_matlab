@@ -1,4 +1,6 @@
 function verify_postconditions(fun, xval, fval, exitflag, output)
+%VERIFY_POSTCONDITIONS verifies whether output is in right form.
+%
 
 % Verify whether xval is a real column or scalar.
 if ~(isnumeric(xval) && isreal(xval) && iscolumn(xval))
