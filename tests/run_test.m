@@ -1,4 +1,4 @@
-% This script is for tough test.
+% This script is for test.
 parameters.solvers_invoke = ["cbds", "cbds"];
 parameters.problems_mindim = 1;
 parameters.problems_maxdim = 1;
