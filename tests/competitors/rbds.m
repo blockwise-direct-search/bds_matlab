@@ -165,10 +165,10 @@ end
 
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.
-if isfield(options, "with_memory")
-    with_memory = options.with_memory;
+if isfield(options, "with_cycling_memory")
+    with_cycling_memory = options.with_cycling_memory;
 else
-    with_memory = get_default_constant("with_memory");
+    with_cycling_memory = get_default_constant("with_cycling_memory");
 end
 
 % Set initial step size and alpha_hist to store the history of step size.
@@ -218,7 +218,7 @@ for iter = 1 : maxit
     suboptions.maxfun = maxfun - nf;
     % Memory and cycling are needed since we permutate indices in inner_direct_search
     suboptions.cycling = cycling_inner;
-    suboptions.with_memory = with_memory;
+    suboptions.with_cycling_memory = with_cycling_memory;
     suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
     suboptions.ftarget = ftarget;
     suboptions.polling_inner = options.polling_inner;

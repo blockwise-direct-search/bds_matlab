@@ -39,7 +39,7 @@ switch constant_name
         constant_value = "opportunistic";
     case {"cycling_inner"}
         constant_value = 1;
-    case {"with_memory"}
+    case {"with_cycling_memory"}
         constant_value = true;
     case {"nb_generator"}
         constant_value = 0.5;

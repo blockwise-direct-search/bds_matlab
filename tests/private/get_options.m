@@ -30,7 +30,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
         end
     end
 
-    options.with_memory = solver_options.with_memory(j);
+    options.with_cycling_memory = solver_options.with_cycling_memory(j);
     options.cycling_inner = solver_options.cycling_inner(j);
     options.direction = solver_options.direction(j);
 

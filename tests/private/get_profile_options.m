@@ -22,11 +22,11 @@ if ~isfield(parameters, "cycling_outer")
     end
 end
 
-% Set with_memory, polling_inner and cycling_inner for inner_direct_search.
-if ~isfield(parameters, "with_memory")
-    parameters.with_memory = [];
+% Set with_cycling_memory, polling_inner and cycling_inner for inner_direct_search.
+if ~isfield(parameters, "with_cycling_memory")
+    parameters.with_cycling_memory = [];
     for i = 1:num_solvers
-        parameters.with_memory = [parameters.with_memory get_default_testparameters("with_memory")];
+        parameters.with_cycling_memory = [parameters.with_cycling_memory get_default_testparameters("with_cycling_memory")];
     end
 end
 

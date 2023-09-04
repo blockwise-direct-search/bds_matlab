@@ -11,7 +11,7 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
 %   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS.
 %   INNER_DIRECT_SEARCH uses these options: sufficient decrease factor,
-%   ftarget, polling, with_memory, cycling.
+%   ftarget, polling, with_cycling_memory, cycling.
 %
 %   [XVAL, FVAL] = INNER_DIRECT_SEARCH(...) returns the value of the
 %   objective function, described in FUN, at XVAL.
@@ -122,7 +122,7 @@ for j = 1 : num_directions
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling directions.
     if success && ~strcmpi(options.polling_inner, "complete")
-        direction_indices = cycling(direction_indices, j, options.cycling, options.with_memory);
+        direction_indices = cycling(direction_indices, j, options.cycling, options.with_cycling_memory);
         break;
     end
 end
@@ -136,7 +136,7 @@ output.direction_indices = direction_indices;
 output.terminate = terminate;
 end
 
-function array = cycling(array, index, strategy, with_memory)
+function array = cycling(array, index, strategy, with_cycling_memory)
 %CYCLING Permute an array according to different options
 %   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array
 %   that is a permutation of ARRAY according to INDEX, STRATEGY, and MEMORY.
@@ -156,8 +156,8 @@ function array = cycling(array, index, strategy, with_memory)
 %   1  The element of the index will be moved to the first element of array.
 %
 %   EXAMPLE
-%   When array is 3 1 2 4 5, if index = 3, for with_memory situation,
-%   array will be 2 3 1 4 5 after cycling; for nonwith_memory situaion, index
+%   When array is 3 1 2 4 5, if index = 3, for with_cycling_memory situation,
+%   array will be 2 3 1 4 5 after cycling; for nonwith_cycling_memory situaion, index
 %   will be 2, sort(index) is 1 2 3 4 5 and array will be 2 1 3 4 5 after
 %   cycling.
 %
@@ -165,8 +165,8 @@ function array = cycling(array, index, strategy, with_memory)
 %      moved ahead of array.
 %
 %   EXAMPLE
-%   When array is 2 1 4 5 3, if index = 3, for with_memory situation,
-%   array will be 4 5 3 2 1 after cycling; for nonwith_memory situaion, index
+%   When array is 2 1 4 5 3, if index = 3, for with_cycling_memory situation,
+%   array will be 4 5 3 2 1 after cycling; for nonwith_cycling_memory situaion, index
 %   will be 4, sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after
 %   cycling.
 %
@@ -174,15 +174,15 @@ function array = cycling(array, index, strategy, with_memory)
 %      moved ahead of array.
 %
 %   EXAMPLE
-%   When array is 2 1 4 5 3 and index = 3, for with_memory situation,
-%   array will be 5 3 2 1 4 after cycling; for nonwith_memory situaion, index will
+%   When array is 2 1 4 5 3 and index = 3, for with_cycling_memory situation,
+%   array will be 5 3 2 1 4 after cycling; for nonwith_cycling_memory situaion, index will
 %   be 4, sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
 %
 %   4  The element of the following one after index will be moved ahead of array.
 %
 %   EXAMPLE
-%   array is 4 1 2 3 5, if index = 3, for with_memory situation, array will
-%   be 3 4 1 2 5 after cycling; for nonwith_memory situaion, index will be 2,
+%   array is 4 1 2 3 5, if index = 3, for with_cycling_memory situation, array will
+%   be 3 4 1 2 5 after cycling; for nonwith_cycling_memory situaion, index will be 2,
 %   sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
 %
 %
@@ -199,8 +199,8 @@ if debug_flag
     assert(isintegerscalar(index));
     % Assert strategy is a positive integer and less than or equal to 4.
     assert(isintegerscalar(strategy) && 0<=strategy && strategy<=4);
-    % Assert with_memory is a boolean value.
-    assert(islogicalscalar(with_memory));
+    % Assert with_cycling_memory is a boolean value.
+    assert(islogicalscalar(with_cycling_memory));
 end
 
 %   If index < 0, then there is no "success_index" and there is no
@@ -209,10 +209,10 @@ if index < 0 || strategy == 0
     return;
 end
 
-% If with_memory is true, cycling_strategy will be operated on array. Otherwise,
+% If with_cycling_memory is true, cycling_strategy will be operated on array. Otherwise,
 % cycling_strategy will be operated on the array after sorting. In this case,
 % the value of index will be the index corresponding to the array after sorting.
-if ~with_memory
+if ~with_cycling_memory
     [array, indices] = sort(array);
     index = find(indices == index);
 end
@@ -221,8 +221,8 @@ switch strategy
     % If cycling_strategy is 1, the element of the index will be moved to
     % the first element of array. For example, if index = 3, array is 1 2 3 4 5,
     % then array will be 3 1 2 4 5 after cycling. For the case where
-    % array is 3 1 2 4 5, if index = 3, for with_memory situation, array will
-    % be 2 3 1 4 5 after cycling; for nonwith_memory situaion, index will
+    % array is 3 1 2 4 5, if index = 3, for with_cycling_memory situation, array will
+    % be 2 3 1 4 5 after cycling; for nonwith_cycling_memory situaion, index will
     % be 2 after executing the code paragraph above, sort(index)
     %is 1 2 3 4 5 and array will be 2 1 3 4 5 after cycling.
     case {1}
@@ -230,8 +230,8 @@ switch strategy
         % If cycling_strategy is 2, the element of the index and the following
         % ones until end will be moved ahead of array. For example, if index = 3,
         % array is 1 2 3 4 5, then array will be 3 4 5 1 2 after cycling.
-        % When array is 2 1 4 5 3, if index = 3, for with_memory
-        % situation, array will be 4 5 3 2 1 after cycling; for nonwith_memory
+        % When array is 2 1 4 5 3, if index = 3, for with_cycling_memory
+        % situation, array will be 4 5 3 2 1 after cycling; for nonwith_cycling_memory
         % situaion, index will be 4 after executing the paragraph above,
         % sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after cycling.
     case {2}
@@ -239,8 +239,8 @@ switch strategy
         % If cycling_strategy is 3, the element of the following ones after index
         % until end will be moved ahead of array. For example, if index = 3, array
         % is 1 2 3 4 5, then array will be 4 5 1 2 3 after cycling.
-        % When array is 2 1 4 5 3 and index = 3, for with_memory
-        % situation, array will be 5 3 2 1 4 after cycling; for nonwith_memory
+        % When array is 2 1 4 5 3 and index = 3, for with_cycling_memory
+        % situation, array will be 5 3 2 1 4 after cycling; for nonwith_cycling_memory
         % situaion, index will be 4 after executing the paragraph above,
         % sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
     case {3}
@@ -248,8 +248,8 @@ switch strategy
         % If cycling_strategy is 4, the element of the following one after index
         % will be moved ahead of array. For example, if index = 3, array
         % is 1 2 3 4 5, then array will be 4 1 2 3 5 after cycling.
-        % For the case where array is 4 1 2 3 5, if index = 3, for with_memory
-        % situation, array will be 3 4 1 2 5 after cycling; for nonwith_memory
+        % For the case where array is 4 1 2 3 5, if index = 3, for with_cycling_memory
+        % situation, array will be 3 4 1 2 5 after cycling; for nonwith_cycling_memory
         % situaion, index will be 2 after executing the paragraph above,
         % sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
     case {4}

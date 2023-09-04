@@ -174,7 +174,7 @@ end
 solver_options.cycling_inner = parameters.cycling_inner;
 solver_options.polling_inner = parameters.polling_inner;
 solver_options.solvers_legend = parameters.solvers_legend;
-solver_options.with_memory = parameters.with_memory;
+solver_options.with_cycling_memory = parameters.with_cycling_memory;
 solver_options.direction = parameters.direction;
 
 

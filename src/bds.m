@@ -7,7 +7,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) minimizes the objective funciton with default parameters replaced
 %   by values in OPTIONS. OPTIONS includes nb, maxfun, maxfun_dim, expand, shrink, 
-%   sufficient_decrease_factor, StepTolerance, ftarget, polling_inner, with_memory, cycling, 
+%   sufficient_decrease_factor, StepTolerance, ftarget, polling_inner, with_cycling_memory, cycling, 
 %   accept_simple_decrease, Algorithm, forcing_function.
 %   
 %   nb                          Number of blocks.
@@ -21,7 +21,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   ftarget                     Target of function value. If function value is below ftarget, 
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
-%   with_memory                 In the opportunistic case (polling_inner == "opportunistic"), 
+%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
 %                               with_meory decides whether the cycling strategy memorizes 
 %                               the history or not.
 %   cycling                     Cycling strategy employed in the opportunistic case.
@@ -206,10 +206,10 @@ else
 end
 
 % Set the boolean value of WITH_MEMORY.
-if isfield(options, "with_memory")
-    with_memory = options.with_memory;
+if isfield(options, "with_cycling_memory")
+    with_cycling_memory = options.with_cycling_memory;
 else
-    with_memory = get_default_constant("with_memory");
+    with_cycling_memory = get_default_constant("with_cycling_memory");
 end
 
 % Set initial step size and alpha_hist.
@@ -316,7 +316,7 @@ for iter = 1 : maxit
         
         suboptions.maxfun = maxfun - nf;
         suboptions.cycling = cycling_inner;
-        suboptions.with_memory = with_memory;
+        suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;

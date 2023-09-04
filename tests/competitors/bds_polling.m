@@ -12,7 +12,7 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %   default optimization parameters replaced by values in the structure OPTIONS,
 %   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
-%   polling_outer, with_memory, cycling.
+%   polling_outer, with_cycling_memory, cycling.
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
@@ -26,7 +26,7 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %   ftarget - If function value is below ftarget, then the algorithm terminates.
 %   polling_inner - polling strategy of indices in one block
 %   polling_outer - polling strategy of block_indices
-%   with_memory - If with_memory is true, permutation will be executed on the array of last
+%   with_cycling_memory - If with_cycling_memory is true, permutation will be executed on the array of last
 %           iteration, otherwise, permutation will be executed on the initial array.
 %   cycling - Possible values of cycling and the corresponding conditions
 %   are listed below.
@@ -38,8 +38,8 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %   1  The element of the index will be moved to the first element of array.
 %
 %   EXAMPLE
-%   When array is 3 1 2 4 5, if index = 3, for with_memory situation,
-%   array will be 2 3 1 4 5 after cycling; for nonwith_memory situaion, index
+%   When array is 3 1 2 4 5, if index = 3, for with_cycling_memory situation,
+%   array will be 2 3 1 4 5 after cycling; for nonwith_cycling_memory situaion, index
 %   will be 2, sort(index) is 1 2 3 4 5 and array will be 2 1 3 4 5 after
 %   cycling.
 %
@@ -47,8 +47,8 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %      moved ahead of array.
 %
 %   EXAMPLE
-%   When array is 2 1 4 5 3, if index = 3, for with_memory situation,
-%   array will be 4 5 3 2 1 after cycling; for nonwith_memory situaion, index
+%   When array is 2 1 4 5 3, if index = 3, for with_cycling_memory situation,
+%   array will be 4 5 3 2 1 after cycling; for nonwith_cycling_memory situaion, index
 %   will be 4, sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after
 %   cycling.
 %
@@ -56,15 +56,15 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %      moved ahead of array.
 %
 %   EXAMPLE
-%   When array is 2 1 4 5 3 and index = 3, for with_memory situation,
-%   array will be 5 3 2 1 4 after cycling; for nonwith_memory situaion, index will
+%   When array is 2 1 4 5 3 and index = 3, for with_cycling_memory situation,
+%   array will be 5 3 2 1 4 after cycling; for nonwith_cycling_memory situaion, index will
 %   be 4, sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
 %
 %   4  The element of the following one after index will be moved ahead of array.
 %
 %   EXAMPLE
-%   array is 4 1 2 3 5, if index = 3, for with_memory situation, array will
-%   be 3 4 1 2 5 after cycling; for nonwith_memory situaion, index will be 2,
+%   array is 4 1 2 3 5, if index = 3, for with_cycling_memory situation, array will
+%   be 3 4 1 2 5 after cycling; for nonwith_cycling_memory situaion, index will be 2,
 %   sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
 %   
 %   5 Use the idea of symmetric Gauss-Seidel to change array first. If
@@ -74,7 +74,7 @@ function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
 %   EXAMPLE
 %   array is 1 2 3 4 5, then array will be changed to 1 2 3 4 5 4 3 2 1
 %   initially. If index = 3, array will be 4 5 4 3 2 1 1 2 3. If index = 2,
-%   for with_memory situation, array will be 4 3 2 1 1 2 3 4 5; for nonwith_memory
+%   for with_cycling_memory situation, array will be 4 3 2 1 1 2 3 4 5; for nonwith_cycling_memory
 %   situation, array will be 4 3 2 1 1 2 3 4 5.
 %
 %
@@ -234,10 +234,10 @@ end
 
 % Set the default value for the boolean indicating whether the cycling
 % strategy employed in the opportunistic case memorizes the history or not.
-if isfield(options, "with_memory")
-    with_memory = options.with_memory;
+if isfield(options, "with_cycling_memory")
+    with_cycling_memory = options.with_cycling_memory;
 else
-    with_memory = get_default_constant("with_memory");
+    with_cycling_memory = get_default_constant("with_cycling_memory");
 end
 
 % Set the initial block indices and the corresponding initial step sizes.
@@ -303,7 +303,7 @@ for k = 1 : maxit
         suboptions.maxfun = maxfun - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search
         suboptions.cycling = cycling_inner;
-        suboptions.with_memory = with_memory;
+        suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
@@ -376,9 +376,9 @@ for k = 1 : maxit
     end
 
     % Cycle the block indices in the opportunistic case, following the
-    % strategy given in options.polling_outer, cycling, and with_memory.
+    % strategy given in options.polling_outer, cycling, and with_cycling_memory.
     if ~strcmpi(options.polling_outer, "complete")
-        block_indices = cycling(block_indices, success_block_index, cycling_outer, with_memory);
+        block_indices = cycling(block_indices, success_block_index, cycling_outer, with_cycling_memory);
     end
 
 end
