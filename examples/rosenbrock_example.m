@@ -1,5 +1,5 @@
 function rosenbrock_example()
-%ROSENBROCK_EXAMPLE illustrates how to use prima.
+%ROSENBROCK_EXAMPLE illustrates how to use bds.
 %
 %   ***********************************************************************
 %   Authors:    LI Haitian (haitian-li@connect.polyu.hk) 
