@@ -294,11 +294,9 @@ for iter = 1 : maxit
             rv = rv ./ norm(rv);
             D = [rv, -rv];
         else
-            for i = 1:m
-                D = random("norm", 0, 1, n, m);
-                % Normalize D.
-                D = normc(D);
-            end
+            D = random("norm", 0, 1, n, m);
+            % Normalize D.
+            D = normc(D);
         end
     end
 

@@ -1,4 +1,4 @@
-% This script is for test.
+% This script is for tough test.
 
 % Record the current path.
 oldpath = path(); 
@@ -12,28 +12,38 @@ fullpath = mfilename('fullpath');
 [path_bds, ~, ~] = fileparts(path_examples);
 path_src = fullfile(path_bds, 'src');
 path_competitors = fullfile(path_bds, 'tests', 'competitors');
-addpath(path_src)
-addpath(path_competitors)
+addpath(path_src);
+addpath(path_competitors);
+
+% Tell MATLAB where to find MatCUTEst.
+locate_matcutest();
 
 % Get list of problems
-s.type = parameters.problems_type; % Unconstrained: 'u'
-s.mindim = parameters.problems_mindim; % Minimum of dimension
-s.maxdim = parameters.problems_maxdim; % Maximum of dimension
+if parameters.problems_dim == "small"
+    s.type = "u"; % Unconstrained: 'u'
+    s.mindim = 1; % Minimum of dimension
+    s.maxdim = 5; % Maximum of dimension
+elseif parameters.problems_dim == "big"
+    s.type = "u"; % Unconstrained: 'u'
+    s.mindim = 6; % Minimum of dimension
+    s.maxdim = 100; % Maximum of dimension
+end
+
 s.blacklist = [];
 % Problems that crash.
 s.blacklist = [s.blacklist, {}];
 s.blacklist = [{'LRCOVTYPE'},{'LRIJCNN1'},{'PARKCH'},{'STRATEC'}];
 
 problem_names = secup(s);
-fprintf("We will load %d problems\n\n", length(problem_names))
+num_problems = length(problem_names);
+fprintf("We will load %d problems\n\n", num_problems);
 
-options.StepTolerance = 1e-10;
-options.Algorithm = "cbds";
-
+options.Algorithm = parameters.Algorithm;
 noise_level = 1e-3;
 
 for i = 1:num_problems
     p = macup(problem_names(1, i));
+    fprintf("%s\n", p.name);
     random_seed = abs(ceil(1e5*sin(sum(p.x0)))) + ...
         abs(ceil(1e4 * sin(1e3*norm(p.x0)))) + 5000 * norm(p.x0);
     with_failure = true;

@@ -1,8 +1,8 @@
-name: Performance profiles of Prima on problems of big dimensions
+name: Tough test of blockwise direct search
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -13,17 +13,16 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Tough test.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [big]
+        dim: [small, big]
         with_optim_toolbox: [yes]
-        solver: [newuoa]
-        competitor: [bfgs, simplex]
+        solver: [CBDS]
 
     steps:
       - name: Check out repository
@@ -88,17 +87,21 @@ jobs:
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
-            cd(path_tests)
+            cd(path_tests);
             parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.accept_simple_decrease = [true, true];
+            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
+            parameters.forcing_function = ["quadratic", "quadratic"];
             parameters.parallel = true;
-            parameters.StepTolerance = eps;
             parameters.is_noisy = false;
-            parameters.num_random = 1;
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            parameters.fmin_type = "randomized";
+            parameters.num_random = 10;
+            parameters.noise_initial_point = true;
+
             profile_bds(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_prima_big
+          name: test_bds_small
           path: ./tests/testdata

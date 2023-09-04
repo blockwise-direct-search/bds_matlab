@@ -5,7 +5,8 @@ function [output] = profile_bds(parameters)
 oldpath = path(); 
 % Restore the "right out of the box" path of MATLAB. 
 restoredefaultpath;  
-
+% Record the current directory.
+old_dir = pwd();
 
 % Add the paths that we need to use in the performance profile into the MATLAB
 % search path.
@@ -340,7 +341,6 @@ for l = 1:tau_length
     output = perfprof(frec, fmin, options_perf);
 end
 
-old_dir = pwd;
 cd(options.outdir);
 
 % Initialize string variable.
@@ -368,15 +368,5 @@ movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
 setpath(oldpath);  
 % Go back to the original directory.
 cd(old_dir);
-
-% Delete the path to recover the environment.
-% rmpath(path_tests);
-% rmpath(path_bds);
-% rmpath(path_src);
-% rmpath(path_competitors);
-% rmpath(path_competitors_mnewuoa);
-% rmpath(path_competitors_matlab_functions);
-
-
 
 end
