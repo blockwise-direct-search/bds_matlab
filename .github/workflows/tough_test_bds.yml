@@ -86,7 +86,7 @@ jobs:
             parameters.problems_dim = "${{ matrix.dim }}";
             options.Algorithm = "${{ matrix.solver }}";
 
-            profile_bds(parameters);
+            run_tough;
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
