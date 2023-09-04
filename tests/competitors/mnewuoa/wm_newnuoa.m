@@ -1,4 +1,4 @@
-function [xval, fval, exitflag, output] = mnewuoa_wrapper(fun,x0,options)
+function [xval, fval, exitflag, output] = wm_newnuoa(fun,x0,options)
 global mnewuoa_fhist
 global mnewuoa_nf
 

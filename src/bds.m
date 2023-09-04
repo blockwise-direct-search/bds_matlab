@@ -82,6 +82,11 @@ x0 = double(x0(:));
 
 % Set the polling directions in D.
 n = length(x0);
+
+if ~isfield(options, "Algorithm")
+    options.Algorithm = get_default_constant("Algorithm");
+end
+
 if strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
         || strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "rbds")
     D = get_searching_set(n, options);

@@ -7,6 +7,8 @@ switch constant_name
         constant_value = 1e5;
     case {"maxfun_dim"}
         constant_value = 1e3;
+    case {"Algorithm"}
+        constant_value = "cbds";
     case {"expand"}
         constant_value = 2;
     case {"shrink"}
