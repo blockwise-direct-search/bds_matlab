@@ -22,7 +22,7 @@ jobs:
         matlab: [latest]
         dim: [small, big]
         with_optim_toolbox: [yes]
-        solver: [CBDS]
+        solver: [CBDS, PBDS, RBDS, DSPD, DS]
 
     steps:
       - name: Check out repository
@@ -80,23 +80,11 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
-
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests);
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.accept_simple_decrease = [true, true];
-            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
-            parameters.forcing_function = ["quadratic", "quadratic"];
-            parameters.parallel = true;
-            parameters.is_noisy = false;
-            parameters.fmin_type = "randomized";
-            parameters.num_random = 10;
-            parameters.noise_initial_point = true;
+            options.Algorithm = "${{ matrix.solver }}";
 
             profile_bds(parameters);
 
