@@ -32,8 +32,6 @@ addpath(path_competitors);
 parameters.path_competitors = path_competitors;
 path_competitors_mnewuoa = fullfile(path_competitors, "mnewuoa");
 addpath(path_competitors_mnewuoa);
-path_competitors_matlab_functions = fullfile(path_competitors, "matlab_functions");
-addpath(path_competitors_matlab_functions);
 
 % In case no solvers are input, then throw an error.
 if ~isfield(parameters, "solvers_invoke")
@@ -76,7 +74,7 @@ problem_names = secup(s);
 fprintf("We will load %d problems\n\n", length(problem_names))
 
 % Some fixed (relatively) options
-% TODO: check what is eps. Read two papers:What Every Computer Scientist Should Know About
+% TODO: check what is eps. Read two papers: What Every Computer Scientist Should Know About
 % Floating-Point Arithmetic; stability and accuracy numerical(written by Higham).
 
 % Set maxfun and maxfun_dim.
