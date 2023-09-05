@@ -295,7 +295,7 @@ for iter = 1 : maxit
     % for each iteration when options.Algorithm is "dspd".
     if strcmpi(options.Algorithm, "dspd")
         if m == 2
-            rv = random("norm", 0, 1, n, 1);
+            rv = rand(n, 1);
             % Normalize rv.
             rv = rv ./ norm(rv);
             D = [rv, -rv];

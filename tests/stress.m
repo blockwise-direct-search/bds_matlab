@@ -55,6 +55,7 @@ end
     end
     test_options.Algorithm = options.Algorithm;
     fprintf('\n>>>>>> test_options =');
+    test_options
     
     % Generate the problem
     problem = stress_problem(n, problem_type, random_seed);
@@ -72,6 +73,7 @@ end
     end
     
     tic;
+    exception = [];
     try
         solver(problem.objective, problem.x0, problem.options);
     catch exception
