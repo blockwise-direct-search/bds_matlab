@@ -1,4 +1,4 @@
-name: Performance profiles of Prima on problems of small dimensions with noise
+name: Tough test
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,19 +13,15 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Tough test
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [small]
         with_optim_toolbox: [yes]
-        solver: [bobyqa]
-        competitor: [newuoa, lincoa]
-        noise_level: [negligible, low, medium, high]
-        version: [old, now]
+        solver: [CBDS, PBDS, RBDS, DSPD, DS]
 
     steps:
       - name: Check out repository
@@ -83,26 +79,11 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
-
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
-            cd(path_tests)
-            parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = true;
-            parameters.StepTolerance = eps;
-            parameters.version = "${{ matrix.version }}";
-            parameters.is_noisy = true;
-            parameters.noise_level = "${{ matrix.noise_level }}";
-            parameters.num_random = 5;
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            profile_bds(parameters);
+            cd(path_tests);
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v3.1.2
-        with:
-          name: test_prima_small_with_noise
-          path: ./tests/testdata
+            % Run tests
+            options.Algorithm = ${{ matrix.solver }};
+            stress("bds", options);
+

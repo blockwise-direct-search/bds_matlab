@@ -12,12 +12,12 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   
 %   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
-%   maxfun_dim                  Factor of maximum of function evaluations regarding to dimenstions.
+%   maxfun_dim                  Factor to define maximum number of function evaluations as a multiplier
+%                               of the dimension of the problem.    
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
 %   sufficient_decrease_factor  Factor of sufficient decrease condition.
-%   StepTolerance               Magnitude of step size small enough. If step size is below 
-%                               StepTolerance, then the algorithm terminates.
+%   StepTolerance               The tolerance for testing whether the step size is small enough.
 %   ftarget                     Target of function value. If function value is below ftarget, 
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
@@ -27,6 +27,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   cycling                     Cycling strategy employed in the opportunistic case.
 %   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
 %   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "dspd", "ds".
+%                               Use Algorithm not algorithm to have the same name as MATLAB.
 %   forcing_function            Type of forcing function. Details can be found in "inner_direct_search.m".
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
 %                               every shuffling_period iterations.    
@@ -44,7 +45,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   1    The maximum number of function evaluations is reached.
 %   2    The target of the objective function is reached.
 %   3    The maximum number of iterations is reached.
-%   NaN  Unknown exitflag. 
+%   NaN  Unknown exitflag, which implies that there is a bug.
 %
 %   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(FUN, X0, OPTIONS) returns a
 %   structure OUTPUT with fields: fhist, xhist, alpha_hist, blocks_hist, funcCount, message.
