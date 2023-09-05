@@ -8,7 +8,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   XVAL = BDS(FUN, X0, OPTIONS) minimizes the objective funciton with default parameters replaced
 %   by values in OPTIONS. OPTIONS includes nb, maxfun, maxfun_dim, expand, shrink, 
 %   sufficient_decrease_factor, StepTolerance, ftarget, polling_inner, with_cycling_memory, cycling, 
-%   accept_simple_decrease, Algorithm, forcing_function.
+%   accept_simple_decrease, Algorithm.
 %   
 %   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
@@ -28,7 +28,6 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
 %   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "dspd", "ds".
 %                               Use Algorithm not algorithm to have the same name as MATLAB.
-%   forcing_function            Type of forcing function. Details can be found in "inner_direct_search.m".
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
 %                               every shuffling_period iterations.    
 %   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that 
@@ -155,13 +154,6 @@ if isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
-end
-
-% Set the type of forcing function.
-if isfield(options, "forcing_function")
-    forcing_function = options.forcing_function;
-else
-    forcing_function = get_default_constant("forcing_function");
 end
 
 % Set the boolean value of accept_simple_decrease. 
@@ -327,7 +319,6 @@ for iter = 1 : maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;
-        suboptions.forcing_function = forcing_function;
         
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...

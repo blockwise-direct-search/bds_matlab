@@ -4,7 +4,7 @@ function [solver_legend] = get_legend(parameters, i)
 % Get legend of algorithm of BDS family.
 if strcmpi(parameters.solvers_invoke(i), "bds")
    solver_legend = upper(parameters.Algorithm(i));
-   solver_legend = strcat(solver_legend, "-", parameters.forcing_function(i));
+   solver_legend = strcat(solver_legend, "-", parameters.sufficient_decrease_factor_level(i));
    %solver_legend = "our method";
 elseif strcmpi(parameters.solvers_invoke(i), "bds_powell")
     solver_legend = "CBDS-Powell";

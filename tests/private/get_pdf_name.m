@@ -4,6 +4,7 @@ prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
 if parameters.solvers_invoke(i) == "bds"
     pdfname = parameters.Algorithm(i);
+    pdfname = strcat(pdfname, "_", parameters.sufficient_decrease_factor_level(i));
 
 elseif parameters.solvers_invoke(i) == "bds_powell"
     powell_factor_stamp = int2str(int32(-log10(parameters.powell_factor(i))));

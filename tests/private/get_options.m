@@ -36,7 +36,6 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
 
     options.StepTolerance = solver_options.StepTolerance;
     options.sufficient_decrease_factor = solver_options.sufficient_decrease_factor(j);
-    options.forcing_function = solver_options.forcing_function(j);
     options.expand = solver_options.expand;
     options.shrink = solver_options.shrink;
     options.alpha_init = solver_options.alpha_init;

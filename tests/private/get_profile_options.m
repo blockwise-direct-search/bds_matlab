@@ -84,21 +84,32 @@ if ~isfield(parameters, "StepTolerance")
     parameters.StepTolerance = get_default_testparameters("StepTolerance");
 end
 
-if ~isfield(parameters, "sufficient_decrease_factor")
-    parameters.sufficient_decrease_factor = [];
-    for i = 1:num_solvers
-        parameters.sufficient_decrease_factor = [parameters.sufficient_decrease_factor...
-            get_default_testparameters("sufficient_decrease_factor")];
+for i = 1:num_solvers
+    switch lower(parameters.sufficient_decrease_factor_level(i))
+        case "zero"
+            parameters.sufficient_decrease_factor(i) = 0;
+        case "negligible"
+            parameters.sufficient_decrease_factor(i) = 1.0e-5;
+        case "low"
+            parameters.sufficient_decrease_factor(i) = 1.0e-3;
+        case "medium"
+            parameters.sufficient_decrease_factor(i) = 1.0e-1;
+        case "high"
+            parameters.sufficient_decrease_factor(i) = 10;
+        case "excessive"
+            parameters.sufficient_decrease_factor(i) = 1000;
+        otherwise
+            error("Unkown noise level %s", parameters.sufficient_decrease_factor_level(i));
     end
 end
 
-if ~isfield(parameters, "forcing_function")
-    parameters.forcing_function = [];
-    for i = 1:num_solvers
-        parameters.forcing_function = [parameters.forcing_function...
-            get_default_testparameters("forcing_function")];
-    end
-end
+% if ~isfield(parameters, "sufficient_decrease_factor")
+%     parameters.sufficient_decrease_factor = [];
+%     for i = 1:num_solvers
+%         parameters.sufficient_decrease_factor = [parameters.sufficient_decrease_factor...
+%             get_default_testparameters("sufficient_decrease_factor")];
+%     end
+% end
 
 if ~isfield(parameters, "expand")
     parameters.expand = get_default_testparameters("expand");

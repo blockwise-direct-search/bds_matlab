@@ -1,8 +1,8 @@
-name: Plot performance profiles for BDS, big with noise
+name: Plot performance profiles for BDS, big, testing level of sufficient decrease
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 */7 * *'
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Profile BDS.
+    name: Profile blockwise direct search.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -23,9 +23,9 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa]
-        noise_level: [negligible, low, medium, high]
-        version: [now]
+        competitor: [CBDS]
+        sufficient_decrease_level: [negligible, low, medium, high]
+        noise_initial_point: [true, false]
 
     steps:
       - name: Check out repository
@@ -94,20 +94,23 @@ jobs:
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.accept_simple_decrease = [true, true];
-            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
-            parameters.forcing_function = ["quadratic", "quadratic"];
+            parameters.sufficient_decrease_factor = ["zero", "${{ matrix.sufficient_decrease_level }}"];
             parameters.parallel = true;
-            parameters.version = "${{ matrix.version }}";
-            parameters.is_noisy = true;
-            parameters.noise_level = "${{ matrix.noise_level }}";
+            parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
             parameters.num_random = 5;
-            parameters.noise_initial_point = false;
-            
+            parameters.noise_initial_point = ${{ matrix.noise_initial_point }};
+
+            if parameters.noise_initial_point
+              parameters.num_random = 5;
+            else
+              parameters.num_random = 1;
+            end
+
             profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_big_with_noise
+          name: test_bds_big
           path: ./tests/testdata

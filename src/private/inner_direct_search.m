@@ -8,7 +8,7 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %
 %   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
 %   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS, which includes
-%   sufficient_decrease_factor, ftarget, polling, with_cycling_memory, cycling, forcing_function.
+%   sufficient_decrease_factor, ftarget, polling, with_cycling_memory, cycling.
 %
 %   [XVAL, FVAL] = INNER_DIRECT_SEARCH(...) returns the value of the objective function FVAL 
 %   at XVAL.
@@ -38,13 +38,6 @@ if isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
-end
-
-% Set the type of forcing function.
-if isfield(options, "forcing_function")
-    forcing_function = options.forcing_function;
-else
-    forcing_function = get_default_constant("forcing_function");
 end
 
 % Set ftarget of objective function.
@@ -99,14 +92,8 @@ for j = 1 : num_directions
     end
     
     % Check whether the sufficient decrease condition is achieved.
-    if strcmpi(forcing_function, "quadratic")
-        % In this case, forcing function is c*alpha^2/2.
-        sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
-        % In this case, forcing function is 0.
-    elseif strcmpi(forcing_function, "zero")
-        sufficient_decrease = (fnew < fbase);
-    end    
-
+    sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+  
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
     % decrease, success will always be true inside this function.
     success = (success || sufficient_decrease);

@@ -1,10 +1,11 @@
 % This script is for test.
-parameters.solvers_invoke = ["pbds", "wm_newuoa"];
+parameters.solvers_invoke = ["cbds", "cbds"];
 parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
+parameters.problems_maxdim = 1;
 parameters.accept_simple_decrease = [true, true];
-parameters.sufficient_decrease_factor = [1e-3, 1e-3];
-parameters.forcing_function = ["quadratic", "quadratic"];
+parameters.sufficient_decrease_factor_level = ["zero", "low"];
+% parameters.sufficient_decrease_factor = [0, 1e-3];
+% parameters.forcing_function = ["quadratic", "quadratic"];
 % parameters.shuffle_period = [1, 1];
 % parameters.replacement_delay = [0, 0];
 cunxin_factor = [1e-1, 1e-1];
@@ -17,5 +18,5 @@ parameters.num_random = 1;
 parameters.parallel = true;
 parameters.version = "now";
 parameters.fmin_type = "randomized";
-parameters.noise_initial_point = true;
+parameters.noise_initial_point = false;
 profile(parameters);
