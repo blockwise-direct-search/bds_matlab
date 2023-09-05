@@ -300,9 +300,9 @@ for iter = 1 : maxit
             rv = rv ./ norm(rv);
             D = [rv, -rv];
         else
-            D = random("norm", 0, 1, n, m);
-            % Normalize D.
-            D = normc(D);
+            D = rand(m, n);
+            % Normalize D. vecnorm is introduced in MATLAB 2017a for the first time.
+            D = D ./ vecnorm(D);
         end
     end
 
