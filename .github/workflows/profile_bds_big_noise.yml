@@ -1,11 +1,11 @@
-name: Performance profiles of blockwise direct search on problems of big dimensions with noise
+name: Plot performance profiles for BDS , big with noise
 
 on:
   # Trigger the workflow on push or pull request
   # push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 20 */7 * *'
   workflow_dispatch:
 
 env:
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Profile BDS.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, lbfgs, newuoa, bobyqa, lincoa]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa]
         noise_level: [negligible, low, medium, high]
         version: [now]
 

@@ -1,11 +1,11 @@
-name: Performance profiles of blockwise direct search on problems of big dimensions with randomized initial points
+name: Plot performance profiles for BDS, big
 
 on:
   # Trigger the workflow on push or pull request
   # push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 20 * * *'
+    - cron: '0 20 */7 * *'
   workflow_dispatch:
 
 env:
@@ -24,6 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [RBDS, PBDS, dspd, simplex, bfgs, lbfgs, newuoa, bobyqa, lincoa]
+        noise_initial_point: [true, false]
 
     steps:
       - name: Check out repository
@@ -98,7 +99,13 @@ jobs:
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
             parameters.num_random = 5;
-            parameters.noise_initial_point = true;
+            parameters.noise_initial_point = ${{ matrix.noise_initial_point }};
+
+            if parameters.noise_initial_point
+              parameters.num_random = 5;
+            else
+              parameters.num_random = 1;
+            end
 
             profile_bds(parameters);
 
