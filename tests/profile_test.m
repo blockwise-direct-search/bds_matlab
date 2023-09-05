@@ -18,4 +18,4 @@ parameters.parallel = false;
 parameters.version = "now";
 parameters.fmin_type = "randomized";
 parameters.noise_initial_point = true;
-profile_bds(parameters);
+profile(parameters);

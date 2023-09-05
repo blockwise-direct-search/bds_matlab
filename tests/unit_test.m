@@ -1,4 +1,4 @@
-function tests = bds_unit_test
+function tests = unit_test
     %BDS_TEST runs all the test functions in this file.
     %   To run these tests, simply type "runtests" in the command window. To
     %   create a new test function in this file with a name that starts or

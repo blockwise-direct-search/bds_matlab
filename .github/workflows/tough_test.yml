@@ -84,6 +84,6 @@ jobs:
             cd(path_tests);
 
             % Run tests
-            options.Algorithm = ${{ matrix.solver }};
+            options.Algorithm = "${{ matrix.solver }}";
             stress("bds", options);
 

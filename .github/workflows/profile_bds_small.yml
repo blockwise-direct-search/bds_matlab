@@ -99,14 +99,14 @@ jobs:
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
             parameters.noise_initial_point = ${{ matrix.noise_initial_point }};
-            
+
             if parameters.noise_initial_point
                 parameters.num_random = 10;
             else
                 parameters.num_random = 1;
             end
 
-            profile_bds(parameters);
+            profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2

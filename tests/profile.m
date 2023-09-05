@@ -1,4 +1,4 @@
-function [output] = profile_bds(parameters)
+function [output] = profile(parameters)
 % Draw performance profiles.
 
 % Record the current path.

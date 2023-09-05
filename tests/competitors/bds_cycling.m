@@ -1,4 +1,4 @@
-function [xval, fval, exitflag, output] = bds_polling(fun, x0, options)
+function [xval, fval, exitflag, output] = bds_cycling(fun, x0, options)
 %   bds_polling is designed under the framework of polling and cycling.
 %
 %   BLOCKWISE_DIRECT_SEARCH Unconstrained nonlinear minimization (direct search with blocks).
