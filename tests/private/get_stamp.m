@@ -32,6 +32,11 @@ if any(contains(prima_list, parameters.solvers_invoke(j), 'IgnoreCase', true))
         end
 end
 
+% Set solver_stamp for wm_newuoa.
+if strcmpi(parameters.solvers_invoke(j), "wm_newuoa")
+    solver_stamp = "wm_newuoa";
+end
+
 % Set solver_stamp for patternsearch.
 if strcmpi(parameters.solvers_invoke(j), "matlab_patternsearch")
     solver_stamp = "patternsearch";

@@ -34,6 +34,11 @@ if any(contains(prima_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
 end
 
 % Get legend of Patternsearch.
+if strcmpi(parameters.solvers_invoke(i), "wm_newuoa")
+    solver_legend = "wm-newuoa";
+end
+
+% Get legend of Patternsearch.
 if strcmpi(parameters.solvers_invoke(i), "matlab_patternsearch")
     solver_legend = "patternsearch";
 end

@@ -30,8 +30,6 @@ addpath(path_src);
 path_competitors = fullfile(path_tests, "competitors");
 addpath(path_competitors);
 parameters.path_competitors = path_competitors;
-path_competitors_mnewuoa = fullfile(path_competitors, "mnewuoa");
-addpath(path_competitors_mnewuoa);
 
 % In case no solvers are input, then throw an error.
 if ~isfield(parameters, "solvers_invoke")

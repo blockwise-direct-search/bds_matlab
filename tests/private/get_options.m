@@ -1,7 +1,7 @@
 function [options] = get_options(p, j, name_solver, solver_options, options)
 % GET_OPTIONS get options that needed by j-th solver on problem p.
 bds_list = ["bds", "bds_powell", "bds_cunxin"];
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa", "wm_newuoa"];
 
 % Each solver should receive the same maxfun on problem p.
 maxfun = options.maxfun;
@@ -81,6 +81,8 @@ elseif any(contains(prima_list, name_solver, 'IgnoreCase', true))
     % In Prima, set initial value of step size as rhobeg and set StepTolerance as rhoend.
     options.rhobeg = solver_options.alpha_init;
     options.rhoend = solver_options.StepTolerance;
+
+elseif name_solver == "wm_newuoa"
 
 % Set options for matlab solvers.
 elseif name_solver == "matlab_fminsearch"

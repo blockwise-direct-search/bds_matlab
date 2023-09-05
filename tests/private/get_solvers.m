@@ -55,11 +55,11 @@ for i = 1:solvers_num
      elseif ~isempty(find(prima_list == parameters.solvers_invoke(i), 1))
 
      % Set solvers_invoke to be matlab_fminunc if it is in fminunc_list.
-     elseif ~isempty(find(fminunc_list == parameters.solvers_invoke(i), 1))
+     elseif any(contains(fminunc_list, parameters.solvers_invoke(i), 'IgnoreCase', true))
              parameters.fminunc_type = parameters.solvers_invoke(i);
              parameters.solvers_invoke(i) = "matlab_fminunc";
     % Set solvers_invoke to be matlab_fminsearch if it is simplex.
-     elseif parameters.solvers_invoke(i) == "simplex"
+     elseif strcmpi(parameters.solvers_invoke(i), "simplex")
              parameters.solvers_invoke(i) = "matlab_fminsearch";
      end
 end

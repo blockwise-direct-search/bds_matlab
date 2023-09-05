@@ -1,11 +1,11 @@
-name: Plot performance profiles for BDS, big
+name: Plot performance profiles for BDS, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 20 */7 * *'
+    - cron: '0 22 */7 * *'
   workflow_dispatch:
 
 env:
@@ -13,17 +13,17 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Profile BDS.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [big]
+        dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, lbfgs, newuoa, bobyqa, lincoa]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa]
         noise_initial_point: [true, false]
 
     steps:
@@ -98,13 +98,12 @@ jobs:
             parameters.parallel = true;
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
-            parameters.num_random = 5;
             parameters.noise_initial_point = ${{ matrix.noise_initial_point }};
 
             if parameters.noise_initial_point
-              parameters.num_random = 5;
+                parameters.num_random = 10;
             else
-              parameters.num_random = 1;
+                parameters.num_random = 1;
             end
 
             profile(parameters);
@@ -112,5 +111,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_big
+          name: test_bds_small
           path: ./tests/testdata

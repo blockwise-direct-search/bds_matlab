@@ -28,6 +28,9 @@ elseif any(strcmpi(prima_list, parameters.solvers_invoke(i)))
             end
         end
 
+elseif parameters.solvers_invoke(i) == "wm_newuoa"
+    pdfname = parameters.solvers_invoke(i);
+
 elseif parameters.solvers_invoke(i) == "matlab_fminsearch"
     pdfname = strcat("fminsearch", "_", "simplex");
 

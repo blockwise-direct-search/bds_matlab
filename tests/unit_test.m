@@ -1,10 +1,10 @@
 function tests = unit_test
-    %BDS_TEST runs all the test functions in this file.
-    %   To run these tests, simply type "runtests" in the command window. To
+    %   UNIT_TEST runs all the test functions in this file.
+    %   To run these tests, simply type "Run Tests" in the command window. To
     %   create a new test function in this file with a name that starts or
     %   finishes with "test" (case insensitive). For more info, see
     %
-    %       https://www.mathworks.com/help/matlab/matlab_prog/write-simple-test-case-with-functions.html
+    %   https://www.mathworks.com/help/matlab/matlab_prog/write-simple-test-case-with-functions.html
     
     fullpath = mfilename("fullpath"); 
     [path, ~] = fileparts(fullpath);

@@ -1,5 +1,5 @@
 % This script is for test.
-parameters.solvers_invoke = ["pbds", "dspd"];
+parameters.solvers_invoke = ["pbds", "wm_newuoa"];
 parameters.problems_mindim = 1;
 parameters.problems_maxdim = 5;
 parameters.accept_simple_decrease = [true, true];
@@ -14,7 +14,7 @@ parameters.cunxin_factor_period = repmat(cunxin_factor_period, 1, 2);
 parameters.is_noisy = false;
 parameters.noise_level = 1e-5;
 parameters.num_random = 1;
-parameters.parallel = false;
+parameters.parallel = true;
 parameters.version = "now";
 parameters.fmin_type = "randomized";
 parameters.noise_initial_point = true;

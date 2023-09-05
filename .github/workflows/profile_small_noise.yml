@@ -1,8 +1,8 @@
-name: Plot performance profiles for BDS , big with noise
+name: Plot performance profiles for BDS, small with noise
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 */7 * *'
@@ -20,12 +20,12 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [big]
+        dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa]
+        version: [new]
         noise_level: [negligible, low, medium, high]
-        version: [now]
 
     steps:
       - name: Check out repository
@@ -103,11 +103,11 @@ jobs:
             parameters.fmin_type = "randomized";
             parameters.num_random = 5;
             parameters.noise_initial_point = false;
-            
+
             profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_big_with_noise
+          name: test_bds_small_with_noise
           path: ./tests/testdata

@@ -1,4 +1,13 @@
-function [xval, fval, exitflag, output] = wm_newnuoa(fun,x0,options)
+function [xval, fval, exitflag, output] = wm_newuoa(fun,x0,options)
+% This is a wrapper for NEWUOA algorithm which was implemented by Stefan
+% Wild.
+%
+
+currentFile = mfilename('fullpath');
+[currentPath, ~, ~] = fileparts(currentFile);
+path_mnewuoa = fullfile(currentPath, 'mnewuoa');
+addpath(path_mnewuoa);
+
 global mnewuoa_fhist
 global mnewuoa_nf
 
@@ -51,4 +60,6 @@ global mnewuoa_nf
 f = fun(x);
 mnewuoa_nf = mnewuoa_nf+1;
 mnewuoa_fhist(mnewuoa_nf) = f;
+
+
 end
