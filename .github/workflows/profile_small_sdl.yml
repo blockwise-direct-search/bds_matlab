@@ -94,7 +94,7 @@ jobs:
             parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.accept_simple_decrease = [true, true];
-            parameters.sufficient_decrease_factor = ["zero", "${{ matrix.sufficient_decrease_level }}"];
+            parameters.sufficient_decrease_factor_level = ["zero", "${{ matrix.sufficient_decrease_level }}"];
             parameters.parallel = true;
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
