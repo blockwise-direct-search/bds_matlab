@@ -201,7 +201,7 @@ end
 if strcmpi(options.Algorithm, "pbds") && isfield(options, "shuffling_period")
     shuffling_period = options.shuffling_period;
 else
-    shuffling_period = get_default_constant("shuffling_period");
+    shuffling_period = get_default_constant("shuffle_period");
 end
 
 % Set the value of replacement_delay. Default value of replacement_delay is set to be 0. 

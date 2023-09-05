@@ -22,6 +22,7 @@ jobs:
         matlab: [latest]
         with_optim_toolbox: [yes]
         solver: [CBDS, PBDS, RBDS, DSPD, DS]
+        tough: [true, false]
 
     steps:
       - name: Check out repository
@@ -85,5 +86,6 @@ jobs:
 
             % Run tests
             options.Algorithm = "${{ matrix.solver }}";
+            options.tough = ${{ matrix.tough }};
             stress("bds", options);
 

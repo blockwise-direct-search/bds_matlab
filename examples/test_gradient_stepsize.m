@@ -12,7 +12,7 @@ p = macup('MUONSINELS');
 % p = macup('HEART6LS');
 % p = macup('LANCZOS1LS');
 options.StepTolerance = 1e-10;
-options.Algorithm = "dspd";
+options.Algorithm = "pbds";
 options.expand = 1;
 
 [x, fval, exitflag, output] = bds(p.objective, p.x0, options);
