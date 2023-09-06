@@ -19,3 +19,4 @@ The tests are **automated** by
     - [![Performance profiles of BDS with noise, small](https://github.com/blockwise-direct-search/bds/actions/workflows/test_bds_small_with_noise.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_bds_small_with_noise.yml)
     - [![Performance profiles of BDS, big](https://github.com/blockwise-direct-search/bds/actions/workflows/test_bds_big.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_bds_big.yml)
     - [![Performance profiles of BDS, small](https://github.com/blockwise-direct-search/bds/actions/workflows/test_bds_small.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_bds_small.yml)
+    - [![Stress test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml)
