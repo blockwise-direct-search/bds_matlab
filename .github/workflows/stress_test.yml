@@ -1,8 +1,8 @@
-name: Tough test
+name: Stress test
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Tough test
+    name: Stress test
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false

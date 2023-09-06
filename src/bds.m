@@ -287,13 +287,14 @@ for iter = 1 : maxit
     % for each iteration when options.Algorithm is "dspd".
     if strcmpi(options.Algorithm, "dspd")
         if m == 2
-            rv = rand(n, 1);
+            rv = randn(n, 1);
             % Normalize rv.
             rv = rv ./ norm(rv);
             D = [rv, -rv];
         else
-            D = rand(m, n);
+            D = randn(m, n);
             % Normalize D. vecnorm is introduced in MATLAB 2017a for the first time.
+            % Here we are dividing a matrix by row vector using implicit expansion.
             D = D ./ vecnorm(D);
         end
     end

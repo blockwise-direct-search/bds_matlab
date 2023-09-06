@@ -89,7 +89,7 @@ for i = 1:num_solvers
         case "zero"
             parameters.sufficient_decrease_factor(i) = 0;
         case "negligible"
-            parameters.sufficient_decrease_factor(i) = 1.0e-5;
+            parameters.sufficient_decrease_factor(i) = eps;
         case "low"
             parameters.sufficient_decrease_factor(i) = 1.0e-3;
         case "medium"

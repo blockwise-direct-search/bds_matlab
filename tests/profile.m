@@ -193,7 +193,7 @@ if parameters.parallel == true
             fprintf("%d(%d). %s\n", i, r, p.name);
             for j = 1:num_solvers
                 [fhist,fval] = get_fhist(p, maxfun, j, r, solver_options, test_options);
-                fval_tmp(j) = fval
+                fval_tmp(j) = fval;
                 frec(i,j,r,:) = fhist;
             end
             [fmin(i,r), ~] = min(fval_tmp);
