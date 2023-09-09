@@ -28,7 +28,7 @@ end
         yw = year_week('Asia/Shanghai');
     end
     fprintf('\nYW = %d\n', yw);
-    % Define the random seed by yw
+    % Define the random seed by yw.
     random_seed = yw;
     
     % Set the dimension of the problem.
@@ -45,21 +45,8 @@ end
     % Set the type of the problem.
     problem_type = 'u';
     
-    % Set the options for the test.
-    test_options = struct();
-    test_options.maxfun = 1000 * n;
-    test_options.alpha_init = 1;
-    test_options.StepTolerance = eps;
-    if ~isfield(options, "Algorithm")
-        options.Algorithm = "cbds";
-    end
-    test_options.Algorithm = options.Algorithm;
-    fprintf('\n>>>>>> test_options =');
-    test_options
-    
     % Generate the problem
     problem = stress_problem(n, problem_type, random_seed);
-    problem.options = test_options;
     original_problem = problem;
     if tough_test
         problem = tough(original_problem, random_seed);

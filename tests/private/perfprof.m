@@ -224,9 +224,9 @@ set(gca,'FontSize', 18);
 
 % Save the figure as eps.
 if int32(-log10(tau)) < 10
-    fignamebase = strcat(options.stamp, '_', 'perf_', '0', int2str(int32(-log10(tau))));
+    fignamebase = strcat(options.time_stamp, '_', 'perf_', '0', int2str(int32(-log10(tau))));
 else
-    fignamebase = strcat(options.stamp, '_', 'perf_', int2str(int32(-log10(tau))));
+    fignamebase = strcat(options.time_stamp, '_', 'perf_', int2str(int32(-log10(tau))));
 end
 epsname = fullfile(options.outdir, strcat(fignamebase,'.eps'));
 saveas(hfig, epsname, 'epsc2');

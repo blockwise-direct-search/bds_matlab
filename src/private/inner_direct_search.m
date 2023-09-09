@@ -26,25 +26,49 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
 %
 %   DIRECTION_INDICES is indices of directions of this block in D.
-
-
-% Set options to an empty structure if it is not provided.
-if nargin < 7
-    options = struct();
-end
+%
 
 % Set the value of sufficient decrease factor.
-if isfield(options, "sufficient_decrease_factor")
-    sufficient_decrease_factor = options.sufficient_decrease_factor;
-else
+if ~isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+else
+    sufficient_decrease_factor = options.sufficient_decrease_factor;
 end
 
 % Set ftarget of objective function.
-if isfield(options, "ftarget")
-    ftarget = options.ftarget;
+if ~isfield(options, "ftarget")
+    ftarget = get_default_constant("ftarget");    
 else
-    ftarget = get_default_constant("ftarget");
+    ftarget = options.ftarget;
+end
+
+% Set the boolean value of accept_simple_decrease, which is for updating xval and fval, but not 
+% for stepsize. 
+if isfield(options, "accept_simple_decrease")
+    accept_simple_decrease = options.accept_simple_decrease;
+else
+    accept_simple_decrease = get_default_constant("accept_simple_decrease");
+end
+
+% Set the value of polling_inner. This is the polling strategy employed within one block.
+if isfield(options, "polling_inner")
+    polling_inner = options.polling_inner;
+else
+    polling_inner = get_default_constant("polling_inner");
+end
+
+% Set the value of cycling_inner, which represents the cycling strategy inside each block.
+if isfield(options, "cycling_inner")
+    cycling_strategy = options.cycling_inner;
+else
+    cycling_strategy = get_default_constant("cycling_inner");
+end
+
+% Set the boolean value of WITH_CYCLING_MEMORY. 
+if isfield(options, "with_cycling_memory")
+    with_cycling_memory = options.with_cycling_memory;
+else
+    with_cycling_memory = get_default_constant("with_cycling_memory");
 end
 
 % Explain why NaN is good. It is possible that this function returns
@@ -105,15 +129,16 @@ for j = 1 : num_directions
     % iterations in the block. So there are some cases where sufficient_decrease is true 
     % and fnew >= fval. For opportunistic polling, as long as sufficient decrease is true, 
     % then the remaining polling points will not be explored. 
-    if (options.accept_simple_decrease || sufficient_decrease) && fnew < fval
+    if (accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
         fval = fnew;
     end
     
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
-    % stop the computations after cycling the indices of the polling directions.
-    if sufficient_decrease && ~strcmpi(options.polling_inner, "complete")
-        direction_indices = cycling(direction_indices, j, options.cycling, options.with_cycling_memory);
+    % stop the computations after cycling the indices of the polling directions. The reason that
+    % indices are cycled here is that inner_direct_search is called in a loop in outer_direct_search. 
+    if sufficient_decrease && ~strcmpi(polling_inner, "complete")
+        direction_indices = cycling(direction_indices, j, cycling_strategy, with_cycling_memory);
         break;
     end
 end
@@ -125,142 +150,10 @@ output.nf = nf;
 output.success = success;
 output.direction_indices = direction_indices;
 output.terminate = terminate;
-end
-
-function array = cycling(array, index, strategy, with_cycling_memory)
-%CYCLING permutes an array according to different options.
-%   ARRAY = CYCLING(ARRAY, INDEX, STRATEGY, MEMORY) returns an array
-%   that is a permutation of ARRAY according to INDEX, STRATEGY, and MEMORY.
-%
-%   ARRAY is the array to permute. It must be a vector.
-%   INDEX is a number from -1, 1, 2, ..., length(array). If INDEX = -1, then there is
-%   no permutation.
-%   MEMORY is a boolean value. If MEMORY is true, then the output ARRAY will
-%   be obtained by permitting the ARRAY; otherwise, the input ARRAY will be
-%   discarded and the output ARRAY will be obtained by permuting sort(ARRAY).
-%   STRATEGY is a nonnegative integer from 0 to 4, indicating the strategy of the
-%   permutation as follows.
-%
-%
-%   0  No permutation.
-%
-%   1  The element of the index will be moved to the first element of array.
-%
-%   EXAMPLE
-%   When array is 3 1 2 4 5, if index = 3, for with_cycling_memory situation,
-%   array will be 2 3 1 4 5 after cycling; for nonwith_cycling_memory situaion, index
-%   will be 2, sort(index) is 1 2 3 4 5 and array will be 2 1 3 4 5 after
-%   cycling.
-%
-%   2  The element of the index and the following ones until end will be
-%      moved ahead of array.
-%
-%   EXAMPLE
-%   When array is 2 1 4 5 3, if index = 3, for with_cycling_memory situation,
-%   array will be 4 5 3 2 1 after cycling; for nonwith_cycling_memory situaion, index
-%   will be 4, sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after
-%   cycling.
-%
-%   3  The element of the following ones after index until end will be
-%      moved ahead of array.
-%
-%   EXAMPLE
-%   When array is 2 1 4 5 3 and index = 3, for with_cycling_memory situation,
-%   array will be 5 3 2 1 4 after cycling; for nonwith_cycling_memory situaion, index will
-%   be 4, sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
-%
-%   4  The element of the following one after index will be moved ahead of array.
-%
-%   EXAMPLE
-%   array is 4 1 2 3 5, if index = 3, for with_cycling_memory situation, array will
-%   be 3 4 1 2 5 after cycling; for nonwith_cycling_memory situaion, index will be 2,
-%   sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
-%
-
-% Check whether input is given in correct type when debug_flag is true. 
-debug_flag = is_debugging();
-if debug_flag
-    % Array should be a real vector.
-    [isrv, ~]  = isrealvector(array);
-    if ~isrv
-        error("Array is not a real vector.");
-    end
-    % Index should be an integer.
-    if ~isintegerscalar(index)
-        error("Index is not an integer.");
-    end
-    % Strategy should be a positive integer and less than or equal to 4.
-    if ~isintegerscalar(strategy) || strategy < 0 || strategy > 4
-        error("Strategy is not a positive integer or less than or equal to 4.");
-    end
-    % With_memory should be boolean value.
-    if ~islogicalscalar(with_cycling_memory)
-        error("With_memory is not a boolean value.");
-    end
-end
-
-%   If index < 0, then there is no "success_index" and there is no
-%   permutation. If strategy == 0, then the permutation is unchanged.
-if index < 0 || strategy == 0
-    return;
-end
-
-% If with_cycling_memory is true, cycling_strategy will be operated on array. Otherwise,
-% cycling_strategy will be operated on the array after sorting. In this case,
-% the value of index will be the index corresponding to the array after sorting.
-if ~with_cycling_memory
-    [array, indices] = sort(array);
-    index = find(indices == index);
-end
-
-switch strategy
-    % If cycling_strategy is 1, the element of the index will be moved to
-    % the first element of array. For example, if index = 3, array is 1 2 3 4 5,
-    % then array will be 3 1 2 4 5 after cycling. For the case where
-    % array is 3 1 2 4 5, if index = 3, for with_cycling_memory situation, array will
-    % be 2 3 1 4 5 after cycling; for nonwith_cycling_memory situaion, index will
-    % be 2 after executing the code paragraph above, sort(index)
-    %is 1 2 3 4 5 and array will be 2 1 3 4 5 after cycling.
-    case {1}
-        array(1:index) = array([index, 1:index-1]);
-        % If cycling_strategy is 2, the element of the index and the following
-        % ones until end will be moved ahead of array. For example, if index = 3,
-        % array is 1 2 3 4 5, then array will be 3 4 5 1 2 after cycling.
-        % When array is 2 1 4 5 3, if index = 3, for with_cycling_memory
-        % situation, array will be 4 5 3 2 1 after cycling; for nonwith_cycling_memory
-        % situaion, index will be 4 after executing the paragraph above,
-        % sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after cycling.
-    case {2}
-        array = array([index:end, 1:index-1]);
-        % If cycling_strategy is 3, the element of the following ones after index
-        % until end will be moved ahead of array. For example, if index = 3, array
-        % is 1 2 3 4 5, then array will be 4 5 1 2 3 after cycling.
-        % When array is 2 1 4 5 3 and index = 3, for with_cycling_memory
-        % situation, array will be 5 3 2 1 4 after cycling; for nonwith_cycling_memory
-        % situaion, index will be 4 after executing the paragraph above,
-        % sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
-    case {3}
-        array = array([index+1:end, 1:index]);
-        % If cycling_strategy is 4, the element of the following one after index
-        % will be moved ahead of array. For example, if index = 3, array
-        % is 1 2 3 4 5, then array will be 4 1 2 3 5 after cycling.
-        % For the case where array is 4 1 2 3 5, if index = 3, for with_cycling_memory
-        % situation, array will be 3 4 1 2 5 after cycling; for nonwith_cycling_memory
-        % situaion, index will be 2 after executing the paragraph above,
-        % sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
-    case {4}
-        if index ~= length(array)
-            array(1:index+1) = array([index+1, 1:index]);
-        end
-end
-
-% Check whether ARRAY is a vector or not when debug_flag is true.
-if debug_flag
-    % Array should be a vector.
-    [isrv, ~]  = isrealvector(array);
-    if ~isrv
-        error("Array is not a real vector.");
-    end
-end
 
 end
+
+
+
+
+

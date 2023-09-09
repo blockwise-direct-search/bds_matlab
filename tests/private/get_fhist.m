@@ -1,11 +1,12 @@
-function [fhist_perfprof, fval] = get_fhist(p, maxfun, j, r, solver_options, test_options)
+function [fhist_perfprof] = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
 % GET_FHIST gets return value of j-th solver on the r-th randomized 
 % experiment of problem p.
 
-name_solver = solver_options.solvers(j);
+options = solvers_options(j);
+name_solver = options.solver;
 solver = str2func(name_solver);
 % Initialze fhist for performance profile.
-fhist_perfprof = NaN(maxfun, 1);
+fhist_perfprof = NaN(maxfun_frec, 1);
 
 % Scaling_matrix
 % Gradient will be affected by scaling_matrix
@@ -17,12 +18,19 @@ fhist_perfprof = NaN(maxfun, 1);
 % end
 
 % Set maxfun before computing.
-if isfield(solver_options, "maxfun_dim")
-   options.maxfun = min(solver_options.maxfun, solver_options.maxfun_dim*length(p.x0));
+% Set MAXFUN to the maximum number of function evaluations if there exist
+% some related parameters input, which are maxfun_dim and maxfun.
+n = length(p.x0);
+if isfield(test_options, "maxfun_dim") && isfield(test_options, "maxfun")
+    options.maxfun = min(test_options.maxfun_dim*n, test_options.maxfun);
+elseif isfield(test_options, "maxfun_dim")
+    options.maxfun = test_options.maxfun_dim*n;
+elseif isfield(test_options, "maxfun")
+    options.maxfun = test_options.maxfun;
 end
 
-% Get the necessary options for j-th solver.
-[options] = get_options(p, j, name_solver, solver_options, options);
+% Get the options for j-th solver.
+[options] = get_options(name_solver, options);
 
 % Turn off warning to save computation resource.
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
@@ -44,10 +52,6 @@ if ~isempty(find(prima_list == name_solver, 1))
     warnoff(name_solver);
 end
 
-% Fval should be the minimum among history of function values. Also, fval
-% should always be the one without noise!
-fval = min(obj.valHist);
-
 % Get length of fhist.
 fhist_length = obj.nEval;
 fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
@@ -55,10 +59,10 @@ fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
 % Trim fhist for performance profile. If the length of fhist is less than maxfun,
 % then the prolonged parts will be imparted the value of the last function evaluation 
 % that we get eventually.
-if  fhist_length < maxfun
-    fhist_perfprof(fhist_length+1:maxfun) = fhist_perfprof(fhist_length);
+if  fhist_length < maxfun_frec
+    fhist_perfprof(fhist_length+1:maxfun_frec) = fhist_perfprof(fhist_length);
 else
-    fhist_perfprof = fhist_perfprof(1:maxfun);
+    fhist_perfprof = fhist_perfprof(1:maxfun_frec);
 end
 
 end
