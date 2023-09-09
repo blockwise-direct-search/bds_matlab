@@ -36,13 +36,14 @@ if ~isfield(options, 'iprint')
 end
 
 if ~isfield(options, 'maxfun')
-    options.maxfun = 500*n;
+    options.maxfun = 1000*n;
 end
 
 mnewuoa_nf = 0;
 mnewuoa_fhist = NaN(1, options.maxfun);
 
-xval = mnewuoa(@(x)objective(fun,x'),n,options.npt,x0',options.rhobeg,options.rhoend,options.iprint,options.maxfun);
+xval = mnewuoa(@(x)objective(fun,x'),n,options.npt,x0',...
+    options.rhobeg,options.rhoend,options.iprint,options.maxfun);
 xval = xval';
 
 fval = fun(xval);
@@ -55,11 +56,11 @@ output.fhist = mnewuoa_fhist(1:mnewuoa_nf);
 end
 
 function [f] = objective(fun, x)
+
 global mnewuoa_fhist
 global mnewuoa_nf
 f = fun(x);
 mnewuoa_nf = mnewuoa_nf+1;
 mnewuoa_fhist(mnewuoa_nf) = f;
-
 
 end

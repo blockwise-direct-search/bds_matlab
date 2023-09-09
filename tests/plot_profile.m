@@ -7,13 +7,13 @@ parameters.num_random = 1;
 parameters.parallel = false;
 parameters.random_initial_point = false;
 % Establish parameters for solver 1.
-struct1.solver = "bds";
-struct1.Algorithm = "cbds";
-struct1.sufficient_decrease_factor_level = 'low';
+solver1.solver = "cbds";
+solver1.sufficient_decrease_factor_level = 'low';
+solver1.maxfun = 1e5;
 % Establish parameters for solver 2.
-struct2.solver = "bds";
-struct2.Algorithm = "pbds";
-struct2.sufficient_decrease_factor_level = "high";
+solver2.solver = "simplex";
+solver2.maxfun = 1e5;
+% solver2.sufficient_decrease_factor_level = "high";
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";
@@ -26,6 +26,6 @@ struct2.sufficient_decrease_factor_level = "high";
 % struct3.iprint = 0;
 % struct3.output_xhist = true;
 
-parameters.solvers_options = [struct1, struct2];
+parameters.solvers_options = [solver1, solver2];
 
 profile(parameters);

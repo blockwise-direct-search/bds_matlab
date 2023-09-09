@@ -34,6 +34,8 @@ end
 % Get the parameters that the test needs.
 parameters = set_profile_options(parameters);
 
+%
+
 % Tell MATLAB where to find MatCUTEst.
 locate_matcutest();
 % Tell MATLAB where to find prima.

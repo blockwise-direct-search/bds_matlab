@@ -19,16 +19,16 @@ elseif any(strcmpi(prima_list, parameters.solvers_options(i).solver))
             end
         end
 
-elseif parameters.solvers_invoke(i) == "wm_newuoa"
+elseif parameters.solvers_options(i).solver == "wm_newuoa"
     pdfname = parameters.solvers_options(i);
 
-elseif parameters.solvers_invoke(i) == "matlab_fminsearch"
+elseif parameters.solvers_options(i).solver == "matlab_fminsearch"
     pdfname = strcat("fminsearch", "_", "simplex");
 
-elseif parameters.solvers_invoke(i) == "matlab_patternsearch"
+elseif parameters.solvers_options(i).solver == "matlab_patternsearch"
     pdfname = strcat("patternsearch", "_", "gps");
 
-elseif parameters.solvers_invoke(i) == "matlab_fminunc"
+elseif parameters.solvers_options(i).solver == "matlab_fminunc"
     pdfname = strcat("fminunc", "_", parameters.solvers_options(i).fminunc_type);
     
 end

@@ -3,7 +3,7 @@ function parameters = set_profile_options(parameters)
 % set default value of the parameters that are not input.
 
 % Specify parameters by parameters.solvers_invoke.
-% parameters = get_solvers(parameters);
+parameters = get_solvers(parameters);
 num_solvers = length(parameters.solvers_options);
 
 % Set parameters for cutest problems.

@@ -23,9 +23,8 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa]
+        competitor: [RBDS, PBDS, ds, dspd, simplex, bfgs, newuoa, wm_newuoa]
         noise_level: [negligible, low, medium, high]
-        version: [now]
 
     steps:
       - name: Check out repository
@@ -91,19 +90,25 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.accept_simple_decrease = [true, true];
-            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
-            parameters.forcing_function = ["quadratic", "quadratic"];
             parameters.parallel = true;
-            parameters.version = "${{ matrix.version }}";
             parameters.is_noisy = true;
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
             parameters.num_random = 5;
-            parameters.noise_initial_point = false;
+            parameters.random_initial_point = false;
+
+            % Establish parameters for solvers.
+            solver1.solver = "cbds";
+            solver1.sufficient_decrease_factor_level = 'zero';
             
+            solver2.solver = "${{ matrix.competitor }}";
+
+            solver2.sufficient_decrease_factor_level = "zero";
+            
+            parameters.solvers_options = [solver1, solver2];
+
+
             profile(parameters);
 
       - name: Upload artifact

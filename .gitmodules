@@ -4,3 +4,6 @@
 [submodule ".github/scripts"]
 	path = .github/scripts
 	url = git@github.com:equipez/github_actions_scripts.git
+[submodule "tests/competitors/nlopt"]
+	path = tests/competitors/nlopt
+	url = https://github.com/stevengj/nlopt.git
