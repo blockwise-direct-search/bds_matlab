@@ -47,7 +47,7 @@ end
 
     % Set the type of the algorithm.
     if isfield(options, "Algorithm")
-        solver_options = options.Algorithm;
+        solver_options.Algorithm = options.Algorithm;
     end
     
     % Generate the problem
