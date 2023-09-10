@@ -289,7 +289,7 @@ for iter = 1:maxit
     % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
         % Make sure that shuffling_period is defined when Algorithm is "sbds".
-        block_indices = randperm(random_stream, nb);
+        block_indices = randperm(nb);
     end
     
     % Get the block that is going to be visited.
@@ -298,7 +298,7 @@ for iter = 1:maxit
         % each iteration. If iter is equal to 1, then the block that we are going to visit
         % is selected randomly from block_indices.
         if replacement_delay == 0 || iter == 1
-            block_indices = randi(random_stream, [1, nb]);
+            block_indices = randi([1, nb]);
         else
             % Record the number of blocks visited.
             num_visited = sum(~isnan(block_hist));

@@ -49,7 +49,7 @@ if ~(isrealmatrix(xhist) && any(size(xhist) == [length(xval), nhist]))
 end
 
 % Check whether length(fhist) is equal to length(xhist) and nf respectively.
-if ~(length(fhist) == length(xhist) && size(xhist, 2) == nf)
+if ~(length(fhist) == size(xhist, 2) && size(xhist, 2) == nf)
     error("length of fhist is not equal to length of xhist or nf.");
 end
 
