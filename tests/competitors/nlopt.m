@@ -3,9 +3,11 @@ function nlopt(fun, x0, options)
 % Dimension
 n = numel(x0);
 
-opt.algorithm = NLOPT_LN_COBYLA;
+if strcmpi(options.Algorithm, "cobyla")
+    opt.algorithm = NLOPT_LN_COBYLA;
+end
 %opt.algorithm = options.Algorithm;
-opt.min_objective = @(x)objective(fun,x);
+opt.min_objective = fun;
 
 if isfield(options, "stopval")
     opt.stopval = options.stopval;

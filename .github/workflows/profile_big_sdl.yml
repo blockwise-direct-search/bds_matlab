@@ -2,7 +2,7 @@ name: Plot performance profiles for BDS, big, testing level of sufficient decrea
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 */7 * *'
@@ -96,14 +96,14 @@ jobs:
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
             parameters.random_initial_point = false;
+            parameters.maxfun_factor = 1e3;
 
             % Establish parameters for solvers.
             solver1.solver = "cbds";
-            solver1.sufficient_decrease_factor_level = "${{ matrix.sufficient_decrease_level }}";
-            solver1.maxfun_dim = 1e3;
+            solver1.sufficient_decrease_factor_level = "zero";
             
             solver2.solver = "${{ matrix.competitor }}";
-            solver2.maxfun_dim = 1e3;
+            solver2.sufficient_decrease_factor_level = "${{ matrix.sufficient_decrease_level }}";
           
             parameters.solvers_options = {};
 

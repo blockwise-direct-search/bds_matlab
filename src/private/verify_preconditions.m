@@ -4,7 +4,7 @@ function verify_preconditions(fun, x0, options)
 
 assert(ischarstr(fun) || isa(fun, "function_handle"));
 
-[isrv, ~]  = isrealvector(x0);
+isrv = isrealvector(x0);
 if ~isrv
     error("x0 is not a real vector.");
 end

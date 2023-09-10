@@ -23,8 +23,8 @@ options.StepTolerance = eps;
 options.Algorithm = "cbds";
 
 fullpath = mfilename('fullpath');
-[path_examples,~] = fileparts(fullpath);
-[path_bds, ~, ~] = fileparts(path_examples);
+path_examples = fileparts(fullpath);
+path_bds = fileparts(path_examples);
 path_src = fullfile(path_bds, 'src');
 addpath(path_src)
 

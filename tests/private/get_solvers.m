@@ -29,6 +29,7 @@ for i = 1:solvers_num
      if strcmpi(parameters.solvers_options{i}.solver, "simplex")
              parameters.solvers_options{i}.solver = "matlab_fminsearch";
      end
+
 end
 
 end

@@ -193,7 +193,7 @@ function array = cycling(array, index, strategy, with_cycling_memory)
 debug_flag = is_debugging();
 if debug_flag
     % Assert array is a real vector.
-    [isrv, ~]  = isrealvector(array);
+    isrv = isrealvector(array);
     assert(isrv);
     % Assert index is an integer.
     assert(isintegerscalar(index));
@@ -262,7 +262,7 @@ end
 % input. If input_correctness is false, then assert may let the code crash.
 if debug_flag
     % Assert array is a vector.
-    [isrv, ~]  = isrealvector(array);
+    isrv  = isrealvector(array);
     assert(isrv);
 end
 

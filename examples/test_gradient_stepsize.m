@@ -1,6 +1,6 @@
 fullpath = mfilename('fullpath');
-[path_examples,~] = fileparts(fullpath);
-[path_bds, ~, ~] = fileparts(path_examples);
+path_examples = fileparts(fullpath);
+path_bds = fileparts(path_examples);
 path_src = fullfile(path_bds, 'src');
 path_competitors = fullfile(path_bds, 'tests', 'competitors');
 addpath(path_src)

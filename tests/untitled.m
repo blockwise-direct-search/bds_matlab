@@ -1,9 +1,9 @@
 cd '/home/lhtian97/Documents/bds/tests/private';
 locate_matcutest
 cd ..
-p = macup('akiva');
+p = macup('ALLINITU');
 obj = ScalarFunction(p);
-test_options.is_noisy = true;
+test_options.is_noisy = false;
 test_options.noise_type = "gaussian";
 test_options.is_abs_noise = false;
 test_options.noise_level = 1e-3;

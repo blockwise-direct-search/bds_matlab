@@ -3,4 +3,4 @@ function matlab_patternsearch(FUN, x0, options)
 % method).
 %
 
-patternsearch(@(x)obj_patternsearch(FUN,x),x0,[],[],[],[],[],[],[],options);
+patternsearch(FUN,x0,[],[],[],[],[],[],[],options);

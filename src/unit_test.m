@@ -202,7 +202,7 @@ function tests = unit_test
     fval_result = 0;
     exitflag_result = 0;
 
-    [xval, fval, exitflag, ~] = bds(fun, x0, options);
+    [xval, fval, exitflag] = bds(fun, x0, options);
 
     verifyEqual(testCase, xval, xval_result);
     verifyEqual(testCase, fval, fval_result);

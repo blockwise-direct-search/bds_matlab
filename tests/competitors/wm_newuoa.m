@@ -5,7 +5,7 @@ function wm_newuoa(fun,x0,options)
 
 currentFile = mfilename('fullpath');
 currentPath = fileparts(currentFile);
-path_mnewuoa = fullfile(currentPath, 'mnewuoa');
+path_mnewuoa = fullfile(currentPath, 'wm_newuoa');
 addpath(path_mnewuoa);
 
 % Dimension

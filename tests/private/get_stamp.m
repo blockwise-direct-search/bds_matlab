@@ -16,7 +16,7 @@ switch parameters.solvers_options{i}.solver
     case {"wm_newuoa"}
         solver_stamp = "wm-newuoa";
     case {"nlopt"}
-        if parameters.solvers_options{i}.Algorithm == 25
+        if strcmpi(parameters.solvers_options{i}.Algorithm, "cobyla") 
             solver_stamp = "nlopt_cobyla";
         end
     case {"matlab_patternsearch"}

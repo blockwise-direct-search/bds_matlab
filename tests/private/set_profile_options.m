@@ -35,7 +35,7 @@ for i = 1:num_solvers
     end
 
     if strcmpi(parameters.solvers_options{i}.solver, "nlopt") && ...
-            parameters.solvers_options{i}.Algorithm == 25
+            strcmpi(parameters.solvers_options{i}.Algorithm, "cobyla")
         if parameters.problems_mindim == 1
             parameters.problems_mindim = 2;
         end

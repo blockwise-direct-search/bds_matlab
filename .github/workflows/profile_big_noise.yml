@@ -2,7 +2,7 @@ name: Plot performance profiles for BDS, big with noise
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 */7 * *'
@@ -109,17 +109,15 @@ jobs:
             parameters.fmin_type = "randomized";
             parameters.num_random = 5;
             parameters.random_initial_point = false;
+            parameters.maxfun_factor = 1e3;
 
             % Establish parameters for solvers.
             solver1.solver = "cbds";
             solver1.sufficient_decrease_factor_level = 'zero';
-            solver1.maxfun_dim = 1e3;
             
             solver2.solver = "${{ matrix.competitor }}";
-            solver2.maxfun_dim = 1e3;
             BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
-
-            if any(ismember("${{ matrix.competitor }}", lower(BDS_list)))
+            if any(strcmpi("${{ matrix.competitor }}", BDS_list))
                 solver2.sufficient_decrease_factor_level = 'zero';
             end
           

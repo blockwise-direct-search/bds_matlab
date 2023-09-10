@@ -3,4 +3,4 @@ function matlab_fminsearch(FUN, x0, options)
 % derivative-free method (simplex method)
 %
 
-fminsearch(@(x)obj_fminsearch(FUN,x),x0, options);
+fminsearch(FUN, x0, options);

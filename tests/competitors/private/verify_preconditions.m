@@ -1,4 +1,4 @@
-function [fun] = verify_preconditions(fun, x0, options)
+function fun = verify_preconditions(fun, x0, options)
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for fun %%%%%%%%%%%%%%%%%
 % FUN should be a function handle or a function name.
@@ -9,7 +9,7 @@ if ischarstr(fun)
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for x0 %%%%%%%%%%%%%%%%%
-[isrv, ~]  = isrealvector(x0);
+isrv = isrealvector(x0);
 assert(isrv);
 
 %%%%%%%%%%%%%%%%%%%%%%%% precondition for options %%%%%%%%%%%%%%%%%

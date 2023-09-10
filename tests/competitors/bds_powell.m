@@ -74,7 +74,7 @@ elseif strcmpi(options.Algorithm, "dspd")
     for i = 1:n
         rv(i) = randn(1);
     end
-    [Q, ~] = qr(rv);
+    Q = qr(rv);
     D = [Q, -Q];
 end
 
