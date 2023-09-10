@@ -1,4 +1,4 @@
-function [powell_factor] = get_powell_factor(powell_factor_level)
+function powell_factor = get_powell_factor(powell_factor_level)
 
 switch powell_factor_level
     case {"one"}

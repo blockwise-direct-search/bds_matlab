@@ -1,4 +1,4 @@
-function [solver_stamp] = get_stamp(parameters, i)
+function solver_stamp = get_stamp(parameters, i)
 % GET_STAMP gets the stamp of j-th solver on performance profile.
 
 switch parameters.solvers_options{i}.solver

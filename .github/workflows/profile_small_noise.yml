@@ -45,6 +45,12 @@ jobs:
           repository: libprima/prima
           path: prima
 
+      - name: Clone NLOPT
+        uses: actions/checkout@v4
+        with:
+          repository: stevengj/nlopt
+          path: nlopt
+
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/link_gfortran ${{ env.GFORTRAN_VERSION }}
@@ -72,6 +78,12 @@ jobs:
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
+      
+      - name: Install cmake
+        run: sudo apt-get update && sudo apt-get install cmake
+
+      - name: Install NLOPT
+        run: cd ./nlopt && cmake . && make && sudo make install
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
@@ -91,19 +103,32 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.accept_simple_decrease = [true, true];
-            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
-            parameters.forcing_function = ["quadratic", "quadratic"];
             parameters.parallel = true;
-            parameters.version = "${{ matrix.version }}";
             parameters.is_noisy = true;
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
             parameters.num_random = 5;
-            parameters.noise_initial_point = false;
+            parameters.random_initial_point = false;
 
+            % Establish parameters for solvers.
+            solver1.solver = "cbds";
+            solver1.sufficient_decrease_factor_level = 'zero';
+            solver1.maxfun_dim = 1e3;
+            
+            solver2.solver = "${{ matrix.competitor }}";
+            solver2.maxfun_dim = 1e3;
+            BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
+
+            if any(ismember("${{ matrix.competitor }}", lower(BDS_list)))
+                solver2.sufficient_decrease_factor_level = 'zero';
+            end
+          
+            parameters.solvers_options = {};
+
+            parameters.solvers_options{1} = solver1;
+            parameters.solvers_options{2} = solver2;
+          
             profile(parameters);
 
       - name: Upload artifact

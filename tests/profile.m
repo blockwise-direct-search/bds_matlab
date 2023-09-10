@@ -8,8 +8,6 @@ restoredefaultpath;
 % Record the current directory.
 old_dir = pwd();
 
-addpath("/usr/local/lib/matlab/");
-
 % Add the paths that we need to use in the performance profile into the MATLAB
 % search path.
 current_path = mfilename("fullpath");
@@ -35,8 +33,6 @@ end
 
 % Get the parameters that the test needs.
 parameters = set_profile_options(parameters);
-
-%
 
 % Tell MATLAB where to find MatCUTEst.
 locate_matcutest();
@@ -154,51 +150,49 @@ end
 % If parameters.fmintype = "real-randomized", then test without noise
 % should be conducted and fmin might be smaller, which makes curves
 %  of performance profile more lower.
-if parameters.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
+if test_options.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
+    fmin_real = NaN(num_problems, 1);
     test_options.is_noisy = false;
-    r = num_random+1;
+    i_run = 1;
     if parameters.parallel == true
-        parfor i = 1:num_problems
-            fval_tmp = NaN(1, num_solvers);
-            p = macup(problem_names(1, i));
-            if parameters.noise_initial_point
-                dim = length(p.x0);
-                rr = randn(dim, 1);
+        parfor i_problem = 1:num_problems
+            p = macup(problem_names(1, i_problem));
+            frec_local = NaN(num_solvers, maxfun_frec);
+            if parameters.random_initial_point
+                rr = randn(size(x0));
                 rr = rr / norm(rr);
-                p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+                p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
             end
-            fprintf("%d(%d). %s\n", i, r, p.name);
-            for j = 1:num_solvers
-                [fhist,fval] = get_fhist(p, maxfun_frec, j, r, solver_options, test_options);
-                fval_tmp(j) = fval;
-                frec(i,j,r,:) = fhist;
+            fprintf("%d. %s\n", i_problem, p.name);
+            for i_solver = 1:num_solvers
+                frec_local(i_solver,:) = get_fhist(p, maxfun_frec,...
+                    i_solver, i_run, solvers_options, test_options);
             end
-            [fmin(i,r), ~] = min(fval_tmp);
-            index_min = find(fval_tmp <= fmin(i,r));
-            fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
+            fmin_real(i_problem) = min(frec_local(:, :),[],"all");
         end
     else
-        for i = 1:num_problems
-            fval_tmp = NaN(1, num_solvers);
-            p = macup(problem_names(1, i));
-            if parameters.noise_initial_point
-                dim = length(p.x0);
-                rr = randn(dim, 1);
+        for i_problem = 1:num_problems
+            p = macup(problem_names(1, i_problem));
+            frec_local = NaN(num_solvers, maxfun_frec);
+            if parameters.random_initial_point
+                rr = randn(size(x0));
                 rr = rr / norm(rr);
-                p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+                p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
             end
-            fprintf("%d(%d). %s\n", i, r, p.name);
-            for j = 1:num_solvers
-                [fhist,fval] = get_fhist(p, maxfun_frec, j, r, solver_options, test_options);
-                fval_tmp(j) = fval;
-                frec(i,j,r,:) = fhist;
+            fprintf("%d. %s\n", i_problem, p.name);
+            for i_solver = 1:num_solvers
+                frec_local(i_solver,:) = get_fhist(p, maxfun_frec,...
+                    i_solver, i_run, solvers_options, test_options);
             end
-            [fmin(i,r), ~] = min(fval_tmp);
-            index_min = find(fval_tmp <= fmin(i,r));
-            fprintf("%s %s\n", sprintf('%d ', index_min), p.name);
-        end    
+            fmin_real(i_problem) = min(frec_local(:, :),[],"all");
+        end
     end
 end 
+
+if strcmpi(parameters.fmin_type, "real-randomized")
+    fmin_total = [fmin, fmin_real];
+    fmin = min(fmin_total, [], 2);
+end
 
 % Use time to distinguish.
 time = datetime("now");

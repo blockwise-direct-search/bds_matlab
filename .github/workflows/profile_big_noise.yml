@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, ds, dspd, simplex, bfgs, newuoa, wm_newuoa]
+        competitor: [RBDS, PBDS, ds, dspd, simplex, bfgs, newuoa, wm_newuoa, nlopt]
         noise_level: [negligible, low, medium, high]
 
     steps:
@@ -43,6 +43,12 @@ jobs:
         with:
           repository: libprima/prima
           path: prima
+
+      - name: Clone NLOPT
+        uses: actions/checkout@v4
+        with:
+          repository: stevengj/nlopt
+          path: nlopt
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -71,6 +77,12 @@ jobs:
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
+
+      - name: Install cmake
+        run: sudo apt-get update && sudo apt-get install cmake
+
+      - name: Install NLOPT
+        run: cd ./nlopt && cmake . && make && sudo make install
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
@@ -101,14 +113,21 @@ jobs:
             % Establish parameters for solvers.
             solver1.solver = "cbds";
             solver1.sufficient_decrease_factor_level = 'zero';
+            solver1.maxfun_dim = 1e3;
             
             solver2.solver = "${{ matrix.competitor }}";
+            solver2.maxfun_dim = 1e3;
+            BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
 
-            solver2.sufficient_decrease_factor_level = "zero";
-            
-            parameters.solvers_options = [solver1, solver2];
+            if any(ismember("${{ matrix.competitor }}", lower(BDS_list)))
+                solver2.sufficient_decrease_factor_level = 'zero';
+            end
+          
+            parameters.solvers_options = {};
 
-
+            parameters.solvers_options{1} = solver1;
+            parameters.solvers_options{2} = solver2;
+          
             profile(parameters);
 
       - name: Upload artifact

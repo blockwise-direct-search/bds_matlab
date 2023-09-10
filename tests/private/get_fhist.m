@@ -1,4 +1,4 @@
-function [fhist_perfprof] = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
+function fhist_perfprof = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
 % GET_FHIST gets return value of j-th solver on the r-th randomized 
 % experiment of problem p.
 

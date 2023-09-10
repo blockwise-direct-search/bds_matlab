@@ -1,4 +1,4 @@
-function problem = stress_problem(n, problem_type, random_seed)
+function problem = stress_problem(n, ~, random_seed)
     %This function generates a test problem for the stress test.
     % n: the dimension of the problem
     % problem_type:

@@ -1,4 +1,4 @@
-function [solver_legend] = get_legend(parameters, i)
+function solver_legend = get_legend(parameters, i)
 % GET_LEGEND gets the legend of i-th solver on performance profile.
 %
 

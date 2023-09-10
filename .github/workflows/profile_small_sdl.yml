@@ -91,19 +91,31 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.accept_simple_decrease = [true, true];
-            parameters.sufficient_decrease_factor_level = ["zero", "${{ matrix.sufficient_decrease_level }}"];
             parameters.parallel = true;
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
-            parameters.noise_initial_point = ${{ matrix.noise_initial_point }};
+            parameters.random_initial_point = false;
 
-            if parameters.noise_initial_point
-                parameters.num_random = 10;
+            % Establish parameters for solvers.
+            solver1.solver = "cbds";
+            solver1.sufficient_decrease_factor_level = "${{ matrix.sufficient_decrease_level }}";
+            solver1.maxfun_dim = 1e3;
+            
+            solver2.solver = "${{ matrix.competitor }}";
+            solver2.maxfun_dim = 1e3;
+          
+            parameters.solvers_options = {};
+
+            parameters.solvers_options{1} = solver1;
+            parameters.solvers_options{2} = solver2;
+          
+            profile(parameters);
+
+            if parameters.random_initial_point
+              parameters.num_random = 10;
             else
-                parameters.num_random = 1;
+              parameters.num_random = 1;
             end
 
             profile(parameters);

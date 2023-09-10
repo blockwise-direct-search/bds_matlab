@@ -1,4 +1,4 @@
-function [pdfname] = get_pdf_name(parameters, i)
+function pdfname = get_pdf_name(parameters, i)
 % GET_PDF_NAME gets the part of pdfname of the i-th solver.
 %
 

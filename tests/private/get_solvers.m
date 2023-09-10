@@ -1,5 +1,6 @@
-function [parameters] = get_solvers(parameters)
+function parameters = get_solvers(parameters)
 % GET_SOLVERS gets the solvers that we invoke. 
+%
 
 solvers_num = length(parameters.solvers_options);
 

@@ -1,4 +1,4 @@
-function [options] = get_options(name_solver, options)
+function options = get_options(name_solver, options)
 % GET_OPTIONS get options that needed by j-th solver on problem p.
 %
 

@@ -23,8 +23,8 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa]
-        noise_initial_point: [true, false]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa, nlopt]
+        random_initial_point: [true, false]
 
     steps:
       - name: Check out repository
@@ -43,6 +43,12 @@ jobs:
         with:
           repository: libprima/prima
           path: prima
+
+      - name: Clone NLOPT
+        uses: actions/checkout@v4
+        with:
+          repository: stevengj/nlopt
+          path: nlopt
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -72,6 +78,12 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
+      - name: Install cmake
+        run: sudo apt-get update && sudo apt-get install cmake
+
+      - name: Install NLOPT
+        run: cd ./nlopt && cmake . && make && sudo make install
+
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
@@ -90,20 +102,36 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.solvers_invoke = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.accept_simple_decrease = [true, true];
-            parameters.sufficient_decrease_factor = [1e-3, 1e-3];
-            parameters.forcing_function = ["quadratic", "quadratic"];
             parameters.parallel = true;
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
-            parameters.noise_initial_point = ${{ matrix.noise_initial_point }};
+            parameters.random_initial_point = false;
 
-            if parameters.noise_initial_point
-                parameters.num_random = 10;
+            % Establish parameters for solvers.
+            solver1.solver = "cbds";
+            solver1.sufficient_decrease_factor_level = 'zero';
+            solver1.maxfun_dim = 1e3;
+            
+            solver2.solver = "${{ matrix.competitor }}";
+            solver2.maxfun_dim = 1e3;
+            BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
+
+            if any(ismember("${{ matrix.competitor }}", lower(BDS_list)))
+                solver2.sufficient_decrease_factor_level = 'zero';
+            end
+          
+            parameters.solvers_options = {};
+
+            parameters.solvers_options{1} = solver1;
+            parameters.solvers_options{2} = solver2;
+          
+            profile(parameters);
+
+            if parameters.random_initial_point
+              parameters.num_random = 10;
             else
-                parameters.num_random = 1;
+              parameters.num_random = 1;
             end
 
             profile(parameters);
