@@ -2,7 +2,7 @@ name: Plot performance profiles for BDS, big with noise
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 */7 * *'
