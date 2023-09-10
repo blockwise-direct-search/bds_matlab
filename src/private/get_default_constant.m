@@ -9,6 +9,10 @@ switch constant_name
         constant_value = 1e3;
     case {"Algorithm"}
         constant_value = "cbds";
+    case {"num_random_vectors"}
+        constant_value = 2;
+    case {"seed"}
+        constant_value = 1e6;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}

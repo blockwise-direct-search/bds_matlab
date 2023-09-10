@@ -104,7 +104,7 @@ n = length(x0);
 if isfield(options, "seed")
     seed = options.seed;
 else
-    seed = 0;
+    seed = get_default_constant("seed");
 end
 
 if ~isfield(options, "Algorithm")
