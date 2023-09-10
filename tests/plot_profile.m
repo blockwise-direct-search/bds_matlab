@@ -12,8 +12,9 @@ solver1.sufficient_decrease_factor_level = 'low';
 solver1.maxfun = 1e5;
 % Establish parameters for solver 2.
 solver2.solver = "simplex";
+%solver2.Algorithm = NLOPT_LN_COBYLA;
 solver2.maxfun = 1e5;
-% solver2.sufficient_decrease_factor_level = "high";
+%solver2.sufficient_decrease_factor_level = "high";
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";
@@ -26,6 +27,9 @@ solver2.maxfun = 1e5;
 % struct3.iprint = 0;
 % struct3.output_xhist = true;
 
-parameters.solvers_options = [solver1, solver2];
+parameters.solvers_options = {};
+
+parameters.solvers_options{1} = solver1;
+parameters.solvers_options{2} = solver2;
 
 profile(parameters);

@@ -8,6 +8,8 @@ restoredefaultpath;
 % Record the current directory.
 old_dir = pwd();
 
+addpath("/usr/local/lib/matlab/");
+
 % Add the paths that we need to use in the performance profile into the MATLAB
 % search path.
 current_path = mfilename("fullpath");

@@ -2,7 +2,7 @@ function [fhist_perfprof] = get_fhist(p, maxfun_frec, j, r, solvers_options, tes
 % GET_FHIST gets return value of j-th solver on the r-th randomized 
 % experiment of problem p.
 
-options = solvers_options(j);
+options = solvers_options{j};
 name_solver = options.solver;
 solver = str2func(name_solver);
 % Initialze fhist for performance profile.

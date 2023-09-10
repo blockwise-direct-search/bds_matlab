@@ -30,8 +30,15 @@ if isfield(parameters, "problems_dim")
 end
 
 for i = 1:num_solvers
-    if strcmpi(parameters.solvers_options(i).solver, "uobyqa") 
+    if strcmpi(parameters.solvers_options{i}.solver, "uobyqa") 
         parameters.problems_maxdim = 60;
+    end
+
+    if strcmpi(parameters.solvers_options{i}.solver, "nlopt") && ...
+            parameters.solvers_options{i}.Algorithm == 25
+        if parameters.problems_mindim == 1
+            parameters.problems_mindim = 2;
+        end
     end
 end
 
