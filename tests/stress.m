@@ -44,6 +44,11 @@ end
     
     % Set the type of the problem.
     problem_type = 'u';
+
+    % Set the type of the algorithm.
+    if isfield(options, "Algorithm")
+        solver_options = options.Algorithm;
+    end
     
     % Generate the problem
     problem = stress_problem(n, problem_type, random_seed);
@@ -62,7 +67,7 @@ end
     tic;
     exception = [];
     try
-        solver(problem.objective, problem.x0, problem.options);
+        solver(problem.objective, problem.x0, solver_options);
     catch exception
     end
     toc;    
