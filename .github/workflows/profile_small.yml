@@ -122,7 +122,7 @@ jobs:
             end
 
             if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))
-                parts = split(str, '_');
+                parts = split("${{ matrix.competitor }}", '_');
                 solver2.solver = "nlopt";
                 solver2.Algorithm = char(parts(2));
             end
