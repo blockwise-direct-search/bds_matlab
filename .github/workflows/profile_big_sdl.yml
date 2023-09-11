@@ -103,7 +103,7 @@ jobs:
             solver1.sufficient_decrease_factor_level = "zero";
             
             solver2.solver = "${{ matrix.competitor }}";
-            solver2.sufficient_decrease_factor_level = "${{ matrix.sufficient_decrease_level }}";
+            solver2.sufficient_decrease_factor_level = ${{ matrix.sufficient_decrease_level }};
           
             parameters.solvers_options = {};
 

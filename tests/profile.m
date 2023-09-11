@@ -120,43 +120,42 @@ try
     if parameters.parallel == true
         parfor i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
-            % We must create a local copy of the part of frec that is modified
-            % by the current loop because otherwise, MATLAB complains that it
-            % does not understand which part should be parallelized.
-            frec_local = NaN(num_solvers,num_random,maxfun_frec);
             for i_run = 1:num_random
+                fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
-                    frec_local(i_solver,i_run,:) = get_fhist(p, maxfun_frec,...
-                        i_solver, i_run, solvers_options, test_options);
+                    [fhist, fval] = get_fhist(p, maxfun_frec, i_solver,...
+                        i_run, solvers_options, test_options);
+                    fval_tmp(i_solver) = fval;
+                    frec(i_problem,i_solver,i_run,:) = fhist;
                 end
-                fmin(i_problem,i_run) = min(frec_local(:,i_run,:),[],"all");
+                fmin(i_problem, i_run) = min(fval_tmp);
             end
-            frec(i_problem,:,:,:) = frec_local;
         end
     else
         for i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
-            frec_local = NaN(num_solvers,num_random,maxfun_frec);
             for i_run = 1:num_random
+                fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
-                    frec_local(i_solver,i_run,:) = get_fhist(p, maxfun_frec,...
-                        i_solver, i_run, solvers_options, test_options);
+                    [fhist, fval] = get_fhist(p, maxfun_frec, i_solver,...
+                        i_run, solvers_options, test_options);
+                    fval_tmp(i_solver) = fval;
+                    frec(i_problem,i_solver,i_run,:) = fhist;
                 end
-                fmin(i_problem,i_run) = min(frec_local(:,i_run,:),[],"all");
+                fmin(i_problem, i_run) = min(fval_tmp);
             end
-            frec(i_problem,:,:,:) = frec_local;
         end
     end
 

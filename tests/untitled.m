@@ -9,4 +9,4 @@ test_options.is_abs_noise = false;
 test_options.noise_level = 1e-3;
 r = 2;
 options.maxfun = 1e5;
-fminsearch(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options)
+nlopt(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options)

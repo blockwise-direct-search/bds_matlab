@@ -1,4 +1,4 @@
-function fhist_perfprof = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
+function [fhist_perfprof, fval] = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
 % GET_FHIST gets return value of j-th solver on the r-th randomized 
 % experiment of problem p.
 
@@ -51,6 +51,10 @@ end
 if ~isempty(find(prima_list == name_solver, 1))
     warnoff(name_solver);
 end
+
+% Fval should be the minimum among history of function values. Also, fval
+% should always be the one without noise!
+fval = min(obj.valHist);
 
 % Get length of fhist.
 fhist_length = obj.nEval;
