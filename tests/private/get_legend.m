@@ -5,8 +5,10 @@ function solver_legend = get_legend(parameters, i)
 switch parameters.solvers_options{i}.solver
     case {"bds"}
         solver_legend = upper(parameters.solvers_options{i}.Algorithm);
-        solver_legend = strcat(solver_legend, "-",...
-            parameters.solvers_options{i}.sufficient_decrease_factor_level);
+        if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor_level")
+            solver_legend = strcat(solver_legend, "-",...
+                parameters.solvers_options{i}.sufficient_decrease_factor_level);
+        end
         %solver_legend = "our method";
     case {"bds_powell"}
         solver_legend = "CBDS-Powell";
@@ -17,11 +19,19 @@ switch parameters.solvers_options{i}.solver
     case {"wm_newuoa"}
         solver_legend = "wm-newuoa";
     case {"nlopt"}
-        if strcmpi(parameters.solvers_options{i}.Algorithm, "cobyla")
-            solver_legend = "nlopt-cobyla";
+        switch parameters.solvers_options{i}.Algorithm
+            case "cobyla"
+                solver_legend = "nlopt-cobyla";
+            case "newuoa"
+                solver_legend = "nlopt-newuoa";
+            case "bobyqa"
+                solver_legend = "nlopt-bobyqa";
         end
+
     case {"matlab_patternsearch"}
         solver_legend = "patternsearch";
+    case {"lam"}
+        solver_legend = "lam";
 end
 
 % Get legend of algorithm of Prima family.

@@ -52,8 +52,7 @@ function array = cycling(array, index, strategy, with_cycling_memory)
 debug_flag = is_debugging();
 if debug_flag
     % Array should be a real vector.
-    [isrv, ~]  = isrealvector(array);
-    if ~isrv
+    if ~isrealvector(array)
         error("Array is not a real vector.");
     end
     % Index should be an integer.
@@ -127,8 +126,7 @@ switch strategy
 % Check whether ARRAY is a vector or not when debug_flag is true.
 if debug_flag
     % Array should be a vector.
-    [isrv, ~]  = isrealvector(array);
-    if ~isrv
+    if ~isrealvector(array)
         error("Array is not a real vector.");
     end
 end

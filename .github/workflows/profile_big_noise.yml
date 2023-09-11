@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, ds, dspd, simplex, bfgs, newuoa, wm_newuoa, nlopt]
+        competitor: [RBDS, PBDS, ds, dspd, simplex, bfgs, newuoa, wm_newuoa, nlopt_newuoa, nlopt_cobyla, nlopt_bobyqa]
         noise_level: [negligible, low, medium, high]
 
     steps:
@@ -35,7 +35,7 @@ jobs:
       - name: Clone MatCUTEst
         uses: actions/checkout@v4
         with:
-          repository: equipez/matcutest_compiled
+          repository: matcutest/matcutest_compiled
           path: matcutest
 
       - name: Clone PRIMA
@@ -117,10 +117,18 @@ jobs:
             
             solver2.solver = "${{ matrix.competitor }}";
             BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
+            NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
+
             if any(strcmpi("${{ matrix.competitor }}", BDS_list))
                 solver2.sufficient_decrease_factor_level = 'zero';
             end
           
+            if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))
+                parts = split(str, '_');
+                solver2.solver = "nlopt";
+                solver2.Algorithm = char(parts(2));
+            end
+
             parameters.solvers_options = {};
 
             parameters.solvers_options{1} = solver1;

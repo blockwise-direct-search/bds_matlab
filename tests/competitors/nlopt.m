@@ -3,10 +3,19 @@ function nlopt(fun, x0, options)
 % Dimension
 n = numel(x0);
 
-if strcmpi(options.Algorithm, "cobyla")
-    opt.algorithm = NLOPT_LN_COBYLA;
+if isfield(options, "Algorithm")
+    switch options.Algorithm
+        case "cobyla"
+         opt.algorithm = NLOPT_LN_COBYLA; 
+        case "newuoa"
+         opt.algorithm = NLOPT_LN_NEWUOA;
+        case "bobyqa"
+         opt.algorithm = NLOPT_LN_BOBYQA;
+    end
+else
+    opt.algorithm = NLOPT_LN_NEWUOA;
 end
-%opt.algorithm = options.Algorithm;
+
 opt.min_objective = fun;
 
 if isfield(options, "stopval")

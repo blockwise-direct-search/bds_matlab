@@ -4,8 +4,10 @@ function solver_stamp = get_stamp(parameters, i)
 switch parameters.solvers_options{i}.solver
     case {"bds"}
         solver_stamp = upper(parameters.solvers_options{i}.solver);
-        solver_stamp = strcat(solver_stamp, "-",...
-            parameters.solvers_options{i}.sufficient_decrease_factor_level);
+        if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor_level")
+            solver_stamp = strcat(solver_stamp, "_",...
+                parameters.solvers_options{i}.sufficient_decrease_factor_level);
+        end
         %solver_legend = "our method";
     case {"bds_powell"}
         solver_stamp = "CBDS-Powell";
@@ -16,9 +18,16 @@ switch parameters.solvers_options{i}.solver
     case {"wm_newuoa"}
         solver_stamp = "wm-newuoa";
     case {"nlopt"}
-        if strcmpi(parameters.solvers_options{i}.Algorithm, "cobyla") 
-            solver_stamp = "nlopt_cobyla";
+        switch parameters.solvers_options{i}.Algorithm
+            case "cobyla"
+                solver_stamp = "nlopt_cobyla";
+            case "newuoa"
+                solver_stamp = "nlopt_newuoa";
+            case "bobyqa"
+                solver_stamp = "nlopt_bobyqa";
         end
+    case {"lam"}
+        solver_stamp = "lam";
     case {"matlab_patternsearch"}
         solver_stamp = "patternsearch";
 end

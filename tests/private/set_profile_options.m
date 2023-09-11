@@ -35,7 +35,8 @@ for i = 1:num_solvers
     end
 
     if strcmpi(parameters.solvers_options{i}.solver, "nlopt") && ...
-            strcmpi(parameters.solvers_options{i}.Algorithm, "cobyla")
+        isfield(parameters.solvers_options{i}, "Algorithm") && ...    
+        strcmpi(parameters.solvers_options{i}.Algorithm, "cobyla")
         if parameters.problems_mindim == 1
             parameters.problems_mindim = 2;
         end

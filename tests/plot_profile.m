@@ -4,14 +4,14 @@ parameters.problems_maxdim = 5;
 parameters.is_noisy = false;
 parameters.noise_level = 1e-5;
 parameters.num_random = 1;
-parameters.parallel = false;
-parameters.random_initial_point = false;
+parameters.parallel = true;
+parameters.random_initial_point = true;
 % Establish parameters for solver 1.
 solver1.solver = "cbds";
 solver1.sufficient_decrease_factor_level = 'low';
 solver1.maxfun = 1e5;
 % Establish parameters for solver 2.
-solver2.solver = "nlopt";
+solver2.solver = "lam";
 %solver2.Algorithm = "cobyla";
 solver2.maxfun = 1e5;
 %solver2.sufficient_decrease_factor_level = "high";

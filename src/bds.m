@@ -416,7 +416,7 @@ rng(seed);
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
-output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
+output.alpha_hist = alpha_hist(1:min(iter, maxit));
 
 % Record the number of blocks visited.
 num_blocks_visited = sum(~isnan(block_hist));
