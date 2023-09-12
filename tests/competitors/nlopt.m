@@ -1,4 +1,5 @@
 function nlopt(fun, x0, options)
+disp("nlopt is invoked");
 
 % Dimension
 n = numel(x0);
