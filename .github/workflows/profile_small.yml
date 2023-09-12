@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [lam]
+        competitor: [nlopt_newuoa, nlopt_bobyqa, nlopt_cobyla, lam]
         random_initial_point: [true, false]
 
     steps:
