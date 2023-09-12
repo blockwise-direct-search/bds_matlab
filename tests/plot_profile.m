@@ -1,8 +1,8 @@
 % This script is for test.
-parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
-parameters.is_noisy = false;
-parameters.noise_level = 1e-5;
+parameters.problems_mindim = 6;
+parameters.problems_maxdim = 100;
+parameters.is_noisy = true;
+parameters.noise_level = "low";
 parameters.num_random = 1;
 parameters.parallel = false;
 parameters.random_initial_point = false;
