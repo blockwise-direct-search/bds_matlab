@@ -103,7 +103,7 @@ jobs:
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = true;
+            parameters.parallel = false;
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
             parameters.random_initial_point = ${{ matrix.random_initial_point }};

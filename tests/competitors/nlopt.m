@@ -42,7 +42,7 @@ else
     if n <= 5
         opt.maxtime = 20;
     else 
-        opt.maxtime = 40;
+        opt.maxtime = 30;
     end
 end
 
