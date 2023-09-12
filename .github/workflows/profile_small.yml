@@ -2,7 +2,7 @@ name: Plot performance profiles for BDS, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa, nlopt_newuoa, nlopt_bobyqa, nlopt_cobyla, lam]
+        competitor: [wm_newuoa, nlopt_newuoa, nlopt_bobyqa, nlopt_cobyla, lam]
         random_initial_point: [true, false]
 
     steps:
