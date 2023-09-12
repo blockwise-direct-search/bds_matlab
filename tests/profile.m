@@ -62,16 +62,22 @@ try
     s.mindim = parameters.problems_mindim; % Minimum of dimension
     s.maxdim = parameters.problems_maxdim; % Maximum of dimension
     s.blacklist = [];
-    % TODO: Not problems, which solvers will crash?
-    s.blacklist = [s.blacklist, {}];
+    %s.blacklist = [s.blacklist, {}];
     % Problems that takes too long to solve.
-    % {'FBRAIN3LS'} and {'STRATEC'} take too long for fminunc(not for ds and bds).
-    % {'LRCOVTYPE'} and {'LRIJCNN1'} take long for ds and bds(not for fminunc).
-    % TODO: check why {'LRIJCNN1'} takes so long to run?
-    % TODO: check why {'PARKCH'} takes so long to run?
-    % TODO: check why {'STRATEC'} takes so long to run?
-    s.blacklist = [{'LRCOVTYPE'},{'LRIJCNN1'},{'PARKCH'},{'STRATEC'}];
-
+    solvers_name = [];
+    for i = 1:length(parameters.solvers_options)
+        solvers_name = [solvers_name, parameters.solvers_options{i}.solver];
+    end
+    
+    % {'FBRAIN3LS'} and {'STRATEC'} take too long for fminunc.
+    if ismember("matlab_fminunc", solvers_name)
+        s.blacklist = [s.blacklist, {'FBRAIN3LS'}, {'STRATEC'}];
+    end
+    % {"MUONSINELS"} takes nlopt_newuoa so long to run (even making MATLAB crash).
+    if ismember("nlopt", solvers_name)
+        s.blacklist = [s.blacklist, {'MUONSINELS'}];
+    end
+    
     problem_names = secup(s);
 
     fprintf("We will load %d problems\n\n", length(problem_names))

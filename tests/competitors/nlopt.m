@@ -1,5 +1,5 @@
 function nlopt(fun, x0, options)
-keyboard
+
 % Dimension
 n = numel(x0);
 

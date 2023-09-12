@@ -7,15 +7,14 @@ addpath(path_src)
 addpath(path_competitors)
 
 %p = macup('akiva');
-p = macup('MUONSINELS');
-% p = macup('PALMER5C');
+p = macup('FBRAIN3LS');
 % p = macup('HEART6LS');
 % p = macup('LANCZOS1LS');
-options.StepTolerance = 1e-10;
-options.Algorithm = "pbds";
-options.expand = 1;
+options.Algorithm = "rbds";
 
-[x, fval, exitflag, output] = bds(p.objective, p.x0, options);
+tic;
+[x, fval, exitflag, output] = matlab_fminunc(p.objective, p.x0, options);
+toc;
 
 fhist_length = length(output.fhist);
 g_hist = NaN(1,fhist_length);

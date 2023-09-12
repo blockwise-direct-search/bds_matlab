@@ -12,9 +12,9 @@ solver1.solver = "cbds";
 solver1.sufficient_decrease_factor = 0;
 
 % Establish parameters for solver 2.
-solver2.solver = "cbds";
-%solver2.Algorithm = "cobyla";
-solver2.sufficient_decrease_factor = 1e-10;
+solver2.solver = "lam";
+%solver2.Algorithm = "newuoa";
+%solver2.sufficient_decrease_factor = 1e-10;
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";
