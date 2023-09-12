@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, ds, dspd, simplex, bfgs, newuoa, wm_newuoa, nlopt_newuoa, nlopt_cobyla, nlopt_bobyqa, lam]
+        competitor: [nlopt_newuoa, nlopt_cobyla, nlopt_bobyqa, lam]
         noise_level: [negligible, low, medium, high]
 
     steps:

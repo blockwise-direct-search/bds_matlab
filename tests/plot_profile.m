@@ -1,6 +1,6 @@
 % This script is for test.
-parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
+parameters.problems_mindim = 6;
+parameters.problems_maxdim = 100;
 parameters.is_noisy = false;
 parameters.noise_level = 1e-5;
 parameters.num_random = 1;
@@ -12,8 +12,8 @@ solver1.solver = "cbds";
 solver1.sufficient_decrease_factor = 0;
 
 % Establish parameters for solver 2.
-solver2.solver = "lam";
-%solver2.Algorithm = "newuoa";
+solver2.solver = "nlopt";
+solver2.Algorithm = "bobyqa";
 %solver2.sufficient_decrease_factor = 1e-10;
 
 % Establish parameters for solver 3.

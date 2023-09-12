@@ -74,8 +74,12 @@ try
         s.blacklist = [s.blacklist, {'FBRAIN3LS'}, {'STRATEC'}];
     end
     % {"MUONSINELS"} takes nlopt_newuoa so long to run (even making MATLAB crash).
+    % {"LRCOVTYPE"}, {'HIMMELBH'} and {'HAIRY'} take nlopt_cobyla so long
+    % to run (even making MATLAB crash).
+    % {"MUONSINELS"} takes nlopt_bobyqa so long to run (even making MATLAB crash).
     if ismember("nlopt", solvers_name)
-        s.blacklist = [s.blacklist, {'MUONSINELS'}];
+        s.blacklist = [s.blacklist, {'MUONSINELS'}, {'BENNETT5LS'},...
+            {'HIMMELBH'}, {'HAIRY'}];
     end
     
     problem_names = secup(s);

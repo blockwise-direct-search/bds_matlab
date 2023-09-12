@@ -36,6 +36,16 @@ else
     opt.ftol_abs = eps;
 end
 
+if isfield(options, 'maxtime')
+    opt.maxtime = options.maxtime;
+else
+    if n <= 5
+        opt.maxtime = 20;
+    else 
+        opt.maxtime = 40;
+    end
+end
+
 if isfield(options, 'maxfun')
     opt.maxeval = options.maxfun;
 else
