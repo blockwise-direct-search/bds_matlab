@@ -51,6 +51,7 @@ if isfield(options, 'maxfun')
 else
     opt.maxeval = 1e3*n;
 end
+
 disp("nlopt is invoked");
 nlopt_optimize(opt, x0');
 
