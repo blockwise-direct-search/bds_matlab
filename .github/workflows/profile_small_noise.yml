@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [nlopt_bobyqa, nlopt_cobyla, nlopt_newuoa, lam]
+        competitor: [lam]
         version: [new]
         noise_level: [negligible, low, medium, high]
 
