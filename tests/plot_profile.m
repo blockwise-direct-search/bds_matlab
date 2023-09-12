@@ -4,7 +4,7 @@ parameters.problems_maxdim = 5;
 parameters.is_noisy = false;
 parameters.noise_level = 1e-5;
 parameters.num_random = 1;
-parameters.parallel = true;
+parameters.parallel = false;
 parameters.random_initial_point = false;
 parameters.maxfun_factor = 1e3;
 % Establish parameters for solver 1.
