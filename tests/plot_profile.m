@@ -14,7 +14,7 @@ solver1.sufficient_decrease_factor = 0;
 % Establish parameters for solver 2.
 solver2.solver = "cbds";
 %solver2.Algorithm = "cobyla";
-solver2.sufficient_decrease_factor = 1e-1;
+solver2.sufficient_decrease_factor = eps;
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";

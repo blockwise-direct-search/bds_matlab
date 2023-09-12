@@ -113,14 +113,14 @@ jobs:
 
             % Establish parameters for solvers.
             solver1.solver = "cbds";
-            solver1.sufficient_decrease_factor_level = 'zero';
+            solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
             BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
             NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
 
             if any(strcmpi("${{ matrix.competitor }}", BDS_list))
-                solver2.sufficient_decrease_factor_level = 'zero';
+                solver2.sufficient_decrease_factor = 0;
             end
           
             if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))

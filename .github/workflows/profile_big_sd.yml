@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [CBDS]
-        sufficient_decrease_factor: [negligible, low, medium, high]
+        sufficient_decrease_factor: [0, eps, 1e-16, 1e-10, 1e-5, 1e-3, 1e-1]
         random_initial_point: [true, false]
 
     steps:
@@ -100,10 +100,10 @@ jobs:
 
             % Establish parameters for solvers.
             solver1.solver = "cbds";
-            solver1.sufficient_decrease_factor_level = "zero";
+            solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
-            solver2.sufficient_decrease_factor_level = "${{ matrix.sufficient_decrease_factor }}"";
+            solver2.sufficient_decrease_factor = ${{ matrix.sufficient_decrease_factor }};
           
             parameters.solvers_options = {};
 
