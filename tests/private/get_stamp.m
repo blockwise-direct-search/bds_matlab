@@ -3,10 +3,15 @@ function solver_stamp = get_stamp(parameters, i)
 
 switch parameters.solvers_options{i}.solver
     case {"bds"}
-        solver_stamp = upper(parameters.solvers_options{i}.solver);
-        if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor_level")
-            solver_stamp = strcat(solver_stamp, "_",...
-                parameters.solvers_options{i}.sufficient_decrease_factor_level);
+        solver_stamp = upper(parameters.solvers_options{i}.Algorithm);
+        if parameters.solvers_options{i}.sufficient_decrease_factor == 0
+            solver_stamp = strcat(solver_stamp, "-", ...
+                num2str(parameters.solvers_options{i}.sufficient_decrease_factor));
+        elseif parameters.solvers_options{i}.sufficient_decrease_factor == eps
+            solver_stamp = strcat(solver_stamp, "-", "eps");
+        else
+            solver_stamp = strcat(solver_stamp, "-", ...
+                int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
         end
         %solver_legend = "our method";
     case {"bds_powell"}
@@ -20,11 +25,11 @@ switch parameters.solvers_options{i}.solver
     case {"nlopt"}
         switch parameters.solvers_options{i}.Algorithm
             case "cobyla"
-                solver_stamp = "nlopt_cobyla";
+                solver_stamp = "nlopt-cobyla";
             case "newuoa"
-                solver_stamp = "nlopt_newuoa";
+                solver_stamp = "nlopt-newuoa";
             case "bobyqa"
-                solver_stamp = "nlopt_bobyqa";
+                solver_stamp = "nlopt-bobyqa";
         end
     case {"lam"}
         solver_stamp = "lam";

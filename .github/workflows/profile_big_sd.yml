@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [CBDS]
-        sufficient_decrease_level: [negligible, low, medium, high]
+        sufficient_decrease_factor: [negligible, low, medium, high]
         random_initial_point: [true, false]
 
     steps:
@@ -103,7 +103,7 @@ jobs:
             solver1.sufficient_decrease_factor_level = "zero";
             
             solver2.solver = "${{ matrix.competitor }}";
-            solver2.sufficient_decrease_factor_level = "${{ matrix.sufficient_decrease_level }}"";
+            solver2.sufficient_decrease_factor_level = "${{ matrix.sufficient_decrease_factor }}"";
           
             parameters.solvers_options = {};
 

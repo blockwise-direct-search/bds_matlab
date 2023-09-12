@@ -1,20 +1,20 @@
 % This script is for test.
 parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
+parameters.problems_maxdim = 1;
 parameters.is_noisy = false;
 parameters.noise_level = 1e-5;
-parameters.num_random = 10;
+parameters.num_random = 1;
 parameters.parallel = true;
-parameters.random_initial_point = true;
+parameters.random_initial_point = false;
 parameters.maxfun_factor = 1e3;
 % Establish parameters for solver 1.
-solver1.solver = "rbds";
-solver1.sufficient_decrease_factor_level = 'zero';
+solver1.solver = "cbds";
+solver1.sufficient_decrease_factor = 0;
 
 % Establish parameters for solver 2.
-solver2.solver = "lam";
+solver2.solver = "cbds";
 %solver2.Algorithm = "cobyla";
-%solver2.sufficient_decrease_factor_level = "high";
+solver2.sufficient_decrease_factor = 1e-1;
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";

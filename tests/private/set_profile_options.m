@@ -63,24 +63,24 @@ if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = get_default_profile_options("is_noisy");
 end
 
-if ~isfield(parameters, "noise_level")
-    parameters.noise_level = get_default_profile_options("noise_level");
-elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "string")
-    switch lower(parameters.noise_level)
-        case "negligible"
-            parameters.noise_level = 1.0e-7;
-        case "low"
-            parameters.noise_level = 1.0e-5;
-        case "medium"
-            parameters.noise_level = 1.0e-3;
-        case "high"
-            parameters.noise_level = 1.0e-1;
-        case "excessive"
-            parameters.noise_level = 2.0e-1;
-        otherwise
-            error("Unkown noise level %s", parameters.noise_level);
-    end
-end
+% if ~isfield(parameters, "noise_level")
+%     parameters.noise_level = get_default_profile_options("noise_level");
+% elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "string")
+%     switch lower(parameters.noise_level)
+%         case "negligible"
+%             parameters.noise_level = 1.0e-7;
+%         case "low"
+%             parameters.noise_level = 1.0e-5;
+%         case "medium"
+%             parameters.noise_level = 1.0e-3;
+%         case "high"
+%             parameters.noise_level = 1.0e-1;
+%         case "excessive"
+%             parameters.noise_level = 2.0e-1;
+%         otherwise
+%             error("Unkown noise level %s", parameters.noise_level);
+%     end
+% end
 
 if ~isfield(parameters, "is_abs_noise")
     parameters.is_abs_noise = get_default_profile_options("is_abs_noise");
