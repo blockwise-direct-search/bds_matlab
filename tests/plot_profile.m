@@ -1,6 +1,6 @@
 % This script is for test.
 parameters.problems_mindim = 1;
-parameters.problems_maxdim = 1;
+parameters.problems_maxdim = 5;
 parameters.is_noisy = false;
 parameters.noise_level = 1e-5;
 parameters.num_random = 1;
@@ -14,7 +14,7 @@ solver1.sufficient_decrease_factor = 0;
 % Establish parameters for solver 2.
 solver2.solver = "cbds";
 %solver2.Algorithm = "cobyla";
-solver2.sufficient_decrease_factor = eps;
+solver2.sufficient_decrease_factor = 1e-10;
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";

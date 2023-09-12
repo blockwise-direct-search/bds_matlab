@@ -1,4 +1,7 @@
 function orig_warning_state = warnoff(solvers)
+% This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/warnoff.m, which is
+% written by Zaikun ZHANG.
+
 orig_warning_state = warning;
 
 for isol = 1 : length(solvers)

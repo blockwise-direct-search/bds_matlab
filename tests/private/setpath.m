@@ -1,4 +1,6 @@
 function setpath(path_string)
+% This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/setpath.m, which is
+% written by Zaikun ZHANG.
 
     path(path_string);
     orig_warning_state = warning;

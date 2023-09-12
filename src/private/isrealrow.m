@@ -1,4 +1,7 @@
-function [isrr, len] = isrealrow(x) % isrealrow([]) = true
+function [isrr, len] = isrealrow(x) 
+% This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/isrealrow.m, which is
+% written by Zaikun ZHANG.
+% isrealrow([]) = true
 %ISREALROW checks whether x is a real row. If yes, it returns len = length(x); otherwise, len = NaN.
 % N.B.: isrealrow([]) = true.
 

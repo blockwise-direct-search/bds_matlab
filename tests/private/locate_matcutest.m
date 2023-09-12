@@ -1,4 +1,7 @@
 function cmpaths = locate_matcutest(directory)
+% This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/locate_matcutest.m, which is
+% written by Zaikun ZHANG.
+%
 %This function finds where MatCUTEst (https://github.com/equipez/matcutest) is installed, adds the
 % paths needed for using MatCUTEst, and returns these paths in a cell array.
 % We search at most 3 levels below the given directory, whose default value is the home directory.

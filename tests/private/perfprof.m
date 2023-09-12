@@ -1,4 +1,7 @@
 function output = perfprof(frec, fmin, options)
+% This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/perfprof.m, which is
+% written by Zaikun ZHANG.
+%
 %This function plots the performance profiles of solvers.
 % frec: trajectory of function values; frec(ip, is, ir, k) is the function value of the ip-th
 % problem obtained by the is-th solver at the ir-th random run at the k-th iteration.

@@ -15,8 +15,13 @@ try
     path_nlopt = "/usr/local/lib/matlab/";
 
     if ~contains(path, path_nlopt, 'IgnoreCase', true)
-        addpath(path_nlopt);
-        disp('Add path_nlopt to MATLAB path.');
+        if exist(path_nlopt, 'dir') == 7
+            addpath(path_nlopt);
+            disp('Add path_nlopt to MATLAB path.');
+        else
+            disp('path_nlopt does not exist on the local machine.');
+        end
+
     else
         disp('Path_nlopt already exists in MATLAB path.');
     end
@@ -99,11 +104,34 @@ try
 
     % Set noisy parts of test.
     test_options.is_noisy = parameters.is_noisy;
-    test_options.noise_level = parameters.noise_level;
-    % Relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
-    test_options.is_abs_noise = parameters.is_abs_noise;
-    test_options.noise_type = parameters.noise_type;
-    test_options.num_random = parameters.num_random;
+    if parameters.is_noisy
+
+        if isfield(parameters, "noise_level")
+            test_options.noise_level = parameters.noise_level;
+        else
+            test_options.noise_level = get_default_profile_options("noise_level");
+        end
+
+        % Relative: (1+noise_level*noise)*f; absolute: f+noise_level*noise
+        if isfield(parameters, "is_abs_noise")
+            test_options.is_abs_noise = parameters.is_abs_noise;
+        else
+            test_options.is_abs_noise = get_default_profile_options("is_abs_noise");
+        end
+
+        if isfield(parameters, "noise_type")
+            test_options.noise_type = parameters.noise_type;
+        else
+            test_options.noise_type = get_default_profile_options("noise_type");
+        end
+
+        if isfield(parameters, "num_random")
+            test_options.num_random = parameters.num_random;
+        else
+            test_options.num_random = get_default_profile_options("num_random");
+        end
+
+    end
 
     % Set scaling matrix.
     test_options.scale_variable = false;
