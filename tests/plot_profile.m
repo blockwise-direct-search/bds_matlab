@@ -5,7 +5,7 @@ parameters.problems_maxdim = 5;
 parameters.is_noisy = false;
 parameters.noise_level = "low";
 parameters.num_random = 1;
-parameters.parallel = true;
+parameters.parallel = false;
 parameters.random_initial_point = false;
 parameters.maxfun_factor = 1e3;
 % Establish parameters for solver 1.
@@ -14,9 +14,9 @@ solver1.expand = 2;
 solver1.sufficient_decrease_factor = 1e-3;
 
 % Establish parameters for solver 2.
-solver2.solver = "lam";
-solver2.expand = 2;
-%solver2.Algorithm = "bobyqa";
+solver2.solver = "nlopt";
+%solver2.expand = 2;
+solver2.Algorithm = "newuoa";
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";

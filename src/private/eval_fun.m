@@ -12,16 +12,10 @@ end
 % Apply the moderate extreme barrier to handle NaN, huge values, and evaluation failures.
 % See 4.5 of "PDFO: A Cross-Platform Package for Powell's Derivative-Free Optimization Solvers" 
 % by Tom M. Ragonneau and Zaikun Zhang.
-
-q = quantizer('double');
-maxexponent = exponentmax(q);
-radix = 2;
-
 if isnan(f)
     f = inf;
 end
-
-f = min(f, radix^min(100, maxexponent / 2));
+f = min([f, 2^100, sqrt(realmax())]);
 
 end
 
