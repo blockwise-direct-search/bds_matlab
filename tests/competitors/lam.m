@@ -186,6 +186,7 @@ for iter = 1:maxit
         % going to visit.
         i_real = block_indices(i);
         
+        %alpha_bar = alpha_all(i_real);
         alpha_bar = max(alpha_all(i_real), stepsize_factor*alpha_max);
 
         % Get indices of directions in the i-th block.
@@ -225,7 +226,8 @@ for iter = 1:maxit
         % Update the step sizes.
         if success
             % alpha_all(i_real) = suboutput.stepsize;
-            alpha_all(i_real) = expand * suboutput.stepsize;
+            % alpha_all(i_real) = expand * suboutput.stepsize;
+            alpha_all(i_real) = expand * alpha_bar;
         else
             alpha_all(i_real) = shrink * alpha_bar;
             %alpha_all(i_real) = shrink * alpha_all(i_real);
