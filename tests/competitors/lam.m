@@ -132,7 +132,7 @@ end
 if isfield(options, "stepsize_factor")
     stepsize_factor = options.stepsize_factor;
 else
-    stepsize_factor = 1e-3;
+    stepsize_factor = 0;
 end
 
 % Set the target of the objective function.
@@ -179,12 +179,14 @@ end
 % Start the actual computations.
 for iter = 1:maxit
 
+    alpha_max = max(alpha_all); 
+
     for i = 1:length(block_indices)
         % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
         % going to visit.
         i_real = block_indices(i);
         
-        alpha_star = max(alpha_all(i), stepsize_factor*max(alpha_all));
+        alpha_bar = max(alpha_all(i_real), stepsize_factor*alpha_max);
 
         % Get indices of directions in the i-th block.
         direction_indices = searching_set_indices{i_real}; 
@@ -192,12 +194,12 @@ for iter = 1:maxit
         suboptions.maxfun = maxfun - nf;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.with_cycling_memory = with_cycling_memory;
-        suboptions.expand = 1/expand;
+        suboptions.expand = expand;
         suboptions.ftarget = ftarget;
         
         [xval, fval, sub_exitflag, suboutput] = linesearch(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...
-            alpha_star, suboptions);
+            alpha_bar, suboptions);
         
         % Store the history of the evaluations by inner_direct_search, 
         % and accumulate the number of function evaluations.
@@ -222,9 +224,11 @@ for iter = 1:maxit
         
         % Update the step sizes.
         if success
-            alpha_all(i_real) = suboutput.stepsize;
+            % alpha_all(i_real) = suboutput.stepsize;
+            alpha_all(i_real) = expand * suboutput.stepsize;
         else
-            alpha_all(i_real) = shrink * alpha_all(i_real);
+            alpha_all(i_real) = shrink * alpha_bar;
+            %alpha_all(i_real) = shrink * alpha_all(i_real);
         end
         
         % Terminate the computations if the largest component of step size is below a

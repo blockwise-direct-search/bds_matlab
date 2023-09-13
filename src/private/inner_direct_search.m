@@ -116,7 +116,11 @@ for j = 1 : num_directions
     end
     
     % Check whether the sufficient decrease condition is achieved.
-    sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+    if sufficient_decrease_factor <= 0
+        sufficient_decrease = (fnew < fbase);
+    else
+        sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+    end
   
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
     % decrease, success will always be true inside this function.

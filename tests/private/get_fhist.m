@@ -1,4 +1,4 @@
-function [fhist_perfprof, fval] = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
+function fhist_perfprof = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
 % GET_FHIST gets return value of j-th solver on the r-th randomized 
 % experiment of problem p.
 
@@ -41,20 +41,16 @@ end
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
-try
-    solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
-catch
-end
-
+% try
+%     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+% catch
+% end
+solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 % Turn off warning is a very dangerous thing. So it must be set a loop to
 % trun on after ending the computation.
 if ~isempty(find(prima_list == name_solver, 1))
     warnoff(name_solver);
 end
-
-% Fval should be the minimum among history of function values. Also, fval
-% should always be the one without noise!
-fval = min(obj.valHist);
 
 % Get length of fhist.
 fhist_length = obj.nEval;
@@ -64,7 +60,9 @@ fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
 % then the prolonged parts will be imparted the value of the last function evaluation 
 % that we get eventually.
 if  fhist_length < maxfun_frec
-    fhist_perfprof(fhist_length+1:maxfun_frec) = fhist_perfprof(fhist_length);
+    if fhist_length > 0
+        fhist_perfprof(fhist_length+1:maxfun_frec) = fhist_perfprof(fhist_length);
+    end
 else
     fhist_perfprof = fhist_perfprof(1:maxfun_frec);
 end

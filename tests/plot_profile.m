@@ -1,20 +1,22 @@
+function plot_profile()
 % This script is for test.
-parameters.problems_mindim = 6;
-parameters.problems_maxdim = 100;
-parameters.is_noisy = true;
+parameters.problems_mindim = 1;
+parameters.problems_maxdim = 5;
+parameters.is_noisy = false;
 parameters.noise_level = "low";
 parameters.num_random = 1;
-parameters.parallel = false;
+parameters.parallel = true;
 parameters.random_initial_point = false;
 parameters.maxfun_factor = 1e3;
 % Establish parameters for solver 1.
 solver1.solver = "cbds";
-solver1.sufficient_decrease_factor = 0;
+solver1.expand = 2;
+solver1.sufficient_decrease_factor = 1e-3;
 
 % Establish parameters for solver 2.
 solver2.solver = "lam";
+solver2.expand = 2;
 %solver2.Algorithm = "bobyqa";
-%solver2.sufficient_decrease_factor = 1e-10;
 
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";

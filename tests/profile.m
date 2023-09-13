@@ -167,9 +167,9 @@ try
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
-                    [fhist, fval] = get_fhist(p, maxfun_frec, i_solver,...
+                    fhist = get_fhist(p, maxfun_frec, i_solver,...
                         i_run, solvers_options, test_options);
-                    fval_tmp(i_solver) = fval;
+                    fval_tmp(i_solver) = min(fhist);
                     frec(i_problem,i_solver,i_run,:) = fhist;
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
@@ -187,9 +187,9 @@ try
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
-                    [fhist, fval] = get_fhist(p, maxfun_frec, i_solver,...
+                    fhist = get_fhist(p, maxfun_frec, i_solver,...
                         i_run, solvers_options, test_options);
-                    fval_tmp(i_solver) = fval;
+                    fval_tmp(i_solver) = min(fhist);
                     frec(i_problem,i_solver,i_run,:) = fhist;
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
