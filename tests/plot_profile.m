@@ -13,7 +13,8 @@ solver1.solver = "cbds";
 %solver1.classical = false;
 %solver1.maxfun = 1e4;
 % solver1.expand = 2;
-solver1.sufficient_decrease_factor = 1e-3;
+solver1.sufficient_decrease_factor = 0;
+%solver1.direction = "canonical";
 %solver1.accept_simple_decrease = false;
 
 % Establish parameters for solver 2.

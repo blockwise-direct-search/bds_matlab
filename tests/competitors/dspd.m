@@ -2,7 +2,7 @@ function [xval, fval, exitflag, output] = dspd(fun, x0, options)
 %DSPD (direct search probabilistic descent) solves unconstrained optimization
 %   problems without using derivatives. 
 %
-%   TODO: here(MATLAB version, what is bds)
+%   TODO: here(MATLAB version for dspd)
 %
 %   XVAL = DSPD(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
 %   calculations at X0. FUN must accept input X and returns a scalar, which is the function value
@@ -224,20 +224,21 @@ for iter = 1:maxit
 
     % Generate the searching set whose directions are uniformly distributed on the unit sphere
     % for each iteration when options.Algorithm is "dspd".
-    if strcmpi(options.Algorithm, "dspd")
-        if m == 2
-            rv = randn(n, 1);
-            % Normalize rv.
-            rv = rv ./ norm(rv);
-            D = [rv, -rv];
-        else
-            D = randn(m, n);
-            % Normalize D. vecnorm is introduced in MATLAB 2017a for the first time.
-            % Here we are dividing a matrix by a row vector using implicit expansion.
-            D = D ./ vecnorm(D);
-        end
+    if m == 1
+        rv = randn(n, 1);
+        % Normalize rv.
+        rv = rv ./ norm(rv);
+        D = [rv, -rv];
+    else
+        D = randn(m, n);
+        % Normalize D. vecnorm is introduced in MATLAB 2017a for the first time.
+        % Here we are dividing a matrix by a row vector using implicit expansion.
+        D = D ./ vecnorm(D);
     end
 
+    % Get indices of directions in the i-th block.
+    direction_indices = 1:m;
+   
     suboptions.maxfun = maxfun - nf;
     suboptions.cycling = cycling_inner;
     suboptions.with_cycling_memory = with_cycling_memory;
@@ -291,14 +292,12 @@ if iter == maxit
     exitflag = get_exitflag("MAXIT_REACHED");
 end
 
-end
-
 % Truncate HISTORY into an nf length vector.
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.alpha_hist = alpha_hist(1:min(iter, maxit));
-
+ 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
         output.message = "The StepTolerance of the step size is reached.";
@@ -315,4 +314,6 @@ end
 % verify_postconditions is to detect whether output is in right form when debug_flag is true.
 if debug_flag
     verify_postconditions(fun, xval, fval, exitflag, output);
+end
+
 end

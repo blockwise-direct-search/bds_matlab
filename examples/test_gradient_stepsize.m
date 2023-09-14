@@ -1,3 +1,5 @@
+function test_gradient_stepsize()
+
 fullpath = mfilename('fullpath');
 path_examples = fileparts(fullpath);
 path_bds = fileparts(path_examples);
@@ -6,14 +8,15 @@ path_competitors = fullfile(path_bds, 'tests', 'competitors');
 addpath(path_src)
 addpath(path_competitors)
 
-%p = macup('akiva');
-p = macup('FBRAIN3LS');
+p = macup('akiva');
+%p = macup('FBRAIN3LS');
 % p = macup('HEART6LS');
 % p = macup('LANCZOS1LS');
-options.Algorithm = "rbds";
+%options.Algorithm = "rbds";
+options.StepTolerance = eps;
 
 tic;
-[x, fval, exitflag, output] = matlab_fminunc(p.objective, p.x0, options);
+[x, fval, exitflag, output] = lam(p.objective, p.x0, options)
 toc;
 
 fhist_length = length(output.fhist);
@@ -27,3 +30,5 @@ ratio = abs(gval)/options.StepTolerance
 
 rmpath(path_src)
 rmpath(path_competitors)
+
+end

@@ -10,7 +10,7 @@ switch constant_name
     case {"Algorithm"}
         constant_value = "cbds";
     case {"num_random_vectors"}
-        constant_value = 2;
+        constant_value = 1;
     case {"seed"}
         constant_value = 1e6;
     case {"expand"}

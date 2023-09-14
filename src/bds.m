@@ -26,7 +26,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %                               the history or not.
 %   cycling_inner               Cycling strategy employed in the opportunistic case.
 %   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
-%   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "dspd", "ds".
+%   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
 %                               Use Algorithm not algorithm to have the same name as MATLAB.
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
 %                               every shuffling_period iterations.    
@@ -59,21 +59,6 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   Copyright 2023, Haitian Li and Zaikun Zhang.
 %   All rights reserved.
 %
-
-% Get the information of current MATLAB.
-matlabVersion = ver('MATLAB');
-
-% Extract the main version and the minor version of MATLAB.
-versionParts = strsplit(matlabVersion.Version, '.');
-
-% Change the version of matlab into floating number.
-majorVersion = str2double(versionParts{1});
-minorVersion = str2double(versionParts{2});
-
-% Check whether the verion of MATLAB is released lower than 2017a.
-if majorVersion < 9 || (majorVersion == 9 && minorVersion < 1)
-    error("The verison of MATLAB is low, please update to 2017a or later versions")
-end
 
 % Set options to an empty structure if it is not provided.
 if nargin < 3
@@ -131,15 +116,7 @@ else
 end
 
 % Get the number of directions.
-if strcmpi(options.Algorithm, "dspd")
-    if isfield(options, "num_random_vectors")
-        m = max(options.num_random_vectors, ceil(log2(1-log(shrink))/log(expand)));
-    else
-        m = max(get_default_constant("num_random_vectors"), ceil(log2(1-log(shrink))/log(expand)));
-    end
-else
-    m = size(D, 2);
-end
+m = size(D, 2);
  
 % Get the number of blocks.
 if isfield(options, "nb")
@@ -149,7 +126,7 @@ elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds").
     % Default value is set as n, which is good for canonical with 2n directions. For
     % other situations, other value may be good.
     nb = n;
-elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorithm, "ds")
+elseif strcmpi(options.Algorithm, "ds")
     nb = 1;
 end
 
@@ -278,7 +255,7 @@ end
 
 % To avoid that the users bring some randomized string.
 % TODO: mention objective function and random generator
-random_stream = rng(seed);
+%random_stream = rng(seed);
 
 % Start the actual computations.
 for iter = 1:maxit
@@ -313,22 +290,6 @@ for iter = 1:maxit
             % Generate a random index from block_real_indices.
             idx = randi(length(block_real_indices));
             block_indices = block_real_indices(idx);
-        end
-    end
-    
-    % Generate the searching set whose directions are uniformly distributed on the unit sphere
-    % for each iteration when options.Algorithm is "dspd".
-    if strcmpi(options.Algorithm, "dspd")
-        if m == 2
-            rv = randn(n, 1);
-            % Normalize rv.
-            rv = rv ./ norm(rv);
-            D = [rv, -rv];
-        else
-            D = randn(m, n);
-            % Normalize D. vecnorm is introduced in MATLAB 2017a for the first time.
-            % Here we are dividing a matrix by a row vector using implicit expansion.
-            D = D ./ vecnorm(D);
         end
     end
 

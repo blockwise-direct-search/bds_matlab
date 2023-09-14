@@ -7,15 +7,18 @@ prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 switch parameters.solvers_options{i}.solver
     case "bds"
         pdfname = upper(parameters.solvers_options{i}.Algorithm);
-        if parameters.solvers_options{i}.sufficient_decrease_factor == 0
-            pdfname = strcat(pdfname, "_", ...
-                num2str(parameters.solvers_options{i}.sufficient_decrease_factor));
-        elseif parameters.solvers_options{i}.sufficient_decrease_factor == eps
-            pdfname = strcat(pdfname, "_", "eps");
-        else
-            pdfname = strcat(pdfname, "_", ...
-                int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
+        if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor")
+            if parameters.solvers_options{i}.sufficient_decrease_factor == 0
+                pdfname = strcat(pdfname, "_", ...
+                    num2str(parameters.solvers_options{i}.sufficient_decrease_factor));
+            elseif parameters.solvers_options{i}.sufficient_decrease_factor == eps
+                pdfname = strcat(pdfname, "_", "eps");
+            else
+                pdfname = strcat(pdfname, "_", ...
+                    int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
+            end
         end
+
     case "bds_powell"
         powell_factor_stamp = int2str(int32(-log10(parameters.solvers_options{i}.powell_factor)));
         pdfname = strcat("CBDS_Powell", "_", powell_factor_stamp);
