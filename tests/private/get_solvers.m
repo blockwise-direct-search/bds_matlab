@@ -30,6 +30,11 @@ for i = 1:solvers_num
              parameters.solvers_options{i}.solver = "matlab_fminsearch";
      end
 
+     % Set solver to be dspd (lower case) if it is DSPD.
+     if strcmpi(parameters.solvers_options{i}.solver, "DSPD")
+             parameters.solvers_options{i}.solver = "dspd";
+     end
+
 end
 
 end

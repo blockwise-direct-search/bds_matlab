@@ -230,14 +230,14 @@ for iter = 1:maxit
         rv = rv ./ norm(rv);
         D = [rv, -rv];
     else
-        D = randn(m, n);
+        D = randn(n, m);
         % Normalize D. vecnorm is introduced in MATLAB 2017a for the first time.
         % Here we are dividing a matrix by a row vector using implicit expansion.
         D = D ./ vecnorm(D);
     end
 
     % Get indices of directions in the i-th block.
-    direction_indices = 1:m;
+    direction_indices = 1:size(D, 2);
    
     suboptions.maxfun = maxfun - nf;
     suboptions.cycling = cycling_inner;

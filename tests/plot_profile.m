@@ -5,7 +5,7 @@ parameters.problems_maxdim = 5;
 parameters.is_noisy = false;
 parameters.noise_level = "low";
 parameters.num_random = 1;
-parameters.parallel = true;
+parameters.parallel = false;
 parameters.random_initial_point = false;
 parameters.maxfun_factor = 1e3;
 % Establish parameters for solver 1.
@@ -18,7 +18,8 @@ solver1.sufficient_decrease_factor = 0;
 %solver1.accept_simple_decrease = false;
 
 % Establish parameters for solver 2.
-solver2.solver = "lam";
+solver2.solver = "dspd";
+%solver2.linesearch_type = "new";
 %solver2.expand = 2;
 %solver2.Algorithm = "cobyla";
 %solver2.maxfun = 1e4;

@@ -2,7 +2,7 @@ name: Plot performance profiles for BDS, small with noise
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 20 */7 * *'
@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [lam]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa, lam]
         version: [new]
         noise_level: [negligible, low, medium, high]
 

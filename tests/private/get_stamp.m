@@ -15,6 +15,9 @@ switch parameters.solvers_options{i}.solver
                     int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
             end
         end
+    
+    case {"dspd"}
+        solver_stamp = "dspd";
 
     case {"bds_powell"}
         solver_stamp = "CBDS-Powell";

@@ -8,15 +8,16 @@ path_competitors = fullfile(path_bds, 'tests', 'competitors');
 addpath(path_src)
 addpath(path_competitors)
 
-p = macup('akiva');
-%p = macup('FBRAIN3LS');
+%p = macup('akiva');
+p = macup('ALLINITU');
 % p = macup('HEART6LS');
 % p = macup('LANCZOS1LS');
 %options.Algorithm = "rbds";
 options.StepTolerance = eps;
+options.linesearch_type = "new";
 
 tic;
-[x, fval, exitflag, output] = lam(p.objective, p.x0, options)
+[x, fval, exitflag, output] = dspd(p.objective, p.x0, options)
 toc;
 
 fhist_length = length(output.fhist);

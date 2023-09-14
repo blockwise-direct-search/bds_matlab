@@ -18,12 +18,17 @@ switch parameters.solvers_options{i}.solver
                     int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
             end
         end
+    
+    case "dspd"
+        pdfname = "dspd";
 
     case "bds_powell"
         powell_factor_stamp = int2str(int32(-log10(parameters.solvers_options{i}.powell_factor)));
         pdfname = strcat("CBDS_Powell", "_", powell_factor_stamp);
+
     case "wm_newuoa"
         pdfname = parameters.solvers_options{i}.solver;
+
     case "nlopt"
         switch parameters.solvers_options{i}.Algorithm
             case "cobyla"
@@ -33,12 +38,20 @@ switch parameters.solvers_options{i}.solver
             case "bobyqa"
                 pdfname = "nlopt_bobyqa";
         end
+
     case "matlab_fminsearch"
         pdfname = strcat("fminsearch", "_", "simplex");
+
     case "lam"
         pdfname = "lam";
+        if isfield(parameters.solvers_options{i}, "linesearch_type")
+            pdfname = strcat(pdfname, "_", ...
+                parameters.solvers_options{i}.linesearch_type);
+        end
+
     case "matlab_fminunc"
         pdfname = strcat("fminunc", "_", parameters.solvers_options{i}.fminunc_type);
+        
     case "matlab_patternsearch"
         pdfname = strcat("patternsearch", "_", "gps");
 end

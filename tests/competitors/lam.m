@@ -130,10 +130,17 @@ end
 
 % Set the value of stepsize_factor.
 if isfield(options, "stepsize_factor")
-     stepsize_factor = options.stepsize_factor;
- else
-     stepsize_factor = 1e-3;
- end
+    stepsize_factor = options.stepsize_factor;
+else
+    stepsize_factor = 1e-3;
+end
+
+% Set the type of linesearch.
+if isfield(options, "linesearch_type")
+    linesearch_type = options.linesearch_type;
+else
+    linesearch_type = "standard";
+end
 
 % Set the target of the objective function.
 if isfield(options, "ftarget")
@@ -197,6 +204,7 @@ for iter = 1:maxit
         suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.expand = expand;
         suboptions.ftarget = ftarget;
+        suboptions.linesearch_type = linesearch_type;
         
         [xval, fval, sub_exitflag, suboutput] = linesearch(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...

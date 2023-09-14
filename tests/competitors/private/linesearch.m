@@ -137,8 +137,15 @@ for j = 1 : num_directions
             exitflag = get_exitflag("MAXFUN_REACHED");
             break;
         end
+        
+        if strcmpi(options.linesearch_type, "standard")
+            sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2 < fbase);
+        elseif strcmpi(options.linesearch_type, "new")
+            sufficient_decrease = (fnew + sufficient_decrease_factor * ((expand-1)...
+                *alpha)^2 < fhist(nf-1));    
+        end
 
-        sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+        
 
         if sufficient_decrease
             fval = fnew;

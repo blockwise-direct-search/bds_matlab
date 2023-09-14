@@ -181,13 +181,15 @@ function tests = unit_test
     end
     options.direction = "canonical";    
     verifyEqual(testCase, get_searching_set(n,options), D)
-    
-    D = [eye(n) -eye(n)];
-    verifyEqual(testCase, get_searching_set(n), D)
 
     options = struct();
+    verifyEqual(testCase, get_searching_set(n, options), D)
+    
+    options.direction = "identity";
     D = [eye(n) -eye(n)];
     verifyEqual(testCase, get_searching_set(n, options), D)
+
+
 
     end
     

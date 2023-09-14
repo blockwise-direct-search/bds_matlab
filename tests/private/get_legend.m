@@ -44,8 +44,14 @@ switch parameters.solvers_options{i}.solver
 
     case {"matlab_patternsearch"}
         solver_legend = "patternsearch";
+
     case {"lam"}
         solver_legend = "lam";
+        if isfield(parameters.solvers_options{i}, "linesearch_type")
+            solver_legend = strcat(solver_legend, "-", ...
+                parameters.solvers_options{i}.linesearch_type);
+        end
+
 end
 
 % Get legend of algorithm of Prima family.
