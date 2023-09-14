@@ -5,19 +5,22 @@ parameters.problems_maxdim = 5;
 parameters.is_noisy = false;
 parameters.noise_level = "low";
 parameters.num_random = 1;
-parameters.parallel = false;
+parameters.parallel = true;
 parameters.random_initial_point = false;
 parameters.maxfun_factor = 1e3;
 % Establish parameters for solver 1.
 solver1.solver = "cbds";
-solver1.expand = 2;
+%solver1.classical = false;
+%solver1.maxfun = 1e4;
+% solver1.expand = 2;
 solver1.sufficient_decrease_factor = 1e-3;
+%solver1.accept_simple_decrease = false;
 
 % Establish parameters for solver 2.
-solver2.solver = "nlopt";
+solver2.solver = "lam";
 %solver2.expand = 2;
-solver2.Algorithm = "newuoa";
-
+%solver2.Algorithm = "cobyla";
+%solver2.maxfun = 1e4;
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";
 % struct3.rhoend = 1e-6;

@@ -19,12 +19,12 @@ fhist_perfprof = NaN(maxfun_frec, 1);
 
 % Set maxfun before computing.
 % Set MAXFUN to the maximum number of function evaluations if there exist
-% some related parameters input, which are maxfun_dim and maxfun.
+% some related parameters input, which are maxfun_factor and maxfun.
 n = length(p.x0);
-if isfield(test_options, "maxfun_dim") && isfield(test_options, "maxfun")
-    options.maxfun = min(test_options.maxfun_dim*n, test_options.maxfun);
-elseif isfield(test_options, "maxfun_dim")
-    options.maxfun = test_options.maxfun_dim*n;
+if isfield(test_options, "maxfun_factor") && isfield(test_options, "maxfun")
+    options.maxfun = min(test_options.maxfun_factor*n, test_options.maxfun);
+elseif isfield(test_options, "maxfun_factor")
+    options.maxfun = test_options.maxfun_factor*n;
 elseif isfield(test_options, "maxfun")
     options.maxfun = test_options.maxfun;
 end

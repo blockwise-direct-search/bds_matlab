@@ -68,7 +68,7 @@ x0 = double(x0(:));
 n = length(x0);
 
 % Get the searching set, the number of directions and blocks respectively.
-options.direction = "canonical";
+%options.direction = "canonical";
 D = get_searching_set(n, options);
 m = size(D, 2);
 nb = n;
@@ -129,11 +129,11 @@ else
 end
 
 % Set the value of stepsize_factor.
-if isfield(options, "stepsize_factor")
-    stepsize_factor = options.stepsize_factor;
-else
-    stepsize_factor = 0;
-end
+% if isfield(options, "stepsize_factor")
+%     stepsize_factor = options.stepsize_factor;
+% else
+%     stepsize_factor = 0;
+% end
 
 % Set the target of the objective function.
 if isfield(options, "ftarget")
@@ -179,15 +179,15 @@ end
 % Start the actual computations.
 for iter = 1:maxit
 
-    alpha_max = max(alpha_all); 
+    %alpha_max = max(alpha_all); 
 
     for i = 1:length(block_indices)
         % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
         % going to visit.
         i_real = block_indices(i);
         
-        %alpha_bar = alpha_all(i_real);
-        alpha_bar = max(alpha_all(i_real), stepsize_factor*alpha_max);
+        alpha = alpha_all(i_real);
+        %alpha_bar = max(alpha_all(i_real), stepsize_factor*alpha_max);
 
         % Get indices of directions in the i-th block.
         direction_indices = searching_set_indices{i_real}; 
@@ -195,12 +195,12 @@ for iter = 1:maxit
         suboptions.maxfun = maxfun - nf;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
         suboptions.with_cycling_memory = with_cycling_memory;
-        suboptions.expand = expand;
+        %suboptions.expand = expand;
         suboptions.ftarget = ftarget;
         
         [xval, fval, sub_exitflag, suboutput] = linesearch(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...
-            alpha_bar, suboptions);
+            alpha, suboptions);
         
         % Store the history of the evaluations by inner_direct_search, 
         % and accumulate the number of function evaluations.
@@ -227,9 +227,11 @@ for iter = 1:maxit
         if success
             % alpha_all(i_real) = suboutput.stepsize;
             % alpha_all(i_real) = expand * suboutput.stepsize;
-            alpha_all(i_real) = expand * alpha_bar;
+            % alpha_all(i_real) = expand * alpha_bar;
+            alpha_all(i_real) = expand * alpha;
         else
-            alpha_all(i_real) = shrink * alpha_bar;
+            % alpha_all(i_real) = shrink * alpha_bar;
+            alpha_all(i_real) = shrink * alpha;
             %alpha_all(i_real) = shrink * alpha_all(i_real);
         end
         

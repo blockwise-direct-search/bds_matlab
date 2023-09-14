@@ -142,6 +142,15 @@ try
         end
 
     end
+    
+    % Set maxfun and maxfun_factor for test_options.
+    if isfield(parameters, "maxfun")
+        test_options.maxfun = parameters.maxfun;
+    end
+
+    if isfield(parameters, "maxfun_factor")
+        test_options.maxfun_factor = parameters.maxfun_factor;
+    end
 
     % Set scaling matrix.
     test_options.scale_variable = false;
@@ -163,7 +172,7 @@ try
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
@@ -183,7 +192,7 @@ try
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 10 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers

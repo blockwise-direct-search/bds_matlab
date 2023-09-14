@@ -36,7 +36,7 @@ else
 end
 
 % Set the value of expanding factor.
-expand = options.expand;
+%expand = options.expand;
 
 % Set the value of cycling_strategy, which represents the cycling strategy inside each block.
 cycling_strategy = 1;
@@ -102,48 +102,49 @@ for j = 1 : num_directions
     % Check whether the sufficient decrease condition is achieved.
     sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
     
-    if sufficient_decrease
+    % if sufficient decrease
+    if sufficient_decrease && fnew < fval
         fval = fnew;
         xval = xnew;
     end
 
     success = sufficient_decrease;
 
-    while sufficient_decrease && false
-        error("This part of code is not used.")
-        alpha = alpha*expand;
-        xnew = xbase+alpha*D(:, j);
-        fnew = eval_fun(fun, xnew);
-        nf = nf+1;
-        fhist(nf) = fnew;
-        xhist(:, nf) = xnew;
+    % while sufficient_decrease && false
+    %     error("This part of code is not used.")
+    %     alpha = alpha*expand;
+    %     xnew = xbase+alpha*D(:, j);
+    %     fnew = eval_fun(fun, xnew);
+    %     nf = nf+1;
+    %     fhist(nf) = fnew;
+    %     xhist(:, nf) = xnew;
 
-        % Stop the computations once the target value of the objective function
-        % is achieved.
-        if fnew <= ftarget
-            xval = xnew;
-            fval = fnew;
-            terminate = true;
-            information = "FTARGET_REACHED";
-            exitflag = get_exitflag(information);
-            break;
-        end
+    %     % Stop the computations once the target value of the objective function
+    %     % is achieved.
+    %     if fnew <= ftarget
+    %         xval = xnew;
+    %         fval = fnew;
+    %         terminate = true;
+    %         information = "FTARGET_REACHED";
+    %         exitflag = get_exitflag(information);
+    %         break;
+    %     end
 
-        % Stop the loop if no more function evaluations can be performed. 
-        % Note that this should be checked before evaluating the objective function.
-        if nf >= options.maxfun
-            terminate = true;
-            exitflag = get_exitflag("MAXFUN_REACHED");
-            break;
-        end
+    %     % Stop the loop if no more function evaluations can be performed. 
+    %     % Note that this should be checked before evaluating the objective function.
+    %     if nf >= options.maxfun
+    %         terminate = true;
+    %         exitflag = get_exitflag("MAXFUN_REACHED");
+    %         break;
+    %     end
 
-        sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+    %     sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
 
-        if sufficient_decrease
-            fval = fnew;
-            xval = xnew;
-        end
-    end
+    %     if sufficient_decrease
+    %         fval = fnew;
+    %         xval = xnew;
+    %     end
+    % end
      
     if success
         direction_indices = cycling(direction_indices, j, cycling_strategy, with_cycling_memory);
@@ -158,7 +159,7 @@ output.nf = nf;
 output.success = success;
 output.direction_indices = direction_indices;
 output.terminate = terminate;
-output.stepsize = alpha;
+%output.stepsize = alpha;
 
 end
 
