@@ -1,7 +1,12 @@
-# latex.txt from cspell after modification
+# 
 
 abbrev
 abc
+addpath
+akiva
+angtest
+anl
+archiva
 afterchapternum
 afterchaptertitle
 alsodigit
