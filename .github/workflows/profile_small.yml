@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest]
         matlab: [latest]
         dim: [small]
-        with_optim_toolbox: [no]
+        with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [PBDS, lam]
         linesearch_type: [standard, new]
