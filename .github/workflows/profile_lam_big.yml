@@ -1,11 +1,11 @@
-name: Plot performance profiles for BDS, small with noise
+name: Plot performance profiles for bds and lam, big
 
 on:
   # Trigger the workflow on push or pull request
   # push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 20 */7 * *'
+    - cron: '0 22 */7 * *'
   workflow_dispatch:
 
 env:
@@ -13,25 +13,26 @@ env:
 
 jobs:
   test:
-    name: Profile BDS.
+    name: Profile BDS and lam, big
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [R2023a]
-        dim: [small]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [PBDS, lam]
-        version: [new]
+        competitor: [lam]
+        is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
-        linesearch_type: [new, standard]
+        random_initial_point: [false, true]
         exclude:
-          - competitor: PBDS
-            linesearch_type: new
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
+
       - name: Check out repository
         uses: actions/checkout@v4
         with:
@@ -86,11 +87,10 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            parameters.is_noisy = true;
+            parameters.is_noisy = ${{ matrix.is_noisy }};
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
-            parameters.num_random = 5;
-            parameters.random_initial_point = false;
+            parameters.random_initial_point = ${{ matrix.random_initial_point }};
             parameters.maxfun_factor = 1e3;
 
             % Establish parameters for solvers.
@@ -98,12 +98,6 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
-            solver2.linesearch_type = "${{ matrix.linesearch_type }}";
-            BDS_list = ["DS", "CBDS", "PBDS", "RBDS"];
-
-            if any(strcmpi("${{ matrix.competitor }}", BDS_list))
-                solver2.sufficient_decrease_factor = 0;
-            end
 
             parameters.solvers_options = {};
 
@@ -112,8 +106,20 @@ jobs:
           
             profile(parameters);
 
+            if parameters.is_noisy
+              parameters.num_random = 3;
+            else
+              if parameters.random_initial_point
+                parameters.num_random = 3;
+              else
+                parameters.num_random = 1;
+              end
+            end
+            
+            profile(parameters);
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_small_with_noise
+          name: test_bds_lam_big
           path: ./tests/testdata

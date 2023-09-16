@@ -25,7 +25,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
 %   maxfun_factor - factor of maximum of function evaluation regarding to
-%               dimenstions.
+%               dimensions.
 %   expand - expanding factor of step size
 %   shrink - shrinking factor of step size
 %   sufficient_decrease_factor - factor of sufficient decrease condition

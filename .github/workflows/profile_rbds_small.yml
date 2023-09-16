@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and prima, small
+name: Plot performance profiles for bds and rbds, small
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,17 +13,17 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and PRIMA.
+    name: Profile BDS and rbds, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
+        matlab: [R2023a]
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [newuoa]
+        competitor: [rbds]
         is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
         random_initial_point: [false, true]
@@ -43,12 +43,6 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone PRIMA
-        uses: actions/checkout@v4
-        with:
-          repository: libprima/prima
-          path: prima
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -88,11 +82,6 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
-
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
@@ -118,10 +107,10 @@ jobs:
             profile(parameters);
 
             if parameters.is_noisy
-              parameters.num_random = 3;
+              parameters.num_random = 5;
             else
               if parameters.random_initial_point
-                parameters.num_random = 3;
+                parameters.num_random = 10;
               else
                 parameters.num_random = 1;
               end
@@ -132,5 +121,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_prima_small
+          name: test_bds_rbds_small
           path: ./tests/testdata

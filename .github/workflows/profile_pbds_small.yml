@@ -1,11 +1,11 @@
-name: Plot performance profiles for BDS, big
+name: Plot performance profiles for bds and pbds, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 20 */7 * *'
+    - cron: '0 22 */7 * *'
   workflow_dispatch:
 
 env:
@@ -13,20 +13,26 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Profile BDS and pbds, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
-        dim: [big]
+        matlab: [R2023a]
+        dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [PBDS, lam]
-        random_initial_point: [true, false]
+        competitor: [pbds]
+        is_noisy: [false, true]
+        noise_level: [negligible, low, medium, high]
+        random_initial_point: [false, true]
+        exclude:
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
+
       - name: Check out repository
         uses: actions/checkout@v4
         with:
@@ -81,7 +87,8 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            parameters.is_noisy = false;
+            parameters.is_noisy = ${{ matrix.is_noisy }};
+            parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
             parameters.random_initial_point = ${{ matrix.random_initial_point }};
             parameters.maxfun_factor = 1e3;
@@ -91,11 +98,6 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
-            BDS_list = ["DS", "CBDS", "PBDS", "RBDS"];
-
-            if any(strcmpi("${{ matrix.competitor }}", BDS_list))
-                solver2.sufficient_decrease_factor = 0;
-            end
 
             parameters.solvers_options = {};
 
@@ -104,16 +106,20 @@ jobs:
           
             profile(parameters);
 
-            if parameters.random_initial_point
-              parameters.num_random = 3;
+            if parameters.is_noisy
+              parameters.num_random = 5;
             else
-              parameters.num_random = 1;
+              if parameters.random_initial_point
+                parameters.num_random = 10;
+              else
+                parameters.num_random = 1;
+              end
             end
-
+            
             profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_big
+          name: test_bds_pbds_small
           path: ./tests/testdata

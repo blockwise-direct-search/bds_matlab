@@ -1,8 +1,8 @@
-name: Plot performance profiles for bds and prima, small
+name: Plot performance profiles for bds and rbds, big
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -13,17 +13,17 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and PRIMA.
+    name: Profile BDS and rbds, big
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
-        dim: [small]
+        matlab: [R2023a]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [newuoa]
+        competitor: [rbds]
         is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
         random_initial_point: [false, true]
@@ -43,12 +43,6 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone PRIMA
-        uses: actions/checkout@v4
-        with:
-          repository: libprima/prima
-          path: prima
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -87,11 +81,6 @@ jobs:
             % Install MatCUTEst
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
-
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
@@ -132,5 +121,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_prima_small
+          name: test_bds_rbds_big
           path: ./tests/testdata

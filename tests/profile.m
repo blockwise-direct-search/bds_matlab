@@ -164,7 +164,7 @@ try
 
     % If parameters.noise_initial_point is true, then initial point will be
     % selected for each problem num_random times.
-    % parameters.fmintype is set to be "randomized" defaultly, then there is
+    % The default value of parameters.fmintype is set to be "randomized", then there is
     % no need to test without noise, which makes the curve of performance profile
     % more higher. If parallel is true, use parfor to calculate (parallel computation),
     % otherwise, use for to calculate (sequential computation).
