@@ -19,13 +19,19 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [R2023a]
+        matlab: [latest]
         dim: [small]
-        with_optim_toolbox: [yes]
+        with_optim_toolbox: [no]
         solver: [CBDS]
         competitor: [PBDS, lam]
         version: [new]
         noise_level: [negligible, low, medium, high]
+        linesearch_type: [new, standard]
+        exclude:
+          - competitor: PBDS
+            linesearch_type: new
+          - competitor: PBDS
+            linesearch_type: standard
 
     steps:
       - name: Check out repository
@@ -94,6 +100,7 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
+            solver2.linesearch_type = "${{ matrix.linesearch_type }}";
             BDS_list = ["DS", "CBDS", "PBDS", "RBDS"];
 
             if any(strcmpi("${{ matrix.competitor }}", BDS_list))

@@ -19,12 +19,18 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [R2023a]
+        matlab: [latest]
         dim: [small]
-        with_optim_toolbox: [yes]
+        with_optim_toolbox: [no]
         solver: [CBDS]
         competitor: [PBDS, lam]
+        linesearch_type: [standard, new]
         random_initial_point: [true, false]
+        exclude:
+          - competitor: PBDS
+            linesearch_type: new
+          - competitor: PBDS
+            linesearch_type: standard
 
     steps:
       - name: Check version of gcc
@@ -83,7 +89,7 @@ jobs:
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = false;
+            parameters.parallel = true;
             parameters.is_noisy = false;
             parameters.fmin_type = "randomized";
             parameters.random_initial_point = ${{ matrix.random_initial_point }};
@@ -94,6 +100,7 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
+            solver2.linesearch_type = "${{ matrix.linesearch_type }}";
             BDS_list = ["DS", "CBDS", "PBDS", "RBDS"];
 
             if any(strcmpi("${{ matrix.competitor }}", BDS_list))

@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
+        matlab: [R2023a]
         dim: [big, small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
@@ -83,7 +83,7 @@ jobs:
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = false;
+            parameters.parallel = true;
             parameters.is_noisy = ${{ matrix.is_noisy }};
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
