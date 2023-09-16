@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [bfgs]
+        competitor: [RBDS, PBDS, dspd, simplex, newuoa, wm_newuoa, lam]
         noise_level: [negligible, low, medium, high]
 
     steps:
@@ -107,7 +107,7 @@ jobs:
             parameters.is_noisy = true;
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
-            parameters.num_random = 5;
+            parameters.num_random = 3;
             parameters.random_initial_point = false;
             parameters.maxfun_factor = 1e3;
 
