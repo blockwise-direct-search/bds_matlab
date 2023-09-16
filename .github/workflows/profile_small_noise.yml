@@ -30,8 +30,6 @@ jobs:
         exclude:
           - competitor: PBDS
             linesearch_type: new
-          - competitor: PBDS
-            linesearch_type: standard
 
     steps:
       - name: Check out repository
