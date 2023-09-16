@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
+        matlab: [R2023a]
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
@@ -40,12 +40,6 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone NLOPT
-        uses: actions/checkout@v4
-        with:
-          repository: stevengj/nlopt
-          path: nlopt
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -85,11 +79,6 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
-
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
@@ -105,17 +94,10 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
-            BDS_list = ["DS", "DSPD", "CBDS", "PBDS", "RBDS"];
-            NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
+            BDS_list = ["DS", "CBDS", "PBDS", "RBDS"];
 
             if any(strcmpi("${{ matrix.competitor }}", BDS_list))
                 solver2.sufficient_decrease_factor = 0;
-            end
-
-            if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))
-                parts = split("${{ matrix.competitor }}", '_');
-                solver2.solver = "nlopt";
-                solver2.Algorithm = char(parts(2));
             end
 
             parameters.solvers_options = {};
