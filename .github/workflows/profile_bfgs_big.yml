@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and prima
+name: Plot performance profiles for bds and bfgs, big
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,20 +13,23 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and PRIMA.
+    name: Profile BDS and bfgs, big
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
-        dim: [big, small]
+        matlab: [R2023a]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [newuoa]
-        is_noisy: [false]
+        competitor: [bfgs]
+        is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
-        random_initial_point: [true, false]
+        random_initial_point: [false, true]
+        exclude:
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
 
@@ -40,12 +43,6 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone PRIMA
-        uses: actions/checkout@v4
-        with:
-          repository: libprima/prima
-          path: prima
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -85,11 +82,6 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Compile prima
-            path_prima = fullfile(root_dir, 'prima');
-            cd(path_prima);
-            setup
-
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
@@ -112,18 +104,22 @@ jobs:
             parameters.solvers_options{1} = solver1;
             parameters.solvers_options{2} = solver2;
           
-            if parameters.random_initial_point && strcmpi(parameters.problems_dim, "small")
-                parameters.num_random = 10;
-            elseif parameters.random_initial_point && strcmpi(parameters.problems_dim, "big")
-                parameters.num_random = 3;
-            elseif ~parameters.random_initial_point
-                parameters.num_random = 1;
-            end
+            profile(parameters);
 
+            if parameters.is_noisy
+              parameters.num_random = 3;
+            else
+              if parameters.random_initial_point
+                parameters.num_random = 3;
+              else
+                parameters.num_random = 1;
+              end
+            end
+            
             profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_prima_small
+          name: test_bds_bfgs_big
           path: ./tests/testdata

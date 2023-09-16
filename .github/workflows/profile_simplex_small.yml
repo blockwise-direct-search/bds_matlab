@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and nlopt, with noise
+name: Plot performance profiles for bds and simplex, small
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,20 +13,23 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and nlopt, with noise.
+    name: Profile BDS and simplex, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
-        dim: [small, big]
+        matlab: [R2023a]
+        dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [nlopt_newuoa]
-        is_noisy: [true]
+        competitor: [simplex]
+        is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
-        random_initial_point: [false]
+        random_initial_point: [false, true]
+        exclude:
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
 
@@ -103,10 +106,14 @@ jobs:
           
             profile(parameters);
 
-            if strcmpi(parameters.problems_dim, "big")
-              parameters.num_random = 3;
-            else
+            if parameters.is_noisy
               parameters.num_random = 5;
+            else
+              if parameters.random_initial_point
+                parameters.num_random = 10;
+              else
+                parameters.num_random = 1;
+              end
             end
             
             profile(parameters);
@@ -114,5 +121,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_nlopt_noise
+          name: test_bds_simplex_small
           path: ./tests/testdata

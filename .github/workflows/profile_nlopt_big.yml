@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and nlopt
+name: Plot performance profiles for bds and nlopt, big
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,20 +13,23 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and NLOPT.
+    name: Profile BDS and NLOPT, big
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
-        dim: [big, small]
+        matlab: [R2023a]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [nlopt_newuoa]
-        is_noisy: [false]
+        is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
-        random_initial_point: [true, false]
+        random_initial_point: [false, true]
+        exclude:
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
 
@@ -40,12 +43,6 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone NLOPT
-        uses: actions/checkout@v4
-        with:
-          repository: stevengj/nlopt
-          path: nlopt
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -74,12 +71,6 @@ jobs:
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
-
-      - name: Install cmake
-        run: sudo apt-get update && sudo apt-get install cmake
-  
-      - name: Install NLOPT
-        run: cd ./nlopt && cmake . && make && sudo make install
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
@@ -118,13 +109,17 @@ jobs:
 
             parameters.solvers_options{1} = solver1;
             parameters.solvers_options{2} = solver2;
+          
+            profile(parameters);
 
-            if parameters.random_initial_point && strcmpi(parameters.problems_dim, "small")
-                parameters.num_random = 10;
-            elseif parameters.random_initial_point && strcmpi(parameters.problems_dim, "big")
-                  parameters.num_random = 3;
-            elseif ~parameters.random_initial_point
+            if parameters.is_noisy
+              parameters.num_random = 3;
+            else
+              if parameters.random_initial_point
+                parameters.num_random = 3;
+              else
                 parameters.num_random = 1;
+              end
             end
             
             profile(parameters);
@@ -132,5 +127,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_nlopt_small
+          name: test_bds_nlopt_big
           path: ./tests/testdata

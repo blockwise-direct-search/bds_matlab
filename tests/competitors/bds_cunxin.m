@@ -8,7 +8,7 @@ function [xval, fval, exitflag, output] = bds_cunxin(fun, x0, options)
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
-%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
+%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_factor,
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
 %   blocks_strategy, with_cycling_memory, cycling, accept_simple_decrease.
 %
@@ -24,7 +24,7 @@ function [xval, fval, exitflag, output] = bds_cunxin(fun, x0, options)
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
-%   maxfun_dim - factor of maximum of function evaluation regarding to
+%   maxfun_factor - factor of maximum of function evaluation regarding to
 %               dimenstions.
 %   expand - expanding factor of step size
 %   shrink - shrinking factor of step size
@@ -100,14 +100,14 @@ block_indices = 1:nb;
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e5.
-if isfield(options, "maxfun_dim") && isfield(options, "maxfun")
-    maxfun = min(options.maxfun_dim*n, options.maxfun);
-elseif isfield(options, "maxfun_dim")
-    maxfun = options.maxfun_dim*n;
+if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
+    maxfun = min(options.maxfun_factor*n, options.maxfun);
+elseif isfield(options, "maxfun_factor")
+    maxfun = options.maxfun_factor*n;
 elseif isfield(options, "maxfun")
     maxfun = options.maxfun;
 else
-    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_dim")*n);
+    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
 end
 
 % Set the maximum of iterations. If complete polling is used, then the

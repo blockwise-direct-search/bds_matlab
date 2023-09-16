@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
+        matlab: [R2023a]
         with_optim_toolbox: [yes]
         solver: [CBDS, PBDS, RBDS, DS]
         tough: [true, false]

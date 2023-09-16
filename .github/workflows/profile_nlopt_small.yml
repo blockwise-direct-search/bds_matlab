@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and bfgs, with noise
+name: Plot performance profiles for bds and nlopt, small
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,20 +13,23 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and bfgs, with noise.
+    name: Profile BDS and nlopt, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [R2023a]
-        dim: [small, big]
+        dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [bfgs]
-        is_noisy: [true]
+        competitor: [nlopt_newuoa]
+        is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
-        random_initial_point: [false]
+        random_initial_point: [false, true]
+        exclude:
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
 
@@ -95,6 +98,12 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
+            NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
+            if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))
+                parts = split("${{ matrix.competitor }}", '_');
+                solver2.solver = "nlopt";
+                solver2.Algorithm = char(parts(2));
+            end 
 
             parameters.solvers_options = {};
 
@@ -103,10 +112,14 @@ jobs:
           
             profile(parameters);
 
-            if strcmpi(parameters.problems_dim, "big")
-              parameters.num_random = 3;
-            else
+            if parameters.is_noisy
               parameters.num_random = 5;
+            else
+              if parameters.random_initial_point
+                parameters.num_random = 10;
+              else
+                parameters.num_random = 1;
+              end
             end
             
             profile(parameters);
@@ -114,5 +127,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_bfgs_noise
+          name: test_bds_nlopt_small
           path: ./tests/testdata

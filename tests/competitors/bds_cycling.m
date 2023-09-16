@@ -10,13 +10,13 @@ function [xval, fval, exitflag, output] = bds_cycling(fun, x0, options)
 %
 %   XVAL = BLOCKWISE_DIRECT_SEARCH(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
-%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_dim,
+%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_factor,
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
 %   polling_outer, with_cycling_memory, cycling.
 %
 %   nb - number of blocks
 %   maxfun - maximum of function evaluation
-%   maxfun_dim - factor of maximum of function evaluation regarding to
+%   maxfun_factor - factor of maximum of function evaluation regarding to
 %               dimenstions.
 %   expand - expanding factor of step size
 %   shrink - shrinking factor of step size
@@ -136,8 +136,8 @@ nb = min(m, nb);
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e4.
-if isfield(options, "maxfun_dim")
-    maxfun = options.maxfun_dim*n;
+if isfield(options, "maxfun_factor")
+    maxfun = options.maxfun_factor*n;
     if isfield(options, "maxfun")
         maxfun = min(options.maxfun, maxfun);
     end

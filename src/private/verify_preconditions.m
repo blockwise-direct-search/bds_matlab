@@ -14,9 +14,9 @@ if isfield(options, "nb")
     end
 end
 
-if isfield(options, "maxfun_dim")
-    if ~isintegerscalar(options.maxfun_dim) || options.maxfun_dim <= 0
-        error("options.maxfun_dim is not a positive integer.");
+if isfield(options, "maxfun_factor")
+    if ~isintegerscalar(options.maxfun_factor) || options.maxfun_factor <= 0
+        error("options.maxfun_factor is not a positive integer.");
     end
 end
 

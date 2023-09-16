@@ -5,7 +5,7 @@ function constant_value = get_default_constant(constant_name)
 switch constant_name
     case {"maxfun"}
         constant_value = 1e5;
-    case {"maxfun_dim"}
+    case {"maxfun_factor"}
         constant_value = 1e3;
     case {"Algorithm"}
         constant_value = "cbds";

@@ -66,7 +66,7 @@ function tests = unit_test
     constant_value = 1e5;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
-    constant_name = "maxfun_dim";
+    constant_name = "maxfun_factor";
     constant_value = 1e3;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 

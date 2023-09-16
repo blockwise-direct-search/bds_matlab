@@ -12,7 +12,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   
 %   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
-%   maxfun_dim                  Factor to define maximum number of function evaluations as a multiplier
+%   maxfun_factor                  Factor to define maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.    
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
@@ -137,14 +137,14 @@ nb = min(m, nb);
 block_indices = 1:nb;
 
 % Set MAXFUN to the maximum number of function evaluations.
-if isfield(options, "maxfun_dim") && isfield(options, "maxfun")
-    maxfun = min(options.maxfun_dim*n, options.maxfun);
-elseif isfield(options, "maxfun_dim")
-    maxfun = options.maxfun_dim*n;
+if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
+    maxfun = min(options.maxfun_factor*n, options.maxfun);
+elseif isfield(options, "maxfun_factor")
+    maxfun = options.maxfun_factor*n;
 elseif isfield(options, "maxfun")
     maxfun = options.maxfun;
 else
-    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_dim")*n);
+    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
 end
 
 % Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.

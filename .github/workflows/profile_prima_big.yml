@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and prima, with noise
+name: Plot performance profiles for bds and prima, big
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,20 +13,23 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and PRIMA, with noise.
+    name: Profile BDS and PRIMA.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [big, small]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [newuoa]
-        is_noisy: [true]
+        is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
-        random_initial_point: [false]
+        random_initial_point: [false, true]
+        exclude:
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
 
@@ -114,10 +117,14 @@ jobs:
           
             profile(parameters);
 
-            if strcmpi(parameters.problems_dim, 'big')
-                parameters.num_random = 3;
+            if parameters.is_noisy
+              parameters.num_random = 3;
             else
-                parameters.num_random = 5;
+              if parameters.random_initial_point
+                parameters.num_random = 3;
+              else
+                parameters.num_random = 1;
+              end
             end
             
             profile(parameters);

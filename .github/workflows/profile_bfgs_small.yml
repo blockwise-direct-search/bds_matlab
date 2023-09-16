@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and simplex
+name: Plot performance profiles for bds and bfgs, small
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,20 +13,23 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and bfgs.
+    name: Profile BDS and bfgs, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [latest]
-        dim: [big, small]
+        matlab: [R2023a]
+        dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [simplex]
-        is_noisy: [false]
+        competitor: [bfgs]
+        is_noisy: [false, true]
         noise_level: [negligible, low, medium, high]
-        random_initial_point: [true, false]
+        random_initial_point: [false, true]
+        exclude:
+          - is_noisy: true
+            random_initial_point: true
 
     steps:
 
@@ -100,13 +103,17 @@ jobs:
 
             parameters.solvers_options{1} = solver1;
             parameters.solvers_options{2} = solver2;
+          
+            profile(parameters);
 
-            if parameters.random_initial_point && strcmpi(parameters.problems_dim, "small")
+            if parameters.is_noisy
+              parameters.num_random = 5;
+            else
+              if parameters.random_initial_point
                 parameters.num_random = 10;
-            elseif parameters.random_initial_point && strcmpi(parameters.problems_dim, "big")
-                  parameters.num_random = 3;
-            elseif ~parameters.random_initial_point
+              else
                 parameters.num_random = 1;
+              end
             end
             
             profile(parameters);
