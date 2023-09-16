@@ -1,11 +1,11 @@
-name: Plot performance profiles for BDS, big
+name: Plot performance profiles for bds and prima
 
 on:
   # Trigger the workflow on push or pull request
   # push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 20 */7 * *'
+    - cron: '0 22 */7 * *'
   workflow_dispatch:
 
 env:
@@ -13,20 +13,23 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Profile BDS and PRIMA.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [big]
+        dim: [big, small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [PBDS, lam]
+        competitor: [newuoa]
+        is_noisy: [false]
+        noise_level: [negligible, low, medium, high]
         random_initial_point: [true, false]
 
     steps:
+
       - name: Check out repository
         uses: actions/checkout@v4
         with:
@@ -37,6 +40,12 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
+
+      - name: Clone PRIMA
+        uses: actions/checkout@v4
+        with:
+          repository: libprima/prima
+          path: prima
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -76,12 +85,18 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
+            % Compile prima
+            path_prima = fullfile(root_dir, 'prima');
+            cd(path_prima);
+            setup
+
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = true;
-            parameters.is_noisy = false;
+            parameters.parallel = false;
+            parameters.is_noisy = ${{ matrix.is_noisy }};
+            parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
             parameters.random_initial_point = ${{ matrix.random_initial_point }};
             parameters.maxfun_factor = 1e3;
@@ -91,23 +106,18 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
-            BDS_list = ["DS", "CBDS", "PBDS", "RBDS"];
-
-            if any(strcmpi("${{ matrix.competitor }}", BDS_list))
-                solver2.sufficient_decrease_factor = 0;
-            end
 
             parameters.solvers_options = {};
 
             parameters.solvers_options{1} = solver1;
             parameters.solvers_options{2} = solver2;
           
-            profile(parameters);
-
-            if parameters.random_initial_point
-              parameters.num_random = 3;
-            else
-              parameters.num_random = 1;
+            if parameters.random_initial_point && strcmpi(parameters.problems_dim, "small")
+                parameters.num_random = 10;
+            elseif parameters.random_initial_point && strcmpi(parameters.problems_dim, "big")
+                parameters.num_random = 3;
+            elseif ~parameters.random_initial_point
+                parameters.num_random = 1;
             end
 
             profile(parameters);
@@ -115,5 +125,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_big
+          name: test_bds_prima_small
           path: ./tests/testdata

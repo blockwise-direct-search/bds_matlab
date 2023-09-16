@@ -18,12 +18,12 @@ solver1.solver = "cbds";
 %solver1.accept_simple_decrease = false;
 
 % Establish parameters for solver 2.
-solver2.solver = "nlopt";
+solver2.solver = "cbds";
 %solver2.linesearch_type = "new";
 %solver3.solver = "lam";
 %solver3.linesearch_type = "new";
 %solver2.expand = 2;
-solver2.Algorithm = "newuoa";
+%solver2.Algorithm = "newuoa";
 %solver2.maxfun = 1e4;
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";

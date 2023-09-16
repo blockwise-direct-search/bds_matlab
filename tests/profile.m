@@ -51,12 +51,21 @@ try
 
     % Get the parameters that the test needs.
     parameters = set_profile_options(parameters);
+    
+    % Get the names of the solvers.
+    solvers_name = [];
+    for i = 1:length(parameters.solvers_options)
+        solvers_name = [solvers_name, parameters.solvers_options{i}.solver];
+    end
 
     % Tell MATLAB where to find MatCUTEst.
     locate_matcutest();
     % Tell MATLAB where to find prima.
-    locate_prima();
-
+    PRIMA_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
+    if ~isempty(intersect(lower(PRIMA_list), lower(solvers_name)))
+        locate_prima();
+    end
+    
     % Get list of problems
     s.type = parameters.problems_type; % Unconstrained: 'u'
     s.mindim = parameters.problems_mindim; % Minimum of dimension
@@ -64,11 +73,6 @@ try
     s.blacklist = [];
     %s.blacklist = [s.blacklist, {}];
     % Problems that takes too long to solve.
-    solvers_name = [];
-    for i = 1:length(parameters.solvers_options)
-        solvers_name = [solvers_name, parameters.solvers_options{i}.solver];
-    end
-    
     % {'FBRAIN3LS'} and {'STRATEC'} take too long for fminunc.
     if ismember("matlab_fminunc", solvers_name)
         s.blacklist = [s.blacklist, {'FBRAIN3LS'}, {'STRATEC'}];

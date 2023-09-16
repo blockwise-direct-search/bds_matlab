@@ -2,7 +2,7 @@ name: Plot performance profiles for BDS, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa, lam]
+        competitor: [PBDS, lam]
         random_initial_point: [true, false]
 
     steps:
@@ -40,12 +40,6 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone PRIMA
-        uses: actions/checkout@v4
-        with:
-          repository: libprima/prima
-          path: prima
 
       - name: Clone NLOPT
         uses: actions/checkout@v4
@@ -80,12 +74,6 @@ jobs:
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
-
-      - name: Install cmake
-        run: sudo apt-get update && sudo apt-get install cmake
-
-      - name: Install NLOPT
-        run: cd ./nlopt && cmake . && make && sudo make install
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
