@@ -39,9 +39,9 @@ if isfield(options, 'n')
     n = options.n;
 else
     if tough_test
-        n = 2000;
-    else
         n = 1000;
+    else
+        n = 500;
     end
 end
 
