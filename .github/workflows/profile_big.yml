@@ -23,7 +23,7 @@ jobs:
         dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [lam]
+        competitor: [RBDS, PBDS, dspd, simplex, bfgs, newuoa, wm_newuoa, lam]
         random_initial_point: [true, false]
 
     steps:
@@ -135,7 +135,7 @@ jobs:
             profile(parameters);
 
             if parameters.random_initial_point
-              parameters.num_random = 5;
+              parameters.num_random = 3;
             else
               parameters.num_random = 1;
             end

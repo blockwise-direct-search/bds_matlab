@@ -12,15 +12,15 @@ switch constant_name
     case {"num_random_vectors"}
         constant_value = 1;
     case {"seed"}
-        constant_value = 1e6;
+        constant_value = 0;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}
         constant_value = 0.5;
     case {"sufficient_decrease_factor"}
-        constant_value = 1e-3;
+        constant_value = eps;
     case {"accept_simple_decrease"}
-        constant_value = false;
+        constant_value = true;
     case {"StepTolerance"}
         constant_value = eps;
     case {"shuffle_period"}

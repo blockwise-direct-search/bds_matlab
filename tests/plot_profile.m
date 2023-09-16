@@ -1,7 +1,7 @@
 function plot_profile()
 % This script is for test.
 parameters.problems_mindim = 1;
-parameters.problems_maxdim = 5;
+parameters.problems_maxdim = 20;
 parameters.is_noisy = false;
 parameters.noise_level = "low";
 parameters.num_random = 1;
@@ -12,16 +12,18 @@ parameters.maxfun_factor = 1e3;
 solver1.solver = "cbds";
 %solver1.classical = false;
 %solver1.maxfun = 1e4;
-% solver1.expand = 2;
-solver1.sufficient_decrease_factor = 0;
+%solver1.expand = 1;
+%solver1.sufficient_decrease_factor = 0;
 %solver1.direction = "canonical";
 %solver1.accept_simple_decrease = false;
 
 % Establish parameters for solver 2.
-solver2.solver = "dspd";
+solver2.solver = "nlopt";
 %solver2.linesearch_type = "new";
+%solver3.solver = "lam";
+%solver3.linesearch_type = "new";
 %solver2.expand = 2;
-%solver2.Algorithm = "cobyla";
+solver2.Algorithm = "newuoa";
 %solver2.maxfun = 1e4;
 % Establish parameters for solver 3.
 % struct3.solver = "newuoa";
@@ -38,5 +40,6 @@ parameters.solvers_options = {};
 
 parameters.solvers_options{1} = solver1;
 parameters.solvers_options{2} = solver2;
+%parameters.solvers_options{3} = solver3;
 
 profile(parameters);

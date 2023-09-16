@@ -103,7 +103,7 @@ for j = 1 : num_directions
     sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
     
     % if sufficient decrease
-    if sufficient_decrease && fnew < fval
+    if sufficient_decrease
         fval = fnew;
         xval = xnew;
     end

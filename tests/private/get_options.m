@@ -40,6 +40,10 @@ elseif name_solver == "matlab_fminsearch"
 
 elseif name_solver == "matlab_fminunc"
     
+    if ~isfield(options, "ftarget")
+        options.ftarget = -inf;
+    end
+
     if isfield(options, "maxfun") && isfield(options, "StepTolerance")
         options = optimoptions('fminunc', 'Algorithm', 'quasi-newton', ...
             'HessUpdate', options.fminunc_type, 'MaxFunctionEvaluations',...

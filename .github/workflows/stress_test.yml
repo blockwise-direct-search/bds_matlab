@@ -2,7 +2,7 @@ name: Stress test
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest]
         matlab: [latest]
         with_optim_toolbox: [yes]
-        solver: [CBDS, PBDS, RBDS, DSPD, DS]
+        solver: [CBDS, PBDS, RBDS, DS]
         tough: [true, false]
 
     steps:

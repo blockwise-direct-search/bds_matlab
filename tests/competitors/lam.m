@@ -132,7 +132,7 @@ end
 if isfield(options, "stepsize_factor")
     stepsize_factor = options.stepsize_factor;
 else
-    stepsize_factor = 1e-3;
+    stepsize_factor = 1e-9;
 end
 
 % Set the type of linesearch.

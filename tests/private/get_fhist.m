@@ -30,7 +30,7 @@ elseif isfield(test_options, "maxfun")
 end
 
 % Get the options for j-th solver.
-[options] = get_options(name_solver, options);
+options = get_options(name_solver, options);
 
 % Turn off warning to save computation resource.
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
