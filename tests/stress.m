@@ -57,7 +57,7 @@ end
 if isfield(options, "maxfun")
     solver_options.maxfun = options.maxfun;
 else
-    solver_options.maxfun = 1000*n;
+    solver_options.maxfun = 500*n;
 end
 
 % Set the StepTolerance of the solver.
