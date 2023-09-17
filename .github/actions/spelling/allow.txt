@@ -182,9 +182,16 @@ eqslantless
 equiv
 esac
 eth
+Evals
 exists
+exitflag
 exp
 fallingdotseq
+fbase
+fbeg
+FBRAIN
+feval
+fhist
 finv
 fontenc
 footins

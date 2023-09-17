@@ -53,16 +53,16 @@ if ~(length(fhist) == size(xhist, 2) && size(xhist, 2) == nf)
     error("length of fhist is not equal to length of xhist or nf.");
 end
 
-% Check whether fhist = fun(xhist)
+% Check whether fhist == fun(xhist).
 % TODO: there is a way to avoid using loop, try to find it.
-fhistx = NaN(1, length(fhist));
+fhist_eval = NaN(1, length(fhist));
 for i = 1:length(fhist)
-    fhistx(i) = eval_fun(fun, xhist(:, i));
+    fhist_eval(i) = eval_fun(fun, xhist(:, i));
 end
 
-% In case of fhistx(i) = NaN or fhist(i) = NaN.
+% In case of fhist_eval(i) = NaN or fhist(i) = NaN.
 % assert(all( (isana(A) & isnan(B)) | A==B ));
-assert(all( (isnan(fhist) & isnan(fhistx)) | fhist==fhistx ));
+assert(all( (isnan(fhist) & isnan(fhist_eval)) | fhist==fhist_eval ));
 
 % Examine whether fval is the minimum of fhist and xval is the
 % corresponding point (when receiving simple decrease)

@@ -102,7 +102,7 @@ end
 
 % Under dspd, expand factor could not be 1.
 if expand == 1
-    error("If expanding facor is set to be 1, convergence may not be ensured")
+    error("If expanding factor is set to be 1, convergence may not be ensured")
 end
 
 % Set the value of shrink factor.
