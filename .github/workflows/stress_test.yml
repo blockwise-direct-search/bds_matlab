@@ -8,9 +8,6 @@ on:
     - cron: '0 22 */7 * *'
   workflow_dispatch:
 
-env:
-    GFORTRAN_VERSION: 12
-
 jobs:
   test:
     name: Stress test
@@ -18,37 +15,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest]
-        matlab: [R2023a]
-        with_optim_toolbox: [yes]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        matlab: [R2020a, R2021a, R2022a, R2023a]#, latest]
+        with_optim_toolbox: [no]
         solver: [CBDS, PBDS, RBDS, DS]
         tough: [true, false]
 
     steps:
-      - name: Check out repository
+      - name: Check out the repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-
-      - name: Clone MatCUTEst
-        uses: actions/checkout@v4
-        with:
-          repository: equipez/matcutest_compiled
-          path: matcutest
-
-      - name: Link gfortran for MATLAB on Linux
-        if: startsWith(matrix.os, 'ubuntu')
-        run: bash .github/scripts/link_gfortran ${{ env.GFORTRAN_VERSION }}
-
-      - name: Install epstopdf and ghostscript
-        if: startsWith(matrix.os, 'ubuntu')
-        run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
-
-      - name: Install Texlive
-        run: sudo apt-get update && sudo apt-get install texlive
-
-      - name: Check whether LaTeX is installed
-        run: pdflatex --version
 
       - name: Cache MATLAB
         id: cache-matlab
@@ -57,22 +34,16 @@ jobs:
           path: ${{ runner.tool_cache }}/MATLAB
           key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
 
-      - name: Set up MATLAB with optimization toolbox
-        if: ${{ matrix.with_optim_toolbox == 'yes' }}
+      - name: Set up MATLAB 
         uses: matlab-actions/setup-matlab@v2-beta
         with:
           release: ${{ matrix.matlab }}
-          products: Optimization_Toolbox
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
             root_dir = pwd()
-
-            % Install MatCUTEst
-            cd(fullfile(root_dir, 'matcutest'));
-            install(); cd(root_dir);
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
@@ -82,4 +53,3 @@ jobs:
             options.Algorithm = "${{ matrix.solver }}";
             options.tough = ${{ matrix.tough }};
             stress("bds", options);
-
