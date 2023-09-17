@@ -2,10 +2,10 @@ name: Stress test
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 22 */7 * *'
+    - cron: '0 18 * * *'
   workflow_dispatch:
 
 jobs:
