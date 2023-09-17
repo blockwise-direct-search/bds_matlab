@@ -35,6 +35,8 @@ switch constant_name
         constant_value = 1;
     case {"with_cycling_memory"}
         constant_value = true;
+    case {"output_xhist"}
+        constant_value = false;
     otherwise
         error("Unknown constant name")
 end

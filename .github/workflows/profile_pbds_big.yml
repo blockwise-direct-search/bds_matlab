@@ -30,6 +30,12 @@ jobs:
         exclude:
           - is_noisy: true
             random_initial_point: true
+          - is_noisy: false
+            noise_level: negligible
+          - is_noisy: false
+            noise_level: low  
+          - is_noisy: false
+            noise_level: medium  
 
     steps:
 

@@ -232,6 +232,11 @@ fhist = NaN(1, maxfun);
 
 % Initialize the history of points visited.
 xhist = NaN(n, maxfun); 
+if isfield(options, "output_xhist")
+    output_xhist = options.output_xhist;
+else
+    output_xhist = get_default_constant("output_xhist");
+end
 
 % Initialize the history of blocks visited.
 block_hist = NaN(1, maxfun);
@@ -376,7 +381,9 @@ rng(seed);
 % Truncate HISTORY into an nf length vector.
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
-output.xhist = xhist(:, 1:nf);
+if output_xhist
+    output.xhist = xhist(:, 1:nf);
+end
 output.alpha_hist = alpha_hist(1:min(iter, maxit));
 
 % Record the number of blocks visited.

@@ -60,6 +60,31 @@ else
     solver_options.maxfun = 500*n;
 end
 
+% The size of the array to be created. 
+arraySize = [n, solver_options.maxfun];  
+
+% Obtain the runtime instance of the current Java Virtual Machine.
+rt = java.lang.Runtime.getRuntime;
+
+% Obtain the maximum available memory size.
+maxMemory = rt.maxMemory;
+
+% Calculate the total number of bytes for the array to be created.
+if isa(arraySize, 'single')
+    arrayBytes = prod(arraySize) * 4;
+else
+    arrayBytes = prod(arraySize) * 8;
+end
+
+% Check if the array size exceeds the maximum array size limit.
+if arrayBytes <= maxMemory
+    solver_options.output_xhist = true;
+    disp('The array size is within the range of the maximum array size limit.');
+else
+    disp('The array size exceeds the maximum array size limit.');
+    solver_options.output_xhist = false;
+end
+
 % Set the StepTolerance of the solver.
 if isfield(options, "StepTolerance")
     solver_options.StepTolerance = options.StepTolerance;

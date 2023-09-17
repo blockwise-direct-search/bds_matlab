@@ -38,34 +38,32 @@ end
 fhist = output.fhist;
 nhist = length(fhist);
 
-% Verify whether output.xhist exists.
-if ~isfield(output, "xhist")
-    error("output.xhist does not exist.");
+if isfield(output, "xhist")
+    xhist = output.xhist;
+    % Verify whether xhist is a real matrix of size.
+    if ~(isrealmatrix(xhist) && any(size(xhist) == [length(xval), nhist]))
+        error("output.xhist is not a real matrix.");
+    end
+    
+    % Check whether length(fhist) is equal to length(xhist) and nf respectively.
+    if ~(length(fhist) == size(xhist, 2) && size(xhist, 2) == nf)
+        error("length of fhist is not equal to length of xhist or nf.");
+    end
+    
+    % Check whether fhist == fun(xhist).
+    % TODO: there is a way to avoid using loop, try to find it.
+    fhist_eval = NaN(1, length(fhist));
+    for i = 1:length(fhist)
+        fhist_eval(i) = eval_fun(fun, xhist(:, i));
+    end
+    
+    % In case of fhist_eval(i) = NaN or fhist(i) = NaN.
+    % assert(all( (isnan(A) & isnan(B)) | A==B ));
+    assert(all( (isnan(fhist) & isnan(fhist_eval)) | fhist==fhist_eval ));
+    
+    % Examine whether fval is the minimum of fhist and xval is the
+    % corresponding point (when receiving simple decrease)
+    % assert(fun(xval) == fval && min(fhist) == fval);
 end
-xhist = output.xhist;
-% Verify whether xhist is a real matrix of size.
-if ~(isrealmatrix(xhist) && any(size(xhist) == [length(xval), nhist]))
-    error("output.xhist is not a real matrix.");
-end
-
-% Check whether length(fhist) is equal to length(xhist) and nf respectively.
-if ~(length(fhist) == size(xhist, 2) && size(xhist, 2) == nf)
-    error("length of fhist is not equal to length of xhist or nf.");
-end
-
-% Check whether fhist == fun(xhist).
-% TODO: there is a way to avoid using loop, try to find it.
-fhist_eval = NaN(1, length(fhist));
-for i = 1:length(fhist)
-    fhist_eval(i) = eval_fun(fun, xhist(:, i));
-end
-
-% In case of fhist_eval(i) = NaN or fhist(i) = NaN.
-% assert(all( (isana(A) & isnan(B)) | A==B ));
-assert(all( (isnan(fhist) & isnan(fhist_eval)) | fhist==fhist_eval ));
-
-% Examine whether fval is the minimum of fhist and xval is the
-% corresponding point (when receiving simple decrease)
-% assert(fun(xval) == fval && min(fhist) == fval);
 
 end

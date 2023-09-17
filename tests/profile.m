@@ -164,7 +164,7 @@ try
 
     % If parameters.noise_initial_point is true, then initial point will be
     % selected for each problem num_random times.
-    % The default value of parameters.fmintype is set to be "randomized", then there is
+    % The default value of parameters.fmin_type is set to be "randomized", then there is
     % no need to test without noise, which makes the curve of performance profile
     % more higher. If parallel is true, use parfor to calculate (parallel computation),
     % otherwise, use for to calculate (sequential computation).
@@ -210,7 +210,7 @@ try
         end
     end
 
-    % If parameters.fmintype = "real-randomized", then test without noise
+    % If parameters.fmin_type = "real-randomized", then test without noise
     % should be conducted and fmin might be smaller, which makes curves
     %  of performance profile more lower.
     if test_options.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")

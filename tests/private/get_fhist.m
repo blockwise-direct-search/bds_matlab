@@ -5,7 +5,7 @@ function fhist_perfprof = get_fhist(p, maxfun_frec, j, r, solvers_options, test_
 options = solvers_options{j};
 name_solver = options.solver;
 solver = str2func(name_solver);
-% Initialze fhist for performance profile.
+% Initialize fhist for performance profile.
 fhist_perfprof = NaN(maxfun_frec, 1);
 
 % Scaling_matrix
