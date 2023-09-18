@@ -4,7 +4,7 @@ function plot_profile()
 % parameters.problems_maxdim = 2;
 parameters.problems_dim = "small";
 %parameters.is_noisy = false;
-parameters.noise_level = "randomx0_1e-3";
+parameters.noise_level = "randomx0_low";
 %parameters.num_random = 1;
 parameters.parallel = false;
 %parameters.random_initial_point = false;

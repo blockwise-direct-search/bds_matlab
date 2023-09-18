@@ -375,23 +375,21 @@ output.funcCount = nf;
 output.fhist = fhist(1:nf);
 
 if output_xhist
-    % The size of the array to be created.
-    xhistSize = [n, nf];
     % Obtain the runtime instance of the current Java Virtual Machine.
     rt = java.lang.Runtime.getRuntime;
     % Obtain the maximum available memory size.
     maxMemory = rt.maxMemory;
     % Calculate the total number of bytes for the array to be created.
-    if isa(xhistSize, 'single')
-        xhistBytes = prod(xhistSize) * 4;
+    if isa(xhist, 'single')
+        xhistBytes = n * nf * 4;
     else
-        xhistBytes = prod(xhistSize) * 8;
+        xhistBytes = n * nf * 8;
     end
     % Check if the array size exceeds the maximum array size limit.
     if xhistBytes <= maxMemory
         output.xhist = xhist(:, 1:nf);
     else
-        warning('The size of xhist exceeds the maximum array size limit.')
+        warning('The size of xhist exceeds the maximum of memory size limit.')
     end
 
 end

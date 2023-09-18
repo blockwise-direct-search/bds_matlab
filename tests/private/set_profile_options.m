@@ -74,13 +74,13 @@ elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "stri
         case "high"
             parameters.is_noisy = true;
             parameters.noise_level = 1.0e-1;
-        case "randomx0_1e-3"
+        case "randomx0_low"
             parameters.is_noisy = false;
-            parameters.noise_level = 1.0e-3;
+            parameters.x0_perturbation_level = 1.0e-3;
             parameters.random_initial_point = true;
-        case "randomx0_1e1"
+        case "randomx0_high"
             parameters.is_noisy = false;
-            parameters.noise_level = 10;
+            parameters.x0_perturbation_level = 10;
             parameters.random_initial_point = true;
         case "excessive"
             parameters.is_noisy = true;
@@ -122,6 +122,10 @@ if ~isfield(parameters, "num_random")
     else
         parameters.num_random = get_default_profile_options("num_random");
     end
+end
+
+if ~isfield(parameters, "x0_perturbation_level")
+    parameters.x0_perturbation_level = get_default_profile_options("x0_perturbation_level");
 end
 
 if ~isfield(parameters, "fmin_type")
