@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [lam]
-        noise_level: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1e-1]
+        noise_level: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1e1]
 
     steps:
 

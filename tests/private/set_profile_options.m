@@ -78,9 +78,9 @@ elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "stri
             parameters.is_noisy = true;
             parameters.noise_level = 1.0e-3;
             parameters.random_initial_point = true;
-        case "randomx0_1e-1"
+        case "randomx0_1e1"
             parameters.is_noisy = true;
-            parameters.noise_level = 1.0e-1;
+            parameters.noise_level = 10;
             parameters.random_initial_point = true;
         case "excessive"
             parameters.is_noisy = true;
