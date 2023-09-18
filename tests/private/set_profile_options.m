@@ -75,11 +75,11 @@ elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "stri
             parameters.is_noisy = true;
             parameters.noise_level = 1.0e-1;
         case "randomx0_1e-3"
-            parameters.is_noisy = true;
+            parameters.is_noisy = false;
             parameters.noise_level = 1.0e-3;
             parameters.random_initial_point = true;
         case "randomx0_1e1"
-            parameters.is_noisy = true;
+            parameters.is_noisy = false;
             parameters.noise_level = 10;
             parameters.random_initial_point = true;
         case "excessive"
@@ -92,6 +92,10 @@ end
 
 if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = get_default_profile_options("is_noisy");
+end
+
+if parameters.is_noisy
+    parameters.random_initial_point = false;
 end
 
 if ~isfield(parameters, "is_abs_noise")
@@ -110,6 +114,10 @@ if ~isfield(parameters, "num_random")
     if parameters.is_noisy && strcmpi(parameters.problems_dim, "small")
         parameters.num_random = 5;
     elseif parameters.is_noisy && strcmpi(parameters.problems_dim, "big")
+        parameters.num_random = 3;
+    elseif ~parameters.is_noisy && strcmpi(parameters.problems_dim, "small") && parameters.random_initial_point
+        parameters.num_random = 10;
+    elseif ~parameters.is_noisy && strcmpi(parameters.problems_dim, "big") && parameters.random_initial_point
         parameters.num_random = 3;
     else
         parameters.num_random = get_default_profile_options("num_random");

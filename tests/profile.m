@@ -176,7 +176,7 @@ try
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + parameters.noise_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
@@ -196,7 +196,7 @@ try
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + parameters.noise_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
@@ -224,7 +224,7 @@ try
                 if parameters.random_initial_point
                     rr = randn(size(x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 1e-5 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + parameters.noise_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
@@ -240,7 +240,7 @@ try
                 if parameters.random_initial_point
                     rr = randn(size(x0));
                     rr = rr / norm(rr);
-                    p.x0 = p.x0 + 1e-3 * max(1, norm(p.x0)) * rr;
+                    p.x0 = p.x0 + parameters.noise_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
