@@ -1,10 +1,10 @@
 function plot_profile()
 % This script is for test.
-% parameters.problems_mindim = 1;
-% parameters.problems_maxdim = 2;
-parameters.problems_dim = "small";
+parameters.problems_mindim = 1;
+parameters.problems_maxdim = 1;
+%parameters.problems_dim = "small";
 %parameters.is_noisy = false;
-parameters.noise_level = "randomx0_low";
+%parameters.noise_level = "randomx0_low";
 %parameters.num_random = 1;
 parameters.parallel = false;
 %parameters.random_initial_point = false;

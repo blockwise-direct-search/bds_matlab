@@ -1,4 +1,4 @@
-function output = perfprof(frec, fmin, options)
+function output = perfprof_display(frec, fmin, options)
 % This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/perfprof.m, which is
 % written by Zaikun ZHANG.
 %
@@ -184,6 +184,16 @@ end
 % Plot the performance profiles.
 clf;
 hfig=figure("visible", false);  % Plot the figure without displaying it.
+
+if int32(-log10(tau)) < 10
+    fignamebase = strcat(options.time_stamp, '_', 'perf_', '0', int2str(int32(-log10(tau))));
+else
+    fignamebase = strcat(options.time_stamp, '_', 'perf_', int2str(int32(-log10(tau))));
+end
+figure_name = fullfile(options.outdir, fignamebase);
+profile_figure = figure_name; 
+eval([profile_figure ' = hfig;']);
+
 for is = 1:ns
     plot(perf_prof{is}(1, :), perf_prof{is}(2, :), lines{is}, 'Color', colors{is},  'Linewidth', linewidth);
     hold on;
