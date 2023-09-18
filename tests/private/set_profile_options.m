@@ -55,31 +55,43 @@ if ~isfield(parameters, "parallel")
 end
 
 % Set parameters for noise test.
-if ~isfield(parameters, "num_random")
-    parameters.num_random = get_default_profile_options("num_random");
-end
-
-if ~isfield(parameters, "is_noisy")
-    parameters.is_noisy = get_default_profile_options("is_noisy");
-end
-
 if ~isfield(parameters, "noise_level")
     parameters.noise_level = get_default_profile_options("noise_level");
 elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "string")
     switch lower(parameters.noise_level)
+        case "plain"
+            parameters.is_noisy = false;
+            parameters.noise_level = 0;
         case "negligible"
+            parameters.is_noisy = true;
             parameters.noise_level = 1.0e-7;
         case "low"
+            parameters.is_noisy = true;
             parameters.noise_level = 1.0e-5;
         case "medium"
+            parameters.is_noisy = true;
             parameters.noise_level = 1.0e-3;
         case "high"
+            parameters.is_noisy = true;
             parameters.noise_level = 1.0e-1;
+        case "randomx0_1e-3"
+            parameters.is_noisy = true;
+            parameters.noise_level = 1.0e-3;
+            parameters.random_initial_point = true;
+        case "randomx0_1e-1"
+            parameters.is_noisy = true;
+            parameters.noise_level = 1.0e-1;
+            parameters.random_initial_point = true;
         case "excessive"
+            parameters.is_noisy = true;
             parameters.noise_level = 2.0e-1;
         otherwise
             error("Unkown noise level %s", parameters.noise_level);
     end
+end
+
+if ~isfield(parameters, "is_noisy")
+    parameters.is_noisy = get_default_profile_options("is_noisy");
 end
 
 if ~isfield(parameters, "is_abs_noise")
@@ -90,8 +102,18 @@ if ~isfield(parameters, "noise_type")
     parameters.noise_type = get_default_profile_options("noise_type");
 end
 
-if ~isfield(parameters, "random_initial_point")
+if ~isfield(parameters, "random_initial_point")   
     parameters.random_initial_point = get_default_profile_options("random_initial_point");
+end
+
+if ~isfield(parameters, "num_random")
+    if parameters.is_noisy && strcmpi(parameters.problems_dim, "small")
+        parameters.num_random = 5;
+    elseif parameters.is_noisy && strcmpi(parameters.problems_dim, "big")
+        parameters.num_random = 3;
+    else
+        parameters.num_random = get_default_profile_options("num_random");
+    end
 end
 
 if ~isfield(parameters, "fmin_type")

@@ -24,18 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [rbds]
-        is_noisy: [false, true]
-        noise_level: [negligible, low, medium, high]
-        random_initial_point: [false, true]
-        exclude:
-          - is_noisy: true
-            random_initial_point: true
-          - is_noisy: false
-            noise_level: negligible
-          - is_noisy: false
-            noise_level: low  
-          - is_noisy: false
-            noise_level: medium
+        noise_level: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1e-1]
 
     steps:
 
@@ -93,10 +82,8 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            parameters.is_noisy = ${{ matrix.is_noisy }};
             parameters.noise_level = "${{ matrix.noise_level }}";
             parameters.fmin_type = "randomized";
-            parameters.random_initial_point = ${{ matrix.random_initial_point }};
             parameters.maxfun_factor = 1e3;
 
             % Establish parameters for solvers.
@@ -109,18 +96,6 @@ jobs:
 
             parameters.solvers_options{1} = solver1;
             parameters.solvers_options{2} = solver2;
-          
-            profile(parameters);
-
-            if parameters.is_noisy
-              parameters.num_random = 3;
-            else
-              if parameters.random_initial_point
-                parameters.num_random = 3;
-              else
-                parameters.num_random = 1;
-              end
-            end
             
             profile(parameters);
 

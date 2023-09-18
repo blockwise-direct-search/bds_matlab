@@ -86,12 +86,6 @@ x0 = double(x0(:));
 % Set the polling directions in D.
 n = length(x0);
 
-if isfield(options, "seed")
-    seed = options.seed;
-else
-    seed = get_default_constant("seed");
-end
-
 if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
@@ -376,14 +370,32 @@ for iter = 1:maxit
     
 end
 
-rng(seed);
-
 % Truncate HISTORY into an nf length vector.
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
+
 if output_xhist
-    output.xhist = xhist(:, 1:nf);
+    % The size of the array to be created.
+    xhistSize = [n, nf];
+    % Obtain the runtime instance of the current Java Virtual Machine.
+    rt = java.lang.Runtime.getRuntime;
+    % Obtain the maximum available memory size.
+    maxMemory = rt.maxMemory;
+    % Calculate the total number of bytes for the array to be created.
+    if isa(xhistSize, 'single')
+        xhistBytes = prod(xhistSize) * 4;
+    else
+        xhistBytes = prod(xhistSize) * 8;
+    end
+    % Check if the array size exceeds the maximum array size limit.
+    if xhistBytes <= maxMemory
+        output.xhist = xhist(:, 1:nf);
+    else
+        warning('The size of xhist exceeds the maximum array size limit.')
+    end
+
 end
+
 output.alpha_hist = alpha_hist(1:min(iter, maxit));
 
 % Record the number of blocks visited.

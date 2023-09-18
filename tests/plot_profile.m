@@ -1,12 +1,13 @@
 function plot_profile()
 % This script is for test.
-parameters.problems_mindim = 1;
-parameters.problems_maxdim = 2;
-parameters.is_noisy = false;
-parameters.noise_level = "low";
-parameters.num_random = 1;
+% parameters.problems_mindim = 1;
+% parameters.problems_maxdim = 2;
+parameters.problems_dim = "small";
+%parameters.is_noisy = false;
+parameters.noise_level = "randomx0_1e-3";
+%parameters.num_random = 1;
 parameters.parallel = false;
-parameters.random_initial_point = false;
+%parameters.random_initial_point = false;
 parameters.maxfun_factor = 1e3;
 % Establish parameters for solver 1.
 solver1.solver = "cbds";
