@@ -33,7 +33,7 @@ switch constant_name
         constant_value = "randomized";
     case {"random_initial_point"}
         constant_value = false;
-    case {"x0_pertubation_level"}
+    case {"x0_perturbation_level"}
         constant_value = 1e-3;
     case {"min_precision"}
         constant_value = -10;
