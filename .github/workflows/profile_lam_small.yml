@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and lam, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -24,6 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [lam]
+        linesearch_type: [standard, new]
         noise_level: [plain, negligible, low, medium, high, randomx0_low, randomx0_high]
 
     steps:
@@ -91,6 +92,7 @@ jobs:
             solver1.sufficient_decrease_factor = 0;
             
             solver2.solver = "${{ matrix.competitor }}";
+            solver2.linesearch_type = "${{ matrix.linesearch_type }}";
 
             parameters.solvers_options = {};
 

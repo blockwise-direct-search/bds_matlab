@@ -224,7 +224,7 @@ ylabel('Performance profile', 'Fontsize', 18);
 %set(xlabh,'Position',get(xlabh,'Position') - [0 .0175 0])
 %set(gca,'FontSize',fontsize);
 set(gca,'FontSize', 18);
-keyboard
+
 % Save the figure as eps.
 if int32(-log10(tau)) < 10
     fignamebase = strcat(options.time_stamp, '_', 'perf_', '0', int2str(int32(-log10(tau))));
