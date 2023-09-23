@@ -22,7 +22,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
 %   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
-%                               with_meory decides whether the cycling strategy memorizes 
+%                               with_memory decides whether the cycling strategy memorizes 
 %                               the history or not.
 %   cycling_inner               Cycling strategy employed in the opportunistic case.
 %   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.

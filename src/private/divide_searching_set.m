@@ -30,7 +30,7 @@ if debug_flag
     end
 end
 
-% Calculate the mumber of directions of each block.
+% Calculate the member of directions of each block.
 num_direction_block = floor(m/nb); 
 
 if mod(m, nb) == 0 
