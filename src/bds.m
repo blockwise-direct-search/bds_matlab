@@ -211,7 +211,23 @@ else
 end
 
 % Initialize the step sizes and alpha_hist, which is the history of step sizes.
-alpha_hist = NaN(nb, maxit);
+% Obtain the runtime instance of the current Java Virtual Machine.
+rt = java.lang.Runtime.getRuntime;
+% Obtain the maximum available memory size.
+maxMemory = rt.maxMemory;
+% Calculate the total number of bytes for the array to be created.
+if isa(0, 'single')
+    alpha_hist_Bytes = nb * maxit * 4;
+else
+    alpha_hist_Bytes = nb * maxit * 8;
+end
+% Check if the array size exceeds the maximum array size limit.
+if alpha_hist_Bytes <= maxMemory
+    alpha_hist = NaN(nb, maxit);
+else
+    warning('The size of alpha_hist exceeds the maximum of memory size limit.')
+end
+
 if isfield(options, "alpha_init")
     alpha_all = options.alpha_init*ones(nb, 1);
 else
@@ -225,11 +241,30 @@ searching_set_indices = divide_searching_set(m, nb);
 fhist = NaN(1, maxfun);
 
 % Initialize the history of points visited.
-xhist = NaN(n, maxfun); 
 if isfield(options, "output_xhist")
     output_xhist = options.output_xhist;
 else
     output_xhist = get_default_constant("output_xhist");
+end
+
+if output_xhist
+    % Obtain the runtime instance of the current Java Virtual Machine.
+    rt = java.lang.Runtime.getRuntime;
+    % Obtain the maximum available memory size.
+    maxMemory = rt.maxMemory;
+    % Calculate the total number of bytes for the array to be created.
+    if isa(0, 'single')
+        xhistBytes = n * maxfun * 4;
+    else
+        xhistBytes = n * maxfun * 8;
+    end
+    % Check if the array size exceeds the maximum array size limit.
+    if xhistBytes <= maxMemory
+        xhist = NaN(n, maxfun); 
+    else
+        warning('The size of xhist exceeds the maximum of memory size limit.')
+    end
+
 end
 
 % Initialize the history of blocks visited.
@@ -238,8 +273,10 @@ xval = x0;
 fval = eval_fun(fun, xval);
 % Set the number of function evaluations.
 nf = 1; 
+if exist('xhist', 'var') == 1
+    xhist(:, nf) = xval;
+end
 fhist(nf) = fval;
-xhist(:, nf) = xval;
 
 % Check whether FTARGET is reached by FVAL. If it is true, then terminate.
 if fval <= ftarget
@@ -259,7 +296,9 @@ end
 % Start the actual computations.
 for iter = 1:maxit
     % Record the value of alpha_all of the current iteration in alpha_hist.
-    alpha_hist(:, iter) = alpha_all;
+    if exist('alpha_hist', 'var') == 1
+        alpha_hist(:, iter) = alpha_all;
+    end
     
     % Shuffle the blocks every shuffling_period iterations.
     % Why iter-1? Since we will permute block_indices at the initial stage.
@@ -319,12 +358,16 @@ for iter = 1:maxit
             alpha_all(i_real), suboptions);
         
         % Update the history of step size.
-        alpha_hist(:, iter) = alpha_all;
+        if exist('alpha_hist', 'var') == 1
+            alpha_hist(:, iter) = alpha_all;
+        end
         
         % Store the history of the evaluations by inner_direct_search, 
         % and accumulate the number of function evaluations.
         fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
-        xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
+        if exist('xhist', 'var') == 1
+            xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
+        end
         nf = nf+suboutput.nf;
         
         % If suboutput.terminate is true, then inner_direct_search returns 
@@ -373,28 +416,12 @@ end
 % Truncate HISTORY into an nf length vector.
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
-
-if output_xhist
-    % Obtain the runtime instance of the current Java Virtual Machine.
-    rt = java.lang.Runtime.getRuntime;
-    % Obtain the maximum available memory size.
-    maxMemory = rt.maxMemory;
-    % Calculate the total number of bytes for the array to be created.
-    if isa(xhist, 'single')
-        xhistBytes = n * nf * 4;
-    else
-        xhistBytes = n * nf * 8;
-    end
-    % Check if the array size exceeds the maximum array size limit.
-    if xhistBytes <= maxMemory
-        output.xhist = xhist(:, 1:nf);
-    else
-        warning('The size of xhist exceeds the maximum of memory size limit.')
-    end
-
+if exist('xhist', 'var') == 1
+    output.xhist = xhist(:, 1:nf);
 end
-
-output.alpha_hist = alpha_hist(1:min(iter, maxit));
+if exist('alpha_hist', 'var') == 1
+    output.alpha_hist = alpha_hist(1:min(iter, maxit));
+end
 
 % Record the number of blocks visited.
 num_blocks_visited = sum(~isnan(block_hist));
