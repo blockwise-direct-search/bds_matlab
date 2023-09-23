@@ -157,7 +157,7 @@ for i = 1:num_solvers
         pdfname = strcat(pdfname, "_", pdfname_solver);
     end
 end
-keyboard
+
 if ~parameters.is_noisy
     if ~parameters.random_initial_point
         pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
