@@ -17,7 +17,7 @@ if ~(isintegerscalar(exitflag))
     error("exitflag is not an integer.");
 end
 
-% Verify whether nf is a postive integer.
+% Verify whether nf is a positive integer.
 if ~isfield(output, "funcCount")
     error("output.funcCount does not exist.");
 end

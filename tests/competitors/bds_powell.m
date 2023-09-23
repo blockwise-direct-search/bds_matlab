@@ -262,7 +262,7 @@ for iter = 1 : maxit
     % increases by 1, the algorithm will visit nb blocks when 
     % options.Algorithm = "pbds".
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
-        % Make sure that `shuffling_period` is defined when `Algorithm` is "sbds".
+        % Make sure that `shuffling_period` is defined when `Algorithm` is "pbds".
         block_indices = randperm(nb);
     end
     

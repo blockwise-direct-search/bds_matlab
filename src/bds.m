@@ -303,7 +303,7 @@ for iter = 1:maxit
     % Shuffle the blocks every shuffling_period iterations.
     % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
-        % Make sure that shuffling_period is defined when Algorithm is "sbds".
+        % Make sure that shuffling_period is defined when Algorithm is "pbds".
         block_indices = randperm(nb);
     end
     

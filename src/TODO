@@ -1,5 +1,5 @@
 - Comparison
 The purpose is to compare the efficiency of the algorithm against some competitors.
 Plot performance profiles against competitors: plain, randomized x0, noisy 10-8, 10-6, 10-4, 10-3.
-single precision, signif3, 5,
+single precision.
 

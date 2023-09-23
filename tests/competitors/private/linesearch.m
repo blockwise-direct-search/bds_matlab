@@ -1,6 +1,6 @@
 function [xval, fval, exitflag, output] = linesearch(fun, ...
     xval, fval, D, direction_indices, alpha, options)
-%LINESEARCH peforms a single iteration of classical direct search 
+%LINESEARCH performs a single iteration of classical direct search 
 %   within a given block.
 %
 %   XVAL = LINESEARCH(FUN, XVAL, FVAL, D, DIRECTION_INDICES, ALPHA, OPTIONS)
@@ -56,7 +56,7 @@ else
 end
 
 % Explain why NaN is good. It is possible that this function returns
-% with exitflag=NaN and this is NOT a bug. This is because other situatons
+% with exitflag=NaN and this is NOT a bug. This is because other situations
 % are corresponding to other normal values. Easy to see whether there is
 % some bug related to exitflag.
 exitflag = NaN;

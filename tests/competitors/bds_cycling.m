@@ -38,45 +38,32 @@ function [xval, fval, exitflag, output] = bds_cycling(fun, x0, options)
 %   1  The element of the index will be moved to the first element of array.
 %
 %   EXAMPLE
-%   When array is 3 1 2 4 5, if index = 3, for with_cycling_memory situation,
-%   array will be 2 3 1 4 5 after cycling; for nonwith_cycling_memory situaion, index
-%   will be 2, sort(index) is 1 2 3 4 5 and array will be 2 1 3 4 5 after
-%   cycling.
+%   When array is 3 1 2 4 5, if index = 3, array will be 2 3 1 4 5 after 
+%   cycling when with_cycling_memory is true; index will be 2, sort(index)
+%   is 1 2 3 4 5 and array will be 2 1 3 4 5 after cycling when with_cycling_memory is false.
 %
 %   2  The element of the index and the following ones until end will be
 %      moved ahead of array.
 %
 %   EXAMPLE
-%   When array is 2 1 4 5 3, if index = 3, for with_cycling_memory situation,
-%   array will be 4 5 3 2 1 after cycling; for nonwith_cycling_memory situaion, index
-%   will be 4, sort(index) is 1 2 3 4 5 and array will be 4 5 1 2 3 after
-%   cycling.
+%   When array is 2 1 4 5 3, if index = 3, array will be 4 5 3 2 1 after cycling when 
+%   with_cycling_memory is true; index will be 4, sort(index) is 1 2 3 4 5 and array will 
+%   be 4 5 1 2 3 after cycling when with_cycling_memory is false.
 %
 %   3  The element of the following ones after index until end will be
 %      moved ahead of array.
 %
 %   EXAMPLE
-%   When array is 2 1 4 5 3 and index = 3, for with_cycling_memory situation,
-%   array will be 5 3 2 1 4 after cycling; for nonwith_cycling_memory situaion, index will
-%   be 4, sort(index) is 1 2 3 4 5 and array will be 5 1 2 3 4 after cycling.
+%   When array is 2 1 4 5 3 and index = 3, array will be 5 3 2 1 4 after cycling when 
+%   with_cycling_memory is true; index will be 4, sort(index) is 1 2 3 4 5 and array 
+%   will be 5 1 2 3 4 after cycling when with_cycling_memory is false.
 %
 %   4  The element of the following one after index will be moved ahead of array.
 %
 %   EXAMPLE
-%   array is 4 1 2 3 5, if index = 3, for with_cycling_memory situation, array will
-%   be 3 4 1 2 5 after cycling; for nonwith_cycling_memory situaion, index will be 2,
-%   sort(index) is 1 2 3 4 5 and array will be 3 1 2 4 5 after cycling.
-%   
-%   5 Use the idea of symmetric Gauss-Seidel to change array first. If
-%   array is 2 3 4 5, then array will be 2 3 4 5 4 3 2 when cycling is 5.
-%   Then use the strategy of cycling 4 on the new array that we get.
-%
-%   EXAMPLE
-%   array is 1 2 3 4 5, then array will be changed to 1 2 3 4 5 4 3 2 1
-%   initially. If index = 3, array will be 4 5 4 3 2 1 1 2 3. If index = 2,
-%   for with_cycling_memory situation, array will be 4 3 2 1 1 2 3 4 5; for nonwith_cycling_memory
-%   situation, array will be 4 3 2 1 1 2 3 4 5.
-%
+%   array is 4 1 2 3 5, if index = 3, array will be 3 4 1 2 5 after cycling when 
+%   with_cycling_memory is true; index will be 2, sort(index) is 1 2 3 4 5 and array 
+%   will be 3 1 2 4 5 after cycling when with_cycling_memory is false.
 %
 % [XVAL, FVAL] = BLOCKWISE_DIRECT_SEARCH(...) returns the value of the
 % objective function, described in FUN, at XVAL.
