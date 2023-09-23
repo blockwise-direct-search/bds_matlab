@@ -143,7 +143,7 @@ end
 
 % Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
 % In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite 
-% cyling if there is a bug.
+% cycling if there is a bug.
 maxit = maxfun;
 
 % Set the value of sufficient decrease factor.

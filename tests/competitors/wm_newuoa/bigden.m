@@ -100,7 +100,7 @@ while (1)
     Wvec(npt+[1:n],2) = D;
     Wvec(npt+[1:n],3) = S;
 
-    % Put the coefficents of THETA*Wcheck in Prod.
+    % Put the coefficients of THETA*Wcheck in Prod.
     Prod = zeros(npt+n,5);
     for jc=1:5
         nw = npt;
