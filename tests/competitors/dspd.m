@@ -62,9 +62,9 @@ versionParts = strsplit(matlabVersion.Version, '.');
 majorVersion = str2double(versionParts{1});
 minorVersion = str2double(versionParts{2});
 
-% Check whether the verion of MATLAB is released lower than 2017a.
+% Check whether the version of MATLAB is released lower than 2017a.
 if majorVersion < 9 || (majorVersion == 9 && minorVersion < 1)
-    error("The verison of MATLAB is low, please update to 2017a or later versions")
+    error("The version of MATLAB is low, please update to 2017a or later versions")
 end
 
 % Set options to an empty structure if it is not provided.

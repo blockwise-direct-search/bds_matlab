@@ -21,7 +21,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
             case "excessive"
                 options.sufficient_decrease_factor = 10;
             otherwise
-                error("Unkown sufficient decrease factor level %s", ...
+                error("Unknown sufficient decrease factor level %s", ...
                     options.sufficient_decrease_factor_level);
         end
     end

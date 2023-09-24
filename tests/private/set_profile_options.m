@@ -86,7 +86,7 @@ elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "stri
             parameters.is_noisy = true;
             parameters.noise_level = 2.0e-1;
         otherwise
-            error("Unkown noise level %s", parameters.noise_level);
+            error("Unknown noise level %s", parameters.noise_level);
     end
 end
 
