@@ -16,6 +16,8 @@ The tests are **automated** by
 
     - [![Check Spelling](https://github.com/blockwise-direct-search/bds/actions/workflows/spelling.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/spelling.yml)
     - [![Stress test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml)
+    - [![Test sufficient decrease factor of BDS, small](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_small_sd.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_small_sd.yml)
+    - [![Test sufficient decrease factor of BDS, big](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_big_sd.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_big_sd.yml)
     - [![Performance profiles of PBDS, big](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_pbds_big.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_pbds_big.yml)
     - [![Performance profiles of PBDS, small](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_pbds_small.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_pbds_small.yml)
     - [![Performance profiles of RBDS, big](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_rbds_big.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_rbds_big.yml)
