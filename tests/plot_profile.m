@@ -1,7 +1,7 @@
 function plot_profile()
 % This script is for test.
-parameters.problems_mindim = 6;
-parameters.problems_maxdim = 100;
+parameters.problems_mindim = 1;
+parameters.problems_maxdim = 1;
 %parameters.problems_dim = "small";
 %parameters.is_noisy = false;
 %parameters.noise_level = "randomx0_low";
@@ -15,13 +15,14 @@ solver1.solver = "cbds";
 %solver1.classical = false;
 %solver1.maxfun = 1e4;
 %solver1.expand = 1;
-%solver1.sufficient_decrease_factor = 0;
+solver1.sufficient_decrease_factor = 0;
 %solver1.direction = "canonical";
 %solver1.accept_simple_decrease = false;
 
 % Establish parameters for solver 2.
-solver2.solver = "lam";
-solver2.linesearch_type = "new";
+solver2.solver = "cbds";
+solver2.sufficient_decrease_factor = 1e-14;
+%solver2.linesearch_type = "new";
 %solver3.solver = "lam";
 %solver3.linesearch_type = "new";
 %solver2.expand = 2;

@@ -94,10 +94,6 @@ if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = get_default_profile_options("is_noisy");
 end
 
-% if parameters.is_noisy
-%     parameters.random_initial_point = false;
-% end
-
 if ~isfield(parameters, "is_abs_noise")
     parameters.is_abs_noise = get_default_profile_options("is_abs_noise");
 end
