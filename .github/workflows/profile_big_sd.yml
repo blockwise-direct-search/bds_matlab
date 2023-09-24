@@ -2,7 +2,7 @@ name: Plot performance profiles for BDS, big, testing level of sufficient decrea
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   # schedule:
   #  - cron: '0 20 */7 * *'
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Profile blockwise direct search.
+    name: Profile BDS.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
