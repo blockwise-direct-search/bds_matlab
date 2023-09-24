@@ -86,7 +86,7 @@ switch strategy
     % the first element of array. For example, if index = 3, array is 1 2 3 4 5,
     % then array will be 3 1 2 4 5 after cycling. For the case where
     % array is 3 1 2 4 5, if index = 3, array will be 2 3 1 4 5 after cycling 
-    % when with_cycling_memore is true; when with_cycling_memory is false, index will
+    % when with_cycling_memory is true; when with_cycling_memory is false, index will
     % be 2 after executing the code paragraph above, sort(index)
     %is 1 2 3 4 5 and array will be 2 1 3 4 5 after cycling.
     case {1}

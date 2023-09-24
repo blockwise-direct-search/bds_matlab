@@ -638,6 +638,7 @@ smallsetminus
 smallsmile
 spadesuit
 sphericalangle
+sprintf
 sqcap
 sqcup
 sqrt
@@ -809,6 +810,7 @@ xlabh
 xnew
 xopt
 xoptd
+xopts
 xoptsq
 Xpt  
 xshift
