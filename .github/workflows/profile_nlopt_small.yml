@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and nlopt, small
+    name: Profile BDS and NLOPT, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
