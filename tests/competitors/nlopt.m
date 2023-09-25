@@ -52,7 +52,7 @@ else
     opt.maxeval = 1e3*n;
 end
 
-disp("nlopt is invoked");
+%disp("nlopt is invoked");
 nlopt_optimize(opt, x0');
 
 end
