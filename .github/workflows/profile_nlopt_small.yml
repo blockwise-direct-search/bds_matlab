@@ -27,13 +27,21 @@ jobs:
         noise_level: [plain, negligible, low, medium, high, randomx0_low, randomx0_high]
 
     steps:
-      - name: Install GCC
-        run: sudo apt-get update && sudo apt-get install gcc-10 
-
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
+      
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install gcc-10 
+
+      - name: Set GCC version
+        run: |
+          echo "CC=gcc-10" >> $GITHUB_ENV
+          echo "CXX=g++-10" >> $GITHUB_ENV
+  
+      - name: check gcc version
+        run: gcc --version
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v4
@@ -48,14 +56,6 @@ jobs:
       - name: Install epstopdf and ghostscript
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
-
-      - name: Set GCC version
-        run: |
-          echo "CC=gcc-10" >> $GITHUB_ENV
-          echo "CXX=g++-10" >> $GITHUB_ENV
-
-      - name: check gcc version
-        run: gcc --version
 
       - name: Install Texlive
         run: sudo apt-get update && sudo apt-get install texlive
