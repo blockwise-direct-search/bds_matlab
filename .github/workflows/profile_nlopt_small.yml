@@ -41,7 +41,7 @@ jobs:
           echo "CXX=g++-10" >> $GITHUB_ENV
   
       - name: check gcc version
-        run: gcc --version
+        run: /usr/bin/gcc-10 --version
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v4
