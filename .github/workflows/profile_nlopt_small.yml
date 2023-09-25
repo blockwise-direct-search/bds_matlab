@@ -53,10 +53,6 @@ jobs:
         run: |
           echo "CC=gcc-10" >> $GITHUB_ENV
           echo "CXX=g++-10" >> $GITHUB_ENV
-          
-      - name: Build with GCC
-        run: |
-          $CC -o output_file source_file.c
 
       - name: check gcc version
         run: gcc --version
