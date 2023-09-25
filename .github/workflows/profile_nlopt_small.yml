@@ -49,7 +49,12 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
 
-      - name: check gcc-10.5.0
+      - name: Set GCC version
+        run:
+          export CC=gcc-10
+          export CXX=g++-10
+
+      - name: check gcc version
         run: gcc --version
 
       - name: Install Texlive
