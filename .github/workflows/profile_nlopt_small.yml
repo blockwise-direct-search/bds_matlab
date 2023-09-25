@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest]
         matlab: [R2023a]
         dim: [small]
-        with_optim_toolbox: [no]
+        with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [nlopt_newuoa]
         noise_level: [plain, negligible, low, medium, high, randomx0_low, randomx0_high]
@@ -75,6 +75,13 @@ jobs:
         with:
           path: ${{ runner.tool_cache }}/MATLAB
           key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
+
+      - name: Set up MATLAB with optimization toolbox
+        if: ${{ matrix.with_optim_toolbox == 'yes' }}
+        uses: matlab-actions/setup-matlab@v2-beta
+        with:
+          release: ${{ matrix.matlab }}
+          products: Optimization_Toolbox
 
       - name: Install cmake
         run: sudo apt-get install cmake
