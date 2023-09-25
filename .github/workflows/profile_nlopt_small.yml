@@ -49,6 +49,18 @@ jobs:
           repository: matcutest/matcutest_compiled
           path: matcutest
 
+      - name: Clone NLOPT
+        uses: actions/checkout@v4
+        with:
+          repository: stevengj/nlopt
+          path: nlopt
+    
+      - name: Install cmake
+        run: sudo apt-get install cmake
+
+      - name: Install NLOPT
+        run: cd ./nlopt && cmake . && make && sudo make install
+
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
         run: bash .github/scripts/link_gfortran ${{ env.GFORTRAN_VERSION }}
