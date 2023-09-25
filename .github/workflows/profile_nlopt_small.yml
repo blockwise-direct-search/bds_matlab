@@ -50,9 +50,13 @@ jobs:
         run: bash .github/scripts/install_epstopdf && bash .github/scripts/install_ghostscript
 
       - name: Set GCC version
-        run:
-          export CC=gcc-10
-          export CXX=g++-10
+        run: |
+          echo "CC=gcc-10" >> $GITHUB_ENV
+          echo "CXX=g++-10" >> $GITHUB_ENV
+          
+      - name: Build with GCC
+        run: |
+          $CC -o output_file source_file.c
 
       - name: check gcc version
         run: gcc --version
