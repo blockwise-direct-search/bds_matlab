@@ -61,44 +61,47 @@ if ~isfield(parameters, "noise_type")
 end
 
 if isfield(parameters, "feature")
-    switch lower(parameters.feature)
-        case "plain"
-            parameters.is_noisy = false;
-            parameters.noise_level = 0;
-            parameters.feature = "no_noise";
-        case "negligible"
-            parameters.is_noisy = true;
-            parameters.noise_level = 1.0e-7;
-            parameters.feature = strcat(parameters.noise_type, "_", "-7", "_noise");
-        case "low"
-            parameters.is_noisy = true;
-            parameters.noise_level = 1.0e-5;
-            parameters.feature = strcat(parameters.noise_type, "_", "-5", "_noise");
-        case "medium"
-            parameters.is_noisy = true;
-            parameters.noise_level = 1.0e-3;
-            parameters.feature = strcat(parameters.noise_type, "_", "-3", "_noise");
-        case "high"
-            parameters.is_noisy = true;
-            parameters.noise_level = 1.0e-1;
-            parameters.feature = strcat(parameters.noise_type, "_", "-1", "_noise");
-        case "excessive"
-            parameters.is_noisy = true;
-            parameters.noise_level = 2.0e-1;
-            parameters.feature = strcat(parameters.noise_type, "_", "2", "-1", "_noise");
-        case startsWith(lower(parameters.feature), 'randomx0')
-            parameters.is_noisy = false;
-            parameters.random_initial_point = true;
-            level_str = split(lower(parameters.feature), '_');
-            parameters.x0_perturbation_level = str2double(level_str{2});
-        case startsWith(lower(parameters.feature), 'noise')
-            parameters.is_noisy = true;
-            parameters.random_initial_point = false;
-            level_str = split(lower(parameters.feature), '_');
-            parameters.noise_level = str2double(level_str{2});
-            parameters.feature = strcat(parameters.noise_type, "_", num2str(log10(parameters.noise_level)), "_noise");
-        otherwise
-            error("Unknown feature %s", parameters.feature);
+    if startsWith(lower(parameters.feature), 'randomx0')
+        parameters.is_noisy = false;
+        parameters.random_initial_point = true;
+        level_str = split(lower(parameters.feature), '_');
+        parameters.x0_perturbation_level = str2double(level_str{2});
+    elseif startsWith(lower(parameters.feature), 'noise')
+        parameters.is_noisy = true;
+        parameters.random_initial_point = false;
+        level_str = split(lower(parameters.feature), '_');
+        parameters.noise_level = str2double(level_str{2});
+        parameters.feature = strcat(parameters.noise_type, "_", ...
+        num2str(log10(parameters.noise_level)), "_noise");
+    else
+        switch lower(parameters.feature)
+            case "plain"
+                parameters.is_noisy = false;
+                parameters.noise_level = 0;
+                parameters.feature = "no_noise";
+            case "negligible"
+                parameters.is_noisy = true;
+                parameters.noise_level = 1.0e-7;
+                parameters.feature = strcat(parameters.noise_type, "_", "-7", "_noise");
+            case "low"
+                parameters.is_noisy = true;
+                parameters.noise_level = 1.0e-5;
+                parameters.feature = strcat(parameters.noise_type, "_", "-5", "_noise");
+            case "medium"
+                parameters.is_noisy = true;
+                parameters.noise_level = 1.0e-3;
+                parameters.feature = strcat(parameters.noise_type, "_", "-3", "_noise");
+            case "high"
+                parameters.is_noisy = true;
+                parameters.noise_level = 1.0e-1;
+                parameters.feature = strcat(parameters.noise_type, "_", "-1", "_noise");
+            case "excessive"
+                parameters.is_noisy = true;
+                parameters.noise_level = 2.0e-1;
+                parameters.feature = strcat(parameters.noise_type, "_", "2", "-1", "_noise");
+            otherwise
+                error("Unknown feature %s", parameters.feature);
+        end
     end
 end
 
