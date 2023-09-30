@@ -3,3 +3,7 @@ The purpose is to compare the efficiency of the algorithm against some competito
 Plot performance profiles against competitors: plain, randomized x0, noisy 10-8, 10-6, 10-4, 10-3.
 single precision.
 
+- How to perturb the initial step size?
+Execute like the way of simplex method which was implemented in the MATLAB. The initial step size is decided by the initial point (probably caused by the norm of values along different coordinate directions).
+
+-

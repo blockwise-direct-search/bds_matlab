@@ -1,8 +1,6 @@
 function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives. 
 %
-%   TODO: here(MATLAB version, what is bds)
-%
 %   XVAL = BDS(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
 %   calculations at X0. FUN must accept input X and returns a scalar, which is the function value
 %   evaluated at X. X0 should be a vector.
@@ -12,7 +10,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   
 %   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
-%   maxfun_factor                  Factor to define maximum number of function evaluations as a multiplier
+%   maxfun_factor               Factor to define maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.    
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
@@ -34,6 +32,8 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %                               replacement_delay is r. If block i is selected at iteration k, then it will 
 %                               not be selected at iterations k+1, ..., k+r. 
 %   seed                        Only used by randomized strategy for reproducibility.
+%   output_xhist                Whether the history of points visited is returned or not.
+%   output_alpha_hist           Whether the history of step sizes is returned or not.
 %
 %   [XVAL, FVAL] = BDS(...) also returns the value of the objective function FUN at the 
 %   solution XVAL.
@@ -211,25 +211,40 @@ else
 end
 
 % Initialize the step sizes and alpha_hist, which is the history of step sizes.
-% Obtain the runtime instance of the current Java Virtual Machine.
-rt = java.lang.Runtime.getRuntime;
-% Obtain the maximum available memory size.
-maxMemory = rt.maxMemory;
-% Calculate the total number of bytes for the array to be created.
-if isa(0, 'single')
-    alpha_hist_Bytes = nb * maxit * 4;
+if isfield(options, "output_alpha_hist")
+    output_alpha_hist = options.output_alpha_hist;
 else
-    alpha_hist_Bytes = nb * maxit * 8;
+    output_alpha_hist = get_default_constant("output_alpha_hist");
 end
-% Check if the array size exceeds the maximum array size limit.
-if alpha_hist_Bytes <= maxMemory
-    alpha_hist = NaN(nb, maxit);
-else
-    warning('The size of alpha_hist exceeds the maximum of memory size limit.')
+
+if output_alpha_hist
+    % Obtain the runtime instance of the current Java Virtual Machine.
+    rt = java.lang.Runtime.getRuntime;
+    % Obtain the maximum available memory size.
+    maxMemory = rt.maxMemory;
+    % Calculate the total number of bytes for the array to be created.
+    if isa(0, 'single')
+        alpha_hist_Bytes = nb * maxit * 4;
+    else
+        alpha_hist_Bytes = nb * maxit * 8;
+    end
+    % Check if the array size exceeds the maximum array size limit.
+    if alpha_hist_Bytes <= maxMemory
+        alpha_hist = NaN(nb, maxit);
+    else
+        output_alpha_hist = false;
+        warning('The size of alpha_hist exceeds the maximum of memory size limit.')
+    end
 end
 
 if isfield(options, "alpha_init")
-    alpha_all = options.alpha_init*ones(nb, 1);
+    if length(options.alpha_init) == 1
+        alpha_all = options.alpha_init*ones(nb, 1);
+    elseif length(options.alpha_init) == nb
+        alpha_all = options.alpha_init;
+    else
+        error("The length of alpha_init should be equal to nb or equal to 1.");
+    end
 else
     alpha_all = ones(nb, 1);
 end
@@ -262,9 +277,9 @@ if output_xhist
     if xhistBytes <= maxMemory
         xhist = NaN(n, maxfun); 
     else
-        warning('The size of xhist exceeds the maximum of memory size limit.')
+        output_xhist = false;
+        warning('xhist will be not included in the output due to the limit of memory.');
     end
-
 end
 
 % Initialize the history of blocks visited.
@@ -273,7 +288,7 @@ xval = x0;
 fval = eval_fun(fun, xval);
 % Set the number of function evaluations.
 nf = 1; 
-if exist('xhist', 'var') == 1
+if output_xhist
     xhist(:, nf) = xval;
 end
 fhist(nf) = fval;
@@ -296,7 +311,7 @@ end
 % Start the actual computations.
 for iter = 1:maxit
     % Record the value of alpha_all of the current iteration in alpha_hist.
-    if exist('alpha_hist', 'var') == 1
+    if output_alpha_hist
         alpha_hist(:, iter) = alpha_all;
     end
     
@@ -358,14 +373,14 @@ for iter = 1:maxit
             alpha_all(i_real), suboptions);
         
         % Update the history of step size.
-        if exist('alpha_hist', 'var') == 1
+        if output_alpha_hist
             alpha_hist(:, iter) = alpha_all;
         end
         
         % Store the history of the evaluations by inner_direct_search, 
         % and accumulate the number of function evaluations.
         fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
-        if exist('xhist', 'var') == 1
+        if output_xhist
             xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
         end
         nf = nf+suboutput.nf;
@@ -416,10 +431,10 @@ end
 % Truncate HISTORY into an nf length vector.
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
-if exist('xhist', 'var') == 1
+if output_xhist
     output.xhist = xhist(:, 1:nf);
 end
-if exist('alpha_hist', 'var') == 1
+if output_alpha_hist
     output.alpha_hist = alpha_hist(1:min(iter, maxit));
 end
 

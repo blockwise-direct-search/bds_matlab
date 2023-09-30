@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [nlopt_newuoa]
-        noise_level: [plain, negligible, low, medium, high, randomx0_low, randomx0_high]
+        feature: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
 
     steps:
       - name: Check out repository
@@ -104,28 +104,18 @@ jobs:
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
-            parameters.noise_level = "${{ matrix.noise_level }}";
+            parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.maxfun_factor = 1e3;
 
-            % Establish parameters for solvers.
-            solver1.solver = "cbds";
-            solver1.sufficient_decrease_factor = 0;
-            
-            solver2.solver = "${{ matrix.competitor }}";
             NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
             if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))
                 parts = split("${{ matrix.competitor }}", '_');
-                solver2.solver = "nlopt";
-                solver2.Algorithm = char(parts(2));
-            end 
-
-            parameters.solvers_options = {};
-
-            parameters.solvers_options{1} = solver1;
-            parameters.solvers_options{2} = solver2;
+                parameters.solvers_options{2}.Algorithm = char(parts(2));
+            end  
+            parameters.solvers_name = ["${{ matrix.solver }}", "nlopt"];
             
-            profile(parameters);
+            plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2

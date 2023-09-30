@@ -2,7 +2,7 @@ function parameters = get_solvers(parameters)
 % GET_SOLVERS gets the solvers that we invoke. 
 %
 
-solvers_num = length(parameters.solvers_options);
+solvers_num = length(parameters.solvers_name);
 
 % RBDS - Randomized Blockwise Direct Search.
 % DSPD - Direct Search based on probabilistic descent.

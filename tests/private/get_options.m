@@ -3,6 +3,7 @@ function options = get_options(name_solver, options)
 %
 
 bds_list = ["bds", "bds_powell"];
+PRIMA_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 
 if any(contains(bds_list, name_solver, 'IgnoreCase', true))
 
@@ -26,8 +27,8 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
         end
     end
 
-    % Set options for matlab solvers.
-elseif name_solver == "matlab_fminsearch"
+% Set options for matlab solvers.
+elseif strcmpi(name_solver, "matlab_fminsearch")
     
     if isfield(options, "maxfun") && isfield(options, "StepTolerance")
         options = optimset('MaxFunEvals', options.maxfun, 'maxiter', options.maxfun,...
@@ -38,7 +39,7 @@ elseif name_solver == "matlab_fminsearch"
         options = optimset('tolfun', options.StepTolerance, 'tolx', options.StepTolerance);
     end
 
-elseif name_solver == "matlab_fminunc"
+elseif strcmpi(name_solver, "matlab_fminunc")
     
     if ~isfield(options, "ftarget")
         options.ftarget = -inf;
@@ -62,7 +63,7 @@ elseif name_solver == "matlab_fminunc"
             options.StepTolerance);
     end
 
-elseif name_solver == "matlab_patternsearch"
+elseif strcmpi(name_solver, "matlab_patternsearch")
     
     if isfield(options, "maxfun") && isfield(options, "StepTolerance")
         options = optimoptions('patternsearch','MaxIterations', options.maxfun,...
@@ -77,6 +78,30 @@ elseif name_solver == "matlab_patternsearch"
             options.StepTolerance, 'TolMesh', options.StepTolerance,...
             'StepTolerance', options.StepTolerance);
     end
+
+% Set options for PRIMA.
+elseif any(contains(PRIMA_list, name_solver, 'IgnoreCase', true))
+
+    if isfield(options, "StepTolerance")
+        options.rhoend = options.StepTolerance;
+    end
+
+    if isfield(options, "alpha_init")
+        options.rhobeg = options.alpha_init;
+    end
+    % An indicator: it can attain 0, 1, 2, 3, -1, -2, -3. Default value is
+    % 0. More absolute value of iprint, more information will be printed on command
+    % window. When the value of iprint is negative, no information will be
+    % printed on command window and will be stored in a file.
+    % options.iprint = 0;
+
+% Set options for NLOPT.
+elseif strcmpi(name_solver, "nlopt")
+
+   if isfield(options, "StepTolerance")
+        options.ftol_rel = options.StepTolerance;
+        options.ftol_abs = options.StepTolerance;
+   end
 
 end
 

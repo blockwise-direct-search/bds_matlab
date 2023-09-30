@@ -21,8 +21,10 @@ switch constant_name
         constant_value = eps;
     case {"accept_simple_decrease"}
         constant_value = true;
+    case {"alpha_init"}
+        constant_value = 1;
     case {"StepTolerance"}
-        constant_value = eps;
+        constant_value = 1e-10;
     case {"shuffle_period"}
         constant_value = 1;
     case {"replacement_delay"}
@@ -36,6 +38,8 @@ switch constant_name
     case {"with_cycling_memory"}
         constant_value = true;
     case {"output_xhist"}
+        constant_value = false;
+    case {"output_alpha_hist"}
         constant_value = false;
     otherwise
         error("Unknown constant name")

@@ -3,4 +3,5 @@ function result = trim_time(str)
          result = replace(str,' ','_');
          result = replace(result,'-','_');
          result = replace(result,':','_');
+         result = result(3:end);
 end

@@ -39,11 +39,7 @@ end
 if isfield(options, 'maxtime')
     opt.maxtime = options.maxtime;
 else
-    if n <= 5
-        opt.maxtime = 20;
-    else 
-        opt.maxtime = 30;
-    end
+    opt.maxtime = 0;
 end
 
 if isfield(options, 'maxfun')

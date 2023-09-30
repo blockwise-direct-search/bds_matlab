@@ -54,39 +54,51 @@ if ~isfield(parameters, "parallel")
     parameters.parallel = get_default_profile_options("parallel");
 end
 
-% Set parameters for noise test.
-if ~isfield(parameters, "noise_level")
-    parameters.noise_level = get_default_profile_options("noise_level");
-elseif  isa(parameters.noise_level, "char") || isa(parameters.noise_level, "string")
-    switch lower(parameters.noise_level)
+% Set parameters for testing.
+
+if ~isfield(parameters, "noise_type")
+    parameters.noise_type = get_default_profile_options("noise_type");
+end
+
+if isfield(parameters, "feature")
+    switch lower(parameters.feature)
         case "plain"
             parameters.is_noisy = false;
             parameters.noise_level = 0;
+            parameters.feature = "no_noise";
         case "negligible"
             parameters.is_noisy = true;
             parameters.noise_level = 1.0e-7;
+            parameters.feature = strcat(parameters.noise_type, "_", "-7", "_noise");
         case "low"
             parameters.is_noisy = true;
             parameters.noise_level = 1.0e-5;
+            parameters.feature = strcat(parameters.noise_type, "_", "-5", "_noise");
         case "medium"
             parameters.is_noisy = true;
             parameters.noise_level = 1.0e-3;
+            parameters.feature = strcat(parameters.noise_type, "_", "-3", "_noise");
         case "high"
             parameters.is_noisy = true;
             parameters.noise_level = 1.0e-1;
-        case "randomx0_low"
-            parameters.is_noisy = false;
-            parameters.x0_perturbation_level = 1.0e-3;
-            parameters.random_initial_point = true;
-        case "randomx0_high"
-            parameters.is_noisy = false;
-            parameters.x0_perturbation_level = 10;
-            parameters.random_initial_point = true;
+            parameters.feature = strcat(parameters.noise_type, "_", "-1", "_noise");
         case "excessive"
             parameters.is_noisy = true;
             parameters.noise_level = 2.0e-1;
+            parameters.feature = strcat(parameters.noise_type, "_", "2", "-1", "_noise");
+        case startsWith(lower(parameters.feature), 'randomx0')
+            parameters.is_noisy = false;
+            parameters.random_initial_point = true;
+            level_str = split(lower(parameters.feature), '_');
+            parameters.x0_perturbation_level = str2double(level_str{2});
+        case startsWith(lower(parameters.feature), 'noise')
+            parameters.is_noisy = true;
+            parameters.random_initial_point = false;
+            level_str = split(lower(parameters.feature), '_');
+            parameters.noise_level = str2double(level_str{2});
+            parameters.feature = strcat(parameters.noise_type, "_", num2str(log10(parameters.noise_level)), "_noise");
         otherwise
-            error("Unknown noise level %s", parameters.noise_level);
+            error("Unknown feature %s", parameters.feature);
     end
 end
 
@@ -94,12 +106,12 @@ if ~isfield(parameters, "is_noisy")
     parameters.is_noisy = get_default_profile_options("is_noisy");
 end
 
-if ~isfield(parameters, "is_abs_noise")
-    parameters.is_abs_noise = get_default_profile_options("is_abs_noise");
+if ~isfield(parameters, "noise_level")
+    parameters.noise_level = get_default_profile_options("noise_level");
 end
 
-if ~isfield(parameters, "noise_type")
-    parameters.noise_type = get_default_profile_options("noise_type");
+if ~isfield(parameters, "is_abs_noise")
+    parameters.is_abs_noise = get_default_profile_options("is_abs_noise");
 end
 
 if ~isfield(parameters, "random_initial_point")   
@@ -117,11 +129,11 @@ if ~isfield(parameters, "num_random")
         if parameters.is_noisy && strcmpi(parameters.problems_dim, "small")
             parameters.num_random = 5;
         elseif parameters.is_noisy && strcmpi(parameters.problems_dim, "big")
-            parameters.num_random = 2;
+            parameters.num_random = 3;
         elseif ~parameters.is_noisy && strcmpi(parameters.problems_dim, "small") && parameters.random_initial_point
             parameters.num_random = 10;
         elseif ~parameters.is_noisy && strcmpi(parameters.problems_dim, "big") && parameters.random_initial_point
-            parameters.num_random = 2;
+            parameters.num_random = 3;
         end
     end
 end
@@ -154,28 +166,49 @@ for i = 1:num_solvers
     end
 end
 
-if ~parameters.is_noisy
-    if ~parameters.random_initial_point
-        pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-            num2str(parameters.problems_maxdim));
+if ~isfield(parameters, "feature")
+    if ~parameters.is_noisy
+        if ~parameters.random_initial_point
+            parameters.feature = "no_noise";
+        else
+            parameters.feature = strcat("randomx0", "_", num2str(log10(parameters.x0_perturbation_level)));
+        end
     else
-        pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-            num2str(parameters.problems_maxdim), "_", ...
-            num2str(log10(parameters.x0_perturbation_level))...
-            ,"_", num2str(parameters.num_random));
-    end
-else
-    if ~parameters.random_initial_point
-        pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-            num2str(parameters.problems_maxdim),"_",num2str(parameters.num_random),...
-            "_", parameters.fmin_type, "_", parameters.noise_type,...
-            "_", num2str(log10(parameters.noise_level)));
-    else
-        pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-            num2str(parameters.problems_maxdim),"_",num2str(parameters.num_random),...
-            "_", parameters.fmin_type, "_", "rand", "_", parameters.noise_type,...
-            "_", num2str(log10(parameters.noise_level)), "_", num2str(log10(parameters.x0_perturbation_level)));
+        if ~parameters.random_initial_point
+            parameters.feature = strcat(parameters.noise_type, "_", num2str(log10(parameters.noise_level)), "_noise");
+        else
+            parameters.feature = strcat(parameters.noise_type, "_", num2str(log10(parameters.noise_level)), "_noise",...
+            "_", "randomx0", "_", num2str(log10(parameters.x0_perturbation_level)));
+        end
+    end 
+end
 
+
+if isfield(parameters, "feature")
+    pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+    num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
+    "_", num2str(parameters.num_random));
+else
+    if ~parameters.is_noisy
+        if ~parameters.random_initial_point
+            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+            num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", num2str(parameters.num_random));
+        else
+            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+            num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", "randomx0", "_",...
+            num2str(log10(parameters.x0_perturbation_level)), "_", num2str(parameters.num_random));
+        end
+    else
+        if ~parameters.random_initial_point
+            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+            num2str(parameters.problems_maxdim),"_", "_", parameters.fmin_type, "_", parameters.noise_type,...
+            "_", num2str(log10(parameters.noise_level)), "_", num2str(parameters.num_random));
+        else
+            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
+            num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", "rand", "_", parameters.noise_type,...
+            "_", num2str(log10(parameters.noise_level)), "_", "randomx0", "_",...
+            num2str(log10(parameters.x0_perturbation_level)), "_", num2str(parameters.num_random));
+        end
     end
 end
 

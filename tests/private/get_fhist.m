@@ -29,6 +29,14 @@ elseif isfield(test_options, "maxfun")
     options.maxfun = test_options.maxfun;
 end
 
+% Set initial step size and StepTolerance before computing.
+if isfield(test_options, "StepTolerance")
+    options.StepTolerance = test_options.StepTolerance;
+end
+if isfield(test_options, "alpha_init")
+    options.alpha_init = test_options.alpha_init;
+end
+
 % Get the options for j-th solver.
 options = get_options(name_solver, options);
 
@@ -53,7 +61,7 @@ if ~isempty(find(prima_list == name_solver, 1))
 end
 
 % Get length of fhist.
-fhist_length = obj.nEval;
+fhist_length = min(obj.nEval, options.maxfun);
 fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
 
 % Trim fhist for performance profile. If the length of fhist is less than maxfun,

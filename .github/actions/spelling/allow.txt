@@ -1,5 +1,3 @@
-# 
-
 abbrev
 abc
 addpath
@@ -821,10 +819,6 @@ yshift
 yticklabels
 yticks
 Zmat
-
-#################################################################
-# latex symbols added by oneself
-
 ifdraft
 mathbbm
 algorithmicx
@@ -890,10 +884,6 @@ xspace
 bbold
 AMSb
 pzc
-
-#################################################################
-# personal allowance 
-
 ASCE
 Abadie
 Abbeel
@@ -1776,7 +1766,6 @@ utx
 vorkommenden
 workflow
 workflows
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 yml
 zaikunzhang
 zaikun
