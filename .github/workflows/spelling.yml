@@ -136,7 +136,7 @@ jobs:
       cancel-in-progress: false
     steps:
     - name: apply spelling updates
-      uses: check-spelling/checkout-merge@main
+      uses: check-spelling/check-spelling@main
       with:
         experimental_apply_changes_via_bot: 1
         checkout: true
