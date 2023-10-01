@@ -161,6 +161,7 @@ end
 
 % Name pdf automatically.
 for i = 1:num_solvers
+    keyboard
     pdfname_solver = get_pdf_name(parameters, i);
     if i == 1
         pdfname = pdfname_solver;

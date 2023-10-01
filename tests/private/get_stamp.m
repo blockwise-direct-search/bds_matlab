@@ -46,6 +46,9 @@ switch parameters.solvers_options{i}.solver
         
     case {"matlab_patternsearch"}
         solver_stamp = "patternsearch";
+
+    case {"bfo"}
+        solver_stamp = "bfo";
 end
 
 % Set solver_stamp for PRIMA family.

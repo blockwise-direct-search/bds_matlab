@@ -35,6 +35,11 @@ for i = 1:solvers_num
              parameters.solvers_options{i}.solver = "dspd";
      end
 
+     % Set solver to be bfo (lower case) if it is BFO.
+     if strcmpi(parameters.solvers_options{i}.solver, "BFO")
+             parameters.solvers_options{i}.solver = "bfo";
+     end     
+
 end
 
 end

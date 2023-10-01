@@ -52,6 +52,9 @@ switch parameters.solvers_options{i}.solver
                 parameters.solvers_options{i}.linesearch_type);
         end
 
+    case {"bfo"}
+       solver_legend = "bfo";
+       
 end
 
 % Get legend of algorithm of Prima family.

@@ -54,7 +54,7 @@ function [output] = profile(parameters)
     
         % Tell MATLAB where to find MatCUTEst.
         locate_matcutest();
-        % Tell MATLAB where to find prima.
+        % Tell MATLAB where to find PRIMA.
         PRIMA_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
         if ~isempty(intersect(lower(PRIMA_list), lower(parameters.solvers_name)))
             locate_prima();

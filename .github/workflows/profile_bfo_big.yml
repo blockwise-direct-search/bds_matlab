@@ -1,8 +1,8 @@
-name: Plot performance profiles for bds and nlopt, small
+name: Plot performance profiles for bds and bfo, big
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -13,47 +13,31 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and NLOPT, small
+    name: Profile BDS and bfo, big
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [R2023a]
-        dim: [small]
+        dim: [big]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [nlopt_newuoa]
+        competitor: [bfo]
         feature: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
 
     steps:
+
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
-      - name: Install GCC
-        run: sudo apt-get update && sudo apt-get install gcc-10 
-
-      - name: Set GCC version
-        run: |
-          echo "CC=gcc-10" >> $GITHUB_ENV
-          echo "CXX=g++-10" >> $GITHUB_ENV
-  
-      - name: check gcc version
-        run: /usr/bin/gcc-10 --version
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v4
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone NLOPT
-        uses: actions/checkout@v4
-        with:
-          repository: stevengj/nlopt
-          path: nlopt
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -83,12 +67,6 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
-      - name: Install cmake
-        run: sudo apt-get install cmake
-  
-      - name: Install NLOPT
-        run: cd ./nlopt && cmake . && make && sudo make install
-
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
@@ -107,18 +85,12 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.maxfun_factor = 1e3;
-
-            NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
-            if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))
-                parts = split("${{ matrix.competitor }}", '_');
-                parameters.solvers_options{2}.Algorithm = char(parts(2));
-            end  
-            parameters.solvers_name = ["${{ matrix.solver }}", "nlopt"];
+            parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             
             plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_nlopt_small
+          name: test_bds_bfo_big
           path: ./tests/testdata

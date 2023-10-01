@@ -1,6 +1,6 @@
 function plot_profile(parameters)
 % This script is for test.
-%parameters.problems_dim = "small";
+parameters.problems_dim = "small";
 parameters.maxfun_factor = 1e3;
 parameters.alpha_init = 1;
 parameters.StepTolerance = eps;

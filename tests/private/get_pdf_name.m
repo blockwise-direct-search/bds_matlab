@@ -54,6 +54,9 @@ switch parameters.solvers_options{i}.solver
         
     case "matlab_patternsearch"
         pdfname = strcat("patternsearch", "_", "gps");
+    
+    case "bfo"
+        pdfname = "bfo";
 end
 
 if any(strcmpi(prima_list, parameters.solvers_options{i}.solver))
