@@ -329,7 +329,8 @@ function [output] = profile(parameters)
         % Set tolerance of convergence test in performance profile.
         tau = parameters.tau;
         tau_length = length(tau);
-        options_perf.time_stamp = time_str;
+        
+        options_perf.pdfname = parameters.pdfname;
         options_perf.solvers = parameters.solvers_legend;
         options_perf.natural_stop = false;
     

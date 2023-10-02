@@ -11,14 +11,6 @@ if ~isfield(parameters, "problems_type")
     parameters.problems_type = get_default_profile_options("problems_type");
 end
 
-if ~isfield(parameters, "problems_mindim")
-    parameters.problems_mindim = get_default_profile_options("problems_mindim");
-end
-
-if ~isfield(parameters, "problems_maxdim")
-    parameters.problems_maxdim = get_default_profile_options("problems_maxdim");
-end
-
 if isfield(parameters, "problems_dim")
     if strcmpi(parameters.problems_dim, "small")
         parameters.problems_mindim = 1;
