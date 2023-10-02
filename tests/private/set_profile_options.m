@@ -43,6 +43,11 @@ for i = 1:num_solvers
     end
 end
 
+if ~isfield(parameters, "problems_mindim") && ~isfield(parameters, "problems_maxdim")
+    parameters.problems_mindim = 1;
+    parameters.problems_maxdim = 5;
+end
+
 % Set tau for performance profile.
 if ~isfield(parameters, "min_precision")
     parameters.tau = 10.^(-1:-1:get_default_profile_options("min_precision"));
