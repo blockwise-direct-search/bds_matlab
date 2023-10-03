@@ -45,7 +45,7 @@ jobs:
           exit 1
         else
           echo "No spelling errors found."
-          rm *_spelling_errors.txt
+          rm -f *_spelling_errors.txt
         fi
 
     - name: Upload spelling errors summary
