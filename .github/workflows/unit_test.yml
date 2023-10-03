@@ -1,0 +1,51 @@
+name: Unit test
+
+on:
+  # Trigger the workflow on push or pull request
+  push:
+  # Trigger the workflow manually
+  schedule:
+    - cron: '0 18 * * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Stress test
+    runs-on: ${{matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        matlab: [R2021a, R2022a, R2023a]#, latest]
+        with_optim_toolbox: [no]
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Cache MATLAB
+        id: cache-matlab
+        uses: actions/cache@v3.3.2
+        with:
+          path: ${{ runner.tool_cache }}/MATLAB
+          key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
+
+      - name: Set up MATLAB 
+        uses: matlab-actions/setup-matlab@v2-beta
+        with:
+          release: ${{ matrix.matlab }}
+
+      - name: Run unit test
+        uses: matlab-actions/run-command@v1.2.0
+        with:
+          command: |
+            root_dir = pwd()
+
+            % Change the directory to the folder where the unit_test.m is located
+            path_src = fullfile(root_dir, 'src');
+            cd(path_src);
+
+            % Run unit test
+            results = runtests(path_src)

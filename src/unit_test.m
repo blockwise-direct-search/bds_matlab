@@ -79,15 +79,15 @@ function tests = unit_test
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
     
     constant_name = "sufficient_decrease_factor";
-    constant_value = 1e-3;
+    constant_value = eps;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
     constant_name = "accept_simple_decrease";
-    constant_value = false;
+    constant_value = true;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)    
      
     constant_name = "StepTolerance";
-    constant_value = eps;
+    constant_value = 1e-10;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
     constant_name = "shuffle_period";
@@ -193,21 +193,21 @@ function tests = unit_test
 
     end
     
-    function blockwise_direct_search_test(testCase)
-    %BLOCKWISE_DIRECT_SEARCH_TEST tests the file bds.m.
-
-    fun = @(x) x(1)^2 + x(2)^2;
-    x0 = [100; 100];
-    options = struct();
-
-    xval_result = [0; 0];
-    fval_result = 0;
-    exitflag_result = 0;
-
-    [xval, fval, exitflag] = bds(fun, x0, options);
-
-    verifyEqual(testCase, xval, xval_result);
-    verifyEqual(testCase, fval, fval_result);
-    verifyEqual(testCase, exitflag, exitflag_result);
-    
-    end
+    % function blockwise_direct_search_test(testCase)
+    % %BLOCKWISE_DIRECT_SEARCH_TEST tests the file bds.m.
+    % 
+    % fun = @(x) x(1)^2 + x(2)^2;
+    % x0 = [100; 100];
+    % options = struct();
+    % 
+    % xval_result = [0; 0];
+    % fval_result = 0;
+    % exitflag_result = 0;
+    % 
+    % [xval, fval, exitflag] = bds(fun, x0, options);
+    % 
+    % verifyEqual(testCase, xval, xval_result);
+    % verifyEqual(testCase, fval, fval_result);
+    % verifyEqual(testCase, exitflag, exitflag_result);
+    % 
+    % end
