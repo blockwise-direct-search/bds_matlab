@@ -37,7 +37,7 @@ for i = 1:solvers_num
 
      % Set solver to be bfo (lower case) if it is BFO.
      if strcmpi(parameters.solvers_options{i}.solver, "BFO")
-             parameters.solvers_options{i}.solver = "bfo";
+             parameters.solvers_options{i}.solver = "bfo_optimize";
      end     
 
 end

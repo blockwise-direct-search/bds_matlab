@@ -45,7 +45,7 @@ jobs:
           repository: m01marpor/BFO
           path: bfo
   
-      - name: modify bfo
+      - name: modify BFO
         run: 
           cd ./bfo && sed -i '/^found  /{s/.*/found = 1/;n;d;}' bfo.m
 
@@ -87,10 +87,10 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Move bfo to the competitor.
+            % Move bfo.m to the competitor.
             path_bfo = fullfile(root_dir, 'bfo', 'bfo.m');
-            path_competitor = fullfile(root_dir, 'tests', 'competitor');
-            movefile(path_bfo, path_competitor);
+            path_competitors = fullfile(root_dir, 'tests', 'competitors');
+            movefile(path_bfo, path_competitors);
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');

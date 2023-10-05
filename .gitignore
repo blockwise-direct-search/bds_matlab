@@ -35,3 +35,6 @@ tests/testdata/
 
 # output.txt
 tests/*.txt
+
+# bfo.m for the copyright
+bfo.m
