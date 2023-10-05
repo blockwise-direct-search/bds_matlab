@@ -716,7 +716,7 @@ Iserles
 isfield
 isintegerscalar
 islogicalscalar
-ismatrix 
+ismatrix
 ismember
 isnan
 isnumeric
@@ -737,7 +737,7 @@ isscalar
 ISSMO
 isstring
 isstruct
-isvector 
+isvector
 itemnum
 itemp
 iterc
@@ -964,10 +964,10 @@ mathpzc
 mathscr
 mathz
 matique
-matlab 
+matlab
 Matlab
 MATLAB
-matlabroot 
+matlabroot
 Mattingley
 matzam
 max
@@ -980,7 +980,7 @@ Maxhist
 maximality
 maxit
 maxiter
-maxtime 
+maxtime
 mbgen
 mbox
 mbox
@@ -1584,7 +1584,7 @@ testcu
 testdata
 Tetruashvili
 Teukolsky
-texlive  
+texlive
 textbf
 textcircled
 textcite
@@ -1623,7 +1623,7 @@ timezone
 titlepage
 titlesec
 Titley
-Tmin 
+Tmin
 tmm
 tmp
 toc
@@ -1632,7 +1632,7 @@ TODO
 Toint
 tolfun
 Tolle
-tolx  
+tolx
 Tomioka
 Tomov
 tomur
@@ -1696,7 +1696,7 @@ utx
 VALHIST
 Vanaret
 varargin
-VARDIM 
+VARDIM
 varepsilon
 varkappa
 varnothing
