@@ -18,6 +18,7 @@ options.StepTolerance = eps;
 
 tic;
 [x, fval, exitflag, output] = bds(p.objective, p.x0, options)
+%matlab_fminsearch(p.objective, p.x0, options)
 toc;
 
 fhist_length = length(output.fhist);

@@ -1,4 +1,6 @@
 function tough_problem = tough(problem, random_seed, noise_level, with_failure)
+    % This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/tough.m, which is
+    % written by Zaikun Zhang.
     %This function prepares the TOUGH version of a given problem.
     % problem: a structure defining the original problem
     % random_seed: a seed provided by the caller in order to ensure reproducibility

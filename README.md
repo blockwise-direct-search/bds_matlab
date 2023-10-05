@@ -15,6 +15,7 @@ The tests are **automated** by
 - [Tests](https://github.com/blockwise-direct-search/bds/actions) at [blockwise-direct-search/bds](https://github.com/blockwise-direct-search/bds/)
 
     - [![Check Spelling](https://github.com/blockwise-direct-search/bds/actions/workflows/spelling.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/spelling.yml)
+    - [![Unit test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/unit_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/unit_test.yml)
     - [![Stress test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml)
     - [![Test sufficient decrease factor of BDS, small](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_small_sd.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_small_sd.yml)
     - [![Test sufficient decrease factor of BDS, big](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_big_sd.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_big_sd.yml)

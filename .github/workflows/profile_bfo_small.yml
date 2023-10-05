@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and bfo, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -38,6 +38,16 @@ jobs:
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
+
+      - name: Clone BFO
+        uses: actions/checkout@v4
+        with:
+          repository: m01marpor/BFO
+          path: bfo
+  
+      - name: modify bfo
+        run: 
+          cd ./bfo && sed -i '/^found  /{s/.*/found = 1/;n;d;}' bfo.m
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -76,6 +86,11 @@ jobs:
             % Install MatCUTEst
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
+
+            % Move bfo to the competitor.
+            path_bfo = fullfile(root_dir, 'bfo', 'bfo.m');
+            path_competitor = fullfile(root_dir, 'tests', 'competitor', 'bfo.m');
+            movefile(path_bfo, path_competitor);
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');

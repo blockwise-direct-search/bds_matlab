@@ -1,4 +1,6 @@
 function problem = stress_problem(n, ~, random_seed)
+    %This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/stress_problem.m, which 
+    %is written by Zaikun Zhang.
     %This function generates a test problem for the stress test.
     % n: the dimension of the problem
     % problem_type:

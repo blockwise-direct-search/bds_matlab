@@ -90,8 +90,22 @@ if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
 
-if strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
-        || strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "rbds")
+if isfield(options, "searching_set")
+    if size(searching_set, 1) ~= n
+        warning("The length of the direction should be n.");
+    else
+        if size(searching_set, 2) ~= n
+            warning("The number of directions in the searching_set should be n.");
+        else
+            if rank(searching_set) == size(searching_set, 2)
+                % TODO: not using this way!
+                D = [searching_set -searching_set];
+            else
+                warning("Directions should be linearly independent.");
+            end
+        end
+    end
+else
     D = get_searching_set(n, options);
 end
 
@@ -246,6 +260,7 @@ if isfield(options, "alpha_init")
         error("The length of alpha_init should be equal to nb or equal to 1.");
     end
 else
+    % Try alpha_all = 0.5 * max(abs(x), 1) in the canonical case.
     alpha_all = ones(nb, 1);
 end
 

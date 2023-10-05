@@ -1,9 +1,9 @@
 function stress(solver, options)
-% This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/stress.m, which is
-% written by Zaikun ZHANG.
-%
-%STRESS  Stress test for the solver on problems large dimensions.
-%
+   %This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/stress.m, which is
+   %written by Zaikun ZHANG.
+   %
+   %STRESS  Stress test for the solver on problems large dimensions.
+   %
 
 if nargin < 2
     options = struct();
