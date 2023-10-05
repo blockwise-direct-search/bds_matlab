@@ -30,6 +30,7 @@ backslash
 barwedge
 bbbk
 beforepartskip
+bfo
 bigden
 biglag
 blockwise
@@ -102,6 +103,7 @@ classdef
 clf
 closing
 clubsuit
+cmake
 cmpaths
 cmtools
 cobyla
@@ -123,6 +125,7 @@ curlyvee
 curlywedge
 curvearrowleft
 curvearrowright
+CXX
 cycling
 dashleftarrow
 dashrightarrow
@@ -193,6 +196,7 @@ fallingdotseq
 fbase
 fbeg
 FBRAIN
+fclose
 feval
 fhist
 fignamebase
@@ -205,6 +209,7 @@ fminsearch
 fminunc
 fnew
 fontsize
+fopen
 fopt
 fprintf
 frec
@@ -414,6 +419,7 @@ makepagestyle
 maketitle
 MANCINO
 mapsto
+marpor
 matcutest
 mathbf
 mathcal
@@ -595,6 +601,7 @@ rosenbrock
 rseed
 rsh
 rtimes
+runtests
 saveas
 savepath
 SCALARFUNCTION
@@ -649,6 +656,7 @@ ss
 ssden
 sstemp
 steepdesc
+stevengj
 sth
 stockheight
 stockwidth

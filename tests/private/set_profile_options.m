@@ -127,7 +127,7 @@ end
 if ~isfield(parameters, "num_random")
     if isfield(parameters, "problems_dim")
         if parameters.is_noisy && strcmpi(parameters.problems_dim, "small")
-            parameters.num_random = 5;
+            parameters.num_random = 10;
         elseif parameters.is_noisy && strcmpi(parameters.problems_dim, "big")
             parameters.num_random = 5;
         elseif ~parameters.is_noisy && strcmpi(parameters.problems_dim, "small") && parameters.random_initial_point
