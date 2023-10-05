@@ -61,6 +61,16 @@ ignore$
 \.zip$
 ^\.github/actions/spelling/
 ^\Q.github/workflows/spelling.yml\E$
+ismatrix
+isvector
+linesearch
+matlab
+matlabroot
+maxtime
+texlive
+Tmin
+tolx
+VARDIM
 
 #######################################
 # Added by Zaikun
