@@ -19,6 +19,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   ftarget                     Target of function value. If function value is below ftarget, 
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
+%   searching_set               Searching set of directions.
 %   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
 %                               with_memory decides whether the cycling strategy memorizes 
 %                               the history or not.
@@ -90,24 +91,8 @@ if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
 
-if isfield(options, "searching_set")
-    if size(searching_set, 1) ~= n
-        warning("The length of the direction should be n.");
-    else
-        if size(searching_set, 2) ~= n
-            warning("The number of directions in the searching_set should be n.");
-        else
-            if rank(searching_set) == size(searching_set, 2)
-                % TODO: not using this way!
-                D = [searching_set -searching_set];
-            else
-                warning("Directions should be linearly independent.");
-            end
-        end
-    end
-else
-    D = get_searching_set(n, options);
-end
+% Get the searching set of directions.
+D = get_searching_set(n, options);
 
 % Set the value of expand factor.
 if isfield(options, "expand")

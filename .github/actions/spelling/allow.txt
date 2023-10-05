@@ -1740,7 +1740,6 @@ Waanders
 Walster
 warnoff
 Wcheck
-whethe
 wholename
 widehat
 widetilde
