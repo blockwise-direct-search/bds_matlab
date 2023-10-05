@@ -879,7 +879,7 @@ lincoa
 Lindenstrauss
 linearen
 linescu
-linesearch 
+linesearch
 Linesearch
 linewidth
 linkcolor
