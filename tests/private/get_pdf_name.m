@@ -55,7 +55,7 @@ switch parameters.solvers_options{i}.solver
     case "matlab_patternsearch"
         pdfname = strcat("patternsearch", "_", "gps");
     
-    case "bfo"
+    case "bfo_optimize"
         pdfname = "bfo";
 end
 

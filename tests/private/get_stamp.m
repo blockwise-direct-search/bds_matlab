@@ -47,7 +47,7 @@ switch parameters.solvers_options{i}.solver
     case {"matlab_patternsearch"}
         solver_stamp = "patternsearch";
 
-    case {"bfo"}
+    case {"bfo_optimize"}
         solver_stamp = "bfo";
 end
 

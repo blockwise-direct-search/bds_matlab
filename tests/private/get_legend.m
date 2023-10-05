@@ -52,7 +52,7 @@ switch parameters.solvers_options{i}.solver
                 parameters.solvers_options{i}.linesearch_type);
         end
 
-    case {"bfo"}
+    case {"bfo_optimize"}
        solver_legend = "bfo";
        
 end
