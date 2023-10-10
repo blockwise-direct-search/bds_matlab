@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest]
         matlab: [R2023a]
         dim: [small]
-        with_optim_toolbox: [yes]
+        with_optim_toolbox: [no]
         solver: [CBDS]
         competitor: [nomad]
         feature: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
@@ -95,9 +95,6 @@ jobs:
       - name: Install
         run: cd ./nomad && cmake --install build/release
 
-      - name: Test nomad without MATLAB
-        run: cd ./nomad && cd build/release && ctest
-
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
@@ -108,7 +105,7 @@ jobs:
 
             % Test Matlab interface of nomad
             cd(fullfile(nomad_dir, 'interfaces', 'Matlab_MEX'));
-            test_nomad_gerad
+            test_nomad_gerad();
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
