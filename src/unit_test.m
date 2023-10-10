@@ -189,25 +189,24 @@ function tests = unit_test
     D = [eye(n) -eye(n)];
     verifyEqual(testCase, get_searching_set(n, options), D)
 
+    n = 3;
+    options = struct();
+    options.searching_set = [1 0;0 0;0 0];
+    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
+    verifyEqual(testCase, get_searching_set(n, options), D)
 
+    n = 3;
+    options = struct();
+    options.searching_set = [1 0;0 1;0 0];
+    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
+    verifyEqual(testCase, get_searching_set(n, options), D)
+
+    n = 3;
+    options = struct();
+    options.searching_set = eye(3);
+    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
+    verifyEqual(testCase, get_searching_set(n, options), D)
+    
 
     end
     
-    % function blockwise_direct_search_test(testCase)
-    % %BLOCKWISE_DIRECT_SEARCH_TEST tests the file bds.m.
-    % 
-    % fun = @(x) x(1)^2 + x(2)^2;
-    % x0 = [100; 100];
-    % options = struct();
-    % 
-    % xval_result = [0; 0];
-    % fval_result = 0;
-    % exitflag_result = 0;
-    % 
-    % [xval, fval, exitflag] = bds(fun, x0, options);
-    % 
-    % verifyEqual(testCase, xval, xval_result);
-    % verifyEqual(testCase, fval, fval_result);
-    % verifyEqual(testCase, exitflag, exitflag_result);
-    % 
-    % end

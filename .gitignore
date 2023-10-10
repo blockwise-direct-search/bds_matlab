@@ -36,5 +36,9 @@ tests/testdata/
 # output.txt
 tests/*.txt
 
+# wm_newuoa
+wm_newuoa.m
+tests/competitors/wm_newuoa
+
 # bfo.m for the copyright
 bfo.m

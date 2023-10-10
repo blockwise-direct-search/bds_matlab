@@ -28,14 +28,9 @@ path_bds = fileparts(path_examples);
 path_src = fullfile(path_bds, 'src');
 addpath(path_src)
 
-% The following syntax is identical to fmincon:
-[xval, fval, exitflag, output] = bds(@rosenb, [0; 0; 0], options)
-% Alternatively, the problem can be passed to bds as a structure:
-%p.objective = @chrosen; p.x0 = x0;
-%[x, fx, exitflag, output] = bds(p.objective, p.x0);
-
 fprintf('\n1. No constraints:\n');
-[xval, fval, exitflag, output] = bds(@chrosen, x0);
+% The following syntax is identical to fmincon:
+[xval, fval, exitflag, output] = bds(@chrosen, x0, options);
 
 rmpath(path_src)
 

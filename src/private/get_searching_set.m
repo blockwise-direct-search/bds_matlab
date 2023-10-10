@@ -7,7 +7,9 @@ function D = get_searching_set(n, options)
    %D = SEARCHING_SET(N, OPTIONS) allows to provide options to the set
    %generation. Set OPTIONS.direction to "identity" to obtain
    %{e_1, ..., e_n, -e_1,..., -e_n}, represented in matrix form.
-   %
+   %Set OPTIONS.direction to "canonical" to obtain {e_1, -e_1, ..., e_n, -e_n}, 
+   %represented in matrix form.
+   % 
 
 % Set options to an empty structure if it is not provided.
 if nargin < 2
@@ -15,44 +17,43 @@ if nargin < 2
 end
 
 if isfield(options, "searching_set")
+
+    % Remove the directions which their norm are too small from the searching set.
     searching_set = options.searching_set;
-    if rank(searching_set) < n
-        warning("The rank of the searching set is advised to be n.");
-    else
-        if size(searching_set, 2) == n
-            D = NaN(n, 2*n);
-            D(:, 1:2:2*n-1) = searching_set;
-            D(:, 2:2:2*n) = -searching_set;
-        else
-            [n, m] = size(searching_set); 
-            % Generate indices for all possible combinations of vectors.
-            [indices1, indices2] = meshgrid(1:m, 1:m);
-            combinations = [indices1(:), indices2(:)];
-            % Find the indices of vector combinations that sum to zero.
-            zero_indices = all(searching_set(:, combinations(:, 1)) + ...
-                searching_set(:, combinations(:, 2)) == 0, 1);
-            % Extract the indices of vector combinations that sum to zero.
-            index_matrix = combinations(zero_indices, :);
-            % Remove duplicate index pairs.
-            index_matrix = unique(sort(index_matrix, 2), 'rows');
-            index_matrix_row = reshape(index_matrix.', 1, []);
-            D_pair = searching_set(:, index_matrix_row);
-            % Obtain the column indices which are not included into the 
-            % vector combinations that sum to zero.
-            all_indices = 1:m;
-            preserve_indices = setdiff(all_indices, unique(index_matrix(:)));
-            if ~isempty(preserve_indices)
-                preserve_indices_length = length(preserve_indices);
-                D_preserve = NaN(n, 2*preserve_indices_length);
-                D_preserve_initial = searching_set(:, preserve_indices);
-                D_preserve(:, 1:2:2*preserve_indices_length-1) = D_preserve_initial;
-                D_preserve(:, 2:2:2*preserve_indices_length) = -D_preserve_initial;
-                D = [D_pair D_preserve];
-            else
-                D = D_pair;
-            end
-        end
+    shortest_direction_norm = 10*eps;
+    direction_norms = sqrt(sum(searching_set.^2, 1));
+    short_directions = (direction_norms < shortest_direction_norm);
+    if any(short_directions)
+        warning("The searching set contains directions shorter than %g. They are removed.", ...
+            shortest_direction_norm);  
+        searching_set = searching_set(:, ~short_directions);
     end
+    
+    % By QR factorization, the searching set will linearly span the full space.
+    [Q, R] = qr(searching_set);
+    [~, m] = size(Q);
+    Q_indices = 1:m;
+    Q_indices(abs(diag(R)) > 10*eps) = [];
+    %searching_set = [searching_set Q(:, diag(R) <= eps)];
+    searching_set = [searching_set, Q(:, Q_indices)]; 
+    
+    % Find those directions which are opposite or parallel in pairs. Preserve the
+    % first one appearing in the searching set and remove the others.
+    direction_norms = sqrt(sum(searching_set.^2, 1));
+    G = searching_set'*searching_set; 
+    opposite_directions = (G < -(1 - 1.0e-10) * (direction_norms' * direction_norms));   
+    [~, repetition_directions_indices] = find(triu(opposite_directions));
+    
+    % Create a logical index vector to select the columns to preserve.
+    preserved_indices = ~ismember(1:size(searching_set, 2), repetition_directions_indices);
+    % Generate a new matrix by selecting the columns to preserve.
+    D_clean = searching_set(:, preserved_indices);
+    
+    % Make the searching set positively span the full space.
+    m = size(D_clean, 2);
+    D = NaN(n, 2*m);
+    D(:, 1:2:2*m-1) = D_clean;
+    D(:, 2:2:2*m) = -D_clean;
 else
     % Set the default searching set, which is identity.
     D = [eye(n) -eye(n)];

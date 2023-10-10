@@ -113,7 +113,8 @@ m = size(D, 2);
  
 % Get the number of blocks.
 if isfield(options, "nb")
-    nb = options.nb;
+    % The number of directions should be greater or equal to the number of blocks.
+    nb = min(m, options.nb);
 elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
         || strcmpi(options.Algorithm, "rbds")
     % Default value is set as n, which is good for canonical with 2n directions. For
@@ -122,9 +123,6 @@ elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds").
 elseif strcmpi(options.Algorithm, "ds")
     nb = 1;
 end
-
-% The number of directions should be greater or equal to the number of blocks.
-nb = min(m, nb);
 
 % Set indices of blocks as 1:nb.
 block_indices = 1:nb;
@@ -345,7 +343,7 @@ for iter = 1:maxit
             block_indices = block_real_indices(idx);
         end
     end
-
+    
     for i = 1:length(block_indices)
         % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
         % going to visit.
