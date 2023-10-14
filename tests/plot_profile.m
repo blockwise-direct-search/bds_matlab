@@ -1,5 +1,5 @@
 function plot_profile(parameters)
-% This script is for the performance profile of the solvers on some CUTEst prolbems. The basic input of parameters
+% This script is for the performance profile of the solvers on some CUTEst problems. The basic input of parameters
 % should be parameters.solvers_name = ["solver1", "solver2" ...]. Additionally, if the user wants to add
 % options for the solvers, the input should be parameters.solvers_options = {options1, options2 ...},
 % where options are structures.  

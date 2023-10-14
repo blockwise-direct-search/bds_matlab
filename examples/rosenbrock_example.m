@@ -1,4 +1,6 @@
 function rosenbrock_example()
+%This file is cited from https://github.com/libprima/prima/blob/main/matlab/examples/rosenbrock_example.m, which is
+%written by Zaikun Zhang. 
 %ROSENBROCK_EXAMPLE illustrates how to use bds.
 %
 %   ***********************************************************************
@@ -30,7 +32,7 @@ addpath(path_src)
 
 fprintf('\n1. No constraints:\n');
 % The following syntax is identical to fmincon:
-[xval, fval, exitflag, output] = bds(@chrosen, x0, options);
+[xval, fval, exitflag, output] = bds(@chrosen, x0, options)
 
 rmpath(path_src)
 
