@@ -317,6 +317,7 @@ curlywedge
 curvearrowleft
 curvearrowright
 Custodio
+CUTEst
 cvs
 CXX
 cycling
@@ -1654,6 +1655,7 @@ thicksim
 thispagestyle
 thodes
 thresholding
+tian
 Tibshirani
 tikz
 tikzpicture
@@ -1714,6 +1716,7 @@ Ullrich
 und
 underdetermined
 uninstall
+uninstalls
 Universitext
 unlhd
 unrhd

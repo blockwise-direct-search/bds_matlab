@@ -1,4 +1,8 @@
 function [f, g] = chrosen(x) % Chained Rosenbrock function
+% This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/private/chrosen.m, which
+% is written by Zaikun Zhang.
+%
+
 alpha = 4.0;
 f = sum((x(2:end)-1).^2 + alpha*(x(2:end).^2 - x(1:end-1)).^2);
 if nargout >= 2

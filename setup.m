@@ -89,6 +89,8 @@ fprintf('\nYou may now try ''help bds'' for information on the usage of the pack
 
 if ~strcmp(action, 'bds')
     fprintf('\nYou may also run ''testbds'' to test the package on a few examples.\n');
+    fprintf('\nIf you want to test solvers on CUTEst problems,\n');
+    fprintf('\nplease see https://github.com/matcutest/matcutest_compiled for more information.\n');
 end
 
 rmpath(setup_tools_dir);
