@@ -158,7 +158,7 @@ jobs:
           command: |
             ver;
             root_dir = pwd();
-            cd(fullfile(root_dir, 'matlab/tests'));
+            cd(fullfile(root_dir, 'tests'));
             options = struct();
             if ~isempty('${{ inputs.random-seed }}')
                 options.seed = str2num('${{ inputs.random-seed }}');

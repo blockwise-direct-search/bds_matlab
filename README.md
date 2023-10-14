@@ -8,7 +8,14 @@ BDS is a derivative-free package using blockwise direct-search methods. The curr
 
 See [Haitian LI's presentation](https://lht97.github.io/documents/ICNONLA2023.pdf) on BDS for more information.
 
-## How to test BDS?
+## How to use BDS?
+```bash
+git clone https://github.com/blockwise-direct-search/bds.git
+cd bds
+setup
+```
+
+## Test of BDS.
 The tests are **automated** by
 [GitHub Actions](https://docs.github.com/en/actions). 
 
