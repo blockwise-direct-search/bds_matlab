@@ -21,7 +21,7 @@ classdef ScalarFunction < handle
             %   which stores the history.
             %
             %   OBJ = SCALARFUNCTION(P,STOREHIST) uses the value of
-            %   STOREHIST to decide whethe to store the history.
+            %   STOREHIST to decide whether to store the history.
             obj.userFun = varargin{1}.objective;
             obj.storeHist = true;
             if nargin > 1

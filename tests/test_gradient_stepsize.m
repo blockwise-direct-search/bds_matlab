@@ -1,6 +1,6 @@
 function ratio = test_gradient_stepsize(problem_name, options)
-
-p = macup(problem_name);
+% This function tests the ratio between the gradient norm and the StepTolerance on CUTEst problems.
+% 
 
 if nargin < 2
     options.solver_name = "bds";
@@ -17,6 +17,7 @@ addpath(path_competitors)
 
 cd(path_locate)
 locate_matcutest();
+p = macup(problem_name);
 if strcmpi(options.solver_name, "newuoa")
     locate_prima();
 end

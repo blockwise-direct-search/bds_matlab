@@ -25,7 +25,7 @@ jobs:
         solver: [CBDS]
         competitor: [lam]
         linesearch_type: [standard, new]
-        feature: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
+        feature: [plain, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
 
     steps:
 

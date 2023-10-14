@@ -100,6 +100,7 @@ bbbk
 bbgreekl
 bbm
 bbold
+bbopt
 Beckenstein
 Beckermann
 beforepartskip
@@ -325,6 +326,7 @@ dashv
 Datamodel
 datetime
 Davidon
+DBUILD
 ddag
 ddagger
 ddot
@@ -1148,6 +1150,7 @@ ominus
 Omojokun
 onelineskip
 oneside
+OPENMP
 Oper
 Opin
 oplus
@@ -1650,6 +1653,7 @@ triangleq
 triangleright
 trianglerighteq
 trimbib
+triu
 Tropp
 Trosset
 trsapp

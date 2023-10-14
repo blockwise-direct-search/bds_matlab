@@ -42,3 +42,12 @@ tests/competitors/wm_newuoa
 
 # bfo.m for the copyright
 bfo.m
+
+# setup
+# setup.m
+# recursive.m
+# parallel.m
+# setup_tools/
+# testbds.m
+# parallel_test_matlab.yml
+# recursive_test_matlab.yml

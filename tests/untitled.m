@@ -1,33 +1,75 @@
-% cd '/home/lhtian97/Documents/bds/tests/private';
-% locate_matcutest
-% cd ..
-% p = macup('akiva');
-% obj = ScalarFunction(p);
-% test_options.is_noisy = false;
-% test_options.noise_type = "gaussian";
-% test_options.is_abs_noise = false;
-% test_options.noise_level = 1e-3;
-% r = 2;
-% options.maxfun = 1e3;
-% options.Algorithm = "newuoa";
-% nlopt(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options)
-% obj
-% 
-% 要创建的数组大小（示例）
-arraySize = [1000, 100];  % 行数 x 列数
+function [xval, fval, exitflag, output] = untitled(inputArg1,inputArg2)
+options = struct();
+options.Algorithm = 'pbds';
+options.maxfun = 1e5;
+options.StepTolerance = eps;
+[xval, fval, exitflag, output] = bds(@(x)goldp(x), [0;0], options)
+end
 
-% 获取当前 Java 虚拟机的运行时实例
-rt = java.lang.Runtime.getRuntime;
+function f = goldp(x)
+%GOLDP evaluates the Goldstein-Price function
+%
+%   See
+%   [1] Dixon, L. C. W., & Szego, G. P. (1978). The global optimization problem: an introduction. Towards global optimization, 2, 1-15.
 
-% 获取最大可用内存大小
-maxMemory = rt.maxMemory;
+f1a = (x(1) + x(2) + 1)^2;
+f1b = 19 - 14*x(1) + 3*x(1)^2 - 14*x(2) + 6*x(1)*x(2) + 3*x(2)^2;
+f1 = 1 + f1a*f1b;
 
-% 计算要创建的数组的总字节数
-arrayBytes = prod(arraySize) * 8;  % 假设每个元素为 8 字节
+f2a = (2*x(1) - 3*x(2))^2;
+f2b = 18 - 32*x(1) + 12*x(1)^2 + 48*x(2) - 36*x(1)*x(2) + 27*x(2)^2;
+f2 = 30 + f2a*f2b;
 
-% 检查数组大小是否超过最大数组大小限制
-if arrayBytes <= maxMemory
-    disp('数组大小在最大数组大小限制范围内。');
-else
-    disp('数组大小超过最大数组大小限制。');
+f = f1*f2;
+
+return
+end
+
+function f = chebquad(x)
+%CHEBQUAD evaluates the Chebyquad function.
+%
+%   See
+%   [1] Fletcher (1965), 'Function minimization without evaluating derivatives --- a review'
+
+n = length(x);
+y(1,1:n) = 1;
+y(2, 1:n) = 2*x(1:n) - 1;
+for i = 2:n
+    y(i+1, 1:n) = 2*y(2, 1:n).*y(i, 1:n) - y(i-1, 1:n);
+end
+f = 0;
+for i = 1 : n+1
+    tmp = mean(y(i, 1:n));
+    if (mod(i, 2) == 1)
+        tmp=tmp+1/double(i*i-2*i);
+    end
+    f = f + tmp*tmp;
+end
+
+return
+end
+
+function [f, g] = hmlb(x)
+%HMLB evaluates the Himmelblau's function and its gradient
+%
+%   See
+%   [1]  Himmelblau (1972),  'Applied Nonlinear Programming'
+
+f = (x(1)^2+x(2)-11)^2 + (x(1)+x(2)^2-7)^2;
+g = 2*[-7 + x(1) + x(2)^2 + 2*x(1)*(-11 + x(1)^2 + x(2)); -11 + x(1)^2 + x(2) + 2*x(2)*(-7 + x(1) + x(2)^2)];
+
+return
+end
+
+function f = mcc(x)
+%MCC evaluates the McCormick function
+
+f1 = sin(x(1) + x(2));
+f2 = (x(1) - x(2))^2;
+f3 = -1.5*x(1);
+f4 = 2.5*x(2);
+
+f = f1 + f2 + f3 + f4 + 1;
+
+return
 end

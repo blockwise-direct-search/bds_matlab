@@ -20,7 +20,7 @@ switch constant_name
     case {"sufficient_decrease_factor"}
         constant_value = eps;
     case {"accept_simple_decrease"}
-        constant_value = true;
+        constant_value = false;
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}

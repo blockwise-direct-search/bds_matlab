@@ -1,4 +1,6 @@
 function plot_fhist(problem_name, parameters)
+% This file is to draw the function value history of the solvers.
+% 
 
 fullpath = mfilename('fullpath');
 path_examples = fileparts(fullpath);

@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [pbds]
-        feature: [plain, negligible, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
+        feature: [plain, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
 
     steps:
 
