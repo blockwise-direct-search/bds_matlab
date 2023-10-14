@@ -14,7 +14,7 @@ function setup(varargin)
 %   contains this script and its subdirectories.
 %
 %   ***********************************************************************
-%   Authors:    Haitian LI (hai-tian.li@connect.polyu.hk)
+%   Authors:    Haitian Li (hai-tian.li@connect.polyu.hk)
 %               and Zaikun ZHANG (zaikun.zhang@polyu.edu.hk)
 %               Department of Applied Mathematics,
 %               The Hong Kong Polytechnic University.

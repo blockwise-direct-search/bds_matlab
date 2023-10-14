@@ -8,7 +8,7 @@ function testbds(release, precision, nrun)
 %   rosenbrock_example.m for an illustration about how to use prima.
 %
 %   ***********************************************************************
-%   Authors:    Haitian LI (hai-tian.li@connect.polyu.hk)
+%   Authors:    Haitian Li (hai-tian.li@connect.polyu.hk)
 %               and Zaikun ZHANG (zaikun.zhang@polyu.edu.hk)
 %               Department of Applied Mathematics,
 %               The Hong Kong Polytechnic University

@@ -90,6 +90,7 @@ Bagirov
 Bainov
 bak
 Bakr
+ballcon
 Bandeira
 Bapat
 Barjhoux
@@ -212,6 +213,7 @@ Butnariu
 Buttari
 cacm
 calfun
+callstack
 Canini
 canm
 Cantelli
@@ -228,11 +230,14 @@ cdots
 cellfun
 Cengage
 centerdot
+ceq
 Cesa
 chapterheadstart
 chaptername
 chapterstyle
 Chawla
+chebquad
+Chebyquad
 checkandfixthelayout
 checkbib
 Cheon
@@ -245,6 +250,7 @@ Choi
 chrosen
 chstr
 Ciaurri
+cineq
 circ
 circeq
 circlearrowleft
@@ -274,6 +280,7 @@ commentstyle
 Commun
 compat
 compdf
+completenames
 COMPSTAT
 Comput
 computerj
@@ -295,6 +302,7 @@ csda
 cse
 CSIAM
 csspm
+cstr
 ctam
 cth
 Cucker
@@ -326,6 +334,7 @@ dashv
 Datamodel
 datetime
 Davidon
+dbstack
 DBUILD
 ddag
 ddagger
@@ -466,6 +475,7 @@ ethods
 Evals
 ewton
 Exascale
+exe
 exists
 exitflag
 exp
@@ -491,9 +501,11 @@ fhist
 Fiala
 Fidler
 fignamebase
+fileattrib
 filecontents
 filemode
 fileparts
+fileread
 fillbetween
 Financ
 finv
@@ -558,11 +570,14 @@ Gazaix
 gca
 gcc
 gcd
+gcp
 geq
 geqq
 geqslant
+gerad
 getenv
 gfortran
+GFVER
 gg
 ggbeg
 ggg
@@ -594,6 +609,7 @@ gnapprox
 gneq
 gneqq
 gnsim
+goldp
 Golomb
 Golovidov
 Gopalakrishnan
@@ -630,6 +646,7 @@ Gunzburger
 Guo
 gval
 gvertneqq
+hai
 Haidar
 Halmos
 Hanzely
@@ -648,12 +665,14 @@ Hestenes
 hfig
 Higham
 HIMMELBH
+Himmelblau
 Hinterm
 Hintermuller
 HLAG
 hler
 hline
 hlmann
+hmlb
 Hogben
 hom
 hookleftarrow
@@ -664,6 +683,7 @@ hskip
 hslash
 htbp
 html
+HTTPS
 huangcunxin
 HYDC
 hyperparameter
@@ -675,6 +695,7 @@ idz
 Ierapetritou
 ifdraft
 iflag
+ifun
 IIT
 ijopt
 ilson
@@ -705,6 +726,7 @@ iprint
 ipschitz
 Ipsen
 ipt
+irun
 isa
 isave
 ISCA
@@ -748,6 +770,7 @@ itersw
 itest
 itmtt
 itshape
+itype
 Iusem
 jacm
 Jaggi
@@ -954,6 +977,7 @@ marpor
 Marteau
 Martinsson
 matcutest
+matd
 mathalfa
 mathbbm
 mathbbol
@@ -986,6 +1010,7 @@ maxtime
 mbgen
 mbox
 mbox
+mcc
 mcomp
 mcs
 mdframed
@@ -998,6 +1023,7 @@ Methodol
 Methven
 Meurant
 Meza
+mfiledir
 mfilename
 mfm
 Microw
@@ -1049,6 +1075,7 @@ Nachrichten
 nalg
 Narayanan
 nargin
+nargout
 Narici
 Narkiss
 Nataf
@@ -1118,6 +1145,7 @@ npreceq
 npt
 nquist
 nrlq
+nrun
 nshortmid
 nshortparallel
 nsim
@@ -1148,6 +1176,7 @@ oldpath
 Olkin
 ominus
 Omojokun
+oneapi
 onelineskip
 oneside
 OPENMP
@@ -1310,6 +1339,7 @@ reciq
 reduc
 refcheck
 reftoget
+regexp
 regexprep
 regman
 regularisation
@@ -1329,6 +1359,7 @@ Revista
 Reyes
 rfloor
 rfrio
+rfun
 rgb
 rgisser
 rgroup
@@ -1495,6 +1526,7 @@ src
 ss
 sscm
 ssden
+ssh
 sss
 sstemp
 Stabilit
@@ -1518,9 +1550,11 @@ Strabi
 Strabic
 STRATEC
 strcat
+strcmp
 strcmpi
 strjoin
 stronconv
+strrep
 strs
 strsplit
 strtrim
@@ -1566,6 +1600,7 @@ Svaiter
 svva
 swarrow
 sys
+Szego
 Szyld
 tableofcontents
 Taheri
@@ -1583,6 +1618,7 @@ tempc
 tempq
 Tenorio
 Terlaky
+testbds
 testcu
 testdata
 Tetruashvili
@@ -1600,6 +1636,7 @@ textools
 textquote
 textrm
 textsc
+textscan
 textsf
 textsl
 texttt
@@ -1676,6 +1713,7 @@ ulem
 Ullrich
 und
 underdetermined
+uninstall
 Universitext
 unlhd
 unrhd
@@ -1694,6 +1732,7 @@ urcorner
 url
 urlcolor
 usepackage
+userpath
 usr
 utm
 utx
@@ -1745,6 +1784,7 @@ Walster
 warnoff
 Wcheck
 wholename
+whos
 widehat
 widetilde
 Widlund
