@@ -29,7 +29,7 @@ rng(random_seed);
 if isfield(options, 'n')
     n = options.n;
 else
-    n = 10;
+    n = 2;
 end
 
 % Set the recursion depth
