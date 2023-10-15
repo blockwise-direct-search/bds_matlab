@@ -52,6 +52,7 @@ solver = str2func('bds');
 % the solver.
 solver_options = struct();
 solver_options.maxfun = min(100*n, 5e3);
+solver_options.StepTolerance = 1.0e-3;
 fun = @chrosen;
 for i = 1 : depth
     fun = @(x) rfun(x, fun, solver, n, solver_options);
@@ -79,6 +80,6 @@ return
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function f = rfun(x, fun, solver, ~, solver_options)
-%RFUN defines a function of x by minimizing fun([x; y]) with respect to y in R^n using a solver.
+%RFUN defines a function of x by minimizing fun([x; y]) with respect to y in R^2 using a solver.
 [~, f] = solver(@(y) fun([x; y]), randn(2, 1), solver_options);
 return
