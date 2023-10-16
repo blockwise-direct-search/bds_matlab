@@ -141,8 +141,8 @@ for j = 1 : num_directions
     % and fnew as xval and fval respectively as long as fnew < fval. Otherwise,
     % we will only accept xnew and fnew when they meet both sufficient decrease and 
     % fnew < fval simultaneously. For complete polling, fbase is fixed during all 
-    % iterations in the block. So there are some cases where sufficient_decrease is true 
-    % and fnew >= fval. For opportunistic polling, as long as the sufficient decrease is true, 
+    % iterations in the block. So it may happen that sufficient_decrease is true 
+    % and fnew >= fval. For opportunistic polling, if the sufficient decrease is true, 
     % then the remaining polling points will not be explored. 
     if (accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
