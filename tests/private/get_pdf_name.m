@@ -39,7 +39,7 @@ switch parameters.solvers_options{i}.solver
                 pdfname = "nlopt_bobyqa";
         end
 
-    case "matlab_fminsearch"
+    case "fminsearch"
         pdfname = strcat("fminsearch", "_", "simplex");
 
     case "lam"
@@ -49,10 +49,10 @@ switch parameters.solvers_options{i}.solver
                 parameters.solvers_options{i}.linesearch_type);
         end
 
-    case "matlab_fminunc"
+    case "fminunc"
         pdfname = strcat("fminunc", "_", parameters.solvers_options{i}.fminunc_type);
         
-    case "matlab_patternsearch"
+    case "patternsearch"
         pdfname = strcat("patternsearch", "_", "gps");
     
     case "bfo_optimize"

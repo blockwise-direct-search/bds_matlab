@@ -52,7 +52,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %
 %   fhist        History of function values.
 %   xhist        History of points visited.
-%   alpha_hist   History of step size.
+%   alpha_hist   History of step size for every iteration.
 %   blocks_hist  History of blocks visited.
 %   funcCount    The number of function evaluations.
 %   message      The information of EXITFLAG.
@@ -150,6 +150,13 @@ else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
 
+% Set the type of forcing function.
+if isfield(options, "forcing_function_type")
+    forcing_function_type = options.forcing_function_type;
+else
+    forcing_function_type = get_default_constant("forcing_function_type");
+end
+
 % Set the boolean value of accept_simple_decrease, which is for updating xval and fval, but not 
 % for stepsize. 
 if isfield(options, "accept_simple_decrease")
@@ -243,7 +250,7 @@ if isfield(options, "alpha_init")
         error("The length of alpha_init should be equal to nb or equal to 1.");
     end
 else
-    % Try alpha_all = 0.5 * max(abs(x), 1) in the canonical case.
+    % TODO: Try alpha_all = 0.5 * max(abs(x), 1) in the canonical case.
     alpha_all = ones(nb, 1);
 end
 
@@ -362,6 +369,7 @@ for iter = 1:maxit
         suboptions.cycling = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
+        suboptions.forcing_function_type = forcing_function_type;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;

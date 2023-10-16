@@ -8,12 +8,20 @@ BDS is a derivative-free package using blockwise direct-search methods. The curr
 
 See [Haitian LI's presentation](https://lht97.github.io/documents/ICNONLA2023.pdf) on BDS for more information.
 
-## How to use BDS?
-```bash
-git clone https://github.com/blockwise-direct-search/bds.git
-cd bds
+## How to install BDS?
+
+1. Clone this repository. You should then get a folder named `bds` containing this README file and the
+[`setup.m`](install.m) file.
+
+2. In the command window of MATLAB, change your directory to the above-mentioned folder, and execute
+
+```matlab
 setup
 ```
+
+If the above succeeds, then the package `bds` is installed and ready to use. Try `help bds.m` for more information.
+
+Success is expected if you are using [MATLAB R2017b or above]. Let me know by opening an issue if this is not the case.
 
 ## Test of BDS.
 The tests are **automated** by

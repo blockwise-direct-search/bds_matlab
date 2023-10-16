@@ -22,10 +22,10 @@ switch parameters.solvers_options{i}.solver
     case {"bds_powell"}
         solver_stamp = "CBDS-Powell";
 
-    case {"matlab_fminsearch"}
+    case {"fminsearch"}
         solver_stamp = "simplex";
 
-    case {"matlab_fminunc"}
+    case {"fminunc"}
         solver_stamp = upper(parameters.solvers_options{i}.fminunc_type);
 
     case {"wm_newuoa"}
@@ -44,7 +44,7 @@ switch parameters.solvers_options{i}.solver
     case {"lam"}
         solver_stamp = "lam";
         
-    case {"matlab_patternsearch"}
+    case {"patternsearch"}
         solver_stamp = "patternsearch";
 
     case {"bfo_optimize"}

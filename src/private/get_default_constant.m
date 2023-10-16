@@ -19,6 +19,8 @@ switch constant_name
         constant_value = 0.5;
     case {"sufficient_decrease_factor"}
         constant_value = eps;
+    case {"forcing_function_type"}
+        constant_value = "quadratic";
     case {"accept_simple_decrease"}
         constant_value = false;
     case {"alpha_init"}

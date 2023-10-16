@@ -22,12 +22,17 @@ for i = 1:solvers_num
      % Set solver to be matlab_fminunc if it is in fminunc_list.
      if any(contains(fminunc_list, parameters.solvers_options{i}.solver, 'IgnoreCase', true))
              parameters.solvers_options{i}.fminunc_type = parameters.solvers_options{i}.solver;
-             parameters.solvers_options{i}.solver = "matlab_fminunc";
+             parameters.solvers_options{i}.solver = "fminunc";
      end
 
      % Set solver to be matlab_fminsearch if it is simplex.
      if strcmpi(parameters.solvers_options{i}.solver, "simplex")
-             parameters.solvers_options{i}.solver = "matlab_fminsearch";
+             parameters.solvers_options{i}.solver = "fminsearch";
+     end
+
+     % Set solver to be matlab_fminsearch if it is patternsearch.
+     if strcmpi(parameters.solvers_options{i}.solver, "patternsearch")
+             parameters.solvers_options{i}.solver = "patternsearch";
      end
 
      % Set solver to be dspd (lower case) if it is DSPD.

@@ -71,6 +71,13 @@ else
     with_cycling_memory = get_default_constant("with_cycling_memory");
 end
 
+% Set the type of forcing function.
+if isfield(options, "forcing_function_type")
+    forcing_function_type = options.forcing_function_type;
+else
+    forcing_function_type = get_default_constant("forcing_function_type");
+end
+
 % Explain why NaN is good. It is possible that this function returns
 % with exitflag=NaN and this is NOT a bug. This is because other situations
 % are corresponding to other normal values. Easy to see whether there is
@@ -119,7 +126,11 @@ for j = 1 : num_directions
     if sufficient_decrease_factor <= 0
         sufficient_decrease = (fnew < fbase);
     else
-        sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+        if strcmpi(forcing_function_type, "quadratic")
+            sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+        elseif strcmpi(forcing_function_type, "cubic")
+            sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^3/2 < fbase);    
+        end
     end
   
     % Success is initialized to be false. Once there exists some direction satisfying sufficient

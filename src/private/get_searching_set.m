@@ -29,6 +29,15 @@ if isfield(options, "searching_set")
 
     % Remove the directions which their norm are too small from the searching set.
     searching_set = options.searching_set;
+
+    % Determine whether the searching set contains NaN or Inf values and replace those
+    % elements with 10^20.
+    hasNaNInf = any(isnan(searching_set(:)) | isinf(searching_set(:))); 
+    if hasNaNInf
+        warning("The searching set contains NaN or inf.");
+        searching_set(isnan(searching_set) | isinf(searching_set)) = 10^20;  
+    end
+
     % In case there exists a direction whose each component is eps.
     shortest_direction_norm = 10*sqrt(n)*eps;
     direction_norms = sqrt(sum(searching_set.^2, 1));
@@ -57,6 +66,9 @@ if isfield(options, "searching_set")
     preserved_indices = ~ismember(1:size(searching_set, 2), repetition_directions_indices);
     % Preserve the left directions.
     D = searching_set(:, preserved_indices);
+    if isempty(D)
+        D = eye(3);
+    end
 
     % By QR factorization, the searching set will linearly span the full space.
     % TODO: whether needs permutation?

@@ -28,7 +28,7 @@ if any(contains(bds_list, name_solver, 'IgnoreCase', true))
     end
 
 % Set options for matlab solvers.
-elseif strcmpi(name_solver, "matlab_fminsearch")
+elseif strcmpi(name_solver, "fminsearch")
     
     if isfield(options, "maxfun") && isfield(options, "StepTolerance")
         options = optimset('MaxFunEvals', options.maxfun, 'maxiter', options.maxfun,...
@@ -39,7 +39,7 @@ elseif strcmpi(name_solver, "matlab_fminsearch")
         options = optimset('tolfun', options.StepTolerance, 'tolx', options.StepTolerance);
     end
 
-elseif strcmpi(name_solver, "matlab_fminunc")
+elseif strcmpi(name_solver, "fminunc")
     
     if ~isfield(options, "ftarget")
         options.ftarget = -inf;
@@ -63,7 +63,7 @@ elseif strcmpi(name_solver, "matlab_fminunc")
             options.StepTolerance);
     end
 
-elseif strcmpi(name_solver, "matlab_patternsearch")
+elseif strcmpi(name_solver, "patternsearch")
     
     if isfield(options, "maxfun") && isfield(options, "StepTolerance")
         options = optimoptions('patternsearch','MaxIterations', options.maxfun,...

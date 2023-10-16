@@ -23,10 +23,10 @@ switch parameters.solvers_options{i}.solver
     case {"bds_powell"}
         solver_legend = "CBDS-Powell";
 
-    case {"matlab_fminsearch"}
+    case {"fminsearch"}
         solver_legend = "fminsearch";
 
-    case {"matlab_fminunc"}
+    case {"fminunc"}
         solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
 
     case {"wm_newuoa"}
@@ -42,7 +42,7 @@ switch parameters.solvers_options{i}.solver
                 solver_legend = "nlopt-bobyqa";
         end
 
-    case {"matlab_patternsearch"}
+    case {"patternsearch"}
         solver_legend = "patternsearch";
 
     case {"lam"}

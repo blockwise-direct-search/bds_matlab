@@ -38,7 +38,6 @@ end
 
 % The full paths to several directories needed for the setup.
 setup_dir = fileparts(mfilename('fullpath')); % The directory containing this setup script.
-setup_tools_dir = fullfile(setup_dir, 'setup_tools'); % Directory containing some tools for setting up.
 src_dir = fullfile(setup_dir, 'src'); % Directory containing the source code of the package.
 examples_dir = fullfile(setup_dir, 'examples'); % Directory containing some examples.
 tests_dir = fullfile(setup_dir, 'tests'); % Directory containing some tests
@@ -56,15 +55,11 @@ if ~attribute.UserWrite
     return
 end
 
-% `tools` contains some functions needed in the sequel.
-addpath(setup_tools_dir);
-
 % Parse the input.
 [action, wrong_input] = parse_input(varargin);
 
 % Exit if wrong input detected. Error messages have been printed during the parsing.
 if wrong_input
-    rmpath(setup_tools_dir);
     error('bds:InvalidInput', 'setup: The input is invalid.');
 end
 
@@ -85,15 +80,11 @@ else
 end
 
 fprintf('\nThe package is ready to use.\n');
-fprintf('\nYou may now try ''help bds'' for information on the usage of the package.\n');
+fprintf('\nYou may now try ''help bds.m'' for information on the usage of the package.\n');
 
 if ~strcmp(action, 'bds')
     fprintf('\nYou may also run ''testbds'' to test the package on a few examples.\n');
-    fprintf('\nIf you want to test solvers on CUTEst problems,\n');
-    fprintf('\nplease see https://github.com/matcutest/matcutest_compiled for more information.\n');
 end
-
-rmpath(setup_tools_dir);
 
 if ~path_saved  % `add_save_path` failed to save the path.
     add_path_string = sprintf('addpath(''%s'');', src_dir);
@@ -117,8 +108,6 @@ function path_saved = add_save_path(path_string, path_string_stamp)
 %ADD_SAVE_PATH adds the path indicated by PATH_STRING to the MATLAB path and then tries saving path.
 % PATH_STRING_STAMP is a stamp used when writing PATH_STRING to the user's startup.m file, which is
 % needed only if `savepath` fails.
-% N.B.: Why not putting this function as an individual file in the `tools` directory? Because we
-% need it after `tools` is removed from the path.
 
 if nargin < 2
     path_string_stamp = sprintf('Added by %s', mfilename);
@@ -191,3 +180,133 @@ end
 
 % add_save_path ends
 return
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+function uninstall_bds(path_string_stamp)
+    %This file is cited from https://github.com/libprima/prima/blob/main/matlab/setup_tools/uninstall_prima.m,
+    %which is written by Zaikun Zhang.
+    %UNINSTALL_BDS uninstalls BDS.
+    
+    fprintf('\nUninstalling BDS (if it is installed) ... ');
+    
+    % The full path of several directories.
+    mfiledir = fileparts(mfilename('fullpath'));  % The directory where this .m file resides
+    matd = fileparts(mfiledir); % Matlab directory
+    src = fullfile(matd, 'src'); % Directory containing the source code
+    examples = fullfile(matd, 'examples'); % Directory containing some examples
+    tests = fullfile(matd, 'tests'); % Directory containing some tests
+    competitors = fullfile(tests, 'competitors'); % Directory containing some competitors
+    path_string = {src, examples, tests, competitors}; % The paths to be removed
+    
+    % Try removing the paths possibly added by PRIMA
+    orig_warning_state = warning;
+    warning('off', 'MATLAB:rmpath:DirNotFound'); % Maybe the paths were not added. We do not want to see this warning.
+    warning('off', 'MATLAB:SavePath:PathNotSaved'); % Maybe we do not have the permission to save path.
+    rmpath(src, examples, tests, competitors);
+    savepath;
+    warning(orig_warning_state); % Restore the behavior of displaying warnings
+    
+    % Removing the line possibly added to the user startup script
+    user_startup = fullfile(userpath,'startup.m');
+    if exist(user_startup, 'file')
+        for i = 1:length(path_string) 
+            add_path_string = sprintf('addpath(''%s'');', path_string{i});
+            full_add_path_string = sprintf('%s\t%s %s', add_path_string, '%', path_string_stamp);
+            try
+                del_str_ln(user_startup, full_add_path_string);
+            catch
+                % Do nothing.
+            end
+        end
+    end
+    
+    callstack = dbstack('-completenames');
+    root_dir = fileparts(callstack(2).file);  % Root directory of the package
+    fprintf('Done.\nYou may now remove\n\n    %s\n\nif it contains nothing you want to keep.\n\n', root_dir);
+    
+    return
+    
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+function [action, wrong_input] = parse_input(argin)
+    %This file is cited from https://github.com/libprima/prima/blob/main/matlab/setup_tools/parse_input.m,
+    %which is written by Zaikun Zhang.
+    %PARSE_INPUT parses the input to the setup script.
+    
+    % Compilation options.
+    action_list = {'all', 'bds', 'uninstall'};
+    action = 'compile';
+    wrong_input = false;
+    
+    % Start the parsing to set `input_string` and `options`.
+    input_string = 'ALL';  % Default value for `input_string`.
+    if length(argin) > 1
+        fprintf('\nSetup accepts at most one inputs.\n\n');
+        wrong_input = true;
+    elseif length(argin) == 1
+        if ischarstr(argin{1})
+            input_string = argin{1};
+        else
+            fprintf('\nThe input to setup should be a string and/or a structure.\n\n');
+            wrong_input = true;
+        end
+    end
+    
+    % Cast input_string to a character array in case it is a MATLAB string.
+    input_string = lower(char(input_string));
+    
+    % Parse `input_string` to set `action`.
+    if ismember(input_string, action_list)
+        action = input_string;
+    else
+        wrong_input = true;
+    end
+    
+    return
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+
+function del_str_ln(filename, string)
+    %This file is cited from https://github.com/libprima/prima/blob/main/matlab/setup_tools/del_str_ln.m,
+    %which is written by Zaikun Zhang.
+    %DEL_STR_LN deletes from filename all the lines that are identical to string
+    
+    fid = fopen(filename, 'r');  % Open file for reading.
+    if fid == -1
+        error('Cannot open file %s.', filename);
+    end
+    
+    % Read the file into a cell of strings
+    data = textscan(fid, '%s', 'delimiter', '\n', 'whitespace', '');
+    fclose(fid);
+    cstr = data{1};
+    
+    % Remove the rows containing string
+    cstr(strcmp(cstr, string)) = [];
+    
+    % Save the file again
+    fid = fopen(filename, 'w');  % Open/create new file for writing. Discard existing contents, if any.
+    if fid == -1
+        error('Cannot open file %s.', filename);
+    end
+    fprintf(fid, '%s\n', cstr{:});
+    fclose(fid);
+    
+    return
+
+    
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+function iscs = ischarstr(x)
+    %ISCHARSTR checks whether an input is a `char` or `string`
+    
+    iscs = (isa(x, 'char') || isa(x, 'string'));
+    
