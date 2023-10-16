@@ -150,8 +150,8 @@ for j = 1 : num_directions
     end
     
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
-    % stop the computations after cycling the indices of the polling directions. The reason that
-    % indices are cycled here is that inner_direct_search is called in a loop in outer_direct_search. 
+    % stop the computations after cycling the indices of the polling directions. The reason  
+    % why we cycle indices here is because inner_direct_search is called in a loop in outer_direct_search. 
     if sufficient_decrease && ~strcmpi(polling_inner, "complete")
         direction_indices = cycling(direction_indices, j, cycling_strategy, with_cycling_memory);
         break;
