@@ -11,6 +11,7 @@ solvers_num = length(parameters.solvers_name);
 BDS_list = ["DS", "CBDS", "PBDS", "RBDS"];
 % MATLAB_fminunc
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
+NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
 
 for i = 1:solvers_num 
     % If there is a solver that we invoke existing in BDS_List, set default value of Algorithm.
@@ -43,7 +44,14 @@ for i = 1:solvers_num
      % Set solver to be bfo (lower case) if it is BFO.
      if strcmpi(parameters.solvers_options{i}.solver, "BFO")
              parameters.solvers_options{i}.solver = "bfo_optimize";
-     end     
+     end   
+
+     % Set solver to be nlopt (lower case) if the prefix is 'nlopt'.
+     if any(strcmpi(parameters.solvers_options{i}.solver, NLOPT_list))
+             parts = split(parameters.solvers_options{i}.solver, '_');
+             parameters.solvers_options{i}.solver = "nlopt";
+             parameters.solvers_options{2}.Algorithm = char(parts(2));
+     end
 
 end
 

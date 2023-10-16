@@ -29,14 +29,17 @@ for i = 1:num_solvers
     if strcmpi(parameters.solvers_options{i}.solver, "nlopt") && ...
         isfield(parameters.solvers_options{i}, "Algorithm") && ...    
         strcmpi(parameters.solvers_options{i}.Algorithm, "newuoa")
-        if parameters.problems_mindim == 1
+        if isfield(parameters, "problems_mindim") && parameters.problems_mindim == 1
             parameters.problems_mindim = 2;
         end
     end
 end
 
-if ~isfield(parameters, "problems_mindim") && ~isfield(parameters, "problems_maxdim")
+if ~isfield(parameters, "problems_mindim")
     parameters.problems_mindim = 1;
+end
+
+if ~isfield(parameters, "problems_maxdim")
     parameters.problems_maxdim = 5;
 end
 
