@@ -401,12 +401,8 @@ for iter = 1:maxit
             break;
         end
         
-        % Retrieve the order of the polling directions and check whether a
-        % sufficient decrease has been achieved in inner_direct_search.
-        searching_set_indices{i_real} = suboutput.direction_indices;
-        success = suboutput.success;
-        
         % Update the step sizes and store the history of step sizes.
+        success = suboutput.success;;
         if success
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
@@ -420,6 +416,10 @@ for iter = 1:maxit
             exitflag = get_exitflag("SMALL_ALPHA");
             break
         end
+
+        % Retrieve the order of the polling directions in the searching set.
+        searching_set_indices{i_real} = suboutput.direction_indices;
+
     end
     
     % Check whether one of SMALL_ALPHA, MAXFUN_REACHED, and FTARGET_REACHED is reached.

@@ -1014,7 +1014,6 @@ maxiter
 maxtime
 mbgen
 mbox
-mbox
 mcc
 mcomp
 mcs
@@ -1120,6 +1119,7 @@ nhist
 nichtlinearen
 Nicolae
 Nievergelt
+NInf
 nlaa
 nleftarrow
 nleftrightarrow
