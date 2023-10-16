@@ -9,10 +9,6 @@ switch constant_name
         constant_value = 1e3;
     case {"Algorithm"}
         constant_value = "cbds";
-    case {"num_random_vectors"}
-        constant_value = 1;
-    case {"seed"}
-        constant_value = 0;
     case {"expand"}
         constant_value = 2;
     case {"shrink"}
@@ -34,6 +30,8 @@ switch constant_name
     case {"ftarget"}
         constant_value = -inf;
     case {"polling_inner"}
+        constant_value = "opportunistic";
+    case {"polling_outer"}
         constant_value = "opportunistic";
     case {"cycling_inner"}
         constant_value = 1;

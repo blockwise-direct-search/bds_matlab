@@ -1,6 +1,7 @@
 function bfo_optimize(FUN, x0, options)
-% Find minimum of multivariable function using derivative-free 
-% method (Brute Force Optimization).
+% A wrapper of finding the minimum of a multivariable function using derivative-free 
+% method (Brute Force Optimization). For more information, please see
+%https://github.com/m01marpor/BFO.
 %
 
 % Dimension

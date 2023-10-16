@@ -4,7 +4,7 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %   within a given block.
 %
 %   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, DIRECTION_INDICES, ALPHA, OPTIONS)
-%   returns a XVAL.
+%   returns an XVAL.
 %
 %   XVAL = INNER_DIRECT_SEARCH(FUN, XVAL, FVAL, D, ...
 %   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS, which includes
@@ -25,7 +25,7 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %   TERMINATE is initialized to be false. If terminate is updated to be true,
 %   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
 %
-%   DIRECTION_INDICES is indices of directions of this block in D.
+%   DIRECTION_INDICES is the indices of directions of this block in D.
 %
 
 % Set the value of sufficient decrease factor.
@@ -35,7 +35,7 @@ else
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 end
 
-% Set ftarget of objective function.
+% Set target of objective function.
 if ~isfield(options, "ftarget")
     ftarget = get_default_constant("ftarget");    
 else
@@ -80,8 +80,8 @@ end
 
 % Explain why NaN is good. It is possible that this function returns
 % with exitflag=NaN and this is NOT a bug. This is because other situations
-% are corresponding to other normal values. Easy to see whether there is
-% some bug related to exitflag.
+% correspond to other normal values. Easy to see whether there is some bug 
+% related to exitflag.
 exitflag = NaN;
 
 % Initialize some parameters before entering the loop.
@@ -142,7 +142,7 @@ for j = 1 : num_directions
     % we will only accept xnew and fnew when they meet both sufficient decrease and 
     % fnew < fval simultaneously. For complete polling, fbase is fixed during all 
     % iterations in the block. So there are some cases where sufficient_decrease is true 
-    % and fnew >= fval. For opportunistic polling, as long as sufficient decrease is true, 
+    % and fnew >= fval. For opportunistic polling, as long as the sufficient decrease is true, 
     % then the remaining polling points will not be explored. 
     if (accept_simple_decrease || sufficient_decrease) && fnew < fval
         xval = xnew;
@@ -158,7 +158,7 @@ for j = 1 : num_directions
     end
 end
 
-% Truncate FHIST and XHIST into an nf length vector.
+% Truncate FHIST and XHIST into a vector of length nf.
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.nf = nf;

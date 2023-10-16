@@ -1,7 +1,7 @@
 function [exitflag] = get_exitflag(information)
 %GET_EXITFLAG gets the EXITFLAG of BDS.
 %   SMALL_ALPHA     Step size is below StepTolerance. In the case of variable step sizes, 
-%                   it indicates the largest component of step sizes is below StepTolerance.
+%                   SMALL_ALPHA indicates the largest component of step sizes is below StepTolerance.
 %   MAXFUN_REACHED  The number of function evaluations reaches MAXFUN.
 %   FTARGET_REACHED Function value is smaller than or equal to FTARGET.
 %   MAXIT_REACHED   The number of iterations reaches MAXIT.  

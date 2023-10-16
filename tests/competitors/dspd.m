@@ -1,24 +1,23 @@
 function [xval, fval, exitflag, output] = dspd(fun, x0, options)
-%DSPD (direct search probabilistic descent) solves unconstrained optimization
-%   problems without using derivatives. 
+%DSPD (direct search probabilistic descent) solves unconstrained optimization problems without using derivatives. 
 %
 %   TODO: here(MATLAB version for dspd)
 %
 %   XVAL = DSPD(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
-%   calculations at X0. FUN must accept input X and returns a scalar, which is the function value
+%   calculations at X0. FUN must accept input X and return a scalar, which is the function value
 %   evaluated at X. X0 should be a vector.
 %
 %   XVAL = DSPD(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
 %   structure, with the following fields:
 %   
 %   maxfun                      Maximum of function evaluations.
-%   maxfun_factor                  Factor to define maximum number of function evaluations as a multiplier
+%   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.    
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
 %   sufficient_decrease_factor  Factor of sufficient decrease condition.
 %   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of function value. If function value is below ftarget, 
+%   ftarget                     Target of the function value. If the function value is below target, 
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
 %   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
@@ -93,19 +92,19 @@ x0 = double(x0(:));
 % Set the polling directions in D.
 n = length(x0);
 
-% Set the value of expand factor.
+% Set the value of expanding factor.
 if isfield(options, "expand")
     expand = options.expand;
 else
     expand = get_default_constant("expand");
 end
 
-% Under dspd, expand factor could not be 1.
+% Under dspd, expanding factor could not be 1.
 if expand == 1
     error("If expanding factor is set to be 1, convergence may not be ensured")
 end
 
-% Set the value of shrink factor.
+% Set the value of shrinking factor.
 if isfield(options, "shrink")
     shrink = options.shrink;
 else
@@ -223,7 +222,7 @@ for iter = 1:maxit
     alpha_hist(iter) = alpha;
 
     % Generate the searching set whose directions are uniformly distributed on the unit sphere
-    % for each iteration when options.Algorithm is "dspd".
+    % for each iteration when the Algorithm is "dspd".
     if m == 1
         rv = randn(n, 1);
         % Normalize rv.
@@ -311,7 +310,7 @@ switch exitflag
         output.message = "Unknown exitflag";
 end
 
-% verify_postconditions is to detect whether output is in right form when debug_flag is true.
+% verify_postconditions is to detect whether the output is in the right form when debug_flag is true.
 if debug_flag
     verify_postconditions(fun, xval, fval, exitflag, output);
 end

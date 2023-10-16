@@ -11,12 +11,12 @@ function D = get_searching_set(n, options)
    %Set OPTIONS.direction to "canonical" to obtain {e_1, -e_1, ..., e_n, -e_n}, 
    %represented in matrix form.
    %If users input OPTIONS.searching_set in matrix form, the function will first
-   %remove the directions which their norm are too small. Next, those directions
+   %remove the directions in which their norm are too small. Next, those directions
    %which are parallel in pairs will be found. Then the function will preserve the first
    %one appearing in the searching set and remove the others. By QR factorization,
    %the searching set will linearly span the full space (If the searching set is 
    %already canonical before QR factorization, then there will be no change).
-   %Finally, the searching set will positively span the full space by adding the 
+   %Finally, the set will positively span the full space by adding the 
    %negative direction in an alternating way.
    %
 
@@ -27,7 +27,6 @@ end
 
 if isfield(options, "searching_set")
 
-    % Remove the directions which their norm are too small from the searching set.
     searching_set = options.searching_set;
 
     % Determine whether the searching set contains NaN or Inf values and replace those
@@ -38,6 +37,7 @@ if isfield(options, "searching_set")
         searching_set(isnan(searching_set) | isinf(searching_set)) = 10^20;  
     end
 
+    % Remove the directions in which their norm are too small.
     % In case there exists a direction whose each component is eps.
     shortest_direction_norm = 10*sqrt(n)*eps;
     direction_norms = sqrt(sum(searching_set.^2, 1));
@@ -48,7 +48,7 @@ if isfield(options, "searching_set")
         searching_set = searching_set(:, ~short_directions);
     end
     
-    % Find those directions which are parallel in pairs. Preserve the first one appearing in the 
+    % Find those directions that are parallel in pairs. Preserve the first one appearing in the 
     % searching set and remove the others.
     direction_norms = sqrt(sum(searching_set.^2, 1)); 
     % Compare the inner products with the product of the norms to see whether the directions are
@@ -56,15 +56,15 @@ if isfield(options, "searching_set")
     % Which one is better, 1e-10 or sqrt(eps)?
     parallel_directions = (abs(searching_set'*searching_set) > (1 - 1.0e-10) * (direction_norms' * direction_norms)); 
     % Parallel_directions is a symmetric matrix, whose diagonal is 1. Triu(parallel_directions, 1) returns 
-    % the indices of the upper triangular part of the matrix parallel_directions, setting diagonal as zero.
+    % the indices of the upper triangular part of the matrix parallel_directions, setting the diagonal as zero.
     % By using find, we can get the row and column indices of the elements in the upper triangular part of 
-    % parallel_directions in pair, which boolean value is 1. The column indices are the indices of the parallel 
-    % directions which do not appear for the first time in the searching set. 
+    % parallel_directions in pair, whose boolean value is 1. The column indices are the indices of the parallel 
+    % directions that do not appear for the first time in the searching set. 
     [~, repetition_directions_indices] = find(triu(parallel_directions, 1));
     
-    % We remove the directions which are parallel in pairs by QR factorization, not appearing the first time.
+    % We remove the directions that are parallel in pairs by QR factorization, not appearing the first time.
     preserved_indices = ~ismember(1:size(searching_set, 2), repetition_directions_indices);
-    % Preserve the left directions.
+    % Keep the remaining direction.
     D = searching_set(:, preserved_indices);
     if isempty(D)
         D = eye(3);

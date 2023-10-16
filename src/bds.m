@@ -2,7 +2,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives. 
 %
 %   XVAL = BDS(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
-%   calculations at X0. FUN must accept input X and returns a scalar, which is the function value
+%   calculations at X0. FUN must accept input X and return a scalar, which is the function value
 %   evaluated at X. X0 should be a vector.
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
@@ -10,13 +10,13 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   
 %   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
-%   maxfun_factor               Factor to define maximum number of function evaluations as a multiplier
+%   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.    
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
 %   sufficient_decrease_factor  Factor of sufficient decrease condition.
 %   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of function value. If function value is below ftarget, 
+%   ftarget                     Target of the function value. If the function value is below target, 
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
 %   searching_set               Searching set of directions.
@@ -94,14 +94,14 @@ end
 % Get the searching set of directions.
 D = get_searching_set(n, options);
 
-% Set the value of expand factor.
+% Set the value of expanding factor.
 if isfield(options, "expand")
     expand = options.expand;
 else
     expand = get_default_constant("expand");
 end
 
-% Set the value of shrink factor.
+% Set the value of shrinking factor.
 if isfield(options, "shrink")
     shrink = options.shrink;
 else
@@ -309,7 +309,7 @@ if fval <= ftarget
     maxit = 0;
 end
 
-% To avoid that the users bring some randomized string.
+% To avoid that the users bring some randomized strings.
 % TODO: mention objective function and random generator
 %random_stream = rng(seed);
 
@@ -323,7 +323,7 @@ for iter = 1:maxit
     % Shuffle the blocks every shuffling_period iterations.
     % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
-        % Make sure that shuffling_period is defined when Algorithm is "pbds".
+        % Make sure that shuffling_period is defined when the Algorithm is "pbds".
         block_indices = randperm(nb);
     end
     
@@ -341,7 +341,7 @@ for iter = 1:maxit
             block_visited_slices_length = min(num_visited, replacement_delay);
             % Get the indices of blocks that we are going to exclude in the following selection.
             block_visited_slices = block_hist(num_visited-block_visited_slices_length+1:num_visited);
-            % Set default value of initial block_indices.
+            % Set the default value of initial block_indices.
             block_initial_indices = 1:nb;
             % Remove elements of block_indices appearing in block_visited_slice.
             block_real_indices = block_initial_indices(~ismember(block_initial_indices, block_visited_slices));
@@ -434,7 +434,7 @@ for iter = 1:maxit
     
 end
 
-% Truncate HISTORY into an nf length vector.
+% Truncate HISTORY into a vector of nf length.
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
 if output_xhist
@@ -463,7 +463,7 @@ switch exitflag
         output.message = "Unknown exitflag";
 end
 
-% verify_postconditions is to detect whether output is in right form when debug_flag is true.
+% verify_postconditions is to detect whether the output is in the right form when debug_flag is true.
 if debug_flag
     verify_postconditions(fun, xval, fval, exitflag, output);
 end

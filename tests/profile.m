@@ -1,5 +1,6 @@
 function [output] = profile(parameters)
     % Draw performance profiles.
+    %
     
     % Record the current path.
     oldpath = path();

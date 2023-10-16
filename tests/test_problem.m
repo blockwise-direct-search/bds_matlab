@@ -1,6 +1,12 @@
-function [xval, fval, exitflag, output] = untitled(inputArg1,inputArg2)
-options = struct();
-options.Algorithm = 'pbds';
+function [xval, fval, exitflag, output] = test_problem(Algorithm)
+%Test bds on some specific problems.
+%
+
+if nargin < 1
+    options = struct();
+end
+
+options.Algorithm = Algorithm;
 options.maxfun = 1e5;
 options.StepTolerance = eps;
 [xval, fval, exitflag, output] = bds(@(x)goldp(x), [0;0], options)

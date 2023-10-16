@@ -1,4 +1,8 @@
 function nlopt(fun, x0, options)
+%A wrapper for NLopt, which is a library for nonlinear local and global optimization, 
+%for functions with and without gradient information. For more information, please
+%see https://github.com/stevengj/nlopt.
+%
 
 % Dimension
 n = numel(x0);

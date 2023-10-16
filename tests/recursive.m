@@ -2,6 +2,7 @@ function recursive(Algorithm, options)
 %This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/recursive.m, which
 %is written by Zaikun Zhang.
 %RECURSIVE verifies that the solvers can be called recursively.
+%
 
 % Turn off the warning about the debug mode.
 orig_warning_state = warning;

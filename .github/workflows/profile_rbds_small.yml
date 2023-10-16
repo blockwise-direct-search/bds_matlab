@@ -5,7 +5,7 @@ on:
   # push:
   # Trigger the workflow manually
   schedule:
-    - cron: '0 22 */7 * *'
+    - cron: '0 16 */5 * *'
   workflow_dispatch:
 
 env:

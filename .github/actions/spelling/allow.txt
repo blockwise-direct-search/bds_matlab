@@ -501,6 +501,7 @@ feval
 fhist
 Fiala
 Fidler
+fieldnames
 fignamebase
 fileattrib
 filecontents
@@ -733,13 +734,16 @@ isave
 ISCA
 ischarstr
 ischstr
+iscell
 iscolumn
 iscs
 isdir
 isempty
 Iserles
 isfield
+isinf
 isintegerscalar
+islogical
 islogicalscalar
 ismatrix
 ismember
