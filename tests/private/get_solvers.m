@@ -50,7 +50,7 @@ for i = 1:solvers_num
      if any(strcmpi(parameters.solvers_options{i}.solver, NLOPT_list))
              parts = split(parameters.solvers_options{i}.solver, '_');
              parameters.solvers_options{i}.solver = "nlopt";
-             parameters.solvers_options{2}.Algorithm = char(parts(2));
+             parameters.solvers_options{2}.Algorithm = string(parts(2));
      end
 
 end
