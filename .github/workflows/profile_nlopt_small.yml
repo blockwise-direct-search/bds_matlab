@@ -106,14 +106,8 @@ jobs:
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
-            parameters.maxfun_factor = 1e3;
-
-            NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
-            if any(strcmpi("${{ matrix.competitor }}", NLOPT_list))
-                parts = split("${{ matrix.competitor }}", '_');
-                parameters.solvers_options{2}.Algorithm = char(parts(2));
-            end  
-            parameters.solvers_name = ["${{ matrix.solver }}", "nlopt"];
+            parameters.maxfun_factor = 1e3; 
+            parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             
             plot_profile(parameters);
 
