@@ -68,7 +68,7 @@ fprintf('\n>>>>>> Recursive test for %s starts <<<<<<\n', Algorithm);
 [x, fx, exitflag, output] = solver(fun, randn(n, 1), solver_options)
 [x, fx, exitflag, output] = solver(fun, randn(n, 1), solver_options)
 
-fprintf('\n>>>>>> Recursive test for %s ends <<<<<<\n', solver_name);
+fprintf('\n>>>>>> Recursive test for %s ends <<<<<<\n', Algorithm);
 toc;
 
 % Restore the random number generator state
