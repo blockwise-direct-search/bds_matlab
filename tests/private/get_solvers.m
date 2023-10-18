@@ -55,7 +55,7 @@ for i = 1:solvers_num
      end
 
         % Set solver to be PRIMA (lower case).
-        if any(strcmpi(parameters.solvers_options{i}.solver, NLOPT_list))
+        if any(strcmpi(parameters.solvers_options{i}.solver, PRIMA_list))
                 parameters.solvers_options{2}.Algorithm = lower(parameters.solvers_options{i}.solver);
                 parameters.solvers_options{i}.solver = "prima_wrapper";
         end

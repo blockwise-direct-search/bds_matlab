@@ -2,6 +2,9 @@ function prima_wrapper(fun, x0, options)
 %A wrapper for PRIMA.
 %
 
+% Dimension
+n = numel(x0);
+
 if isfield(options, "StepTolerance")
     options.rhoend = options.StepTolerance;
 else
@@ -41,8 +44,16 @@ else
     Algorithm = "newuoa";
 end
 
-solver = str2fun(Algorithm);
+solver = str2func(Algorithm);
+
+% Turn off warning to save computation resource.
+warnoff(Algorithm);
+
 solver(fun, x0, options);
+
+% Turn off warning is a very dangerous thing. So it must be set a loop to
+% turn on after ending the computation.
+warnoff(Algorithm);
 
 end
 

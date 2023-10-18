@@ -17,12 +17,6 @@ fhist_perfprof = NaN(maxfun_frec, 1);
 %    scaling_matrix = eye(length(p.x0));
 % end
 
-% Turn off warning to save computation resource.
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-if ~isempty(find(prima_list == name_solver, 1))
-    warnoff(name_solver);
-end
-
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
@@ -32,11 +26,6 @@ obj = ScalarFunction(p);
 % end
 
 solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
-% Turn off warning is a very dangerous thing. So it must be set a loop to
-% trun on after ending the computation.
-if ~isempty(find(prima_list == name_solver, 1))
-    warnoff(name_solver);
-end
 
 % Get length of fhist.
 fhist_length = length(obj.valHist);

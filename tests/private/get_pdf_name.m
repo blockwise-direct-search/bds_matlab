@@ -57,15 +57,9 @@ switch parameters.solvers_options{i}.solver
     
     case "bfo_wrapper"
         pdfname = "bfo";
-end
 
-if any(strcmpi(prima_list, parameters.solvers_options{i}.solver))
-    pdfname = parameters.solvers_options{i}.solver;
-    if isfield(parameters.solvers_options{i}, "version")
-        if strcmpi(parameters.solvers_options{i}.version, "old")
-            pdfname = strcat(parameters.solvers_options{i}.solver, "_", "classical");
-        end
-    end
+    case "prima_wrapper"
+        pdfname = parameters.solvers_options{i}.Algorithm;
 end
 
 end
