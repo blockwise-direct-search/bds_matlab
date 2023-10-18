@@ -1,11 +1,10 @@
 function setup(varargin)
-%This file is cited from https://github.com/libprima/prima/blob/main/setup.m, which is written by Zaikun Zhang.
+%This file is based on https://github.com/libprima/prima/blob/main/setup.m, which is written by Zaikun Zhang.
 %SETUP sets the package up for MATLAB.
 %
 %   This script can be called in the following ways.
 %
 %   setup % Add the paths needed to use the package
-%   setup solvers % Add the paths needed to use the solvers
 %   setup uninstall  % Uninstall the package
 %
 %   REMARKS:
@@ -26,13 +25,13 @@ function setup(varargin)
 
 % setup starts
 
-% path_stringName of the package. It will be used as a stamp to be included in the path_string. Needed only
+% path_stringName of the package. It will be used as a stamp to be included in the path_strings. Needed only
 % if `savepath` fails.
 package_name = 'bds';
 
 % Check the version of MATLAB.
-if verLessThan('matlab', '9.2')   % MATLAB R2017a = MATLAB 9.2
-    fprintf('\nSorry, this package does not support MATLAB R2017b or earlier releases.\n\n');
+if verLessThan('matlab', '9.3')   % MATLAB R2017b = MATLAB 9.3
+    fprintf('\nSorry, this package does not support MATLAB R2017a or earlier releases.\n\n');
     return
 end
 
@@ -40,20 +39,18 @@ end
 setup_dir = fileparts(mfilename('fullpath')); % The directory containing this setup script.
 src_dir = fullfile(setup_dir, 'src'); % Directory containing the source code of the package.
 examples_dir = fullfile(setup_dir, 'examples'); % Directory containing some examples.
-tests_dir = fullfile(setup_dir, 'tests'); % Directory containing some tests
-tests_competitors_dir = fullfile(tests_dir, 'competitors'); % Directory containing some tests for competitors.
+tests_dir = fullfile(setup_dir, 'tests'); % Directory containing some tests.
 
-
-% We need write access to `setup_dir` (and its subdirectories). Return if we do not have it.
-% N.B.: This checking is NOT perfect because of the following --- but it is better than nothing.
-% 1. `fileattrib` may not reflect the attributes correctly, particularly on Windows. See
-% https://www.mathworks.com/matlabcentral/answers/296657-how-can-i-check-if-i-have-read-or-write-access-to-a-directory
-% 2. Even if we have write access to `setup_dir`, we may not have the same access to its subdirectories.
-[~, attribute] = fileattrib(setup_dir);
-if ~attribute.UserWrite
-    fprintf('\nSorry, we cannot continue because we do not have write access to\n\n%s\n\n', setup_dir);
-    return
-end
+% % We need write access to `setup_dir` (and its subdirectories). Return if we do not have it.
+% % N.B.: This checking is NOT perfect because of the following --- but it is better than nothing.
+% % 1. `fileattrib` may not reflect the attributes correctly, particularly on Windows. See
+% % https://www.mathworks.com/matlabcentral/answers/296657-how-can-i-check-if-i-have-read-or-write-access-to-a-directory
+% % 2. Even if we have write access to `setup_dir`, we may not have the same access to its subdirectories.
+% [~, attribute] = fileattrib(setup_dir);
+% if ~attribute.UserWrite
+%     fprintf('\nSorry, we cannot continue because we do not have write access to\n\n%s\n\n', setup_dir);
+%     return
+% end
 
 % Parse the input.
 [action, wrong_input] = parse_input(varargin);
@@ -69,22 +66,12 @@ if strcmp(action, 'uninstall')
     return
 end
 
-
-%%%%%%%%%%%%%%% If we arrive here, then the user requests us to compile the solvers. %%%%%%%%%%%%%%%
-
 % Add the related paths to the MATLAB path, and then try saving the path.
-if strcmp(action, 'bds')
-    path_saved = add_save_path({src_dir}, package_name);
-else 
-    path_saved = add_save_path({src_dir, examples_dir, tests_dir, tests_competitors_dir}, package_name);
-end
+path_saved = add_save_path({src_dir, examples_dir, tests_dir}, package_name);
 
 fprintf('\nThe package is ready to use.\n');
-fprintf('\nYou may now try ''help bds.m'' for information on the usage of the package.\n');
-
-if ~strcmp(action, 'bds')
-    fprintf('\nYou may also run ''testbds'' to test the package on a few examples.\n');
-end
+fprintf('\nYou may now try ''help bds'' for information on the usage of the package.\n');
+fprintf('\nYou may also run ''testbds'' to test the package on a few examples.\n');
 
 if ~path_saved  % `add_save_path` failed to save the path.
     add_path_string = sprintf('addpath(''%s'');', src_dir);
@@ -104,22 +91,19 @@ return
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-function path_saved = add_save_path(path_string, path_string_stamp)
-%ADD_SAVE_PATH adds the path indicated by PATH_STRING to the MATLAB path and then tries saving path.
-% PATH_STRING_STAMP is a stamp used when writing PATH_STRING to the user's startup.m file, which is
+function path_saved = add_save_path(path_strings, path_string_stamp)
+%This function is based on https://github.com/libprima/prima/blob/main/setup.m, by Zaikun Zhang.
+%ADD_SAVE_PATH adds the paths indicated by PATH_STRINGS to the MATLAB path and then tries saving the paths.
+% PATH_STRING_STAMP is a stamp used when writing PATH_STRINGS to the user's startup.m file, which is
 % needed only if `savepath` fails.
 
-if nargin < 2
-    path_string_stamp = sprintf('Added by %s', mfilename);
-end
+for i = 1:length(path_strings)
 
-for i = 1:length(path_string)
-
-    if ~exist(path_string{i}, 'dir')
-        error('bds:PathNotExist', 'The string %s does not correspond to an existing directory.', path_string);
+    if ~exist(path_strings{i}, 'dir')
+        error('bds:PathNotExist', 'The string %s does not correspond to an existing directory.', path_strings);
     end
     
-    addpath(path_string{i});
+    addpath(path_strings{i});
     
     % Try saving the path in the system path-defining file at sys_pathdef. If the user does not have
     % writing permission for this file, then the path will not saved.
@@ -139,8 +123,8 @@ for i = 1:length(path_string)
     % this directory in that case.
     if ~path_saved && numel(userpath) > 0
         user_startup = fullfile(userpath, 'startup.m');
-        add_path_string = sprintf('addpath(''%s'');', path_string{i});
-        full_add_path_string = sprintf('%s  %s %s', add_path_string, '%', path_string_stamp);
+        add_path_string = sprintf('addpath(''%s'');', path_strings{i});
+        full_add_path_string = sprintf('%s\t%s %s', add_path_string, '%', path_string_stamp);
     
         % First, check whether full_add_path_string already exists in user_startup or not.
         if exist(user_startup, 'file')
@@ -186,34 +170,32 @@ return
 
 
 function uninstall_bds(path_string_stamp)
-    %This file is cited from https://github.com/libprima/prima/blob/main/matlab/setup_tools/uninstall_prima.m,
-    %which is written by Zaikun Zhang.
+    %This function is based on https://github.com/libprima/prima/blob/main/matlab/setup_tools/uninstall_prima.m,
+    %by Zaikun Zhang.
     %UNINSTALL_BDS uninstalls BDS.
     
     fprintf('\nUninstalling BDS (if it is installed) ... ');
     
     % The full path of several directories.
     mfiledir = fileparts(mfilename('fullpath'));  % The directory where this .m file resides
-    matd = fileparts(mfiledir); % Matlab directory
-    src = fullfile(matd, 'src'); % Directory containing the source code
-    examples = fullfile(matd, 'examples'); % Directory containing some examples
-    tests = fullfile(matd, 'tests'); % Directory containing some tests
-    competitors = fullfile(tests, 'competitors'); % Directory containing some competitors
-    path_string = {src, examples, tests, competitors}; % The paths to be removed
+    src = fullfile(mfiledir, 'src'); % Directory containing the source code
+    examples = fullfile(mfiledir, 'examples'); % Directory containing some examples
+    tests = fullfile(mfiledir, 'tests'); % Directory containing some tests
+    path_strings = {src, examples, tests}; % The paths to be removed
     
-    % Try removing the paths possibly added by PRIMA
+    % Try removing the paths possibly added by BDS.
     orig_warning_state = warning;
     warning('off', 'MATLAB:rmpath:DirNotFound'); % Maybe the paths were not added. We do not want to see this warning.
     warning('off', 'MATLAB:SavePath:PathNotSaved'); % Maybe we do not have the permission to save path.
-    rmpath(src, examples, tests, competitors);
+    rmpath(src, examples, tests);
     savepath;
     warning(orig_warning_state); % Restore the behavior of displaying warnings
     
     % Removing the line possibly added to the user startup script
     user_startup = fullfile(userpath,'startup.m');
     if exist(user_startup, 'file')
-        for i = 1:length(path_string) 
-            add_path_string = sprintf('addpath(''%s'');', path_string{i});
+        for i = 1:length(path_strings) 
+            add_path_string = sprintf('addpath(''%s'');', path_strings{i});
             full_add_path_string = sprintf('%s\t%s %s', add_path_string, '%', path_string_stamp);
             try
                 del_str_ln(user_startup, full_add_path_string);
@@ -223,9 +205,7 @@ function uninstall_bds(path_string_stamp)
         end
     end
     
-    callstack = dbstack('-completenames');
-    root_dir = fileparts(callstack(2).file);  % Root directory of the package
-    fprintf('Done.\nYou may now remove\n\n    %s\n\nif it contains nothing you want to keep.\n\n', root_dir);
+    fprintf('Done.\nYou may now remove\n\n    %s\n\nif it contains nothing you want to keep.\n\n', mfiledir);
     
     return
     
@@ -234,17 +214,17 @@ function uninstall_bds(path_string_stamp)
 
 
 function [action, wrong_input] = parse_input(argin)
-    %This file is cited from https://github.com/libprima/prima/blob/main/matlab/setup_tools/parse_input.m,
-    %which is written by Zaikun Zhang.
+    %This function is based on https://github.com/libprima/prima/blob/main/matlab/setup_tools/parse_input.m,
+    %by Zaikun Zhang.
     %PARSE_INPUT parses the input to the setup script.
     
     % Compilation options.
-    action_list = {'all', 'bds', 'uninstall'};
+    action_list = {'all', 'uninstall'};
     action = 'compile';
     wrong_input = false;
-    
+
     % Start the parsing to set `input_string` and `options`.
-    input_string = 'ALL';  % Default value for `input_string`.
+    input_string = 'all';  % Default value for `input_string`.
     if length(argin) > 1
         fprintf('\nSetup accepts at most one inputs.\n\n');
         wrong_input = true;

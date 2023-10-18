@@ -22,16 +22,16 @@ switch parameters.solvers_options{i}.solver
     case {"bds_powell"}
         solver_stamp = "CBDS-Powell";
 
-    case {"fminsearch"}
+    case {"fminsearch_wrapper"}
         solver_stamp = "simplex";
 
-    case {"fminunc"}
+    case {"fminunc_wrapper"}
         solver_stamp = upper(parameters.solvers_options{i}.fminunc_type);
 
     case {"wm_newuoa"}
         solver_stamp = "wm-newuoa";
 
-    case {"nlopt"}
+    case {"nlopt_wrapper"}
         switch parameters.solvers_options{i}.Algorithm
             case "cobyla"
                 solver_stamp = "nlopt-cobyla";
@@ -47,19 +47,11 @@ switch parameters.solvers_options{i}.solver
     case {"patternsearch"}
         solver_stamp = "patternsearch";
 
-    case {"bfo_optimize"}
+    case {"bfo_wrapper"}
         solver_stamp = "bfo";
-end
 
-% Set solver_stamp for PRIMA family.
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-if any(contains(prima_list, parameters.solvers_options{i}.solver, 'IgnoreCase', true))
-        solver_stamp = upper(parameters.solvers_options{i}.solver);
-        if isfield(parameters.solvers_options{i}, "version")
-            if strcmpi(parameters.solvers_options{i}.version, "old")
-                solver_stamp = strcat(upper(parameters.solvers_options{i}), "_", "classical");
-            end
-        end
+    case {"prima_wrapper"}
+        solver_stamp = parameters.solvers_options{i}.Algorithm;
 end
 
 end

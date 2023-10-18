@@ -13,6 +13,8 @@ switch constant_name
         constant_value = 2;
     case {"shrink"}
         constant_value = 0.5;
+    case {"num_random_vectors"}
+        constant_value = 2;
     case {"sufficient_decrease_factor"}
         constant_value = eps;
     case {"forcing_function_type"}
@@ -37,9 +39,13 @@ switch constant_name
         constant_value = 1;
     case {"with_cycling_memory"}
         constant_value = true;
+    case {"fminunc_type"}
+        constant_value = "bfgs";
     case {"output_xhist"}
         constant_value = false;
     case {"output_alpha_hist"}
+        constant_value = false;
+    case {"output_block_hist"}
         constant_value = false;
     otherwise
         error("Unknown constant name")

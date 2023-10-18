@@ -151,28 +151,12 @@ function [output] = profile(parameters)
             end
     
         end
-        
-        % Set maxfun and maxfun_factor for test_options.
-        if isfield(parameters, "maxfun")
-            test_options.maxfun = parameters.maxfun;
-        end
-    
-        if isfield(parameters, "maxfun_factor")
-            test_options.maxfun_factor = parameters.maxfun_factor;
-        end
-    
-        if isfield(parameters, "alpha_init")
-            test_options.alpha_init = parameters.alpha_init;
-        end
-
-        if isfield(parameters, "StepTolerance")
-            test_options.StepTolerance = parameters.StepTolerance;
-        end
 
         % Set scaling matrix.
         test_options.scale_variable = false;
     
         % Set solvers_options.
+        parameters = get_options(parameters);
         solvers_options = parameters.solvers_options;
 
         % If parameters.noise_initial_point is true, then initial point will be

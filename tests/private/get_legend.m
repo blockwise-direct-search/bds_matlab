@@ -23,16 +23,16 @@ switch parameters.solvers_options{i}.solver
     case {"bds_powell"}
         solver_legend = "CBDS-Powell";
 
-    case {"fminsearch"}
+    case {"fminsearch_wrapper"}
         solver_legend = "fminsearch";
 
-    case {"fminunc"}
+    case {"fminunc_wrapper"}
         solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
 
     case {"wm_newuoa"}
         solver_legend = "wm-newuoa";
         
-    case {"nlopt"}
+    case {"nlopt_wrapper"}
         switch parameters.solvers_options{i}.Algorithm
             case "cobyla"
                 solver_legend = "nlopt-cobyla";
@@ -52,22 +52,12 @@ switch parameters.solvers_options{i}.solver
                 parameters.solvers_options{i}.linesearch_type);
         end
 
-    case {"bfo_optimize"}
+    case {"bfo_wrapper"}
        solver_legend = "bfo";
+
+    case {"prima_wrapper"}
+       solver_legend = parameters.solvers_options{i}.Algorithm;
        
 end
-
-% Get legend of algorithm of Prima family.
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-if any(contains(prima_list, parameters.solvers_options{i}.solver, 'IgnoreCase', true))
-    solver_legend = upper(parameters.solvers_options{i}.solver);
-    if isfield(parameters.solvers_options{i}, "version")
-        if strcmpi(parameters.solvers_options{i}.version, "old")
-            solver_legend = strcat(upper(parameters.solvers_options{i}), "-", "classical");
-        end
-    end
-end
-
-
 
 end

@@ -1,5 +1,5 @@
 function testbds(release, precision, nrun)
-%This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/testprima.m, which is written
+%This file is based on https://github.com/libprima/prima/blob/main/matlab/tests/testprima.m, which is written
 %by Zaikun Zhang.
 %TESTBDS tests bds on a few VERY simple problems.
 %
@@ -42,16 +42,14 @@ else
     perturb = eps;
 end
 
-type_list = {'unconstrained'};
-
 fun_list = {@mcc, @hmlb, @chrosen, @chebquad};
 
 x0_list = {zeros(2,1), zeros(2,1), zeros(3,1), zeros(4,1)};
 
-fopt_list = {{-1.913222954981037, -5.0768934966810497e-01, 0.934627336363561,  0.934627336363561}, ... %mcc
-              {0, 144.125, 136, 1.293402195198189e+02}, ... %hmlb
-              {0, 0.7, 6.0153819489865101e-01, 2.4054273877510723e-01}, ... %chrosen
- 			 {0, 2.1272916538809911e-01,  2.9733407628744646e-01, 2.6143791089220641e-02} %chebquad
+fopt_list = {-1.913222954981037, ... %mcc
+              0, ... %hmlb
+              0, ... %chrosen
+ 			  0 %chebquad
  			};
 
 %xopt_list = {{[-0.547197554599523; -1.547197552199337], [-1.4849642130761465e-01; -0.5], [0.267825716190182; 0], [0.267825716190182; 0]}, ... %mcc
@@ -76,60 +74,53 @@ for irun = 1 : nrun
     if (nrun > 1)
         fprintf ('Test %d:\n\n', irun);
     end
-    for itype = 1 : length(type_list)
-        type = type_list{itype};
-        fprintf ('Testing %s problems ...\n', strrep(type, '-', ' '));
-        for iAlgorithm = 1 : length(all_Algorithms)
-            Algorithm = all_Algorithms{iAlgorithm};
-            for ifun = 1 : length(fun_list)
-                fun = fun_list{ifun};
-                x0 = x0_list{ifun};
-                r = abs(sin(1e3*sum(double([Algorithm, func2str(fun), type]))*irun*(1:length(x0))'));
-                % Introduce a tiny perturbation to the experiments.
-                % We use a deterministic permutation so that
-                % experiments can be easily repeated when necessary.
-                x0 = x0 + perturb*max(norm(x0), 1)*r/norm(r);
-                %xopt = xopt_list{ifun}{itype};
-                fopt = fopt_list{ifun}{itype};
+    %fprintf ('Testing %s problems ...\n', strrep(type, '-', ' '));
+    for iAlgorithm = 1 : length(all_Algorithms)
+        Algorithm = all_Algorithms{iAlgorithm};
+        for ifun = 1 : length(fun_list)
+            fun = fun_list{ifun};
+            x0 = x0_list{ifun};
+            r = abs(sin(1e3*sum(double([Algorithm, func2str(fun)]))*irun*(1:length(x0))'));
+            % Introduce a tiny perturbation to the experiments.
+            % We use a deterministic permutation so that
+            % experiments can be easily repeated when necessary.
+            x0 = x0 + perturb*max(norm(x0), 1)*r/norm(r);
+            %xopt = xopt_list{ifun}{itype};
+            fopt = fopt_list{ifun};
 
-                problem = struct();
-                problem.objective = fun;
-                problem.x0 = x0;
-                options.Algorithm = Algorithm;
-                problem.options = options;
+            problem = struct();
+            problem.objective = fun;
+            problem.x0 = x0;
+            options.Algorithm = Algorithm;
+            problem.options = options;
 
-                    switch type
-                    case 'unconstrained'
-                        [x, fx] = bds(fun, x0, options);
-                    end
+            [x, fx] = bds(fun, x0, options);
 
-                    xs = bds(problem.objective, problem.x0, problem.options);
+            xs = bds(problem.objective, problem.x0, problem.options);
 
-                    if ~release
-                        fprintf('\nsolver = %s,\tfun = %s,\t\tfx = %.16e,\t\tfopt = %.16e\n', solver, func2str(fun), fx, fopt);
-                    end
-
-                    if strcmpi(Algorithm, "pbds") || strcmpi(Algorithm, "rbds")
-                        if ((fx-fopt)/max(1, abs(fopt)) > precision) || (~release && abs(fx-fopt)/max(1, abs(fopt)) > precision)
-                        fprintf ('Required precision = %.2e,\t\tactual precision = %.2e\n', precision, abs(fx-fopt)/max(1, abs(fopt)));
-                        error('bds FAILED a test on %s problem: Algorithm = ''%s'', objective function = ''%s''.\n', type, Algorithm, func2str(fun));
-                        end
-                    else
-                        if (norm(x-xs) > 0) || ((fx-fopt)/max(1, abs(fopt)) > precision) || (~release && abs(fx-fopt)/max(1, abs(fopt)) > precision)
-                        keyboard
-                        fprintf ('Required precision = %.2e,\t\tactual precision = %.2e\n', precision, abs(fx-fopt)/max(1, abs(fopt)));
-                        error('bds FAILED a test on %s problem: Algorithm = ''%s'', objective function = ''%s''.\n', type, Algorithm, func2str(fun));
-                        end
-                    end
-
+            if ~release
+                fprintf('\nsolver = %s,\tfun = %s,\t\tfx = %.16e,\t\tfopt = %.16e\n', solver, func2str(fun), fx, fopt);
             end
-        end
 
-        if ~release((fx-fopt)/max(1, abs(fopt)) > precision)
-            fprintf('\n\n');
+            if strcmpi(Algorithm, "pbds") || strcmpi(Algorithm, "rbds")
+                if ((fx-fopt)/max(1, abs(fopt)) > precision) || (~release && abs(fx-fopt)/max(1, abs(fopt)) > precision)
+                    fprintf ('Required precision = %.2e,\t\tactual precision = %.2e\n', precision, abs(fx-fopt)/max(1, abs(fopt)));
+                    error('bds FAILED a test: Algorithm = ''%s'', objective function = ''%s''.\n', Algorithm, func2str(fun));
+                end
+            else
+                if (norm(x-xs) > 0) || ((fx-fopt)/max(1, abs(fopt)) > precision) || (~release && abs(fx-fopt)/max(1, abs(fopt)) > precision)
+                    fprintf ('Required precision = %.2e,\t\tactual precision = %.2e\n', precision, abs(fx-fopt)/max(1, abs(fopt)));
+                    error('bds FAILED a test: Algorithm = ''%s'', objective function = ''%s''.\n', Algorithm, func2str(fun));
+                end
+            end
+
         end
-        fprintf ('Succeed.\n\n');
     end
+
+    if ~release((fx-fopt)/max(1, abs(fopt)) > precision)
+        fprintf('\n\n');
+    end
+    fprintf ('Succeed.\n\n');
 
     fprintf('All tests were successful.\n\n');
 end

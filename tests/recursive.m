@@ -1,6 +1,5 @@
 function recursive(Algorithm, options)
-%This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/recursive.m, which
-%is written by Zaikun Zhang.
+%This function is based on https://github.com/libprima/prima/blob/main/matlab/tests/recursive.m, by Zaikun Zhang.
 %RECURSIVE verifies that the solvers can be called recursively.
 %
 
@@ -44,7 +43,7 @@ end
 if ~isfield(options, 'compile') || options.compile
     old_directory = pwd();
     cd(fileparts(fileparts(mfilename('fullpath'))));
-    setup bds
+    setup
     cd(old_directory);
 end
 solver = str2func('bds');

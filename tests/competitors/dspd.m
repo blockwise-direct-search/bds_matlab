@@ -113,9 +113,10 @@ end
 
 % Get the number of directions.
 if isfield(options, "num_random_vectors")
-    m = max(options.num_random_vectors, ceil(log2(1-log(shrink))/log(expand)));
+    m = max(options.num_random_vectors, 1 + floor(log2(1-log(shrink)/log(expand))));
+    choice = true;
 else
-    m = max(get_default_constant("num_random_vectors"), ceil(log2(1-log(shrink))/log(expand)));
+    choice = false;
 end
 
 % Set MAXFUN to the maximum number of function evaluations.
@@ -223,7 +224,7 @@ for iter = 1:maxit
 
     % Generate the searching set whose directions are uniformly distributed on the unit sphere
     % for each iteration when the Algorithm is "dspd".
-    if m == 1
+    if ~choice
         rv = randn(n, 1);
         % Normalize rv.
         rv = rv ./ norm(rv);

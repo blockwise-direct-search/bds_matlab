@@ -67,13 +67,14 @@ if isfield(options, "searching_set")
     % Keep the remaining direction.
     D = searching_set(:, preserved_indices);
     if isempty(D)
-        D = eye(3);
+        D = eye(n);
     end
 
     % By QR factorization, the searching set will linearly span the full space.
     % TODO: whether needs permutation?
     [Q, R, ~] = qr(D);
-    [~, m] = size(Q);
+    [~, m] = size(R);
+    
     % Q_indices(abs(diag(R)) > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n)))) = [];
     rank_D_clean = sum(abs(diag(R)) > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
     D = [D, Q(:, rank_D_clean+1:end)];

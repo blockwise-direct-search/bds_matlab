@@ -17,30 +17,6 @@ fhist_perfprof = NaN(maxfun_frec, 1);
 %    scaling_matrix = eye(length(p.x0));
 % end
 
-% Set maxfun before computing.
-% Set MAXFUN to the maximum number of function evaluations if there exist
-% some related parameters input, which are maxfun_factor and maxfun.
-n = length(p.x0);
-if isfield(test_options, "maxfun_factor") && isfield(test_options, "maxfun")
-    options.maxfun = min(test_options.maxfun_factor*n, test_options.maxfun);
-elseif isfield(test_options, "maxfun_factor")
-    options.maxfun = test_options.maxfun_factor*n;
-elseif isfield(test_options, "maxfun")
-    options.maxfun = test_options.maxfun;
-end
-maxfun = options.maxfun;
-
-% Set initial step size and StepTolerance before computing.
-if isfield(test_options, "StepTolerance")
-    options.StepTolerance = test_options.StepTolerance;
-end
-if isfield(test_options, "alpha_init")
-    options.alpha_init = test_options.alpha_init;
-end
-
-% Get the options for j-th solver.
-options = get_options(name_solver, options);
-
 % Turn off warning to save computation resource.
 prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
 if ~isempty(find(prima_list == name_solver, 1))
@@ -54,6 +30,7 @@ obj = ScalarFunction(p);
 %     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 % catch
 % end
+
 solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 % Turn off warning is a very dangerous thing. So it must be set a loop to
 % trun on after ending the computation.
@@ -62,8 +39,8 @@ if ~isempty(find(prima_list == name_solver, 1))
 end
 
 % Get length of fhist.
-fhist_length = min(obj.nEval, maxfun);
-fhist_perfprof(1:fhist_length) = obj.valHist(1:fhist_length);
+fhist_length = length(obj.valHist);
+fhist_perfprof(1:fhist_length) = obj.valHist;
 
 % Trim fhist for performance profile. If the length of fhist is less than maxfun,
 % then the prolonged parts will be imparted the value of the last function evaluation 

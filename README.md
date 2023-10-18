@@ -21,8 +21,8 @@ setup
 
 If the above succeeds, then the package `bds` is installed and ready to use. Try `help bds.m` for more information.
 
-Success is expected if you are using MATLAB R2017b or above since we use [vecnorm.m](https://www.mathworks.com/help/matlab/ref/vecnorm.html) in the [get_searching_set.m](https://github.com/blockwise-direct-search/bds/blob/main/src/private/get_searching_set.m) and the [dspd.m](https://github.com/blockwise-direct-search/bds/blob/main/tests/competitors/dspd.m).
-Let me know by opening an issue if this is not the case.
+We do not support MATLAB R2017a or earlier. If there exists any problems, please open an issue by
+https://github.com/blockwise-direct-search/bds/issues.
 
 
 ## Test of BDS.

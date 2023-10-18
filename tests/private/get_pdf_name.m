@@ -29,7 +29,7 @@ switch parameters.solvers_options{i}.solver
     case "wm_newuoa"
         pdfname = parameters.solvers_options{i}.solver;
 
-    case "nlopt"
+    case "nlopt_wrapper"
         switch parameters.solvers_options{i}.Algorithm
             case "cobyla"
                 pdfname = "nlopt_cobyla";
@@ -39,7 +39,7 @@ switch parameters.solvers_options{i}.solver
                 pdfname = "nlopt_bobyqa";
         end
 
-    case "fminsearch"
+    case "fminsearch_wrapper"
         pdfname = strcat("fminsearch", "_", "simplex");
 
     case "lam"
@@ -49,13 +49,13 @@ switch parameters.solvers_options{i}.solver
                 parameters.solvers_options{i}.linesearch_type);
         end
 
-    case "fminunc"
+    case "fminunc_wrapper"
         pdfname = strcat("fminunc", "_", parameters.solvers_options{i}.fminunc_type);
         
     case "patternsearch"
         pdfname = strcat("patternsearch", "_", "gps");
     
-    case "bfo_optimize"
+    case "bfo_wrapper"
         pdfname = "bfo";
 end
 

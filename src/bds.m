@@ -144,10 +144,30 @@ end
 maxit = maxfun;
 
 % Set the value of sufficient decrease factor.
-if isfield(options, "sufficient_decrease_factor")
-    sufficient_decrease_factor = options.sufficient_decrease_factor;
+if isfield(options, "sufficient_decrease_factor_level")
+    switch lower(options.sufficient_decrease_factor_level)
+        case "zero"
+            options.sufficient_decrease_factor = 0;
+        case "negligible"
+            options.sufficient_decrease_factor = 1e-16;
+        case "low"
+            options.sufficient_decrease_factor = 1e-8;
+        case "medium"
+            options.sufficient_decrease_factor = 1e-3;
+        case "high"
+            options.sufficient_decrease_factor = 1;
+        case "excessive"
+            options.sufficient_decrease_factor = 10;
+        otherwise
+            error("Unknown sufficient decrease factor level %s", ...
+                options.sufficient_decrease_factor_level);
+    end
 else
-    sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+    if isfield(options, "sufficient_decrease_factor")
+        sufficient_decrease_factor = options.sufficient_decrease_factor;
+    else
+        sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+    end
 end
 
 % Set the type of forcing function.
@@ -285,6 +305,12 @@ if output_xhist
         output_xhist = false;
         warning('xhist will be not included in the output due to the limit of memory.');
     end
+end
+
+if isfield(options, "output_block_hist")
+    output_block_hist = options.output_block_hist;
+else
+    output_block_hist = get_default_constant("output_block_hist");
 end
 
 % Initialize the history of blocks visited.
@@ -448,7 +474,10 @@ end
 num_blocks_visited = sum(~isnan(block_hist));
 
 % Record the blocks visited.
-output.blocks_hist = block_hist(1:num_blocks_visited);
+if output_block_hist
+    output.blocks_hist = block_hist(1:num_blocks_visited);
+end
+
 
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}

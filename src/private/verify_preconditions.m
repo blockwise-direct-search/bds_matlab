@@ -128,4 +128,10 @@ if isfield(options, "output_alpha_hist")
     end
 end
 
+if isfield(options, "output_block_hist")
+    if ~islogical(options.output_block_hist)
+        error("options.output_block_hist is not a logical value.");
+    end
+end
+
 end

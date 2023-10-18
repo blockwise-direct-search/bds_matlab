@@ -83,7 +83,7 @@ function tests = unit_test
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
     constant_name = "accept_simple_decrease";
-    constant_value = true;
+    constant_value = false;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)    
      
     constant_name = "StepTolerance";
@@ -206,7 +206,12 @@ function tests = unit_test
     options.searching_set = eye(3);
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
     verifyEqual(testCase, get_searching_set(n, options), D)
-    
+
+    n = 3;
+    options = struct();
+    options.searching_set = [];
+    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
+    verifyEqual(testCase, get_searching_set(n, options), D)
 
     end
     
