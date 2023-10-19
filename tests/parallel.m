@@ -40,7 +40,7 @@ end
 if ~isfield(options, 'compile') || options.compile
     old_directory = pwd();
     cd(fileparts(fileparts(mfilename('fullpath'))));
-    setup bds
+    setup
     cd(old_directory);
 end
 solver = str2func('bds');
