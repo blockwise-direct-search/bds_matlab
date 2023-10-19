@@ -43,6 +43,9 @@ tests/competitors/wm_newuoa
 # bfo.m for the copyright
 bfo.m
 
+# untitled.m for some temporary tests
+untitled.m
+
 # setup
 # setup.m
 # recursive.m
