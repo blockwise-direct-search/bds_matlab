@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Stress test
+    name: Unit test
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
