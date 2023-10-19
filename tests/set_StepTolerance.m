@@ -41,8 +41,8 @@ try
 
     % Get list of problems
     s.type = 'u'; % Unconstrained: 'u'
-    s.mindim = 1; % Minimum of dimension
-    s.maxdim = 100; % Maximum of dimension
+    s.mindim = 5; % Minimum of dimension
+    s.maxdim = 5; % Maximum of dimension
     s.blacklist = [];
     s.blacklist = [s.blacklist, { 'ARGTRIGLS', 'BROWNAL', ...
         'COATING', 'DIAMON2DLS', 'DIAMON3DLS', 'DMN15102LS', ...
@@ -72,7 +72,9 @@ try
     % Trim time string.
     time_str = trim_time(time_str);
     % Rename tst as mixture of time Algorithm and StepTolerance.
-    tst = strcat("ratio", "_", time_str);
+    int2str(int32(-log10(options.StepTolerance)))
+    tst = strcat("ratio", "_", Algorithm, "_", ...
+        int2str(int32(-log10(options.StepTolerance))),  "_", time_str);
     path_testdata = fullfile(path_tests, "testdata");
     path_ratio = fullfile(path_testdata, tst);
 
@@ -97,10 +99,10 @@ try
     T = cell2table(data, 'VariableNames', columnNames);
     fileID = fopen(path_ratio_data, 'w');
     % Write column names to ratio.txt.
-    fprintf(fileID, '%-15s\t%-15s\t%-20s\t%-15s\n', columnNames{:});
+    fprintf(fileID, '%-15s\t%-15s\t%-25s\t%-25s\n', columnNames{:});
     % Write table data to ratio.txt.
     for row = 1:size(T, 1)
-        fprintf(fileID, '%-15s\t%-15d\t%-20f\t%-15f\n', T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
+        fprintf(fileID, '%-15s\t%-15d\t%-25f\t%-25f\n', T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
     end
 
 % 关闭文件

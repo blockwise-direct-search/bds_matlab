@@ -2,8 +2,6 @@ function pdfname = get_pdf_name(parameters, i)
 % GET_PDF_NAME gets the part of pdfname of the i-th solver.
 %
 
-prima_list = ["cobyla", "uobyqa", "newuoa", "bobyqa", "lincoa"];
-
 switch parameters.solvers_options{i}.solver
     case "bds"
         pdfname = upper(parameters.solvers_options{i}.Algorithm);
