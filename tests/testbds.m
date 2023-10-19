@@ -23,12 +23,6 @@ function testbds(release, precision, nrun)
 
 all_Algorithms =  {'pbds', 'cbds', 'ds', 'rbds'};
 
-% Suppress the following warnings
-cellfun(@(solver) warning('off', [solver, ':Debug']), {'bds'});
-cellfun(@(solver) warning('off', [solver, ':ChkFunval']), {'bds'});
-cellfun(@(solver) warning('off', [solver, ':Classical']), {'bds'});
-cellfun(@(solver) warning('off', [solver, ':ReviseX0']), {'bds'});
-
 if nargin < 1
     release = true;
 end
@@ -124,12 +118,6 @@ for irun = 1 : nrun
 
     fprintf('All tests were successful.\n\n');
 end
-
-% Recover the warning behavior
-cellfun(@(solver) warning('on', [solver, ':Debug']), {'bds'});
-cellfun(@(solver) warning('on', [solver, ':ChkFunval']), {'bds'});
-cellfun(@(solver) warning('on', [solver, ':Classical']), {'bds'});
-cellfun(@(solver) warning('on', [solver, ':ReviseX0']), {'bds'});
 
 return
 

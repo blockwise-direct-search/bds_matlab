@@ -11,7 +11,7 @@ See [Haitian LI's presentation](https://lht97.github.io/documents/ICNONLA2023.pd
 ## How to install BDS?
 
 1. Clone this repository. You should then get a folder named `bds` containing this README file and the
-[`setup.m`](install.m) file.
+[`setup.m`](https://github.com/blockwise-direct-search/bds/blob/main/setup.m) file.
 
 2. In the command window of MATLAB, change your directory to the above-mentioned folder, and execute
 
@@ -19,7 +19,7 @@ See [Haitian LI's presentation](https://lht97.github.io/documents/ICNONLA2023.pd
 setup
 ```
 
-If the above succeeds, then the package `bds` is installed and ready to use. Try `help bds.m` for more information.
+If the above succeeds, then the package `bds` is installed and ready to use. Try `help bds` for more information.
 
 We do not support MATLAB R2017a or earlier. If there exists any problems, please open an issue by
 https://github.com/blockwise-direct-search/bds/issues.

@@ -3,10 +3,6 @@ function recursive(Algorithm, options)
 %RECURSIVE verifies that the solvers can be called recursively.
 %
 
-% Turn off the warning about the debug mode.
-orig_warning_state = warning;
-warning('off', ['bds', ':Debug']);
-
 if nargin < 2
     options = struct();
 end
@@ -72,8 +68,6 @@ toc;
 
 % Restore the random number generator state
 rng(orig_rng_state);
-% Restore the warning state
-warning(orig_warning_state);
 
 return
 

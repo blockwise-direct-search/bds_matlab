@@ -2,10 +2,7 @@ function parallel(Algorithm, options)
 %This file is cited from https://github.com/libprima/prima/blob/main/matlab/tests/parallel.m, which
 %is written by Zaikun Zhang.
 %PARALLEL verifies that the solvers can be called in parallel.
-
-% Turn off the warning about the debug mode.
-orig_warning_state = warning;
-warning('off', ['bds', ':Debug']);
+%
 
 if nargin < 2
     options = struct();
@@ -76,8 +73,6 @@ toc;
 
 % Restore the random number generator state
 rng(orig_rng_state);
-% Restore the warning state
-warning(orig_warning_state);
 
 return
 
