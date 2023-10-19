@@ -2,7 +2,7 @@ name: Set StepTolerance for BDS
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   #schedule:
   # - cron: '0 12 */7 * *'

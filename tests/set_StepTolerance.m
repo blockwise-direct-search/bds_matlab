@@ -56,6 +56,7 @@ try
     problem_names = secup(s);
     num_problems = length(problem_names);
     data = cell(num_problems, 4);
+    columnNames = {'Name', 'dimension', 'ratio', 'gval'};
 
     % Set output_xhist to be true to have output.xhist for calculating the
     % norm of the gradient.
@@ -76,30 +77,35 @@ try
     path_testdata = fullfile(path_tests, "testdata");
     path_ratio = fullfile(path_testdata, tst);
 
-    % Make a new folder to save the results and source code.
+    % Make a new folder to save the results and source code and a new txt
+    % file to record the data.
     mkdir(path_ratio);
+    path_ratio_data = fullfile(path_ratio, "ratio.txt");
     path_ratio_src = fullfile(path_ratio, "src");
     mkdir(path_ratio_src);
     copyfile(fullfile(path_src, "*"), path_ratio_src);
 
     % Make a txt file to store the ratio that are recorded.
-    problem_names_str = strings(1, length(problem_names));
-    for i = 1:num_problems
-        problem_names_str(i) = problem_names{i};
-    end
-    filePath = strcat(path_ratio, "/ratio.txt");
-    fileID = fopen(filePath, 'w');
-    fprintf(fileID, '%s\n', options.Algorithm);
-    fprintf(fileID, '%s\n', num2str(options.maxfun));
-    if isfield(options, "StepTolerance")
-        fprintf(fileID, '%s\n', num2str(options.StepTolerance));
-    end
     for i_problem = 1:num_problems
         p = macup(problem_names(1, i_problem));
-        ratio = test_gradient_stepsize(p.name, options);
-        fprintf(fileID, '%s %s\n', p.name, num2str(ratio));
+        [ratio, gval] = test_gradient_stepsize(p.name, options);
+        data{(i_problem-1)*4+1} = p.name;
+        data{(i_problem-1)*4+2} = length(p.x0);
+        data{(i_problem-1)*4+3} = ratio;
+        data{(i_problem-1)*4+4} = gval;
     end
-    fclose(fileID);
+
+    T = cell2table(data, 'VariableNames', columnNames);
+    fileID = fopen(path_ratio_data, 'w');
+    % Write column names to ratio.txt.
+    fprintf(fileID, '%-15s\t%-15s\t%-15s\t%-15s\n', columnNames{:});
+    % Write table data to ratio.txt.
+    for row = 1:size(T, 1)
+        fprintf(fileID, '%-15s\t%-15d\t%-15f\t%-15s\n', T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
+    end
+
+% 关闭文件
+fclose(fileID);
 
 catch exception
 
