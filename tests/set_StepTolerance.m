@@ -52,7 +52,6 @@ try
         'LUKSAN22LS', 'MANCINO', 'PENALTY2', 'PENALTY3', 'VARDIM',
         }];
    
-
     problem_names = secup(s);
     num_problems = length(problem_names);
     data = cell(num_problems, 4);
@@ -89,19 +88,19 @@ try
     for i_problem = 1:num_problems
         p = macup(problem_names(1, i_problem));
         [ratio, gval] = test_gradient_stepsize(p.name, options);
-        data{(i_problem-1)*4+1} = p.name;
-        data{(i_problem-1)*4+2} = length(p.x0);
-        data{(i_problem-1)*4+3} = ratio;
-        data{(i_problem-1)*4+4} = gval;
+        data{i_problem} = p.name;
+        data{num_problems + i_problem} = length(p.x0);
+        data{num_problems*2 + i_problem} = ratio;
+        data{(num_problems)*3 + i_problem} = gval;
     end
 
     T = cell2table(data, 'VariableNames', columnNames);
     fileID = fopen(path_ratio_data, 'w');
     % Write column names to ratio.txt.
-    fprintf(fileID, '%-15s\t%-15s\t%-15s\t%-15s\n', columnNames{:});
+    fprintf(fileID, '%-15s\t%-15s\t%-20s\t%-15s\n', columnNames{:});
     % Write table data to ratio.txt.
     for row = 1:size(T, 1)
-        fprintf(fileID, '%-15s\t%-15d\t%-15f\t%-15s\n', T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
+        fprintf(fileID, '%-15s\t%-15d\t%-20f\t%-15f\n', T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
     end
 
 % 关闭文件
