@@ -41,8 +41,8 @@ try
 
     % Get list of problems
     s.type = 'u'; % Unconstrained: 'u'
-    s.mindim = 5; % Minimum of dimension
-    s.maxdim = 5; % Maximum of dimension
+    s.mindim = 1; % Minimum of dimension
+    s.maxdim = 100; % Maximum of dimension
     s.blacklist = [];
     s.blacklist = [s.blacklist, { 'ARGTRIGLS', 'BROWNAL', ...
         'COATING', 'DIAMON2DLS', 'DIAMON3DLS', 'DMN15102LS', ...
@@ -72,7 +72,6 @@ try
     % Trim time string.
     time_str = trim_time(time_str);
     % Rename tst as mixture of time Algorithm and StepTolerance.
-    int2str(int32(-log10(options.StepTolerance)))
     tst = strcat("ratio", "_", Algorithm, "_", ...
         int2str(int32(-log10(options.StepTolerance))),  "_", time_str);
     path_testdata = fullfile(path_tests, "testdata");
