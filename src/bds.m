@@ -270,7 +270,7 @@ if isfield(options, "alpha_init")
         error("The length of alpha_init should be equal to nb or equal to 1.");
     end
     % TODO: Try alpha_all = 0.5 * max(abs(x0), 1) in the canonical case.
-elseif isfield(options, "alpha_init_perturbated") && options.alpha_init_perturbated
+elseif isfield(options, "alpha_init_perturbed") && options.alpha_init_perturbed
     alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
 else
     alpha_all = ones(nb, 1);
