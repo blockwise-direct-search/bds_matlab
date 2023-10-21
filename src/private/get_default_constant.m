@@ -39,8 +39,6 @@ switch constant_name
         constant_value = 1;
     case {"with_cycling_memory"}
         constant_value = true;
-    case {"fminunc_type"}
-        constant_value = "bfgs";
     case {"output_xhist"}
         constant_value = false;
     case {"output_alpha_hist"}

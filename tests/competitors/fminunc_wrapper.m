@@ -39,7 +39,7 @@ end
 if isfield(options, "fminunc_type")
     fminunc_type = options.fminunc_type;
 else
-    fminunc_type = get_default_constant("fminunc_type");
+    fminunc_type = "bfgs";
 end
 
 options = optimoptions('fminunc', 'Algorithm', 'quasi-newton', 'HessUpdate', ...

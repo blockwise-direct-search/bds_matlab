@@ -1,4 +1,4 @@
-function [output] = profile(parameters)
+function profile(parameters)
 % Draw performance profiles.
 %
 
@@ -343,16 +343,18 @@ try
     % Draw performance profiles.
     % Set tolerance of convergence test in performance profile.
     tau = parameters.tau;
-    tau_length = length(tau);
+    %tau_length = length(tau);
 
     options_perf.pdfname = parameters.pdfname;
     options_perf.solvers = parameters.solvers_legend;
     options_perf.natural_stop = false;
 
-    for l = 1:tau_length
-        options_perf.tau = tau(l);
-        output = perfprof(frec, fmin, options_perf);
-    end
+    perfdata(tau, frec, fmin, options_perf);
+
+    % for l = 1:tau_length
+    %     options_perf.tau = tau(l);
+    %     output = perfprof(frec, fmin, options_perf);
+    % end
 
     cd(options_perf.outdir);
 
