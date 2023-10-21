@@ -31,8 +31,6 @@ switch constant_name
         constant_value = -inf;
     case {"polling_inner"}
         constant_value = "opportunistic";
-    case {"polling_outer"}
-        constant_value = "opportunistic";
     case {"cycling_inner"}
         constant_value = 1;
     case {"with_cycling_memory"}
