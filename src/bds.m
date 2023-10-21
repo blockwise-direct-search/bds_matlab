@@ -269,8 +269,10 @@ if isfield(options, "alpha_init")
     else
         error("The length of alpha_init should be equal to nb or equal to 1.");
     end
+    % TODO: Try alpha_all = 0.5 * max(abs(x0), 1) in the canonical case.
+elseif isfield(options, "alpha_init_perturbated") && options.alpha_init_perturbated
+    alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
 else
-    % TODO: Try alpha_all = 0.5 * max(abs(x), 1) in the canonical case.
     alpha_all = ones(nb, 1);
 end
 
@@ -428,7 +430,7 @@ for iter = 1:maxit
         end
         
         % Update the step sizes and store the history of step sizes.
-        success = suboutput.success;;
+        success = suboutput.success;
         if success
             alpha_all(i_real) = expand * alpha_all(i_real);
         else

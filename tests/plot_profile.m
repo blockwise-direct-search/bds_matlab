@@ -6,8 +6,6 @@ function plot_profile(parameters)
 % 
 
 parameters.maxfun_factor = 1e3;
-parameters.alpha_init = 1;
-parameters.StepTolerance = eps;
 
 if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};

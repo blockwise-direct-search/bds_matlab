@@ -14,7 +14,7 @@ end
 if isfield(options, "alpha_init")
     options.rhobeg = options.alpha_init;
 else
-    options.rhoend = get_default_constant("alpha_init");
+    options.rhobeg = get_default_constant("alpha_init");
 end
 % An indicator: it can attain 0, 1, 2, 3, -1, -2, -3. Default value is
 % 0. More absolute value of iprint, more information will be printed on command
