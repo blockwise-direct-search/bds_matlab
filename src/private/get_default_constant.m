@@ -13,14 +13,12 @@ switch constant_name
         constant_value = 2;
     case {"shrink"}
         constant_value = 0.5;
-    case {"num_random_vectors"}
-        constant_value = 2;
     case {"sufficient_decrease_factor"}
         constant_value = eps;
     case {"forcing_function_type"}
         constant_value = "quadratic";
     case {"accept_simple_decrease"}
-        constant_value = false;
+        constant_value = true;
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}
