@@ -74,7 +74,7 @@ if isfield(options, "searching_set")
     % By the permutation matrix P, the absolute values of the diagonal 
     % elements of R will decrease. We preserve the columns in D where the
     % diagonal elements of R are not too small correspondingly. To make D
-    % linealy span the full space, we introduce some columns in Q. 
+    % linearly span the full space, we introduce some columns in Q. 
     [Q, R, ~] = qr(D);
     [~, m] = size(R);
     rank_D_clean = sum(abs(diag(R)) > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
