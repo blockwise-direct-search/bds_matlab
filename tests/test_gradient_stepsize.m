@@ -2,6 +2,8 @@ function [ratio, gval] = test_gradient_stepsize(problem_name, options)
 % This function tests the ratio between the gradient norm and the StepTolerance on CUTEst problems.
 % 
 
+format long
+
 if nargin < 2
     options.solver_name = "bds";
 end
