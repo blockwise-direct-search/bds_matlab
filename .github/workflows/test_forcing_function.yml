@@ -8,6 +8,9 @@ on:
   # - cron: '0 12 */7 * *'
   workflow_dispatch:
 
+env:
+    GFORTRAN_VERSION: 12
+
 jobs:
   test:
     name: Test forcing function for BDS
