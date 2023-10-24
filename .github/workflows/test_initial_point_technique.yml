@@ -1,11 +1,11 @@
-name: Plot performance profiles for bds and nomad, big
+name: Test the technique of initial step size using initial point  
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
-  schedule:
-    - cron: '0 22 */7 * *'
+  #schedule:
+  #  - cron: '0 12 */7 * *'
   workflow_dispatch:
 
 env:
@@ -13,46 +13,31 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and nomad, big
+    name: Test the technique of initial step size using initial point  
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        matlab: [R2023a]
-        dim: [big]
-        with_optim_toolbox: [no]
+        matlab: [latest]
+        dim: [small, big]
+        with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [nomad]
+        competitor: [CBDS]
+        feature: [plain, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
 
     steps:
+
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
-      
-      - name: Install GCC
-        run: sudo apt-get update && sudo apt-get install gcc-10 
-
-      - name: Set GCC version
-        run: |
-          echo "CC=gcc-10" >> $GITHUB_ENV
-          echo "CXX=g++-10" >> $GITHUB_ENV
-  
-      - name: check gcc version
-        run: /usr/bin/gcc-10 --version
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v4
         with:
           repository: matcutest/matcutest_compiled
           path: matcutest
-
-      - name: Clone nomad
-        uses: actions/checkout@v4
-        with:
-          repository: bbopt/nomad
-          path: nomad
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -75,38 +60,38 @@ jobs:
           path: ${{ runner.tool_cache }}/MATLAB
           key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
 
-      - name: Set up MATLAB 
+      - name: Set up MATLAB with optimization toolbox
+        if: ${{ matrix.with_optim_toolbox == 'yes' }}
         uses: matlab-actions/setup-matlab@v2-beta
         with:
           release: ${{ matrix.matlab }}
-
-      - name: Install cmake
-        run: sudo apt-get install cmake
-
-      - name: Configuration
-        run:  cd ./nomad && cmake -DTEST_OPENMP=OFF -DBUILD_INTERFACE_MATLAB=ON -S . -B build/release 
-
-      - name: Build
-        run:  cd ./nomad && cmake --build build/release
-
-      - name: Install
-        run: cd ./nomad && cmake --install build/release
+          products: Optimization_Toolbox
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0
         with:
           command: |
             root_dir = pwd()
-            nomad_dir = fullfile(root_dir, 'nomad');
-            nomad_lib_dir = fullfile(nomad_dir, 'build', 'release', 'lib');
-            addpath(nomad_lib_dir);
 
-            % Test Matlab interface of nomad
-            cd(fullfile(nomad_dir, 'interfaces', 'Matlab_MEX'));
-            test_nomad_gerad();
+            % Install MatCUTEst
+            cd(fullfile(root_dir, 'matcutest'));
+            install(); cd(root_dir);
+
+            % Conduct your tests
+            path_tests = fullfile(root_dir, 'tests');
+            cd(path_tests)
+            parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.parallel = true;
+            parameters.feature = "${{ matrix.feature }}";
+            parameters.fmin_type = "randomized";
+            parameters.maxfun_factor = 1e3;
+            parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            parameters.solvers_options{1}.alpha_init_perturbed = true;
+            
+            plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_nomad_big
+          name: test_initial_point_technique
           path: ./tests/testdata

@@ -17,6 +17,11 @@ switch parameters.solvers_options{i}.solver
             end
         end
 
+        if isfield(parameters.solvers_options{i}, "alpha_init_perturbed") && ...
+                parameters.solvers_options{i}.alpha_init_perturbed
+            solver_legend = strcat(solver_legend, "-", "perturbed");
+        end
+
     case {"dspd"}
             solver_legend = "DSPD";
 

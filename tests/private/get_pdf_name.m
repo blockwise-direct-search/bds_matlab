@@ -16,6 +16,11 @@ switch parameters.solvers_options{i}.solver
                     int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
             end
         end
+
+        if isfield(parameters.solvers_options{i}, "alpha_init_perturbed") &&...
+                parameters.solvers_options{i}.alpha_init_perturbed
+            pdfname = strcat(pdfname, "_", "perturbed");
+        end
     
     case "dspd"
         pdfname = "dspd";
