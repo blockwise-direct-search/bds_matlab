@@ -150,7 +150,7 @@ for j = 1 : num_directions
                 sufficient_decrease = true;
             else
                 sufficient_decrease = false;
-                reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^2/2 < fbase);
+                reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^3/2 < fbase);
             end 
         end
     end

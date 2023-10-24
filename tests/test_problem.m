@@ -9,7 +9,8 @@ end
 options.Algorithm = Algorithm;
 options.maxfun = 1e5;
 options.StepTolerance = eps;
-[xval, fval, exitflag, output] = bds(@(x)goldp(x), [0;0], options)
+options.forcing_function_type = "cubic";
+[xval, fval, exitflag, output] = bds(@(x)hmlb(x), [0;0], options)
 end
 
 function f = goldp(x)
