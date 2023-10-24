@@ -668,6 +668,7 @@ hfig
 Higham
 HIMMELBH
 Himmelblau
+hinf
 Hinterm
 Hintermuller
 HLAG
@@ -1108,6 +1109,7 @@ newuoas
 nexists
 Neyman
 nez
+nfeval
 nfm 
 nfmm
 nfsav
@@ -1226,6 +1228,7 @@ Padidar
 pagestyle
 Palem
 Paquette
+params
 Pardalos
 parfor
 Parikh
