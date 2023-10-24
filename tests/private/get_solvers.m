@@ -47,14 +47,19 @@ for i = 1:solvers_num
         parameters.solvers_options{i}.solver = "bfo_wrapper";
     end
 
-    % Set solver to be nlopt (lower case) if the prefix is 'nlopt'.
+    % Set solver to be nomad_wraper (lower case) if it is nomad.
+    if strcmpi(parameters.solvers_options{i}.solver, "nomad")
+        parameters.solvers_options{i}.solver = "nomad_wrapper";
+    end    
+
+    % Set solver to be nlopt_wrapper (lower case) if the prefix is 'nlopt'.
     if any(strcmpi(parameters.solvers_options{i}.solver, NLOPT_list))
         parts = split(parameters.solvers_options{i}.solver, '_');
         parameters.solvers_options{i}.solver = "nlopt_wrapper";
         parameters.solvers_options{2}.Algorithm = string(parts(2));
     end
 
-    % Set solver to be PRIMA (lower case).
+    % Set solver to be prima_wrapper (lower case).
     if any(strcmpi(parameters.solvers_name(i), PRIMA_list))
         parameters.solvers_options{i}.Algorithm = parameters.solvers_name(i);
         parameters.solvers_options{i}.solver = "prima_wrapper";

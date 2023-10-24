@@ -20,7 +20,7 @@ switch parameters.solvers_options{i}.solver
         if isfield(parameters.solvers_options{i}, "alpha_init_perturbed") && parameters.solvers_options{i}.alpha_init_perturbed
             solver_stamp = strcat(solver_stamp, "-", "perturbed");
         end
-    
+
     case {"dspd"}
         solver_stamp = "dspd";
 
@@ -45,10 +45,13 @@ switch parameters.solvers_options{i}.solver
             case "bobyqa"
                 solver_stamp = "nlopt-bobyqa";
         end
+    
+    case {"nomad_wrapper"}
+        solver_stamp = "nomad";
 
     case {"lam"}
         solver_stamp = "lam";
-        
+
     case {"patternsearch"}
         solver_stamp = "patternsearch";
 

@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and nomad, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -24,6 +24,7 @@ jobs:
         with_optim_toolbox: [no]
         solver: [CBDS]
         competitor: [nomad]
+        feature: [plain]
 
     steps:
       - name: Check out repository
@@ -101,10 +102,17 @@ jobs:
             nomad_lib_dir = fullfile(nomad_dir, 'build', 'release', 'lib');
             addpath(nomad_lib_dir);
 
-            % Test nomad
+            % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            test_nomad();
+            parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.parallel = false;
+            parameters.feature = "${{ matrix.feature }}";
+            parameters.fmin_type = "randomized";
+            parameters.maxfun_factor = 1e3;
+            parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            
+            plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2

@@ -54,7 +54,10 @@ switch parameters.solvers_options{i}.solver
 
     case "fminunc_wrapper"
         pdfname = strcat("fminunc", "_", parameters.solvers_options{i}.fminunc_type);
-        
+     
+    case "nomad_wrapper"
+        pdfname = "nomad";
+
     case "patternsearch"
         pdfname = strcat("patternsearch", "_", "gps");
     
