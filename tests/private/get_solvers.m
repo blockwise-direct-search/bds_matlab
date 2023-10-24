@@ -47,7 +47,7 @@ for i = 1:solvers_num
         parameters.solvers_options{i}.solver = "bfo_wrapper";
     end
 
-    % Set solver to be nomad_wraper (lower case) if it is nomad.
+    % Set solver to be nomad_wrapper (lower case) if it is nomad.
     if strcmpi(parameters.solvers_options{i}.solver, "nomad")
         parameters.solvers_options{i}.solver = "nomad_wrapper";
     end    
