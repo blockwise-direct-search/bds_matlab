@@ -24,6 +24,10 @@ switch parameters.solvers_options{i}.solver
             pdfname = strcat(pdfname, "_", "perturbed");
         end
 
+        if isfield(parameters.solvers_options{i}, "forcing_function_type")
+            pdfname = strcat(pdfname, "_", parameters.solvers_options{i}.forcing_function_type);
+        end
+
     case "dspd"
         pdfname = "dspd";
 

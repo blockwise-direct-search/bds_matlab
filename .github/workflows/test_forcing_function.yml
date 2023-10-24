@@ -90,7 +90,6 @@ jobs:
             parameters.solvers_options{2}.sufficient_decrease_factor = [10^30, eps];
             parameters.solvers_options{2}.forcing_function_type = "cubic";
             
-
             plot_profile(parameters);
 
       - name: Upload artifact

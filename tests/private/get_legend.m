@@ -24,6 +24,10 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", "perturbed");
         end
 
+        if isfield(parameters.solvers_options{i}, "forcing_function_type")
+            solver_legend = strcat(solver_legend, "-", parameters.solvers_options{i}.forcing_function_type);
+        end
+
     case {"dspd"}
         solver_legend = "DSPD";
 
