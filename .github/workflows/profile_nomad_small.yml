@@ -110,6 +110,7 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
+            test_nomad();
             parameters.problems_dim = "${{ matrix.dim }}";
             parameters.parallel = false;
             parameters.feature = "${{ matrix.feature }}";
