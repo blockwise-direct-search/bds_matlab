@@ -22,6 +22,10 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %   SUCCESS is initialized to be false. If success is updated to be true,
 %   it means that there at least exists some direction satisfying sufficient decrease.
 %
+%   REDUCTION is intialize to be false. If reduction is updated to be true,
+%   it means that there at least exists some direction achieving
+%   reduction_ratio. In this case, we will not shrink the step size.
+%
 %   TERMINATE is initialized to be false. If terminate is updated to be true,
 %   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
 %
@@ -91,6 +95,7 @@ fhist = NaN(1, num_directions);
 xhist = NaN(n, num_directions);
 nf = 0; 
 success = false; 
+reduction = false;
 fbase = fval;
 xbase = xval;
 terminate = false;
@@ -127,9 +132,21 @@ for j = 1 : num_directions
         sufficient_decrease = (fnew < fbase);
     else
         if strcmpi(forcing_function_type, "quadratic")
-            sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+            if (fnew + sufficient_decrease_factor(2) * alpha^2/2 < fbase)
+                sufficient_decrease = true;
+            else
+                sufficient_decrease = false;
+                % Check whether the small reduction_ratio is achieved.
+                reduction = false;
+                %reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^2/2 < fbase);
+            end
         elseif strcmpi(forcing_function_type, "cubic")
-            sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^3/2 < fbase);    
+            if (fnew + sufficient_decrease_factor(2) * alpha^3/2 < fbase)
+                sufficient_decrease = true;
+            else
+                sufficient_decrease = false;
+                reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^2/2 < fbase);
+            end 
         end
     end
   
@@ -163,11 +180,11 @@ output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);
 output.nf = nf;
 output.success = success;
+output.reduction = reduction;
 output.direction_indices = direction_indices;
 output.terminate = terminate;
 
 end
-
 
 
 

@@ -45,8 +45,9 @@ if isfield(options, "shrink")
 end
 
 if isfield(options, "sufficient_decrease_factor")
-    if ~isrealscalar(options.sufficient_decrease_factor) || options.sufficient_decrease_factor < 0
-        error("options.sufficient_decrease_factor is not a real number greater than or equal to 0.");
+    if ~isnumvec(options.sufficient_decrease_factor) || all(options.sufficient_decrease_factor < 0)
+        error("options.sufficient_decrease_factor is not a real vector than ..." + ...
+            "or there exists some element less than 0.");
     end
 end
 

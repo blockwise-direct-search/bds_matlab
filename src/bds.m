@@ -434,10 +434,13 @@ for iter = 1:maxit
         
         % Update the step sizes and store the history of step sizes.
         success = suboutput.success;
+        reduction = suboutput.reduction;
         if success
             alpha_all(i_real) = expand * alpha_all(i_real);
         else
-            alpha_all(i_real) = shrink * alpha_all(i_real);
+            if ~reduction
+                alpha_all(i_real) = shrink * alpha_all(i_real);
+            end
         end
         
         % Terminate the computations if the largest component of step size is below a

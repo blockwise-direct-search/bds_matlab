@@ -1,0 +1,80 @@
+name: Test forcing function
+
+on:
+  # Trigger the workflow on push or pull request
+  # push:
+  # Trigger the workflow manually
+  #schedule:
+  # - cron: '0 12 */7 * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test forcing function for BDS
+    runs-on: ${{matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        matlab: [latest]
+        dim: [small, big]
+        with_optim_toolbox: [yes]
+        solver: [CBDS]
+        competitor: [CBDS]
+        feature: [plain, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Clone MatCUTEst
+        uses: actions/checkout@v4
+        with:
+          repository: matcutest/matcutest_compiled
+          path: matcutest
+
+      - name: Cache MATLAB
+        id: cache-matlab
+        uses: actions/cache@v3.3.2
+        with:
+          path: ${{ runner.tool_cache }}/MATLAB
+          key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
+
+      - name: Set up MATLAB with optimization toolbox
+        if: ${{ matrix.with_optim_toolbox == 'yes' }}
+        uses: matlab-actions/setup-matlab@v2-beta
+        with:
+          release: ${{ matrix.matlab }}
+          products: Optimization_Toolbox
+
+      - name: Run test
+        uses: matlab-actions/run-command@v1.2.0
+        with:
+          command: |
+            root_dir = pwd()
+
+            % Install MatCUTEst
+            cd(fullfile(root_dir, 'matcutest'));
+            install(); cd(root_dir);
+
+            % Conduct your tests
+            path_tests = fullfile(root_dir, 'tests');
+            cd(path_tests)
+            parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.parallel = true;
+            parameters.feature = "${{ matrix.feature }}";
+            parameters.fmin_type = "randomized";
+            parameters.maxfun_factor = 1e3;
+            parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            parameters.solvers_options{2}.forcing_function_type = "cubic";
+
+            plot_profile(parameters);
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: test_forcing_function
+          path: ./tests/testdata

@@ -14,7 +14,7 @@ switch constant_name
     case {"shrink"}
         constant_value = 0.5;
     case {"sufficient_decrease_factor"}
-        constant_value = eps;
+        constant_value = [1e-8, eps];
     case {"forcing_function_type"}
         constant_value = "quadratic";
     case {"accept_simple_decrease"}
