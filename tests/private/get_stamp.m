@@ -6,14 +6,16 @@ switch parameters.solvers_options{i}.solver
     case {"bds"}
         solver_stamp = upper(parameters.solvers_options{i}.Algorithm);
         if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor")
-            if parameters.solvers_options{i}.sufficient_decrease_factor == 0
-                solver_stamp = strcat(solver_stamp, "-", ...
-                    num2str(parameters.solvers_options{i}.sufficient_decrease_factor));
-            elseif parameters.solvers_options{i}.sufficient_decrease_factor == eps
-                solver_stamp = strcat(solver_stamp, "-", "eps");
-            else
-                solver_stamp = strcat(solver_stamp, "-", ...
-                    int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
+            for j = 1:length(parameters.solvers_options{i}.sufficient_decrease_factor)
+                if parameters.solvers_options{i}.sufficient_decrease_factor(j) == 0
+                    solver_stamp = strcat(solver_stamp, "-", ...
+                        num2str(parameters.solvers_options{i}.sufficient_decrease_factor(j)));
+                elseif parameters.solvers_options{i}.sufficient_decrease_factor(j) == eps
+                    solver_stamp = strcat(solver_stamp, "-", "eps");
+                else
+                    solver_stamp = strcat(solver_stamp, "-", ...
+                        int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor(j)))));
+                end
             end
         end
 
@@ -45,7 +47,7 @@ switch parameters.solvers_options{i}.solver
             case "bobyqa"
                 solver_stamp = "nlopt-bobyqa";
         end
-    
+
     case {"nomad_wrapper"}
         solver_stamp = "nomad";
 

@@ -6,14 +6,16 @@ switch parameters.solvers_options{i}.solver
     case {"bds"}
         solver_legend = upper(parameters.solvers_options{i}.Algorithm);
         if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor")
-            if parameters.solvers_options{i}.sufficient_decrease_factor == 0
-                solver_legend = strcat(solver_legend, "-", ...
-                    num2str(parameters.solvers_options{i}.sufficient_decrease_factor));
-            elseif parameters.solvers_options{i}.sufficient_decrease_factor == eps
-                solver_legend = strcat(solver_legend, "-", "eps");
-            else
-                solver_legend = strcat(solver_legend, "-", ...
-                    int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
+            for j = 1:length(parameters.solvers_options{i}.sufficient_decrease_factor)
+                if parameters.solvers_options{i}.sufficient_decrease_factor(j) == 0
+                    solver_legend = strcat(solver_legend, "-", ...
+                        num2str(parameters.solvers_options{i}.sufficient_decrease_factor(j)));
+                elseif parameters.solvers_options{i}.sufficient_decrease_factor(j) == eps
+                    solver_legend = strcat(solver_legend, "-", "eps");
+                else
+                    solver_legend = strcat(solver_legend, "-", ...
+                        int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor(j)))));
+                end
             end
         end
 
@@ -23,7 +25,7 @@ switch parameters.solvers_options{i}.solver
         end
 
     case {"dspd"}
-            solver_legend = "DSPD";
+        solver_legend = "DSPD";
 
     case {"bds_powell"}
         solver_legend = "CBDS-Powell";
@@ -36,7 +38,7 @@ switch parameters.solvers_options{i}.solver
 
     case {"wm_newuoa"}
         solver_legend = "wm-newuoa";
-        
+
     case {"nlopt_wrapper"}
         switch parameters.solvers_options{i}.Algorithm
             case "cobyla"
@@ -58,14 +60,14 @@ switch parameters.solvers_options{i}.solver
         end
 
     case {"bfo_wrapper"}
-       solver_legend = "bfo";
+        solver_legend = "bfo";
 
     case {"prima_wrapper"}
-       solver_legend = parameters.solvers_options{i}.Algorithm;
+        solver_legend = parameters.solvers_options{i}.Algorithm;
 
     case {"nomad_wrapper"}
-       solver_legend = "nomad";
-       
+        solver_legend = "nomad";
+
 end
 
 end

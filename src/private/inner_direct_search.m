@@ -22,7 +22,7 @@ function [xval, fval, exitflag, output] = inner_direct_search(fun, ...
 %   SUCCESS is initialized to be false. If success is updated to be true,
 %   it means that there at least exists some direction satisfying sufficient decrease.
 %
-%   REDUCTION is intialize to be false. If reduction is updated to be true,
+%   REDUCTION is initialize to be false. If reduction is updated to be true,
 %   it means that there at least exists some direction achieving
 %   reduction_ratio. In this case, we will not shrink the step size.
 %
@@ -136,9 +136,14 @@ for j = 1 : num_directions
                 sufficient_decrease = true;
             else
                 sufficient_decrease = false;
-                % Check whether the small reduction_ratio is achieved.
-                reduction = false;
-                %reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^2/2 < fbase);
+                % Check whether the smaller reduction_ratio is achieved. If
+                % reduction is set to be false always, then the framework 
+                % is the same as the framework with only one
+                % sufficient_decrease_factor. An effective way is to set
+                % sufficient_decrease_factor(1) large enough to make reduction
+                % always be false.
+                % reduction = false.
+                reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^2/2 < fbase);
             end
         elseif strcmpi(forcing_function_type, "cubic")
             if (fnew + sufficient_decrease_factor(2) * alpha^3/2 < fbase)

@@ -6,14 +6,16 @@ switch parameters.solvers_options{i}.solver
     case "bds"
         pdfname = upper(parameters.solvers_options{i}.Algorithm);
         if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor")
-            if parameters.solvers_options{i}.sufficient_decrease_factor == 0
-                pdfname = strcat(pdfname, "_", ...
-                    num2str(parameters.solvers_options{i}.sufficient_decrease_factor));
-            elseif parameters.solvers_options{i}.sufficient_decrease_factor == eps
-                pdfname = strcat(pdfname, "_", "eps");
-            else
-                pdfname = strcat(pdfname, "_", ...
-                    int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor))));
+            for j = 1:length(parameters.solvers_options{i}.sufficient_decrease_factor)
+                if parameters.solvers_options{i}.sufficient_decrease_factor(j) == 0
+                    pdfname = strcat(pdfname, "_", ...
+                        num2str(parameters.solvers_options{i}.sufficient_decrease_factor(j)));
+                elseif parameters.solvers_options{i}.sufficient_decrease_factor(j) == eps
+                    pdfname = strcat(pdfname, "_", "eps");
+                else
+                    pdfname = strcat(pdfname, "_", ...
+                        int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor(j)))));
+                end
             end
         end
 
@@ -21,7 +23,7 @@ switch parameters.solvers_options{i}.solver
                 parameters.solvers_options{i}.alpha_init_perturbed
             pdfname = strcat(pdfname, "_", "perturbed");
         end
-    
+
     case "dspd"
         pdfname = "dspd";
 
@@ -54,13 +56,13 @@ switch parameters.solvers_options{i}.solver
 
     case "fminunc_wrapper"
         pdfname = strcat("fminunc", "_", parameters.solvers_options{i}.fminunc_type);
-     
+
     case "nomad_wrapper"
         pdfname = "nomad";
 
     case "patternsearch"
         pdfname = strcat("patternsearch", "_", "gps");
-    
+
     case "bfo_wrapper"
         pdfname = "bfo";
 
