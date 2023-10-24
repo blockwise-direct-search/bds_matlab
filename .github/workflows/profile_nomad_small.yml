@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and nomad, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */7 * *'
@@ -98,6 +98,11 @@ jobs:
         with:
           command: |
             root_dir = pwd()
+
+            % Install MatCUTEst
+            cd(fullfile(root_dir, 'matcutest'));
+            install(); cd(root_dir);
+
             nomad_dir = fullfile(root_dir, 'nomad');
             nomad_lib_dir = fullfile(nomad_dir, 'build', 'release', 'lib');
             addpath(nomad_lib_dir);
