@@ -14,7 +14,6 @@ function rosenbrock_example()
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Attribute: public (can be called directly by users)
 % 
-% TODO: None
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 fprintf('\nMinimize the chained Rosenbrock function without constraints:\n');
@@ -30,7 +29,6 @@ path_bds = fileparts(path_examples);
 path_src = fullfile(path_bds, 'src');
 addpath(path_src)
 
-fprintf('\n1. No constraints:\n');
 % The following syntax is identical to fmincon:
 [xval, fval, exitflag, output] = bds(@chrosen, x0, options)
 

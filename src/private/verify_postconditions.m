@@ -51,7 +51,6 @@ if isfield(output, "xhist")
     end
     
     % Check whether fhist == fun(xhist).
-    % TODO: there is a way to avoid using loop, try to find it.
     fhist_eval = NaN(1, length(fhist));
     for i = 1:length(fhist)
         fhist_eval(i) = eval_fun(fun, xhist(:, i));

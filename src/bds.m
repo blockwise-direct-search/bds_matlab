@@ -227,7 +227,10 @@ else
 end
 
 % Set the boolean value of WITH_CYCLING_MEMORY. 
-% TODO: write it more detailedly.
+% WITH_CYCLING_MEMORY is only used when we need to permute the directions_indices. If
+% WITH_CYCLING_MEMORY is true, then we will permute the directions_indices by using the
+% directions_indices of the previous iteration. Otherwise, we will permute the directions_indices
+% with the initial directions_indices of ascending orders.
 if isfield(options, "with_cycling_memory")
     with_cycling_memory = options.with_cycling_memory;
 else
@@ -269,7 +272,7 @@ if isfield(options, "alpha_init")
     else
         error("The length of alpha_init should be equal to nb or equal to 1.");
     end
-    % TODO: Try alpha_all = 0.5 * max(abs(x0), 1) in the canonical case.
+    % Try alpha_all = 0.5 * max(abs(x0), 1) in the canonical case.
 elseif isfield(options, "alpha_init_perturbed") && options.alpha_init_perturbed
     alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
 else
