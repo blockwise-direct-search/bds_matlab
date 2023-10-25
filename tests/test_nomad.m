@@ -4,7 +4,7 @@ function [x,fval,hinf,exit_status,nfeval] = test_nomad()
 
 lb = [-Inf;-Inf];
 ub = [Inf;Inf];
-params = struct('initial_mesh_size','* 10','MAX_BB_EVAL','100');
+params = struct("initial_mesh_size","* 10","MAX_BB_EVAL","100");
 
 [x,fval,hinf,exit_status,nfeval] = nomadOpt(@(x)goldp(x), [0;0], lb, ub, params);
 
@@ -33,7 +33,7 @@ function f = chebquad(x)
 %CHEBQUAD evaluates the Chebyquad function.
 %
 %   See
-%   [1] Fletcher (1965), 'Function minimization without evaluating derivatives --- a review'
+%   [1] Fletcher (1965), "Function minimization without evaluating derivatives --- a review"
 
 n = length(x);
 y(1,1:n) = 1;
@@ -54,10 +54,10 @@ return
 end
 
 function [f, g] = hmlb(x)
-%HMLB evaluates the Himmelblau's function and its gradient
+%HMLB evaluates the Himmelblau"s function and its gradient
 %
 %   See
-%   [1]  Himmelblau (1972),  'Applied Nonlinear Programming'
+%   [1]  Himmelblau (1972),  "Applied Nonlinear Programming"
 
 f = (x(1)^2+x(2)-11)^2 + (x(1)+x(2)^2-7)^2;
 g = 2*[-7 + x(1) + x(2)^2 + 2*x(1)*(-11 + x(1)^2 + x(2)); -11 + x(1)^2 + x(2) + 2*x(2)*(-7 + x(1) + x(2)^2)];

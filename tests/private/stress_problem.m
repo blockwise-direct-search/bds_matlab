@@ -4,7 +4,7 @@ function problem = stress_problem(n, ~, random_seed)
     %This function generates a test problem for the stress test.
     % n: the dimension of the problem
     % problem_type:
-    %   'u' for unconstrained,
+    %   "u" for unconstrained,
     % random_seed: the random seed for the problem generation
     
     % Set the random seed

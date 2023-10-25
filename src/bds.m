@@ -245,7 +245,7 @@ if output_alpha_hist
         alpha_hist = NaN(nb, maxit);
     catch
         output_alpha_hist = false;
-        warning('The size of alpha_hist exceeds the maximum of memory size limit.')
+        warning("The size of alpha_hist exceeds the maximum of memory size limit.")
     end    
 end
 
@@ -284,7 +284,7 @@ if output_xhist
         xhist = NaN(n, maxfun);
     catch
         output_xhist = false;
-        warning('xhist will be not included in the output due to the limit of memory.');
+        warning("xhist will be not included in the output due to the limit of memory.");
     end
 end
 
@@ -318,9 +318,9 @@ end
 
 % To avoid that the users bring some randomized strings.
 if ~isfield(options, "seed")
-    random_stream = RandStream('mt19937ar', 'Seed', "shuffle");
+    random_stream = RandStream("mt19937ar", "Seed", "shuffle");
 else
-    random_stream = RandStream('mt19937ar', 'Seed', options.seed);
+    random_stream = RandStream("mt19937ar", "Seed", options.seed);
 end
 
 

@@ -1,5 +1,5 @@
 function parameters_saved = trim_struct(parameters_saved)
-% Trim the string using '_' to replace ' ', '-' and ':'.
+% Trim the string using "_" to replace " ", "-" and ":".
 
 % 获取结构体的字段名
 fields = fieldnames(parameters_saved);
@@ -11,7 +11,7 @@ for i = 1:numel(fields)
     value_length = length(value);
     if isnumvec(value)
         value = num2str(value);
-        separator = ', ';
+        separator = ", ";
         if value_length ~= 1
             value = strjoin(strsplit(value), separator);
         end
@@ -23,7 +23,7 @@ for i = 1:numel(fields)
             parameters_saved.(field) = "false";
         end
     elseif ischarstr(value)
-        value = strjoin(value, ', ');
+        value = strjoin(value, ", ");
         parameters_saved.(field) = value;
     end
 end

@@ -8,12 +8,12 @@ if nargin < 2
     options.solver_name = "bds";
 end
 
-fullpath = mfilename('fullpath');
+fullpath = mfilename("fullpath");
 path_examples = fileparts(fullpath);
 path_bds = fileparts(path_examples);
-path_src = fullfile(path_bds, 'src');
-path_locate = fullfile(path_bds, 'tests', 'private');
-path_competitors = fullfile(path_bds, 'tests', 'competitors');
+path_src = fullfile(path_bds, "src");
+path_locate = fullfile(path_bds, "tests", "private");
+path_competitors = fullfile(path_bds, "tests", "competitors");
 addpath(path_src)
 addpath(path_competitors)
 

@@ -12,7 +12,7 @@ if nargin < 3
     options = struct();
 end
 
-if isfield(options, 'StepTolerance')
+if isfield(options, "StepTolerance")
     StepTolerance = options.StepTolerance;
 else
     StepTolerance = eps;

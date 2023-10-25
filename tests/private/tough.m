@@ -19,7 +19,7 @@ function tough_problem = tough(problem, random_seed, noise_level, with_failure)
     rng(random_seed);
     
     % Copy the problem options
-    if isfield(problem, 'options')
+    if isfield(problem, "options")
         tough_problem.options = problem.options;
     else
         tough_problem.options = [];
@@ -71,7 +71,7 @@ function tough_problem = tough(problem, random_seed, noise_level, with_failure)
     
     % Set the random seed.
     orig_rng_state = rng();
-    rseed = max(0, min(2^32 - 1, random_seed + sum(num2str(f, 16)) + sum(num2str(x, 16), 'all')));
+    rseed = max(0, min(2^32 - 1, random_seed + sum(num2str(f, 16)) + sum(num2str(x, 16), "all")));
     rng(rseed);
     
     % Contaminate f. The value will be further modified below.
@@ -86,7 +86,7 @@ function tough_problem = tough(problem, random_seed, noise_level, with_failure)
     % Modify the value of f to make it "tough".
     if r > 0.9
         if with_failure
-            error('Function evaluation fails!');
+            error("Function evaluation fails!");
         else
             f = NaN;
         end

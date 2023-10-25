@@ -50,10 +50,10 @@ try
     if ~isfield(parameters, "solvers_options") || length(parameters.solvers_options) < 2
         error("There should be at least two solvers.")
     end
-    
+
     % Get the parameters that the test needs.
     parameters = set_profile_options(parameters);
-    
+
     % Tell MATLAB where to find MatCUTEst.
     locate_matcutest();
     % Tell MATLAB where to find PRIMA.
@@ -155,11 +155,11 @@ try
 
     % Set scaling matrix.
     test_options.scale_variable = false;
-    
+
     % Set solvers_options.
     parameters = get_options(parameters);
     solvers_options = parameters.solvers_options;
-    
+
     % If parameters.noise_initial_point is true, then initial point will be
     % selected for each problem num_random times.
     % The default value of parameters.fmin_type is set to be "randomized", then there is

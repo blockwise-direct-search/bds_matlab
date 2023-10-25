@@ -47,13 +47,13 @@ end
 solver = str2func(Algorithm);
 
 % Turn off warning to save computation resource.
-warnoff(Algorithm);
+%warnoff(Algorithm);
 
 solver(fun, x0, options);
 
 % Turn off warning is a very dangerous thing. So it must be set a loop to
 % turn on after ending the computation.
-warnoff(Algorithm);
+%warnoff(Algorithm);
 
 end
 

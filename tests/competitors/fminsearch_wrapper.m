@@ -28,7 +28,7 @@ else
     tol = get_default_constant("StepTolerance");
 end
 
-options = optimset('MaxFunEvals', maxfun, 'maxiter', maxfun, 'tolfun', tol, 'tolx', tol);
+options = optimset("MaxFunEvals", maxfun, "maxiter", maxfun, "tolfun", tol, "tolx", tol);
 
 fminsearch(FUN, x0, options);
 

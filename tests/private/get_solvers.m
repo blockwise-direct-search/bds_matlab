@@ -22,7 +22,7 @@ for i = 1:solvers_num
     end
 
     % Set solver to be matlab_fminunc if it is in fminunc_list.
-    if any(contains(fminunc_list, parameters.solvers_options{i}.solver, 'IgnoreCase', true))
+    if any(contains(fminunc_list, parameters.solvers_options{i}.solver, "IgnoreCase", true))
         parameters.solvers_options{i}.fminunc_type = parameters.solvers_options{i}.solver;
         parameters.solvers_options{i}.solver = "fminunc_wrapper";
     end
@@ -52,9 +52,9 @@ for i = 1:solvers_num
         parameters.solvers_options{i}.solver = "nomad_wrapper";
     end    
 
-    % Set solver to be nlopt_wrapper (lower case) if the prefix is 'nlopt'.
+    % Set solver to be nlopt_wrapper (lower case) if the prefix is "nlopt".
     if any(strcmpi(parameters.solvers_options{i}.solver, NLOPT_list))
-        parts = split(parameters.solvers_options{i}.solver, '_');
+        parts = split(parameters.solvers_options{i}.solver, "_");
         parameters.solvers_options{i}.solver = "nlopt_wrapper";
         parameters.solvers_options{2}.Algorithm = string(parts(2));
     end

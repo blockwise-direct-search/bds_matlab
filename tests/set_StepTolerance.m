@@ -40,22 +40,22 @@ try
     locate_matcutest();
 
     % Get list of problems
-    s.type = 'u'; % Unconstrained: 'u'
+    s.type = "u"; % Unconstrained: "u"
     s.mindim = 1; % Minimum of dimension
     s.maxdim = 100; % Maximum of dimension
     s.blacklist = [];
-    s.blacklist = [s.blacklist, { 'ARGTRIGLS', 'BROWNAL', ...
-        'COATING', 'DIAMON2DLS', 'DIAMON3DLS', 'DMN15102LS', ...
-        'DMN15103LS', 'DMN15332LS', 'DMN15333LS', 'DMN37142LS', ...
-        'DMN37143LS', 'ERRINRSM', 'HYDC20LS', 'LRA9A', ...
-        'LRCOVTYPE', 'LUKSAN12LS', 'LUKSAN14LS', 'LUKSAN17LS', 'LUKSAN21LS', ...
-        'LUKSAN22LS', 'MANCINO', 'PENALTY2', 'PENALTY3', 'VARDIM',
+    s.blacklist = [s.blacklist, { "ARGTRIGLS", "BROWNAL", ...
+        "COATING", "DIAMON2DLS", "DIAMON3DLS", "DMN15102LS", ...
+        "DMN15103LS", "DMN15332LS", "DMN15333LS", "DMN37142LS", ...
+        "DMN37143LS", "ERRINRSM", "HYDC20LS", "LRA9A", ...
+        "LRCOVTYPE", "LUKSAN12LS", "LUKSAN14LS", "LUKSAN17LS", "LUKSAN21LS", ...
+        "LUKSAN22LS", "MANCINO", "PENALTY2", "PENALTY3", "VARDIM",
         }];
    
     problem_names = secup(s);
     num_problems = length(problem_names);
     data = cell(num_problems, 4);
-    columnNames = {'Name', 'dimension', 'ratio', 'gval'};
+    columnNames = {"Name", "dimension", "ratio", "gval"};
 
     % Set output_xhist to be true to have output.xhist for calculating the
     % norm of the gradient.
@@ -68,7 +68,7 @@ try
     end
     
     % Use time to distinguish.
-    time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
+    time_str = char(datetime("now", "Format", "yyyy-MM-dd HH:mm"));
     % Trim time string.
     time_str = trim_time(time_str);
     % Rename tst as mixture of time Algorithm and StepTolerance.
@@ -95,13 +95,13 @@ try
         data{(num_problems)*3 + i_problem} = gval;
     end
 
-    T = cell2table(data, 'VariableNames', columnNames);
-    fileID = fopen(path_ratio_data, 'w');
+    T = cell2table(data, "VariableNames", columnNames);
+    fileID = fopen(path_ratio_data, "w");
     % Write column names to ratio.txt.
-    fprintf(fileID, '%-15s\t%-15s\t%-25s\t%-25s\n', columnNames{:});
+    fprintf(fileID, "%-15s\t%-15s\t%-25s\t%-25s\n", columnNames{:});
     % Write table data to ratio.txt.
     for row = 1:size(T, 1)
-        fprintf(fileID, '%-15s\t%-15d\t%-25f\t%-25f\n', T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
+        fprintf(fileID, "%-15s\t%-15d\t%-25f\t%-25f\n", T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
     end
 
 % 关闭文件

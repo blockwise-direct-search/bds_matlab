@@ -364,7 +364,7 @@ for iter = 1 : maxit
         exitflag = get_exitflag("MAXIT_REACHED");
     end
 
-    % Update alpha using Cunxin's technique.
+    % Update alpha using Cunxin"s technique.
     if (max(alpha_all) <= powell_factor(1))
         powell_factor = shrink^powell_factor_period*powell_factor;
     else
@@ -378,7 +378,7 @@ for iter = 1 : maxit
     
 end
 
-% Set useful pieces on information about the solver's history in output.
+% Set useful pieces on information about the solver"s history in output.
 output.funcCount = nf;
 output.fhist = fhist(1:nf);
 output.xhist = xhist(:, 1:nf);

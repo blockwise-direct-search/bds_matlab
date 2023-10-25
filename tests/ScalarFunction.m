@@ -50,12 +50,12 @@ classdef ScalarFunction < handle
                 seed = abs(ceil(1e5*sin(1e9*sum(x)))) + ...
                        abs(ceil(1e4 * sin(1e7*k_run))) + 5000 * k_run;
                 rng(seed)
-                if strcmpi(options.noise_type, 'uniform')
+                if strcmpi(options.noise_type, "uniform")
                     noise = rand(1);
-                elseif strcmpi(options.noise_type, 'gaussian')
+                elseif strcmpi(options.noise_type, "gaussian")
                     noise = randn(1);
                 else
-                    error('Unknown noise type')
+                    error("Unknown noise type")
                 end
                 if options.is_abs_noise
                     f = f+options.noise_level*noise;

@@ -16,17 +16,17 @@ function rosenbrock_example()
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fprintf('\nMinimize the chained Rosenbrock function without constraints:\n');
+fprintf("\nMinimize the chained Rosenbrock function:\n");
 x0 = [0; 0; 0];  % starting point
 
 options.maxfun = 1e4;
 options.StepTolerance = eps;
 options.Algorithm = "cbds";
 
-fullpath = mfilename('fullpath');
+fullpath = mfilename("fullpath");
 path_examples = fileparts(fullpath);
 path_bds = fileparts(path_examples);
-path_src = fullfile(path_bds, 'src');
+path_src = fullfile(path_bds, "src");
 addpath(path_src)
 
 % The following syntax is identical to fmincon:

@@ -4,10 +4,10 @@ function setpath(path_string)
 
     path(path_string);
     orig_warning_state = warning;
-    warning('off', 'MATLAB:SavePath:PathNotSaved'); % Maybe we do not have the permission to save path.
+    warning("off", "MATLAB:SavePath:PathNotSaved"); % Maybe we do not have the permission to save path.
     
     try
-        sys_pathdef = fullfile(matlabroot(), 'toolbox', 'local', 'pathdef.m');
+        sys_pathdef = fullfile(matlabroot(), "toolbox", "local", "pathdef.m");
         savepath(sys_pathdef);
     catch
         % Do nothing.

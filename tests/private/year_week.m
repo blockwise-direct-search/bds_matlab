@@ -8,8 +8,8 @@ function yw = year_week(time_zone)
 % where year_number and week_number are both two-digit integers.
 
 if nargin < 1
-    time_zone = 'Asia/Shanghai';
+    time_zone = "Asia/Shanghai";
 end
 
-dt = datetime('now', 'TimeZone', time_zone);
+dt = datetime("now", "TimeZone", time_zone);
 yw = 100*mod(year(dt), 100) + week(dt);

@@ -52,10 +52,10 @@ function [xval, fval, exitflag, output] = dspd(fun, x0, options)
 %
 
 % Get the information of current MATLAB.
-matlabVersion = ver('MATLAB');
+matlabVersion = ver("MATLAB");
 
 % Extract the main version and the minor version of MATLAB.
-versionParts = strsplit(matlabVersion.Version, '.');
+versionParts = strsplit(matlabVersion.Version, ".");
 
 % Change the version of matlab into floating number.
 majorVersion = str2double(versionParts{1});
@@ -140,14 +140,6 @@ if isfield(options, "sufficient_decrease_factor")
     sufficient_decrease_factor = options.sufficient_decrease_factor;
 else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
-end
-
-% Set the boolean value of accept_simple_decrease, which is for updating xval and fval, but not 
-% for stepsize. 
-if isfield(options, "accept_simple_decrease")
-    accept_simple_decrease = options.accept_simple_decrease;
-else
-    accept_simple_decrease = get_default_constant("accept_simple_decrease");
 end
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
@@ -248,7 +240,6 @@ for iter = 1:maxit
     suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
     suboptions.ftarget = ftarget;
     suboptions.polling_inner = options.polling_inner;
-    suboptions.accept_simple_decrease = accept_simple_decrease;
 
     [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
         fval, D, direction_indices, alpha, suboptions);

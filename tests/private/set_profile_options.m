@@ -61,15 +61,15 @@ if ~isfield(parameters, "noise_type")
 end
 
 if isfield(parameters, "feature")
-    if startsWith(lower(parameters.feature), 'randomx0')
+    if startsWith(lower(parameters.feature), "randomx0")
         parameters.is_noisy = false;
         parameters.random_initial_point = true;
-        level_str = split(lower(parameters.feature), '_');
+        level_str = split(lower(parameters.feature), "_");
         parameters.x0_perturbation_level = str2double(level_str{2});
-    elseif startsWith(lower(parameters.feature), 'noise')
+    elseif startsWith(lower(parameters.feature), "noise")
         parameters.is_noisy = true;
         parameters.random_initial_point = false;
-        level_str = split(lower(parameters.feature), '_');
+        level_str = split(lower(parameters.feature), "_");
         parameters.noise_level = str2double(level_str{2});
         parameters.feature = strcat(parameters.noise_type, "_", ...
             num2str(log10(parameters.noise_level)), "_noise");
