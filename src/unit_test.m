@@ -79,12 +79,8 @@ function tests = unit_test
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
     
     constant_name = "sufficient_decrease_factor";
-    constant_value = eps;
-    verifyEqual(testCase, get_default_constant(constant_name), constant_value)
-
-    constant_name = "accept_simple_decrease";
-    constant_value = false;
-    verifyEqual(testCase, get_default_constant(constant_name), constant_value)    
+    constant_value = [0, eps, eps];
+    verifyEqual(testCase, get_default_constant(constant_name), constant_value)  
      
     constant_name = "StepTolerance";
     constant_value = 1e-10;

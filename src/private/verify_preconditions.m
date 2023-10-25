@@ -49,6 +49,11 @@ if isfield(options, "sufficient_decrease_factor")
         error("options.sufficient_decrease_factor is not a real vector than ..." + ...
             "or there exists some element less than 0.");
     end
+
+    if options.sufficient_decrease_factor(1) > options.sufficient_decrease_factor(3) || ...
+            options.sufficient_decrease_factor(2) > options.sufficient_decrease_factor(3)
+        error("options.sufficient_decrease_factors is incorrect.")
+    end
 end
 
 if isfield(options, "forcing_function_type")
@@ -90,6 +95,12 @@ end
 if isfield(options, "replacement_delay")
     if ~isintegerscalar(options.replacement_delay) || options.replacement_delay < 0
         error("options.replacement_delay is not a nonnegative integer.");
+    end
+end
+
+if isfield(options, "seed")
+    if ~isintegerscalar(options.seed) || options.seed < 0
+        error("options.seed is not a nonnegative integer.");
     end
 end
 

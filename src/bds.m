@@ -16,7 +16,9 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %                               of the dimension of the problem.
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
-%   sufficient_decrease_factor  Factor of sufficient decrease condition.
+%   sufficient_decrease_factor  Factor of sufficient decrease condition. Sufficient_decrease_factor(1) is 
+%                               for the update of fval and xval. Sufficient_decrease_factor(2) and 
+%                               sufficient_decrease_factor(3) is for the update of step size.                           
 %   StepTolerance               The tolerance for testing whether the step size is small enough.
 %   ftarget                     Target of the function value. If the function value is below target,
 %                               then the algorithm terminates.
@@ -247,27 +249,6 @@ else
 end
 
 if output_alpha_hist
-    % try
-    %     % Obtain the runtime instance of the current Java Virtual Machine.
-    %     rt = java.lang.Runtime.getRuntime;
-    %     % Obtain the maximum available memory size.
-    %     maxMemory = 0.5*rt.maxMemory;
-    % catch
-    %     maxMemory = 1e8;
-    % end
-    % % Calculate the total number of bytes for the array to be created.
-    % if isa(0, 'single')
-    %     alpha_hist_Bytes = nb * maxit * 4;
-    % else
-    %     alpha_hist_Bytes = nb * maxit * 8;
-    % end
-    % % Check if the array size exceeds the maximum array size limit.
-    % if alpha_hist_Bytes <= maxMemory
-    %     alpha_hist = NaN(nb, maxit);
-    % else
-    %     output_alpha_hist = false;
-    %     warning('The size of alpha_hist exceeds the maximum of memory size limit.')
-    % end
     try
         alpha_hist = NaN(nb, maxit);
     catch
@@ -307,27 +288,6 @@ else
 end
 
 if output_xhist
-    % try
-    %     % Obtain the runtime instance of the current Java Virtual Machine.
-    %     rt = java.lang.Runtime.getRuntime;
-    %     % Obtain the maximum available memory size.
-    %     maxMemory = 0.5*rt.maxMemory;
-    % catch
-    %     maxMemory = 1e8;
-    % end
-    % % Calculate the total number of bytes for the array to be created.
-    % if isa(0, 'single')
-    %     xhistBytes = n * maxfun * 4;
-    % else
-    %     xhistBytes = n * maxfun * 8;
-    % end
-    % % Check if the array size exceeds the maximum array size limit.
-    % if xhistBytes <= maxMemory
-    %     xhist = NaN(n, maxfun);
-    % else
-    %     output_xhist = false;
-    %     warning('xhist will be not included in the output due to the limit of memory.');
-    % end
     try
         xhist = NaN(n, maxfun);
     catch
@@ -365,12 +325,9 @@ if fval <= ftarget
 end
 
 % To avoid that the users bring some randomized strings.
-% TODO: mention objective function and random generator
-%random_stream = rng(seed);
 if ~isfield(options, "seed")
     random_stream = RandStream('mt19937ar', 'Seed', "shuffle");
 else
-    % TODO: check whether the seed is a number.
     random_stream = RandStream('mt19937ar', 'Seed', options.seed);
 end
 

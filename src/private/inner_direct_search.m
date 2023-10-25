@@ -46,14 +46,6 @@ else
     ftarget = options.ftarget;
 end
 
-% Set the boolean value of accept_simple_decrease, which is for updating xval and fval, but not 
-% for stepsize. 
-if isfield(options, "accept_simple_decrease")
-    accept_simple_decrease = options.accept_simple_decrease;
-else
-    accept_simple_decrease = get_default_constant("accept_simple_decrease");
-end
-
 % Set the value of polling_inner. This is the polling strategy employed within one block.
 if isfield(options, "polling_inner")
     polling_inner = options.polling_inner;
@@ -132,21 +124,23 @@ for j = 1 : num_directions
         sufficient_decrease = (fnew < fbase);
     else
         if strcmpi(forcing_function_type, "quadratic")
-            sufficient_decrease = (fnew + sufficient_decrease_factor(2) * alpha^2/2 < fbase);
+            sufficient_decrease = (fnew + sufficient_decrease_factor(3) * alpha^2/2 < fbase);
             if ~sufficient_decrease
                 % Check whether the smaller reduction_ratio is achieved. If
                 % reduction is set to be false always, then the framework 
                 % is the same as the framework with only one
                 % sufficient_decrease_factor. An effective way is to set
                 % sufficient_decrease_factor(1) large enough to make reduction
-                % always be false.
+                % always be false. Besides that, sufficient_decrease_factor(3) should be greater than
+                % or equal to sufficient_decrease_factor(1) to make sure that the sufficient decrease
+                % condition above is stronger than the sufficient decrease condition below.
                 % reduction = false.
-                reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^2/2 < fbase);
+                reduction = (reduction || fnew + sufficient_decrease_factor(2) * alpha^2/2 < fbase);
             end
         elseif strcmpi(forcing_function_type, "cubic")
-            sufficient_decrease = (fnew + sufficient_decrease_factor(2) * alpha^3/2 < fbase);
+            sufficient_decrease = (fnew + sufficient_decrease_factor(3) * alpha^3/2 < fbase);
             if ~sufficient_decrease
-                reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^3/2 < fbase);
+                reduction = (reduction || fnew + sufficient_decrease_factor(2) * alpha^3/2 < fbase);
             end 
         end
     end
@@ -154,15 +148,13 @@ for j = 1 : num_directions
     % Success is initialized to be false. Once there exists some direction satisfying sufficient
     % decrease, success will always be true inside this function.
     success = (success || sufficient_decrease);
-    
-    % If options.accept_simple_decrease is true, then we will accept xnew
-    % and fnew as xval and fval respectively as long as fnew < fval. Otherwise,
-    % we will only accept xnew and fnew when they meet both sufficient decrease and 
-    % fnew < fval simultaneously. For complete polling, fbase is fixed during all 
-    % iterations in the block. So it may happen that sufficient_decrease is true 
-    % and fnew >= fval. For opportunistic polling, if the sufficient decrease is true, 
-    % then the remaining polling points will not be explored. 
-    if (accept_simple_decrease || sufficient_decrease) && fnew < fval
+
+    % We will update the value of xval and fval if the sufficient decrease condition below is achieved
+    % and fnew < fval. This is because we want to make sure that the value of xval and fval is always
+    % updated to be the best value. When we set sufficient_decrease_factor(1) to be 0, this is the same 
+    % as accept simple decrease. Also, sufficient_decrease_factor(3) should be greater than sufficient_decrease_factor(1)
+    % to make sure that the sufficient decrease condition below is weaker than the sufficient decrease condition above. 
+    if (fnew + sufficient_decrease_factor(1) * alpha^3/2 < fbase) && fnew < fval
         xval = xnew;
         fval = fnew;
     end
