@@ -17,8 +17,6 @@ switch constant_name
         constant_value = [0, eps, eps];
     case {"forcing_function_type"}
         constant_value = "quadratic";
-    case {"accept_simple_decrease"}
-        constant_value = true;
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}

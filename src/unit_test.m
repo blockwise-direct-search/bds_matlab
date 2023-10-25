@@ -209,5 +209,11 @@ function tests = unit_test
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
     verifyEqual(testCase, get_searching_set(n, options), D)
 
+    n = 3;
+    options = struct();
+    options.searching_set = [1; NaN; inf];
+    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
+    verifyEqual(testCase, get_searching_set(n, options), D)
+
     end
     

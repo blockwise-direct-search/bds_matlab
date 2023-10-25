@@ -85,7 +85,6 @@ jobs:
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
-            parameters.maxfun_factor = 1e3;
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.solvers_options{2}.linesearch_type = "${{ matrix.linesearch_type }}";
             

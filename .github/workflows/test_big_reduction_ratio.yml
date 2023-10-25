@@ -102,8 +102,7 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{1}.sufficient_decrease_factor = [10^30, eps];
-            parameters.solvers_options{2}.sufficient_decrease_factor = [${{ matrix.reduction_ratio_1 }}, ${{ matrix.reduction_ratio_2 }}];
+            parameters.solvers_options{2}.sufficient_decrease_factor = [0, ${{ matrix.reduction_ratio_1 }}, ${{ matrix.reduction_ratio_2 }}];
 
             plot_profile(parameters);
 

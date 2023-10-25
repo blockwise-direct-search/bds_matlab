@@ -4,8 +4,8 @@ on:
   # Trigger the workflow on push or pull request
   # push:
   # Trigger the workflow manually
-  schedule:
-    - cron: '0 22 */7 * *'
+  # schedule:
+  #  - cron: '0 22 */7 * *'
   workflow_dispatch:
 
 env:

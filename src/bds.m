@@ -181,14 +181,6 @@ else
     forcing_function_type = get_default_constant("forcing_function_type");
 end
 
-% Set the boolean value of accept_simple_decrease, which is for updating xval and fval, but not
-% for stepsize.
-if isfield(options, "accept_simple_decrease")
-    accept_simple_decrease = options.accept_simple_decrease;
-else
-    accept_simple_decrease = get_default_constant("accept_simple_decrease");
-end
-
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than
 % the StepTolerance.
 if isfield(options, "StepTolerance")
@@ -391,7 +383,6 @@ for iter = 1:maxit
         suboptions.forcing_function_type = forcing_function_type;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
-        suboptions.accept_simple_decrease = accept_simple_decrease;
 
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...
