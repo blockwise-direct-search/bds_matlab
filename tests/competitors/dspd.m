@@ -1,7 +1,7 @@
 function [xval, fval, exitflag, output] = dspd(fun, x0, options)
 %DSPD (direct search probabilistic descent) solves unconstrained optimization problems without using derivatives. 
 %
-%   TODO: here(MATLAB version for dspd)
+%   It is supported in MATLAB 2017b or later versions.
 %
 %   XVAL = DSPD(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
 %   calculations at X0. FUN must accept input X and return a scalar, which is the function value
@@ -177,8 +177,11 @@ else
     cycling_inner = get_default_constant("cycling_inner");
 end
 
-% Set the boolean value of WITH_CYCLING_MEMORY. 
-% TODO: write it more detailedly.
+% Set the boolean value of WITH_CYCLING_MEMORY.
+% WITH_CYCLING_MEMORY is only used when we need to permute the directions_indices. If
+% WITH_CYCLING_MEMORY is true, then we will permute the directions_indices by using the
+% directions_indices of the previous iteration. Otherwise, we will permute the directions_indices
+% with the initial directions_indices of ascending orders.
 if isfield(options, "with_cycling_memory")
     with_cycling_memory = options.with_cycling_memory;
 else

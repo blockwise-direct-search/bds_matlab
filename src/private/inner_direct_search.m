@@ -132,10 +132,8 @@ for j = 1 : num_directions
         sufficient_decrease = (fnew < fbase);
     else
         if strcmpi(forcing_function_type, "quadratic")
-            if (fnew + sufficient_decrease_factor(2) * alpha^2/2 < fbase)
-                sufficient_decrease = true;
-            else
-                sufficient_decrease = false;
+            sufficient_decrease = (fnew + sufficient_decrease_factor(2) * alpha^2/2 < fbase);
+            if ~sufficient_decrease
                 % Check whether the smaller reduction_ratio is achieved. If
                 % reduction is set to be false always, then the framework 
                 % is the same as the framework with only one
@@ -146,10 +144,8 @@ for j = 1 : num_directions
                 reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^2/2 < fbase);
             end
         elseif strcmpi(forcing_function_type, "cubic")
-            if (fnew + sufficient_decrease_factor(2) * alpha^3/2 < fbase)
-                sufficient_decrease = true;
-            else
-                sufficient_decrease = false;
+            sufficient_decrease = (fnew + sufficient_decrease_factor(2) * alpha^3/2 < fbase);
+            if ~sufficient_decrease
                 reduction = (reduction || fnew + sufficient_decrease_factor(1) * alpha^3/2 < fbase);
             end 
         end

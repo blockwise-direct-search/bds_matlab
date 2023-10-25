@@ -97,7 +97,7 @@ try
     fprintf("We will load %d problems\n\n", length(problem_names))
 
     % Some fixed (relatively) options
-    % TODO: Read two papers: What Every Computer Scientist Should Know About
+    % Read two papers: What Every Computer Scientist Should Know About
     % Floating-Point Arithmetic; stability and accuracy numerical(written by Higham).
 
     % Set maxfun for frec.

@@ -1,5 +1,7 @@
 function [xval, fval, exitflag, output] = bds(fun, x0, options)
-%BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives. 
+%BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives.
+%
+%   It is supported in MATLAB 2017b or later versions.
 %
 %   XVAL = BDS(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
 %   calculations at X0. FUN must accept input X and return a scalar, which is the function value
@@ -7,39 +9,39 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
 %   structure, with the following fields:
-%   
+%
 %   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
 %   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
-%                               of the dimension of the problem.    
+%                               of the dimension of the problem.
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
 %   sufficient_decrease_factor  Factor of sufficient decrease condition.
 %   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of the function value. If the function value is below target, 
+%   ftarget                     Target of the function value. If the function value is below target,
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
 %   searching_set               Searching set of directions.
-%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
-%                               with_memory decides whether the cycling strategy memorizes 
+%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"),
+%                               with_memory decides whether the cycling strategy memorizes
 %                               the history or not.
 %   cycling_inner               Cycling strategy employed in the opportunistic case.
 %   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
 %   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
 %                               Use Algorithm not algorithm to have the same name as MATLAB.
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
-%                               every shuffling_period iterations.    
-%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that 
-%                               replacement_delay is r. If block i is selected at iteration k, then it will 
-%                               not be selected at iterations k+1, ..., k+r. 
+%                               every shuffling_period iterations.
+%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that
+%                               replacement_delay is r. If block i is selected at iteration k, then it will
+%                               not be selected at iterations k+1, ..., k+r.
 %   seed                        Only used by randomized strategy for reproducibility.
 %   output_xhist                Whether the history of points visited is returned or not.
 %   output_alpha_hist           Whether the history of step sizes is returned or not.
 %
-%   [XVAL, FVAL] = BDS(...) also returns the value of the objective function FUN at the 
+%   [XVAL, FVAL] = BDS(...) also returns the value of the objective function FUN at the
 %   solution XVAL.
 %
-%   [XVAL, FVAL, EXITFLAG] = BDS(...) returns an EXITFLAG that describes the exit 
+%   [XVAL, FVAL, EXITFLAG] = BDS(...) returns an EXITFLAG that describes the exit
 %   condition. The possible values of EXITFLAG are 0, 1, 2, 3.
 %
 %   0    The StepTolerance of the step size is reached.
@@ -48,7 +50,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   3    The maximum number of iterations is reached.
 %
 %   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
-%   structure OUTPUT with the following fields: 
+%   structure OUTPUT with the following fields:
 %
 %   fhist        History of function values.
 %   xhist        History of points visited.
@@ -110,7 +112,7 @@ end
 
 % Get the number of directions.
 m = size(D, 2);
- 
+
 % Get the number of blocks.
 if isfield(options, "nb")
     % The number of directions should be greater or equal to the number of blocks.
@@ -139,7 +141,7 @@ else
 end
 
 % Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
-% In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite 
+% In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite
 % cycling if there is a bug.
 maxit = maxfun;
 
@@ -177,15 +179,15 @@ else
     forcing_function_type = get_default_constant("forcing_function_type");
 end
 
-% Set the boolean value of accept_simple_decrease, which is for updating xval and fval, but not 
-% for stepsize. 
+% Set the boolean value of accept_simple_decrease, which is for updating xval and fval, but not
+% for stepsize.
 if isfield(options, "accept_simple_decrease")
     accept_simple_decrease = options.accept_simple_decrease;
 else
     accept_simple_decrease = get_default_constant("accept_simple_decrease");
 end
 
-% Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
+% Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than
 % the StepTolerance.
 if isfield(options, "StepTolerance")
     alpha_tol = options.StepTolerance;
@@ -219,14 +221,14 @@ else
     shuffling_period = get_default_constant("shuffle_period");
 end
 
-% Set the value of replacement_delay. The default value of replacement_delay is set to 0. 
+% Set the value of replacement_delay. The default value of replacement_delay is set to 0.
 if strcmpi(options.Algorithm, "rbds") && isfield(options, "replacement_delay")
     replacement_delay = min(options.replacement_delay, nb-1);
 else
     replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
 end
 
-% Set the boolean value of WITH_CYCLING_MEMORY. 
+% Set the boolean value of WITH_CYCLING_MEMORY.
 % WITH_CYCLING_MEMORY is only used when we need to permute the directions_indices. If
 % WITH_CYCLING_MEMORY is true, then we will permute the directions_indices by using the
 % directions_indices of the previous iteration. Otherwise, we will permute the directions_indices
@@ -245,23 +247,33 @@ else
 end
 
 if output_alpha_hist
-    % Obtain the runtime instance of the current Java Virtual Machine.
-    rt = java.lang.Runtime.getRuntime;
-    % Obtain the maximum available memory size.
-    maxMemory = rt.maxMemory;
-    % Calculate the total number of bytes for the array to be created.
-    if isa(0, 'single')
-        alpha_hist_Bytes = nb * maxit * 4;
-    else
-        alpha_hist_Bytes = nb * maxit * 8;
-    end
-    % Check if the array size exceeds the maximum array size limit.
-    if alpha_hist_Bytes <= maxMemory
+    % try
+    %     % Obtain the runtime instance of the current Java Virtual Machine.
+    %     rt = java.lang.Runtime.getRuntime;
+    %     % Obtain the maximum available memory size.
+    %     maxMemory = 0.5*rt.maxMemory;
+    % catch
+    %     maxMemory = 1e8;
+    % end
+    % % Calculate the total number of bytes for the array to be created.
+    % if isa(0, 'single')
+    %     alpha_hist_Bytes = nb * maxit * 4;
+    % else
+    %     alpha_hist_Bytes = nb * maxit * 8;
+    % end
+    % % Check if the array size exceeds the maximum array size limit.
+    % if alpha_hist_Bytes <= maxMemory
+    %     alpha_hist = NaN(nb, maxit);
+    % else
+    %     output_alpha_hist = false;
+    %     warning('The size of alpha_hist exceeds the maximum of memory size limit.')
+    % end
+    try
         alpha_hist = NaN(nb, maxit);
-    else
+    catch
         output_alpha_hist = false;
         warning('The size of alpha_hist exceeds the maximum of memory size limit.')
-    end
+    end    
 end
 
 if isfield(options, "alpha_init")
@@ -274,7 +286,9 @@ if isfield(options, "alpha_init")
     end
     % Try alpha_all = 0.5 * max(abs(x0), 1) in the canonical case.
 elseif isfield(options, "alpha_init_perturbed") && options.alpha_init_perturbed
-    alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
+    alpha_all = 0.00025 * ones(nb, 1);
+    alpha_all(x0 ~= 0) = 1.05 * abs(x0(x0 ~= 0));
+    % alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
 else
     alpha_all = ones(nb, 1);
 end
@@ -293,20 +307,30 @@ else
 end
 
 if output_xhist
-    % Obtain the runtime instance of the current Java Virtual Machine.
-    rt = java.lang.Runtime.getRuntime;
-    % Obtain the maximum available memory size.
-    maxMemory = rt.maxMemory;
-    % Calculate the total number of bytes for the array to be created.
-    if isa(0, 'single')
-        xhistBytes = n * maxfun * 4;
-    else
-        xhistBytes = n * maxfun * 8;
-    end
-    % Check if the array size exceeds the maximum array size limit.
-    if xhistBytes <= maxMemory
-        xhist = NaN(n, maxfun); 
-    else
+    % try
+    %     % Obtain the runtime instance of the current Java Virtual Machine.
+    %     rt = java.lang.Runtime.getRuntime;
+    %     % Obtain the maximum available memory size.
+    %     maxMemory = 0.5*rt.maxMemory;
+    % catch
+    %     maxMemory = 1e8;
+    % end
+    % % Calculate the total number of bytes for the array to be created.
+    % if isa(0, 'single')
+    %     xhistBytes = n * maxfun * 4;
+    % else
+    %     xhistBytes = n * maxfun * 8;
+    % end
+    % % Check if the array size exceeds the maximum array size limit.
+    % if xhistBytes <= maxMemory
+    %     xhist = NaN(n, maxfun);
+    % else
+    %     output_xhist = false;
+    %     warning('xhist will be not included in the output due to the limit of memory.');
+    % end
+    try
+        xhist = NaN(n, maxfun);
+    catch
         output_xhist = false;
         warning('xhist will be not included in the output due to the limit of memory.');
     end
@@ -320,10 +344,10 @@ end
 
 % Initialize the history of blocks visited.
 block_hist = NaN(1, maxfun);
-xval = x0; 
+xval = x0;
 fval = eval_fun(fun, xval);
 % Set the number of function evaluations.
-nf = 1; 
+nf = 1;
 if output_xhist
     xhist(:, nf) = xval;
 end
@@ -333,9 +357,9 @@ fhist(nf) = fval;
 if fval <= ftarget
     information = "FTARGET_REACHED";
     exitflag = get_exitflag(information);
-    
-    % FTARGET has been reached at the very first function evaluation. 
-    % In this case, no further computation should be entertained, and hence, 
+
+    % FTARGET has been reached at the very first function evaluation.
+    % In this case, no further computation should be entertained, and hence,
     % no iteration should be run.
     maxit = 0;
 end
@@ -343,6 +367,13 @@ end
 % To avoid that the users bring some randomized strings.
 % TODO: mention objective function and random generator
 %random_stream = rng(seed);
+if ~isfield(options, "seed")
+    random_stream = RandStream('mt19937ar', 'Seed', "shuffle");
+else
+    % TODO: check whether the seed is a number.
+    random_stream = RandStream('mt19937ar', 'Seed', options.seed);
+end
+
 
 % Start the actual computations.
 for iter = 1:maxit
@@ -350,21 +381,21 @@ for iter = 1:maxit
     if output_alpha_hist
         alpha_hist(:, iter) = alpha_all;
     end
-    
+
     % Shuffle the blocks every shuffling_period iterations.
     % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
         % Make sure that shuffling_period is defined when the Algorithm is "pbds".
-        block_indices = randperm(nb);
+        block_indices = random_stream.randperm(nb);
     end
-    
+
     % Get the block that is going to be visited.
     if strcmpi(options.Algorithm, "rbds")
-        % If replacement_delay is 0, then select a block randomly from block_indices for 
+        % If replacement_delay is 0, then select a block randomly from block_indices for
         % each iteration. If iter is equal to 1, then the block that we are going to visit
         % is selected randomly from block_indices.
         if replacement_delay == 0 || iter == 1
-            block_indices = randi([1, nb]);
+            block_indices = random_stream.randi([1, nb]);
         else
             % Record the number of blocks visited.
             num_visited = sum(~isnan(block_hist));
@@ -377,25 +408,25 @@ for iter = 1:maxit
             % Remove elements of block_indices appearing in block_visited_slice.
             block_real_indices = block_initial_indices(~ismember(block_initial_indices, block_visited_slices));
             % Generate a random index from block_real_indices.
-            idx = randi(length(block_real_indices));
+            idx = random_stream.randi(length(block_real_indices));
             block_indices = block_real_indices(idx);
         end
     end
-    
+
     for i = 1:length(block_indices)
         % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
         % going to visit.
         i_real = block_indices(i);
-        
+
         % Record the number of blocks visited.
         num_visited = sum(~isnan(block_hist));
 
         % Record the block that is going to be visited.
         block_hist(num_visited+1) = i_real;
-        
+
         % Get indices of directions in the i-th block.
-        direction_indices = searching_set_indices{i_real}; 
-        
+        direction_indices = searching_set_indices{i_real};
+
         suboptions.maxfun = maxfun - nf;
         suboptions.cycling = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
@@ -404,34 +435,34 @@ for iter = 1:maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.accept_simple_decrease = accept_simple_decrease;
-        
+
         [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
             fval, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
-        
+
         % Update the history of step size.
         if output_alpha_hist
             alpha_hist(:, iter) = alpha_all;
         end
-        
-        % Store the history of the evaluations by inner_direct_search, 
+
+        % Store the history of the evaluations by inner_direct_search,
         % and accumulate the number of function evaluations.
         fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
         if output_xhist
             xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
         end
         nf = nf+suboutput.nf;
-        
-        % If suboutput.terminate is true, then inner_direct_search returns 
+
+        % If suboutput.terminate is true, then inner_direct_search returns
         % boolean value of terminate because either the maximum number of function
-        % evaluations or the target of the objective function value is reached. 
+        % evaluations or the target of the objective function value is reached.
         % In both cases, the exitflag is set by inner_direct_search.
         terminate = suboutput.terminate;
         if terminate
             exitflag = sub_exitflag;
             break;
         end
-        
+
         % Update the step sizes and store the history of step sizes.
         success = suboutput.success;
         reduction = suboutput.reduction;
@@ -442,7 +473,7 @@ for iter = 1:maxit
                 alpha_all(i_real) = shrink * alpha_all(i_real);
             end
         end
-        
+
         % Terminate the computations if the largest component of step size is below a
         % given StepTolerance.
         if max(alpha_all) < alpha_tol
@@ -455,17 +486,17 @@ for iter = 1:maxit
         searching_set_indices{i_real} = suboutput.direction_indices;
 
     end
-    
+
     % Check whether one of SMALL_ALPHA, MAXFUN_REACHED, and FTARGET_REACHED is reached.
     if terminate
         break;
     end
-    
+
     % Check whether MAXIT is reached.
     if iter == maxit
         exitflag = get_exitflag("MAXIT_REACHED");
     end
-    
+
 end
 
 % Truncate HISTORY into a vector of nf length.

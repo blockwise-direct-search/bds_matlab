@@ -31,12 +31,12 @@ if isfield(options, "searching_set")
 
     % Determine whether the searching set contains NaN or Inf values and replace those
     % elements with 10^20.
-    hasNaNInf = any(isnan(searching_set(:)) | isinf(searching_set(:))); 
+    hasNaNInf = any(isnan(searching_set) | isinf(searching_set), "all"); 
     if hasNaNInf
         warning("The searching set contains NaN or inf.");
-        searching_set(isnan(searching_set) | isinf(searching_set)) = 10^20;  
+        searching_set(isnan(searching_set) | isinf(searching_set)) = 0;  
     end
-
+    
     % Remove the directions in which their norm are too small.
     % In case there exists a direction whose each component is eps.
     shortest_direction_norm = 10*sqrt(n)*eps;
@@ -77,7 +77,16 @@ if isfield(options, "searching_set")
     % linearly span the full space, we introduce some columns in Q. 
     [Q, R, ~] = qr(D);
     [~, m] = size(R);
-    rank_D_clean = sum(abs(diag(R)) > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
+    % If R is a vector, diag(R) will be broadcasted into a matrix. So we 
+    % discuss into two situations. If R is a vector, we only select the
+    % first element on its diagonal to see whether it is larger than the
+    % tolerance. If R is a matrix, then we select the transpose of the
+    % diag(R) since the vecnorm will return a column vector.
+    if min(m, n) == 1 
+        rank_D_clean = sum(abs(R(1, 1)) > 10*eps*max(m,n)*R(1, 1));
+    else
+        rank_D_clean = sum(abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
+    end
     D = [D, Q(:, rank_D_clean+1:end)];
     
     % Make the searching set positively span the full space.
