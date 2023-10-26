@@ -1,4 +1,4 @@
-function set_StepTolerance(Algorithm, options)
+function test_StepTolerance(Algorithm, options)
 % Get the ratio of StepTolerance and the minimum of gradient value among
 % fhist.
 %
