@@ -64,7 +64,7 @@ jobs:
 
             Algorithm = "${{ matrix.Algorithm }}";
             options.StepTolerance = ${{ matrix.StepTolerance }};
-            set_StepTolerance(Algorithm, options);
+            test_StepTolerance(Algorithm, options);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2

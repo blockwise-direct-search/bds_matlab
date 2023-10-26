@@ -1,6 +1,7 @@
 function [xval, fval, exitflag, output] = dspd(fun, x0, options)
 %DSPD (direct search probabilistic descent) solves unconstrained optimization problems without using derivatives. 
 %
+%
 %   It is supported in MATLAB 2017b or later versions.
 %
 %   XVAL = DSPD(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
@@ -9,28 +10,41 @@ function [xval, fval, exitflag, output] = dspd(fun, x0, options)
 %
 %   XVAL = DSPD(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
 %   structure, with the following fields:
-%   
+%
+%   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
 %   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
-%                               of the dimension of the problem.    
+%                               of the dimension of the problem.
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
-%   sufficient_decrease_factor  Factor of sufficient decrease condition.
+%   sufficient_decrease_factor  Factor of sufficient decrease condition. Sufficient_decrease_factor(1) is 
+%                               for the update of fval and xval. Sufficient_decrease_factor(2) and 
+%                               sufficient_decrease_factor(3) is for the update of step size.                           
 %   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of the function value. If the function value is below target, 
+%   ftarget                     Target of the function value. If the function value is below target,
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
-%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
-%                               with_memory decides whether the cycling strategy memorizes 
+%   searching_set               Searching set of directions.
+%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"),
+%                               with_memory decides whether the cycling strategy memorizes
 %                               the history or not.
 %   cycling_inner               Cycling strategy employed in the opportunistic case.
-%   accept_simple_decrease      Whether the algorithm accepts simple decrease or not. 
+%   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
+%   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
+%                               Use Algorithm not algorithm to have the same name as MATLAB.
+%   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
+%                               every shuffling_period iterations.
+%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that
+%                               replacement_delay is r. If block i is selected at iteration k, then it will
+%                               not be selected at iterations k+1, ..., k+r.
 %   seed                        Only used by randomized strategy for reproducibility.
+%   output_xhist                Whether the history of points visited is returned or not.
+%   output_alpha_hist           Whether the history of step sizes is returned or not.
 %
-%   [XVAL, FVAL] = DSPD(...) also returns the value of the objective function FUN at the 
+%   [XVAL, FVAL] = DSPD(...) also returns the value of the objective function FUN at the
 %   solution XVAL.
 %
-%   [XVAL, FVAL, EXITFLAG] = DSPD(...) returns an EXITFLAG that describes the exit 
+%   [XVAL, FVAL, EXITFLAG] = DSPD(...) returns an EXITFLAG that describes the exit
 %   condition. The possible values of EXITFLAG are 0, 1, 2, 3.
 %
 %   0    The StepTolerance of the step size is reached.
@@ -38,12 +52,13 @@ function [xval, fval, exitflag, output] = dspd(fun, x0, options)
 %   2    The target of the objective function is reached.
 %   3    The maximum number of iterations is reached.
 %
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = DSPD(...) returns a
-%   structure OUTPUT with the following fields: 
+%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
+%   structure OUTPUT with the following fields:
 %
 %   fhist        History of function values.
 %   xhist        History of points visited.
-%   alpha_hist   History of step size.
+%   alpha_hist   History of step size for every iteration.
+%   blocks_hist  History of blocks visited.
 %   funcCount    The number of function evaluations.
 %   message      The information of EXITFLAG.
 %

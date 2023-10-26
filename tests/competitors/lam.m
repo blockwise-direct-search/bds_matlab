@@ -1,45 +1,6 @@
 function [xval, fval, exitflag, output] = lam(fun, x0, options)
 %LAM (Linesearch Algorithm Model) solves unconstrained optimization problems without using derivatives. 
 %
-%
-%   XVAL = LAM(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
-%   calculations at X0. FUN must accept input X and returns a scalar, which is the function value
-%   evaluated at X. X0 should be a vector.
-%
-%   XVAL = LAM(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
-%   structure, with the following fields:
-%   
-%   nb                          Number of blocks.
-%   maxfun                      Maximum of function evaluations.
-%   maxfun_factor                  Factor to define maximum number of function evaluations as a multiplier
-%                               of the dimension of the problem.    
-%   expand                      Expanding factor of step size (not the same with direct search).
-%   shrink                      Shrinking factor of step size.
-%   sufficient_decrease_factor  Factor of sufficient decrease condition.
-%   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of function value. If function value is below ftarget, 
-%                               then the algorithm terminates.
-%   stepsize_factor             constant for adjusting stepsize before computing.
-%
-%   [XVAL, FVAL] = LAM(...) also returns the value of the objective function FUN at the 
-%   solution XVAL.
-%
-%   [XVAL, FVAL, EXITFLAG] = LAM(...) returns an EXITFLAG that describes the exit 
-%   condition. The possible values of EXITFLAG are 0, 1, 2, 3.
-%
-%   0    The StepTolerance of the step size is reached.
-%   1    The maximum number of function evaluations is reached.
-%   2    The target of the objective function is reached.
-%   3    The maximum number of iterations is reached.
-%
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = LAM(...) returns a
-%   structure OUTPUT with the following fields: 
-%
-%   fhist        History of function values.
-%   xhist        History of points visited.
-%   funcCount    The number of function evaluations.
-%   message      The information of EXITFLAG.
-%
 
 % Set options to an empty structure if it is not provided.
 if nargin < 3
@@ -98,6 +59,12 @@ if isfield(options, "sufficient_decrease_factor")
 else
     sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
 end
+% After adjusting the framework of inner_direct_search, we need to set the sufficient decrease factor in
+% a new way. First, let sufficient_decrease_factor(1) = 0 accept simple decrease. Then let 
+% sufficient_decrease_factor(2) = sufficient_decrease_factor(3) match the framework proposed by 
+% <<Worst case complexity bounds for linesearch-type derivative-free algorithms>>.
+sufficient_decrease_factor(1) = 0;
+sufficient_decrease_factor(2) = sufficient_decrease_factor(3);
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
 % the StepTolerance.
