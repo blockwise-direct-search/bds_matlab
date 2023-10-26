@@ -30,6 +30,9 @@ switch parameters.solvers_options{i}.solver
 
     case {"dspd"}
         solver_legend = "DSPD";
+        if isfield(parameters.solvers_options{i}, "num_random_vectors")
+            solver_legend = strcat(solver_legend, "-", num2str(parameters.solvers_options{i}.num_random_vectors));
+        end
 
     case {"bds_powell"}
         solver_legend = "CBDS-Powell";

@@ -29,6 +29,9 @@ switch parameters.solvers_options{i}.solver
 
     case {"dspd"}
         solver_stamp = "dspd";
+        if isfield(parameters.solvers_options{i}, "num_random_vectors")
+            solver_stamp = strcat(solver_stamp, "-", num2str(parameters.solvers_options{i}.num_random_vectors));
+        end
 
     case {"bds_powell"}
         solver_stamp = "CBDS-Powell";

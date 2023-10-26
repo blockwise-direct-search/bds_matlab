@@ -30,6 +30,9 @@ switch parameters.solvers_options{i}.solver
 
     case "dspd"
         pdfname = "dspd";
+        if isfield(parameters.solvers_options{i}, "num_random_vectors")
+            pdfname = strcat(pdfname, "_", num2str(parameters.solvers_options{i}.num_random_vectors));
+        end
 
     case "bds_powell"
         powell_factor_stamp = int2str(int32(-log10(parameters.solvers_options{i}.powell_factor)));
