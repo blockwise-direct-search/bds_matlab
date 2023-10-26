@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [dspd]
         competitor: [dspd]
-        num_random_vectors: [3, 4, 5, 6, 7, 8]
+        num_random_vectors: [4, 5, 6, 7, 8]
         feature: [plain]
 
     steps:
@@ -87,7 +87,7 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{1}.num_random_vectors = 2;
+            parameters.solvers_options{1}.num_random_vectors = 3;
             parameters.solvers_options{2}.num_random_vectors = ${{ matrix.num_random_vectors }};
             
             plot_profile(parameters);
