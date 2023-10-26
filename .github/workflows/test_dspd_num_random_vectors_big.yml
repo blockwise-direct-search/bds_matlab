@@ -2,7 +2,7 @@ name: Test num_random_vectors of dspd, big
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */10 * *'
@@ -24,7 +24,8 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [dspd]
         competitor: [dspd]
-        num_random_vectors: [3, 4, 5, 6, 7, 8]
+        solver_num_random_vectors: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        num_random_vectors: [2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         feature: [plain]
 
     steps:
@@ -87,10 +88,13 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{1}.num_random_vectors = 2;
+            parameters.solvers_options{1}.num_random_vectors = ${{ matrix.solver_num_random_vectors }};
             parameters.solvers_options{2}.num_random_vectors = ${{ matrix.num_random_vectors }};
             
-            plot_profile(parameters);
+            if parameters.solvers_options{1}.num_random_vectors < parameters.solvers_options{2}.num_random_vectors
+                plot_profile(parameters);
+            end
+            
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
