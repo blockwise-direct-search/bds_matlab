@@ -42,7 +42,7 @@ try
     % Get list of problems
     s.type = "u"; % Unconstrained: "u"
     s.mindim = 1; % Minimum of dimension
-    s.maxdim = 5; % Maximum of dimension
+    s.maxdim = 100; % Maximum of dimension
     s.blacklist = [];
 
     if s.mindim >= 6
@@ -58,7 +58,7 @@ try
     problem_names = secup(s);
     num_problems = length(problem_names);
     data = cell(num_problems, 4);
-    columnNames = {"Name", "dimension", "ratio", "gval"};
+    columnNames = ["Name", "dimension", "ratio", "gval"];
 
     % Set output_xhist to be true to have output.xhist for calculating the
     % norm of the gradient.

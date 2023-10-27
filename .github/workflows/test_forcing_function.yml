@@ -1,4 +1,4 @@
-name: Test forcing function for BDS
+name: Test forcing function for bds
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Test forcing function for BDS
+    name: Test forcing function for bds
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false

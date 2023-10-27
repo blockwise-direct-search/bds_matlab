@@ -1,4 +1,4 @@
-name: Test StepTolerance for BDS
+name: Test StepTolerance for bds
 
 on:
   # Trigger the workflow on push or pull request
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Set StepTolerance for BDS
+    name: Set StepTolerance for bds
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
