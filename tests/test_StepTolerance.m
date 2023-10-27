@@ -42,16 +42,19 @@ try
     % Get list of problems
     s.type = "u"; % Unconstrained: "u"
     s.mindim = 1; % Minimum of dimension
-    s.maxdim = 100; % Maximum of dimension
+    s.maxdim = 5; % Maximum of dimension
     s.blacklist = [];
-    s.blacklist = [s.blacklist, { "ARGTRIGLS", "BROWNAL", ...
-        "COATING", "DIAMON2DLS", "DIAMON3DLS", "DMN15102LS", ...
-        "DMN15103LS", "DMN15332LS", "DMN15333LS", "DMN37142LS", ...
-        "DMN37143LS", "ERRINRSM", "HYDC20LS", "LRA9A", ...
-        "LRCOVTYPE", "LUKSAN12LS", "LUKSAN14LS", "LUKSAN17LS", "LUKSAN21LS", ...
-        "LUKSAN22LS", "MANCINO", "PENALTY2", "PENALTY3", "VARDIM",
-        }];
-   
+
+    if s.mindim >= 6
+        s.blacklist = [s.blacklist, { "ARGTRIGLS", "BROWNAL", ...
+            "COATING", "DIAMON2DLS", "DIAMON3DLS", "DMN15102LS", ...
+            "DMN15103LS", "DMN15332LS", "DMN15333LS", "DMN37142LS", ...
+            "DMN37143LS", "ERRINRSM", "HYDC20LS", "LRA9A", ...
+            "LRCOVTYPE", "LUKSAN12LS", "LUKSAN14LS", "LUKSAN17LS", "LUKSAN21LS", ...
+            "LUKSAN22LS", "MANCINO", "PENALTY2", "PENALTY3", "VARDIM",
+            }];
+    end
+
     problem_names = secup(s);
     num_problems = length(problem_names);
     data = cell(num_problems, 4);
@@ -66,7 +69,7 @@ try
     if ~isfield(options, "maxfun")
         options.maxfun = 1e5;
     end
-    
+
     % Use time to distinguish.
     time_str = char(datetime("now", "Format", "yyyy-MM-dd HH:mm"));
     % Trim time string.
@@ -104,8 +107,8 @@ try
         fprintf(fileID, "%-15s\t%-15d\t%-25f\t%-25f\n", T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
     end
 
-% 关闭文件
-fclose(fileID);
+    % 关闭文件
+    fclose(fileID);
 
 catch exception
 

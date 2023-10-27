@@ -1,4 +1,4 @@
-name: Test forcing function
+name: Test forcing function for BDS
 
 on:
   # Trigger the workflow on push or pull request
