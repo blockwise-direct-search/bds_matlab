@@ -16,9 +16,9 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %                               of the dimension of the problem.
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
-%   sufficient_decrease_factor  Factor of sufficient decrease condition. Sufficient_decrease_factor(1) is 
-%                               for the update of fval and xval. Sufficient_decrease_factor(2) and 
-%                               sufficient_decrease_factor(3) is for the update of step size.                           
+%   sufficient_decrease_factor  Factor of sufficient decrease condition. Sufficient_decrease_factor(1) is
+%                               for the update of fval and xval. Sufficient_decrease_factor(2) and
+%                               sufficient_decrease_factor(3) is for the update of step size.
 %   StepTolerance               The tolerance for testing whether the step size is small enough.
 %   ftarget                     Target of the function value. If the function value is below target,
 %                               then the algorithm terminates.
@@ -28,7 +28,7 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %                               with_memory decides whether the cycling strategy memorizes
 %                               the history or not.
 %   cycling_inner               Cycling strategy employed in the opportunistic case.
-%   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
+%   forcing_function            Type of forcing function.
 %   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
 %                               Use Algorithm not algorithm to have the same name as MATLAB.
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
@@ -151,17 +151,17 @@ maxit = maxfun;
 if isfield(options, "sufficient_decrease_factor_level")
     switch lower(options.sufficient_decrease_factor_level)
         case "zero"
-            options.sufficient_decrease_factor = 0;
+            options.sufficient_decrease_factor = [0, 0, 0];
         case "negligible"
-            options.sufficient_decrease_factor = 1e-16;
+            options.sufficient_decrease_factor = [1e-16, 1e-16, 1e-16];
         case "low"
-            options.sufficient_decrease_factor = 1e-8;
+            options.sufficient_decrease_factor = [1e-8, 1e-8, 1e-8];
         case "medium"
-            options.sufficient_decrease_factor = 1e-3;
+            options.sufficient_decrease_factor = [1e-3, 1e-3, 1e-3];
         case "high"
-            options.sufficient_decrease_factor = 1;
+            options.sufficient_decrease_factor = [1, 1, 1];
         case "excessive"
-            options.sufficient_decrease_factor = 10;
+            options.sufficient_decrease_factor = [10, 10, 10];
         otherwise
             error("Unknown sufficient decrease factor level %s", ...
                 options.sufficient_decrease_factor_level);
@@ -174,11 +174,20 @@ else
     end
 end
 
-% Set the type of forcing function.
-if isfield(options, "forcing_function_type")
-    forcing_function_type = options.forcing_function_type;
+% Set the forcing function, which is a function handle.
+if isfield(options, "forcing_function")
+    forcing_function = options.forcing_function;
 else
-    forcing_function_type = get_default_constant("forcing_function_type");
+    forcing_function = get_default_constant("forcing_function");
+end
+
+if isfield(options, "forcing_function_type")
+    switch options.forcing_function_type
+        case "quadratic"
+            forcing_function = @(x)x.^2;
+        case "cubic"
+            forcing_function = @(x)x.^3;
+    end
 end
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than
@@ -246,7 +255,7 @@ if output_alpha_hist
     catch
         output_alpha_hist = false;
         warning("The size of alpha_hist exceeds the maximum of memory size limit.")
-    end    
+    end
 end
 
 if isfield(options, "alpha_init")
@@ -380,7 +389,7 @@ for iter = 1:maxit
         suboptions.cycling = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
-        suboptions.forcing_function_type = forcing_function_type;
+        suboptions.forcing_function = forcing_function;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
 

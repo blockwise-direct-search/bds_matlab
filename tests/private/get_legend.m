@@ -24,6 +24,14 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", "perturbed");
         end
 
+        if isfield(parameters.solvers_options{i}, "forcing_function")
+            if strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^2))
+               solver_legend = strcat(solver_legend, "-", "quadratic");
+            elseif strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^3)) 
+               solver_legend = strcat(solver_legend, "-", "cubic");
+            end
+        end
+
         if isfield(parameters.solvers_options{i}, "forcing_function_type")
             solver_legend = strcat(solver_legend, "-", parameters.solvers_options{i}.forcing_function_type);
         end

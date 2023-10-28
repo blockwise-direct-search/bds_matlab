@@ -78,6 +78,8 @@ function tests = unit_test
     constant_value = 0.5;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
     
+    assert(strcmp(func2str(get_default_constant("forcing_function")), func2str(@(x)x.^2)));
+
     constant_name = "sufficient_decrease_factor";
     constant_value = [0, eps, eps];
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)  

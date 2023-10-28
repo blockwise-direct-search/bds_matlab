@@ -24,6 +24,14 @@ switch parameters.solvers_options{i}.solver
             pdfname = strcat(pdfname, "_", "perturbed");
         end
 
+        if isfield(parameters.solvers_options{i}, "forcing_function")
+            if strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^2))
+                pdfname = strcat(pdfname, "_", "quadratic");
+            elseif strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^3))
+                pdfname = strcat(pdfname, "_", "cubic");
+            end
+        end
+
         if isfield(parameters.solvers_options{i}, "forcing_function_type")
             pdfname = strcat(pdfname, "_", parameters.solvers_options{i}.forcing_function_type);
         end
@@ -31,7 +39,12 @@ switch parameters.solvers_options{i}.solver
     case "dspd"
         pdfname = "dspd";
         if isfield(parameters.solvers_options{i}, "num_random_vectors")
-            pdfname = strcat(pdfname, "_", num2str(parameters.solvers_options{i}.num_random_vectors));
+            if parameters.solvers_options{i}.num_random_vectors < 10
+                pdfname = strcat(pdfname, "_", "0", num2str(parameters.solvers_options{i}.num_random_vectors));
+            else
+                pdfname = strcat(pdfname, "_", num2str(parameters.solvers_options{i}.num_random_vectors));
+            end
+
         end
 
     case "bds_powell"

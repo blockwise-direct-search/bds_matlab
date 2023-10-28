@@ -85,7 +85,7 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{2}.forcing_function_type = "cubic";
+            parameters.solvers_options{2}.forcing_function = @(x)x.^3;
             
             plot_profile(parameters);
 

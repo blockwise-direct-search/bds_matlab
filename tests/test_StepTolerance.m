@@ -58,6 +58,7 @@ try
     problem_names = secup(s);
     num_problems = length(problem_names);
     data = cell(num_problems, 4);
+    % columnNames is a cell array of character vectors or string arrays.
     columnNames = ["Name", "dimension", "ratio", "gval"];
 
     % Set output_xhist to be true to have output.xhist for calculating the

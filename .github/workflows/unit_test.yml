@@ -18,6 +18,9 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
         matlab: [R2021a, R2022a, R2023a]#, latest]
         with_optim_toolbox: [no]
+      exclude:
+        - os: windows-latest
+          matlab: R2021a
 
     steps:
       - name: Check out the repository

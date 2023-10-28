@@ -27,6 +27,18 @@ switch parameters.solvers_options{i}.solver
             solver_stamp = strcat(solver_stamp, "-", parameters.solvers_options{i}.forcing_function_type);
         end
 
+        if isfield(parameters.solvers_options{i}, "forcing_function")
+            if strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^2))
+                solver_stamp = strcat(solver_stamp, "-", "quadratic");
+            elseif strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^3))
+                solver_stamp = strcat(solver_stamp, "-", "cubic");
+            end
+        end
+
+        if isfield(parameters.solvers_options{i}, "forcing_function_type")
+            solver_stamp = strcat(solver_stamp, "-", parameters.solvers_options{i}.forcing_function_type);
+        end
+
     case {"dspd"}
         solver_stamp = "dspd";
         if isfield(parameters.solvers_options{i}, "num_random_vectors")

@@ -15,8 +15,8 @@ switch constant_name
         constant_value = 0.5;
     case {"sufficient_decrease_factor"}
         constant_value = [0, eps, eps];
-    case {"forcing_function_type"}
-        constant_value = "quadratic";
+    case {"forcing_function"}
+        constant_value = @(x)x.^2;
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}

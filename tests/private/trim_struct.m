@@ -16,7 +16,7 @@ for i = 1:numel(fields)
             value = strjoin(strsplit(value), separator);
         end
         parameters_saved.(field) = value;
-    elseif islogical(value) 
+    elseif islogical(value)
         if value
             parameters_saved.(field) = "true";
         else
@@ -25,6 +25,12 @@ for i = 1:numel(fields)
     elseif ischarstr(value)
         value = strjoin(value, ", ");
         parameters_saved.(field) = value;
+    elseif isa(value, 'function_handle')
+        if strcmp(func2str(value), func2str(@(x)x.^2))
+            parameters_saved.(field) = "quadratic";
+        elseif strcmp(func2str(value), func2str(@(x)x.^3))
+            parameters_saved.(field) = "cubic";
+        end
     end
 end
 
