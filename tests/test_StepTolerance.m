@@ -42,7 +42,7 @@ try
     % Get list of problems
     s.type = "u"; % Unconstrained: "u"
     s.mindim = 1; % Minimum of dimension
-    s.maxdim = 100; % Maximum of dimension
+    s.maxdim = 60; % Maximum of dimension
     s.blacklist = [];
 
     if s.mindim >= 6
