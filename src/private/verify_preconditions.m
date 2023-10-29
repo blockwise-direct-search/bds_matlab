@@ -99,8 +99,8 @@ if isfield(options, "replacement_delay")
 end
 
 if isfield(options, "seed")
-    if ~isintegerscalar(options.seed) || options.seed < 0
-        error("options.seed is not a nonnegative integer.");
+    if ~isintegerscalar(options.seed) || options.seed <= 0
+        error("options.seed is not a positive integer.");
     end
 end
 
