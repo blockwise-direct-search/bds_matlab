@@ -20,9 +20,9 @@ jobs:
         with_optim_toolbox: [no]
         solver: [CBDS, PBDS, RBDS, DS]
         tough: [true, false]
-      exclude:
-        - os: windows-latest
-          matlab: R2021a
+        exclude:
+          - os: windows-latest
+            matlab: R2021a
 
     steps:
       - name: Check out the repository
