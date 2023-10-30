@@ -9,7 +9,8 @@ end
 options.Algorithm = Algorithm;
 options.maxfun = 1e5;
 options.StepTolerance = eps;
-options.forcing_function_type = "cubic";
+options.Rosenbrock_rotation = false;
+options.output_xhist = true;
 [xval, fval, exitflag, output] = bds(@(x)hmlb(x), [0;0], options)
 end
 

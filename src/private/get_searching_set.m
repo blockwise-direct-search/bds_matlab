@@ -87,21 +87,24 @@ if isfield(options, "searching_set")
     else
         rank_D_clean = sum(abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
     end
-    D = [D, Q(:, rank_D_clean+1:end)];
+    D_base = [D, Q(:, rank_D_clean+1:end)];
     
-    % Make the searching set positively span the full space.
-    D = [D, -D];
+    % % Make the searching set positively span the full space.
+    % D = [D, -D];
 else
     % Set the default searching set, which is identity.
-    D = [eye(n), -eye(n)];
+    %D = [eye(n), -eye(n)];
+    D_base = eye(n);
 end
+m = size(D_base, 2);
 
 % If the direction is not identity, then the searching set is canonical.
 if ~isfield(options, "direction") || options.direction ~= "identity"
-    perm = NaN(2*n, 1);
-    perm(1:2:2*n-1) = 1:n;
-    perm(2:2:2*n) = n+1:2*n;
-    D = D(:, perm);     
+    D = NaN(n, 2*m);
+    D(:, 1:2:2*m-1) = D_base;
+    D(:, 2:2:2*m) = -D_base;
+else
+    D = [D_base, -D_base];
 end
 
 end

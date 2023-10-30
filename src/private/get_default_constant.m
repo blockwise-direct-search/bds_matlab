@@ -25,6 +25,8 @@ switch constant_name
         constant_value = 1;
     case {"replacement_delay"}
         constant_value = 0;
+    case {"Rosenbrock_rotation"}
+        constant_value = false;
     case {"ftarget"}
         constant_value = -inf;
     case {"polling_inner"}

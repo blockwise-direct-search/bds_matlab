@@ -91,6 +91,7 @@ x0 = double(x0(:));
 % Set the polling directions in D.
 n = length(x0);
 
+% Set the type of Algorithm.
 if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
@@ -126,6 +127,13 @@ elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds").
     nb = n;
 elseif strcmpi(options.Algorithm, "ds")
     nb = 1;
+end
+
+% Set the value of Rosenbrock_rotation.
+if ~isfield(options, "Rosenbrock_rotation")
+    Rosenbrock_rotation = get_default_constant("Rosenbrock_rotation");
+else
+    Rosenbrock_rotation = options.Rosenbrock_rotation;
 end
 
 % Set indices of blocks as 1:nb.
@@ -313,6 +321,10 @@ if output_xhist
     xhist(:, nf) = xval;
 end
 fhist(nf) = fval;
+if Rosenbrock_rotation
+    rotation_condition = true(1, nb);
+    x_init = x0;
+end
 
 % Check whether FTARGET is reached by FVAL. If it is true, then terminate.
 if fval <= ftarget
@@ -338,6 +350,17 @@ for iter = 1:maxit
     % Record the value of alpha_all of the current iteration in alpha_hist.
     if output_alpha_hist
         alpha_hist(:, iter) = alpha_all;
+    end
+
+    if (strcmpi(options.Algorithm, "pbds") || strcmpi(options.Algorithm, "cbds"))...
+            && Rosenbrock_rotation && iter > 1 && nb == n
+        % Rotate the directions in D.
+        if all(rotation_condition == false)
+            keyboard
+            D = rotate_directions(D, x_init, xval);
+            keyboard
+            x_init = xval;
+        end
     end
 
     % Shuffle the blocks every shuffling_period iterations.
@@ -429,6 +452,9 @@ for iter = 1:maxit
             if ~reduction
                 alpha_all(i_real) = shrink * alpha_all(i_real);
             end
+        end
+        if (strcmpi(options.Algorithm, "pbds") || strcmpi(options.Algorithm, "cbds")) && Rosenbrock_rotation
+            rotation_condition(i_real) = success;
         end
 
         % Terminate the computations if the largest component of step size is below a
