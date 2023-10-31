@@ -19,9 +19,9 @@ switch parameters.solvers_options{i}.solver
             end
         end
 
-        if isfield(parameters.solvers_options{i}, "alpha_init_perturbed") && ...
-                parameters.solvers_options{i}.alpha_init_perturbed
-            solver_legend = strcat(solver_legend, "-", "perturbed");
+        if isfield(parameters.solvers_options{i}, "alpha_init_scaling") && ...
+                parameters.solvers_options{i}.alpha_init_scaling
+            solver_legend = strcat(solver_legend, "-", "alpha-init-scaling");
         end
 
         if isfield(parameters.solvers_options{i}, "forcing_function")
