@@ -49,7 +49,8 @@ switch parameters.solvers_options{i}.solver
         solver_legend = "fminsearch";
 
     case {"fminunc_wrapper"}
-        solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
+        solver_legend = "fminunc";
+        %solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
 
     case {"wm_newuoa"}
         solver_legend = "wm-newuoa";
@@ -75,7 +76,7 @@ switch parameters.solvers_options{i}.solver
         end
 
     case {"bfo_wrapper"}
-        solver_legend = "bfo";
+        solver_legend = "BFO";
 
     case {"prima_wrapper"}
         solver_legend = parameters.solvers_options{i}.Algorithm;
