@@ -5,12 +5,12 @@ function [f] = eval_fun(fun, x)
 try
     f = fun(x);    
 catch
-    warning('The function evaluation failed.');
+    % TODO: if there is a failure of the function, give a warning.
     f = NaN; 
 end
 
 % Apply the moderate extreme barrier to handle NaN, huge values, and evaluation failures.
-% See section 4.5 of "PDFO: A Cross-Platform Package for Powell's Derivative-Free Optimization Solvers" 
+% See 4.5 of "PDFO: A Cross-Platform Package for Powell's Derivative-Free Optimization Solvers" 
 % by Tom M. Ragonneau and Zaikun Zhang.
 if isnan(f)
     f = inf;

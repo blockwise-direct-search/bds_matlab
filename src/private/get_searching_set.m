@@ -31,12 +31,12 @@ if isfield(options, "searching_set")
 
     % Determine whether the searching set contains NaN or Inf values and replace those
     % elements with 10^20.
-    hasNaNInf = any(isnan(searching_set) | isinf(searching_set), "all"); 
+    hasNaNInf = any(isnan(searching_set(:)) | isinf(searching_set(:))); 
     if hasNaNInf
         warning("The searching set contains NaN or inf.");
-        searching_set(isnan(searching_set) | isinf(searching_set)) = 0;  
+        searching_set(isnan(searching_set) | isinf(searching_set)) = 10^20;  
     end
-    
+
     % Remove the directions in which their norm are too small.
     % In case there exists a direction whose each component is eps.
     shortest_direction_norm = 10*sqrt(n)*eps;
@@ -77,6 +77,7 @@ if isfield(options, "searching_set")
     % linearly span the full space, we introduce some columns in Q. 
     [Q, R, ~] = qr(D);
     [~, m] = size(R);
+
     % If R is a vector, diag(R) will be broadcasted into a matrix. So we 
     % discuss into two situations. If R is a vector, we only select the
     % first element on its diagonal to see whether it is larger than the
@@ -87,24 +88,22 @@ if isfield(options, "searching_set")
     else
         rank_D_clean = sum(abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
     end
-    D_base = [D, Q(:, rank_D_clean+1:end)];
+
+    D = [D, Q(:, rank_D_clean+1:end)];
     
-    % % Make the searching set positively span the full space.
-    % D = [D, -D];
+    % Make the searching set positively span the full space.
+    D = [D, -D];
 else
     % Set the default searching set, which is identity.
-    %D = [eye(n), -eye(n)];
-    D_base = eye(n);
+    D = [eye(n), -eye(n)];
 end
-m = size(D_base, 2);
 
 % If the direction is not identity, then the searching set is canonical.
 if ~isfield(options, "direction") || options.direction ~= "identity"
-    D = NaN(n, 2*m);
-    D(:, 1:2:2*m-1) = D_base;
-    D(:, 2:2:2*m) = -D_base;
-else
-    D = [D_base, -D_base];
+    perm = NaN(2*n, 1);
+    perm(1:2:2*n-1) = 1:n;
+    perm(2:2:2*n) = n+1:2*n;
+    D = D(:, perm);     
 end
 
 end

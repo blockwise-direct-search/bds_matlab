@@ -1,49 +1,47 @@
-function [xval, fval, exitflag, output] = bds(fun, x0, options)
-%BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives.
+function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
+%BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives. 
 %
-%   It is supported in MATLAB 2017b or later versions.
-%
-%   XVAL = BDS(FUN, X0) returns an approximate minimizer XVAL of the function handle FUN, starting the
+%   It is supported in MATLAB R2017b or later.
+%   
+%   XOPT = BDS(FUN, X0) returns an approximate minimizer XOPT of the function handle FUN, starting the
 %   calculations at X0. FUN must accept input X and return a scalar, which is the function value
 %   evaluated at X. X0 should be a vector.
 %
-%   XVAL = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
+%   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
 %   structure, with the following fields:
-%
+%   
 %   nb                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
 %   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
-%                               of the dimension of the problem.
+%                               of the dimension of the problem.    
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
-%   sufficient_decrease_factor  Factor of sufficient decrease condition. Sufficient_decrease_factor(1) is
-%                               for the update of fval and xval. Sufficient_decrease_factor(2) and
-%                               sufficient_decrease_factor(3) is for the update of step size.
+%   reduction_factor            Factor of reduction.
 %   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of the function value. If the function value is below target,
+%   ftarget                     Target of the function value. If the function value is below target, 
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
 %   searching_set               Searching set of directions.
-%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"),
-%                               with_memory decides whether the cycling strategy memorizes
+%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
+%                               with_memory decides whether the cycling strategy memorizes 
 %                               the history or not.
 %   cycling_inner               Cycling strategy employed in the opportunistic case.
-%   forcing_function            Type of forcing function.
+%   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
 %   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
 %                               Use Algorithm not algorithm to have the same name as MATLAB.
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
-%                               every shuffling_period iterations.
-%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that
-%                               replacement_delay is r. If block i is selected at iteration k, then it will
-%                               not be selected at iterations k+1, ..., k+r.
+%                               every shuffling_period iterations.    
+%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that 
+%                               replacement_delay is r. If block i is selected at iteration k, then it will 
+%                               not be selected at iterations k+1, ..., k+r. 
 %   seed                        Only used by randomized strategy for reproducibility.
 %   output_xhist                Whether the history of points visited is returned or not.
 %   output_alpha_hist           Whether the history of step sizes is returned or not.
 %
-%   [XVAL, FVAL] = BDS(...) also returns the value of the objective function FUN at the
-%   solution XVAL.
+%   [XOPT, FOPT] = BDS(...) also returns the value of the objective function FUN at the 
+%   solution XOPT.
 %
-%   [XVAL, FVAL, EXITFLAG] = BDS(...) returns an EXITFLAG that describes the exit
+%   [XOPT, FOPT, EXITFLAG] = BDS(...) returns an EXITFLAG that describes the exit 
 %   condition. The possible values of EXITFLAG are 0, 1, 2, 3.
 %
 %   0    The StepTolerance of the step size is reached.
@@ -51,8 +49,8 @@ function [xval, fval, exitflag, output] = bds(fun, x0, options)
 %   2    The target of the objective function is reached.
 %   3    The maximum number of iterations is reached.
 %
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
-%   structure OUTPUT with the following fields:
+%   [XOPT, FOPT, EXITFLAG, OUTPUT] = BDS(...) returns a
+%   structure OUTPUT with the following fields: 
 %
 %   fhist        History of function values.
 %   xhist        History of points visited.
@@ -91,7 +89,6 @@ x0 = double(x0(:));
 % Set the polling directions in D.
 n = length(x0);
 
-% Set the type of Algorithm.
 if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
@@ -115,7 +112,7 @@ end
 
 % Get the number of directions.
 m = size(D, 2);
-
+ 
 % Get the number of blocks.
 if isfield(options, "nb")
     % The number of directions should be greater or equal to the number of blocks.
@@ -127,13 +124,6 @@ elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds").
     nb = n;
 elseif strcmpi(options.Algorithm, "ds")
     nb = 1;
-end
-
-% Set the value of Rosenbrock_rotation.
-if ~isfield(options, "Rosenbrock_rotation")
-    Rosenbrock_rotation = get_default_constant("Rosenbrock_rotation");
-else
-    Rosenbrock_rotation = options.Rosenbrock_rotation;
 end
 
 % Set indices of blocks as 1:nb.
@@ -151,34 +141,34 @@ else
 end
 
 % Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
-% In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite
+% In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite 
 % cycling if there is a bug.
 maxit = maxfun;
 
-% Set the value of sufficient decrease factor.
-if isfield(options, "sufficient_decrease_factor_level")
-    switch lower(options.sufficient_decrease_factor_level)
+% Set the value of reduction factor.
+if isfield(options, "reduction_factor_level")
+    switch lower(options.reduction_factor_level)
         case "zero"
-            options.sufficient_decrease_factor = [0, 0, 0];
+            options.reduction_factor = [0, 0, 0];
         case "negligible"
-            options.sufficient_decrease_factor = [1e-16, 1e-16, 1e-16];
+            options.reduction_factor = [0, 1e-16, 1e-16];
         case "low"
-            options.sufficient_decrease_factor = [1e-8, 1e-8, 1e-8];
+            options.reduction_factor = [0, 1e-8, 1e-8];
         case "medium"
-            options.sufficient_decrease_factor = [1e-3, 1e-3, 1e-3];
+            options.reduction_factor = [0, 1e-3, 1e-3];
         case "high"
-            options.sufficient_decrease_factor = [1, 1, 1];
+            options.reduction_factor = [0, 1, 1];
         case "excessive"
-            options.sufficient_decrease_factor = [10, 10, 10];
+            options.reduction_factor = [0, 10, 10];
         otherwise
-            error("Unknown sufficient decrease factor level %s", ...
-                options.sufficient_decrease_factor_level);
+            error("Unknown reduction_factor_level %s", ...
+                options.reduction_factor_level);
     end
 else
-    if isfield(options, "sufficient_decrease_factor")
-        sufficient_decrease_factor = options.sufficient_decrease_factor;
+    if isfield(options, "reduction_factor")
+        reduction_factor = options.reduction_factor;
     else
-        sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+        reduction_factor = get_default_constant("reduction_factor");
     end
 end
 
@@ -198,7 +188,7 @@ if isfield(options, "forcing_function_type")
     end
 end
 
-% Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than
+% Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
 % the StepTolerance.
 if isfield(options, "StepTolerance")
     alpha_tol = options.StepTolerance;
@@ -232,14 +222,14 @@ else
     shuffling_period = get_default_constant("shuffle_period");
 end
 
-% Set the value of replacement_delay. The default value of replacement_delay is set to 0.
+% Set the value of replacement_delay. The default value of replacement_delay is set to 0. 
 if strcmpi(options.Algorithm, "rbds") && isfield(options, "replacement_delay")
     replacement_delay = min(options.replacement_delay, nb-1);
 else
     replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
 end
 
-% Set the boolean value of WITH_CYCLING_MEMORY.
+% Set the boolean value of WITH_CYCLING_MEMORY. 
 % WITH_CYCLING_MEMORY is only used when we need to permute the directions_indices. If
 % WITH_CYCLING_MEMORY is true, then we will permute the directions_indices by using the
 % directions_indices of the previous iteration. Otherwise, we will permute the directions_indices
@@ -279,7 +269,7 @@ elseif isfield(options, "alpha_init_scaling") && options.alpha_init_scaling
     %alpha_all = 0.1 * ones(nb, 1);
     %alpha_all(x0 ~= 0) = 0.1 * abs(x0(x0 ~= 0));
     % alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
-    alpha_all = 0.1 * max(1e-2, abs(x0));
+    alpha_all = 0.1 * max(1e-3, abs(x0));
 else
     alpha_all = ones(nb, 1);
 end
@@ -314,26 +304,22 @@ end
 
 % Initialize the history of blocks visited.
 block_hist = NaN(1, maxfun);
-xval = x0;
-fval = eval_fun(fun, xval);
+xopt = x0; 
+fopt = eval_fun(fun, xopt);
 % Set the number of function evaluations.
-nf = 1;
+nf = 1; 
 if output_xhist
-    xhist(:, nf) = xval;
+    xhist(:, nf) = xopt;
 end
-fhist(nf) = fval;
-if Rosenbrock_rotation
-    rotation_condition = true(1, nb);
-    x_init = x0;
-end
+fhist(nf) = fopt;
 
 % Check whether FTARGET is reached by FVAL. If it is true, then terminate.
-if fval <= ftarget
+if fopt <= ftarget
     information = "FTARGET_REACHED";
     exitflag = get_exitflag(information);
-
-    % FTARGET has been reached at the very first function evaluation.
-    % In this case, no further computation should be entertained, and hence,
+    
+    % FTARGET has been reached at the very first function evaluation. 
+    % In this case, no further computation should be entertained, and hence, 
     % no iteration should be run.
     maxit = 0;
 end
@@ -345,35 +331,23 @@ else
     random_stream = RandStream("mt19937ar", "Seed", options.seed);
 end
 
-
 % Start the actual computations.
 for iter = 1:maxit
     % Record the value of alpha_all of the current iteration in alpha_hist.
     if output_alpha_hist
         alpha_hist(:, iter) = alpha_all;
     end
-
-    if (strcmpi(options.Algorithm, "pbds") || strcmpi(options.Algorithm, "cbds"))...
-            && Rosenbrock_rotation && iter > 1 && nb == n
-        % Rotate the directions in D.
-        if all(rotation_condition == false)
-            keyboard
-            D = rotate_directions(D, x_init, xval);
-            keyboard
-            x_init = xval;
-        end
-    end
-
+    
     % Shuffle the blocks every shuffling_period iterations.
     % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
         % Make sure that shuffling_period is defined when the Algorithm is "pbds".
         block_indices = random_stream.randperm(nb);
     end
-
+    
     % Get the block that is going to be visited.
     if strcmpi(options.Algorithm, "rbds")
-        % If replacement_delay is 0, then select a block randomly from block_indices for
+        % If replacement_delay is 0, then select a block randomly from block_indices for 
         % each iteration. If iter is equal to 1, then the block that we are going to visit
         % is selected randomly from block_indices.
         if replacement_delay == 0 || iter == 1
@@ -394,70 +368,68 @@ for iter = 1:maxit
             block_indices = block_real_indices(idx);
         end
     end
-
+    
     for i = 1:length(block_indices)
         % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
         % going to visit.
         i_real = block_indices(i);
-
+        
         % Record the number of blocks visited.
         num_visited = sum(~isnan(block_hist));
 
         % Record the block that is going to be visited.
         block_hist(num_visited+1) = i_real;
-
+        
         % Get indices of directions in the i-th block.
-        direction_indices = searching_set_indices{i_real};
-
+        direction_indices = searching_set_indices{i_real}; 
+        
         suboptions.maxfun = maxfun - nf;
         suboptions.cycling = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
-        suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
+        suboptions.reduction_factor = reduction_factor;
         suboptions.forcing_function = forcing_function;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
-
-        [xval, fval, sub_exitflag, suboutput] = inner_direct_search(fun, xval,...
-            fval, D(:, direction_indices), direction_indices,...
+        
+        [sub_xopt, sub_fopt, sub_exitflag, suboutput] = inner_direct_search(fun, xopt,...
+            fopt, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
-
+        
         % Update the history of step size.
         if output_alpha_hist
             alpha_hist(:, iter) = alpha_all;
         end
-
-        % Store the history of the evaluations by inner_direct_search,
+        
+        % Store the history of the evaluations by inner_direct_search, 
         % and accumulate the number of function evaluations.
         fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
         if output_xhist
             xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
         end
         nf = nf+suboutput.nf;
-
-        % If suboutput.terminate is true, then inner_direct_search returns
+        
+        % If suboutput.terminate is true, then inner_direct_search returns 
         % boolean value of terminate because either the maximum number of function
-        % evaluations or the target of the objective function value is reached.
+        % evaluations or the target of the objective function value is reached. 
         % In both cases, the exitflag is set by inner_direct_search.
         terminate = suboutput.terminate;
         if terminate
             exitflag = sub_exitflag;
             break;
         end
-
+        
         % Update the step sizes and store the history of step sizes.
-        success = suboutput.success;
-        reduction = suboutput.reduction;
-        if success
+        if sub_fopt + reduction_factor(3) * forcing_function(alpha_all(i_real)) < fopt
             alpha_all(i_real) = expand * alpha_all(i_real);
-        else
-            if ~reduction
-                alpha_all(i_real) = shrink * alpha_all(i_real);
-            end
-        end
-        if (strcmpi(options.Algorithm, "pbds") || strcmpi(options.Algorithm, "cbds")) && Rosenbrock_rotation
-            rotation_condition(i_real) = success;
+        elseif sub_fopt + reduction_factor(2) * forcing_function(alpha_all(i_real)) >= fopt
+            alpha_all(i_real) = shrink * alpha_all(i_real);
         end
 
+        if (reduction_factor(1) <= 0 && sub_fopt < fopt) || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fopt
+            xopt = sub_xopt;
+            fopt = sub_fopt;
+        end
+        
         % Terminate the computations if the largest component of step size is below a
         % given StepTolerance.
         if max(alpha_all) < alpha_tol
@@ -470,17 +442,17 @@ for iter = 1:maxit
         searching_set_indices{i_real} = suboutput.direction_indices;
 
     end
-
+    
     % Check whether one of SMALL_ALPHA, MAXFUN_REACHED, and FTARGET_REACHED is reached.
     if terminate
         break;
     end
-
+    
     % Check whether MAXIT is reached.
     if iter == maxit
         exitflag = get_exitflag("MAXIT_REACHED");
     end
-
+    
 end
 
 % Truncate HISTORY into a vector of nf length.
@@ -501,7 +473,6 @@ if output_block_hist
     output.blocks_hist = block_hist(1:num_blocks_visited);
 end
 
-
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
         output.message = "The StepTolerance of the step size is reached.";
@@ -517,5 +488,5 @@ end
 
 % verify_postconditions is to detect whether the output is in the right form when debug_flag is true.
 if debug_flag
-    verify_postconditions(fun, xval, fval, exitflag, output);
+    verify_postconditions(fun, xopt, fopt, exitflag, output);
 end

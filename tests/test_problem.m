@@ -9,8 +9,9 @@ end
 options.Algorithm = Algorithm;
 options.maxfun = 1e5;
 options.StepTolerance = eps;
-options.Rosenbrock_rotation = false;
 options.output_xhist = true;
+options.output_alpha_hist = true;
+options.output_block_hist = true;
 [xval, fval, exitflag, output] = bds(@(x)hmlb(x), [0;0], options)
 end
 

@@ -13,10 +13,12 @@ switch constant_name
         constant_value = 2;
     case {"shrink"}
         constant_value = 0.5;
-    case {"sufficient_decrease_factor"}
+    case {"reduction_factor"}
         constant_value = [0, eps, eps];
     case {"forcing_function"}
         constant_value = @(x)x.^2;
+    case {"accept_simple_decrease"}
+        constant_value = true;
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}
@@ -25,8 +27,6 @@ switch constant_name
         constant_value = 1;
     case {"replacement_delay"}
         constant_value = 0;
-    case {"Rosenbrock_rotation"}
-        constant_value = false;
     case {"ftarget"}
         constant_value = -inf;
     case {"polling_inner"}

@@ -18,9 +18,10 @@ function testbds(release, precision, nrun)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Attribute: public (can be called directly by users)
 %
+% TODO: None
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-all_Algorithms =  {"pbds", "cbds", "ds", "rbds"};
+all_Algorithms =  {'pbds', 'cbds', 'ds', 'rbds'};
 
 if nargin < 1
     release = true;
@@ -58,22 +59,22 @@ fopt_list = {-1.913222954981037, ... %mcc
 %            };
 % Note:
 % 1. chebquad is invariant with respect to permutations of the variables. Thus there is no unique xopt.
-% 2. Himmelblau"s function (hmlb) has multiple minima when
+% 2. Himmelblau's function (hmlb) has multiple minima when
 % unconstrained. They are [3; 2], [-2.805118; 3.131312], [-3.779310; -3.283186], [3.584428; -1.848126]
 
 
 for irun = 1 : nrun
-    fprintf ("\n");
+    fprintf ('\n');
     if (nrun > 1)
-        fprintf ("Test %d:\n\n", irun);
+        fprintf ('Test %d:\n\n', irun);
     end
-    %fprintf ("Testing %s problems ...\n", strrep(type, "-", " "));
+    %fprintf ('Testing %s problems ...\n', strrep(type, '-', ' '));
     for iAlgorithm = 1 : length(all_Algorithms)
         Algorithm = all_Algorithms{iAlgorithm};
         for ifun = 1 : length(fun_list)
             fun = fun_list{ifun};
             x0 = x0_list{ifun};
-            r = abs(sin(1e3*sum(double([Algorithm, func2str(fun)]))*irun*(1:length(x0))"));
+            r = abs(sin(1e3*sum(double([Algorithm, func2str(fun)]))*irun*(1:length(x0))'));
             % Introduce a tiny perturbation to the experiments.
             % We use a deterministic permutation so that
             % experiments can be easily repeated when necessary.
@@ -92,18 +93,18 @@ for irun = 1 : nrun
             xs = bds(problem.objective, problem.x0, problem.options);
 
             if ~release
-                fprintf("\nsolver = %s,\tfun = %s,\t\tfx = %.16e,\t\tfopt = %.16e\n", solver, func2str(fun), fx, fopt);
+                fprintf('\nsolver = %s,\tfun = %s,\t\tfx = %.16e,\t\tfopt = %.16e\n', solver, func2str(fun), fx, fopt);
             end
 
             if strcmpi(Algorithm, "pbds") || strcmpi(Algorithm, "rbds")
                 if ((fx-fopt)/max(1, abs(fopt)) > precision) || (~release && abs(fx-fopt)/max(1, abs(fopt)) > precision)
-                    fprintf ("Required precision = %.2e,\t\tactual precision = %.2e\n", precision, abs(fx-fopt)/max(1, abs(fopt)));
-                    error("bds FAILED a test: Algorithm = ""%s"", objective function = ""%s"".\n", Algorithm, func2str(fun));
+                    fprintf ('Required precision = %.2e,\t\tactual precision = %.2e\n', precision, abs(fx-fopt)/max(1, abs(fopt)));
+                    error('bds FAILED a test: Algorithm = ''%s'', objective function = ''%s''.\n', Algorithm, func2str(fun));
                 end
             else
                 if (norm(x-xs) > 0) || ((fx-fopt)/max(1, abs(fopt)) > precision) || (~release && abs(fx-fopt)/max(1, abs(fopt)) > precision)
-                    fprintf ("Required precision = %.2e,\t\tactual precision = %.2e\n", precision, abs(fx-fopt)/max(1, abs(fopt)));
-                    error("bds FAILED a test: Algorithm = ""%s"", objective function = ""%s"".\n", Algorithm, func2str(fun));
+                    fprintf ('Required precision = %.2e,\t\tactual precision = %.2e\n', precision, abs(fx-fopt)/max(1, abs(fopt)));
+                    error('bds FAILED a test: Algorithm = ''%s'', objective function = ''%s''.\n', Algorithm, func2str(fun));
                 end
             end
 
@@ -111,11 +112,11 @@ for irun = 1 : nrun
     end
 
     if ~release((fx-fopt)/max(1, abs(fopt)) > precision)
-        fprintf("\n\n");
+        fprintf('\n\n');
     end
-    fprintf ("Succeed.\n\n");
+    fprintf ('Succeed.\n\n');
 
-    fprintf("All tests were successful.\n\n");
+    fprintf('All tests were successful.\n\n');
 end
 
 return
@@ -124,10 +125,10 @@ function [f, g, H]=chrosen(x)
 %CHROSEN calculates the function value, gradient, and Hessian of the
 %   Chained Rosenbrock function.
 %   See
-%   [1] Toint (1978), "Some numerical results using a sparse matrix
-%   updating formula in unconstrained optimization"
-%   [2] Powell (2006), "The NEWUOA software for unconstrained
-%   optimization without derivatives"
+%   [1] Toint (1978), 'Some numerical results using a sparse matrix
+%   updating formula in unconstrained optimization'
+%   [2] Powell (2006), 'The NEWUOA software for unconstrained
+%   optimization without derivatives'
 
 n=length(x);
 
@@ -155,7 +156,7 @@ function f = chebquad(x)
 %CHEBQUAD evaluates the Chebyquad function.
 %
 %   See
-%   [1] Fletcher (1965), "Function minimization without evaluating derivatives --- a review"
+%   [1] Fletcher (1965), 'Function minimization without evaluating derivatives --- a review'
 
 n = length(x);
 y(1,1:n) = 1;
@@ -175,10 +176,10 @@ end
 return
 
 function [f, g] = hmlb(x)
-%HMLB evaluates the Himmelblau"s function and its gradient
+%HMLB evaluates the Himmelblau's function and its gradient
 %
 %   See
-%   [1]  Himmelblau (1972),  "Applied Nonlinear Programming"
+%   [1]  Himmelblau (1972),  'Applied Nonlinear Programming'
 
 f = (x(1)^2+x(2)-11)^2 + (x(1)+x(2)^2-7)^2;
 g = 2*[-7 + x(1) + x(2)^2 + 2*x(1)*(-11 + x(1)^2 + x(2)); -11 + x(1)^2 + x(2) + 2*x(2)*(-7 + x(1) + x(2)^2)];
@@ -218,7 +219,7 @@ return
 function [cineq, ceq] = ballcon(x, centre, radius)
 % BALLCON represents the ball constraint ||x-centre|| <= radius
 
-cineq = (x-centre)"*(x-centre) - radius^2;
+cineq = (x-centre)'*(x-centre) - radius^2;
 ceq = [];
 
 return
