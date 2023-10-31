@@ -44,8 +44,8 @@ if isfield(output, "xhist")
         [~,gradient] = p.objective(output.xhist(:,eval_g));
         g_hist(eval_g) = norm(gradient);
     end
-    % gval = min(g_hist);
-    ratio = abs(g_hist(end))/options.StepTolerance/g_hist(1);
+    gval = abs(g_hist(end));
+    ratio = gval/options.StepTolerance/abs(g_hist(1));
 end
 
 rmpath(path_src)
