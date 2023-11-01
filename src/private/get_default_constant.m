@@ -17,8 +17,6 @@ switch constant_name
         constant_value = [0, eps, eps];
     case {"forcing_function"}
         constant_value = @(x)x.^2;
-    case {"accept_simple_decrease"}
-        constant_value = true;
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}

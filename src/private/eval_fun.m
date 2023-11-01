@@ -5,7 +5,7 @@ function [f] = eval_fun(fun, x)
 try
     f = fun(x);    
 catch
-    % TODO: if there is a failure of the function, give a warning.
+    warning('The function evaluation failed.');
     f = NaN; 
 end
 

@@ -150,11 +150,11 @@ end
 % cycling if there is a bug.
 maxit = maxfun;
 
-% Set the value of sufficient decrease factor.
-if isfield(options, "sufficient_decrease_factor")
-    sufficient_decrease_factor = options.sufficient_decrease_factor;
+% Set the value of reduction_factor.
+if isfield(options, "reduction_factor")
+    reduction_factor = options.reduction_factor;
 else
-    sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+    reduction_factor = get_default_constant("reduction_factor");
 end
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
@@ -252,7 +252,7 @@ for iter = 1:maxit
     suboptions.maxfun = maxfun - nf;
     suboptions.cycling = cycling_inner;
     suboptions.with_cycling_memory = with_cycling_memory;
-    suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
+    suboptions.reduction_factor = reduction_factor;
     suboptions.ftarget = ftarget;
     suboptions.polling_inner = options.polling_inner;
 

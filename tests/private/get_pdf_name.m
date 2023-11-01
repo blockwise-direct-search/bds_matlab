@@ -36,6 +36,9 @@ switch parameters.solvers_options{i}.solver
             pdfname = strcat(pdfname, "_", parameters.solvers_options{i}.forcing_function_type);
         end
 
+    case "bds_previous"
+        pdfname = "bds_previous";
+
     case "dspd"
         pdfname = "dspd";
         if isfield(parameters.solvers_options{i}, "num_random_vectors")

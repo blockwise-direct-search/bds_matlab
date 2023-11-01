@@ -26,55 +26,25 @@ function [xopt, fopt, exitflag, output] = inner_direct_search(fun, ...
 %
 
 % Set the value of sufficient decrease factor.
-if ~isfield(options, "reduction_factor")
-    reduction_factor = get_default_constant("reduction_factor");
-else
-    reduction_factor = options.reduction_factor;
-end
+reduction_factor = options.reduction_factor;
 
 % Set target of objective function.
-if ~isfield(options, "ftarget")
-    ftarget = get_default_constant("ftarget");    
-else
-    ftarget = options.ftarget;
-end
+ftarget = options.ftarget;
 
 % Set the value of polling_inner. This is the polling strategy employed within one block.
-if isfield(options, "polling_inner")
-    polling_inner = options.polling_inner;
-else
-    polling_inner = get_default_constant("polling_inner");
-end
+polling_inner = options.polling_inner;
 
 % Set the value of cycling_inner, which represents the cycling strategy inside each block.
-if isfield(options, "cycling_inner")
-    cycling_strategy = options.cycling_inner;
-else
-    cycling_strategy = get_default_constant("cycling_inner");
-end
+cycling_strategy = options.cycling_inner;
 
 % Set the boolean value of WITH_CYCLING_MEMORY. 
-if isfield(options, "with_cycling_memory")
-    with_cycling_memory = options.with_cycling_memory;
-else
-    with_cycling_memory = get_default_constant("with_cycling_memory");
-end
+with_cycling_memory = options.with_cycling_memory;
 
 % Set the forcing function, which is a function handle.
-if isfield(options, "forcing_function")
-    forcing_function = options.forcing_function;
-else
-    forcing_function = get_default_constant("forcing_function");
-end
+forcing_function = options.forcing_function;
 
-if isfield(options, "forcing_function_type")
-    switch options.forcing_function_type
-        case "quadratic"
-            forcing_function = @(x)x.^2;
-        case "cubic"
-            forcing_function = @(x)x.^3;
-    end
-end
+% The number of function evaluations allocated to this function.
+maxfun = options.maxfun;
 
 % Explain why NaN is good. It is possible that this function returns
 % with exitflag=NaN and this is NOT a bug. This is because other situations
@@ -90,16 +60,8 @@ xhist = NaN(n, num_directions);
 nf = 0; 
 fbase = fopt;
 xbase = xopt;
-terminate = false;
 
 for j = 1 : num_directions
-    % Stop the loop if no more function evaluations can be performed. 
-    % Note that this should be checked before evaluating the objective function.
-    if nf >= options.maxfun
-        terminate = true;
-        exitflag = get_exitflag("MAXFUN_REACHED");
-        break;
-    end
     
     % Evaluate the objective function for the current polling direction.
     xnew = xbase+alpha*D(:, j);
@@ -107,20 +69,6 @@ for j = 1 : num_directions
     nf = nf+1;
     fhist(nf) = fnew;
     xhist(:, nf) = xnew;
-    
-    % Stop the computations once the target value of the objective function
-    % is achieved.
-    if fnew <= ftarget
-        xopt = xnew;
-        fopt = fnew;
-        terminate = true;
-        information = "FTARGET_REACHED";
-        exitflag = get_exitflag(information);
-        break;
-    end
-    
-    % Check whether the sufficient decrease condition is achieved.
-    sufficient_decrease = (fnew + reduction_factor(3) * forcing_function(alpha)/2 < fbase);
 
     % Update the best point and the best function value.
     if fnew < fopt
@@ -128,6 +76,9 @@ for j = 1 : num_directions
         fopt = fnew;
     end
     
+    % Check whether the sufficient decrease condition is achieved.
+    sufficient_decrease = (fnew + reduction_factor(3) * forcing_function(alpha)/2 < fbase);
+
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling directions. The reason  
     % why we cycle indices here is because inner_direct_search is called in a loop in outer_direct_search. 
@@ -135,6 +86,23 @@ for j = 1 : num_directions
         direction_indices = cycling(direction_indices, j, cycling_strategy, with_cycling_memory);
         break;
     end
+
+    if nf >= maxfun || fnew <= ftarget
+        break;
+    end
+
+end
+
+% When the algorithm reaches here, it means that there are three cases.
+% 1. The algorithm uses out of the allocated function evaluations.
+% 2. The algorithm reaches the target function value.
+% 3. The algorithm achieves sufficient decrease.
+% We need to check whether the algorithm terminates by the first two cases.
+terminate = (nf >= maxfun || fnew <= ftarget);
+if fnew <= ftarget
+    exitflag = get_exitflag( "FTARGET_REACHED");
+elseif nf >= maxfun
+    exitflag = get_exitflag("MAXFUN_REACHED");
 end
 
 % Truncate FHIST and XHIST into a vector of length nf.

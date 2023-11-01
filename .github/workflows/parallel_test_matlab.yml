@@ -1,4 +1,4 @@
-name: Parallel test, MATLAB
+name: Parallel test
 # This file is cited from https://github.com/libprima/prima/blob/main/.github/workflows/parallel_test_matlab.yml,
 # which is written by Zaikun Zhang.
 

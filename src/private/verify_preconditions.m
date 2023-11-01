@@ -44,9 +44,15 @@ if isfield(options, "shrink")
     end
 end
 
-if isfield(options, "sufficient_decrease_factor")
-    if ~isrealscalar(options.sufficient_decrease_factor) || options.sufficient_decrease_factor < 0
-        error("options.sufficient_decrease_factor is not a real number greater than or equal to 0.");
+if isfield(options, "reduction_factor")
+    if ~isnumvec(options.reduction_factor) || all(options.reduction_factor < 0)
+        error("options.reduction_factor is not a real vector than ..." + ...
+            "or there exists some element less than 0.");
+    end
+
+    if options.reduction_factor(1) > options.reduction_factor(3) || ...
+            options.reduction_factor(2) > options.reduction_factor(3)
+        error("options.reduction_factor is incorrect.")
     end
 end
 
@@ -89,6 +95,12 @@ end
 if isfield(options, "replacement_delay")
     if ~isintegerscalar(options.replacement_delay) || options.replacement_delay < 0
         error("options.replacement_delay is not a nonnegative integer.");
+    end
+end
+
+if isfield(options, "seed")
+    if ~isintegerscalar(options.seed) || options.seed <= 0
+        error("options.seed is not a positive integer.");
     end
 end
 

@@ -1,4 +1,4 @@
-function nlopt_wrapper(fun, x0, options)
+function [xopt, fmin, retcode] = nlopt_wrapper(fun, x0, options)
 %A wrapper for NLopt, which is a library for nonlinear local and global optimization, 
 %for functions with and without gradient information. For more information, please
 %see https://github.com/stevengj/nlopt.
@@ -42,6 +42,8 @@ else
     opt.maxtime = 0;
 end
 
+opt.initial_step = [2 1 1]; 
+
 % Set MAXFUN to the maximum number of function evaluations.
 if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
     opt.maxeval = min(options.maxfun_factor*n, options.maxfun);
@@ -54,6 +56,7 @@ else
 end
 
 %disp("nlopt is invoked");
-nlopt_optimize(opt, x0');
+[xopt, fmin, retcode] = nlopt_optimize(opt, x0');
+%nlopt_optimize(opt, x0');
 
 end

@@ -36,6 +36,9 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", parameters.solvers_options{i}.forcing_function_type);
         end
 
+    case {"bds_previous"}
+        solver_legend = "bds-previous";
+
     case {"dspd"}
         solver_legend = "DSPD";
         if isfield(parameters.solvers_options{i}, "num_random_vectors")

@@ -16,23 +16,27 @@ function rosenbrock_example()
 % 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-fprintf("\nMinimize the chained Rosenbrock function:\n");
 x0 = [0; 0; 0];  % starting point
 
-options.maxfun = 1e4;
-options.StepTolerance = eps;
-options.Algorithm = "cbds";
+% options.maxfun = 1e4;
+% options.StepTolerance = eps;
+% options.Algorithm = "cbds";
+options.Algorithm = "newuoa";
 
 fullpath = mfilename("fullpath");
 path_examples = fileparts(fullpath);
 path_bds = fileparts(path_examples);
 path_src = fullfile(path_bds, "src");
+path_competitors = fullfile(path_bds, "tests", "competitors");
 addpath(path_src)
+addpath(path_competitors)
 
 % The following syntax is identical to fmincon:
-[xval, fval, exitflag, output] = bds(@chrosen, x0, options)
+% [xval, fval, exitflag, output] = nlopt_wrapper(@chrosen, x0, options)
+[xopt, fmin, retcode] = nlopt_wrapper(@chrosen, x0, options)
 
 rmpath(path_src)
+rmpath(path_competitors)
 
 return
 

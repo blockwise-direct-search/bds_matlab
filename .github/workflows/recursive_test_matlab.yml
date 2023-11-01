@@ -1,4 +1,4 @@
-name: Recursive test, MATLAB
+name: Recursive test
 # This file is cited from https://github.com/libprima/prima/blob/main/.github/workflows/recursive_test_matlab.yml,
 # which is written by Zaikun Zhang.
 

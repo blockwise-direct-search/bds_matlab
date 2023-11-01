@@ -77,14 +77,12 @@ function tests = unit_test
     constant_name = "shrink";
     constant_value = 0.5;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
-    
-    constant_name = "sufficient_decrease_factor";
-    constant_value = eps;
-    verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
-    constant_name = "accept_simple_decrease";
-    constant_value = false;
-    verifyEqual(testCase, get_default_constant(constant_name), constant_value)    
+    assert(strcmp(func2str(get_default_constant("forcing_function")), func2str(@(x)x.^2)));
+
+    constant_name = "reduction_factor";
+    constant_value = [0, eps, eps];
+    verifyEqual(testCase, get_default_constant(constant_name), constant_value)  
      
     constant_name = "StepTolerance";
     constant_value = 1e-10;
@@ -151,7 +149,6 @@ function tests = unit_test
     fhist_result = [5 1];
     xhist_result = [2 0;1 1];
     nf_result = 2;
-    success_result = true;
     terminate_result = false;
 
     [xval_update, fval_update, exitflag, output] = inner_direct_search(fun, ...
@@ -164,7 +161,6 @@ function tests = unit_test
     verifyEqual(testCase, output.fhist, fhist_result);
     verifyEqual(testCase, output.xhist, xhist_result);
     verifyEqual(testCase, output.nf, nf_result);
-    verifyEqual(testCase, output.success, success_result);
     verifyEqual(testCase, output.direction_indices, direction_indices_result);
     verifyEqual(testCase, output.terminate, terminate_result);
     

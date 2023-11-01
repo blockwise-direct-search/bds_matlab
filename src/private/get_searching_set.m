@@ -30,11 +30,11 @@ if isfield(options, "searching_set")
     searching_set = options.searching_set;
 
     % Determine whether the searching set contains NaN or Inf values and replace those
-    % elements with 10^20.
-    hasNaNInf = any(isnan(searching_set(:)) | isinf(searching_set(:))); 
+    % elements with 0.
+    hasNaNInf = any(isnan(searching_set) | isinf(searching_set), "all");
     if hasNaNInf
         warning("The searching set contains NaN or inf.");
-        searching_set(isnan(searching_set) | isinf(searching_set)) = 10^20;  
+        searching_set(isnan(searching_set) | isinf(searching_set)) = 0;  
     end
 
     % Remove the directions in which their norm are too small.
