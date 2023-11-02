@@ -5,16 +5,16 @@ function solver_legend = get_legend(parameters, i)
 switch parameters.solvers_options{i}.solver
     case {"bds"}
         solver_legend = upper(parameters.solvers_options{i}.Algorithm);
-        if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor")
-            for j = 1:length(parameters.solvers_options{i}.sufficient_decrease_factor)
-                if parameters.solvers_options{i}.sufficient_decrease_factor(j) == 0
+        if isfield(parameters.solvers_options{i}, "reduction_factor")
+            for j = 1:length(parameters.solvers_options{i}.reduction_factor)
+                if parameters.solvers_options{i}.reduction_factor(j) == 0
                     solver_legend = strcat(solver_legend, "-", ...
-                        num2str(parameters.solvers_options{i}.sufficient_decrease_factor(j)));
-                elseif parameters.solvers_options{i}.sufficient_decrease_factor(j) == eps
+                        num2str(parameters.solvers_options{i}.reduction_factor(j)));
+                elseif parameters.solvers_options{i}.reduction_factor(j) == eps
                     solver_legend = strcat(solver_legend, "-", "eps");
                 else
                     solver_legend = strcat(solver_legend, "-", ...
-                        int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor(j)))));
+                        int2str(int32(-log10(parameters.solvers_options{i}.reduction_factor(j)))));
                 end
             end
         end

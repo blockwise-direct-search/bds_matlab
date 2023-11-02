@@ -54,17 +54,17 @@ end
 maxit = maxfun;
 
 % Set the value of sufficient decrease factor.
-if isfield(options, "sufficient_decrease_factor")
-    sufficient_decrease_factor = options.sufficient_decrease_factor;
+if isfield(options, "reduction_factor")
+    reduction_factor = options.reduction_factor;
 else
-    sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
+    reduction_factor = get_default_constant("reduction_factor");
 end
 % After adjusting the framework of inner_direct_search, we need to set the sufficient decrease factor in
-% a new way. First, let sufficient_decrease_factor(1) = 0 accept simple decrease. Then let 
-% sufficient_decrease_factor(2) = sufficient_decrease_factor(3) match the framework proposed by 
+% a new way. First, let reduction_factor(1) = 0 accept simple decrease. Then let 
+% reduction_factor(2) = reduction_factor(3) match the framework proposed by 
 % <<Worst case complexity bounds for linesearch-type derivative-free algorithms>>.
-sufficient_decrease_factor(1) = 0;
-sufficient_decrease_factor(2) = sufficient_decrease_factor(3);
+reduction_factor(1) = 0;
+reduction_factor(2) = reduction_factor(3);
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
 % the StepTolerance.
@@ -167,7 +167,7 @@ for iter = 1:maxit
         direction_indices = searching_set_indices{i_real}; 
         
         suboptions.maxfun = maxfun - nf;
-        suboptions.sufficient_decrease_factor = sufficient_decrease_factor;
+        suboptions.reduction_factor = reduction_factor;
         suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.expand = expand;
         suboptions.ftarget = ftarget;

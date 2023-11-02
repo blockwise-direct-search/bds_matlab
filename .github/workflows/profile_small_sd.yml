@@ -1,8 +1,8 @@
-name: Plot performance profiles for BDS, small, testing level of sufficient decrease
+name: Plot performance profiles for BDS, small, testing level of reduction factor
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   #schedule:
   #  - cron: '0 22 */7 * *'
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Profile BDS.
+    name: Profile BDS on problems of small dimensions with different reduction factors
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -87,21 +87,13 @@ jobs:
             parameters.maxfun_factor = 1e3;
 
             % Establish parameters for solvers.
-            solver1.solver = "cbds";
-            solver1.reduction_factor = 0;
-            
-            solver2.solver = "${{ matrix.competitor }}";
-            solver2.reduction_factor = ${{ matrix.reduction_factor }};
-
-            parameters.solvers_options = {};
-
-            parameters.solvers_options{1} = solver1;
-            parameters.solvers_options{2} = solver2;
+            parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            parameters.solvers_options{2}.reduction_factor = [0, ${{ matrix.reduction_factor }}, 100*${{ matrix.reduction_factor }}];
 
             profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_small
+          name: test_bds_small_reduction_factor
           path: ./tests/testdata

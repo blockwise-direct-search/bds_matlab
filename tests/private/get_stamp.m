@@ -5,16 +5,16 @@ function solver_stamp = get_stamp(parameters, i)
 switch parameters.solvers_options{i}.solver
     case {"bds"}
         solver_stamp = upper(parameters.solvers_options{i}.Algorithm);
-        if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor")
-            for j = 1:length(parameters.solvers_options{i}.sufficient_decrease_factor)
-                if parameters.solvers_options{i}.sufficient_decrease_factor(j) == 0
+        if isfield(parameters.solvers_options{i}, "reduction_factor")
+            for j = 1:length(parameters.solvers_options{i}.reduction_factor)
+                if parameters.solvers_options{i}.reduction_factor(j) == 0
                     solver_stamp = strcat(solver_stamp, "-", ...
-                        num2str(parameters.solvers_options{i}.sufficient_decrease_factor(j)));
-                elseif parameters.solvers_options{i}.sufficient_decrease_factor(j) == eps
+                        num2str(parameters.solvers_options{i}.reduction_factor(j)));
+                elseif parameters.solvers_options{i}.reduction_factor(j) == eps
                     solver_stamp = strcat(solver_stamp, "-", "eps");
                 else
                     solver_stamp = strcat(solver_stamp, "-", ...
-                        int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor(j)))));
+                        int2str(int32(-log10(parameters.solvers_options{i}.reduction_factor(j)))));
                 end
             end
         end

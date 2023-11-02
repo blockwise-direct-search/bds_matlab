@@ -8,7 +8,7 @@ function [xval, fval, exitflag, output] = linesearch(fun, ...
 %
 %   XVAL = LINESEARCH(FUN, XVAL, FVAL, D, ...
 %   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS, which includes
-%   sufficient_decrease_factor, ftarget.
+%   reduction_factor, ftarget.
 %
 %   [XVAL, FVAL] = LINESEARCH(...) returns the value of the objective function FVAL 
 %   at XVAL.
@@ -28,12 +28,8 @@ function [xval, fval, exitflag, output] = linesearch(fun, ...
 %   DIRECTION_INDICES is indices of directions of this block in D.
 %
 
-% Set the value of sufficient decrease factor.
-if ~isfield(options, "sufficient_decrease_factor")
-    sufficient_decrease_factor = get_default_constant("sufficient_decrease_factor");
-else
-    sufficient_decrease_factor = options.sufficient_decrease_factor;
-end
+% Set the value of reduction_factor.
+reduction_factor = options.reduction_factor;
 
 % Set the value of expanding factor.
 expand = options.expand;
@@ -42,18 +38,10 @@ expand = options.expand;
 cycling_strategy = 1;
 
 % Set the boolean value of WITH_CYCLING_MEMORY. 
-if isfield(options, "with_cycling_memory")
-    with_cycling_memory = options.with_cycling_memory;
-else
-    with_cycling_memory = get_default_constant("with_cycling_memory");
-end
+with_cycling_memory = options.with_cycling_memory;
 
 % Set ftarget of objective function.
-if ~isfield(options, "ftarget")
-    ftarget = get_default_constant("ftarget");    
-else
-    ftarget = options.ftarget;
-end
+ftarget = options.ftarget;
 
 % Explain why NaN is good. It is possible that this function returns
 % with exitflag=NaN and this is NOT a bug. This is because other situations
@@ -100,7 +88,7 @@ for j = 1 : num_directions
     end
     
     % Check whether the sufficient decrease condition is achieved.
-    sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2/2 < fbase);
+    sufficient_decrease = (fnew + reduction_factor(3) * alpha^2/2 < fbase);
     
     % if sufficient decrease
     if sufficient_decrease
@@ -139,13 +127,11 @@ for j = 1 : num_directions
         end
         
         if strcmpi(options.linesearch_type, "standard")
-            sufficient_decrease = (fnew + sufficient_decrease_factor * alpha^2 < fbase);
+            sufficient_decrease = (fnew + reduction_factor(3) * alpha^2 < fbase);
         elseif strcmpi(options.linesearch_type, "new")
-            sufficient_decrease = (fnew + sufficient_decrease_factor * ((expand-1)...
-                *alpha)^2 < fhist(nf-1));    
+            sufficient_decrease = (fnew + reduction_factor(3) * (expand-1)...
+                *alpha)^2 < fhist(nf-1);    
         end
-
-        
 
         if sufficient_decrease
             fval = fnew;

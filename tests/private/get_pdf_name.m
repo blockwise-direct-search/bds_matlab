@@ -5,16 +5,16 @@ function pdfname = get_pdf_name(parameters, i)
 switch parameters.solvers_options{i}.solver
     case "bds"
         pdfname = upper(parameters.solvers_options{i}.Algorithm);
-        if isfield(parameters.solvers_options{i}, "sufficient_decrease_factor")
-            for j = 1:length(parameters.solvers_options{i}.sufficient_decrease_factor)
-                if parameters.solvers_options{i}.sufficient_decrease_factor(j) == 0
+        if isfield(parameters.solvers_options{i}, "reduction_factor")
+            for j = 1:length(parameters.solvers_options{i}.reduction_factor)
+                if parameters.solvers_options{i}.reduction_factor(j) == 0
                     pdfname = strcat(pdfname, "_", ...
-                        num2str(parameters.solvers_options{i}.sufficient_decrease_factor(j)));
-                elseif parameters.solvers_options{i}.sufficient_decrease_factor(j) == eps
+                        num2str(parameters.solvers_options{i}.reduction_factor(j)));
+                elseif parameters.solvers_options{i}.reduction_factor(j) == eps
                     pdfname = strcat(pdfname, "_", "eps");
                 else
                     pdfname = strcat(pdfname, "_", ...
-                        int2str(int32(-log10(parameters.solvers_options{i}.sufficient_decrease_factor(j)))));
+                        int2str(int32(-log10(parameters.solvers_options{i}.reduction_factor(j)))));
                 end
             end
         end
