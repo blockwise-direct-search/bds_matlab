@@ -88,7 +88,7 @@ jobs:
 
             % Establish parameters for solvers.
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{2}.reduction_factor = [0, ${{ matrix.reduction_factor }}, 100*${{ matrix.reduction_factor }}];
+            parameters.solvers_options{1}.reduction_factor = [0, ${{ matrix.reduction_factor }}, 100*${{ matrix.reduction_factor }}];
 
             profile(parameters);
 
