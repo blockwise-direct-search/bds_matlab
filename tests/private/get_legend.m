@@ -82,7 +82,7 @@ switch parameters.solvers_options{i}.solver
         solver_legend = "BFO";
 
     case {"prima_wrapper"}
-        solver_legend = parameters.solvers_options{i}.Algorithm;
+        solver_legend = upper(parameters.solvers_options{i}.Algorithm);
 
     case {"nomad_wrapper"}
         solver_legend = "nomad";
