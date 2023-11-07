@@ -1,4 +1,4 @@
-name: Plot performance profiles for BDS, small, testing level of reduction factor
+name: Plot performance profiles for bds, small, testing level of reduction factor
 
 on:
   # Trigger the workflow on push or pull request
