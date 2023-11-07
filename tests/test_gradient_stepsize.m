@@ -1,4 +1,4 @@
-function [ratio, gval] = test_gradient_stepsize(problem_name, options)
+function [ratio, g_end] = test_gradient_stepsize(problem_name, options)
 % This function tests the ratio between the gradient norm and the StepTolerance on CUTEst problems.
 % 
 
@@ -27,7 +27,7 @@ end
 solver = str2func(options.solver_name);
 
 tic;
-if strcmpi(options.solver_name, "bds") || strcmpi(options.solver_name, "bfo_optimize") ||...
+if strcmpi(options.solver_name, "bds") || strcmpi(options.solver_name, "bfo_wrapper") ||...
         strcmpi(options.solvers_name, "newuoa")
     [~, ~, ~, output] = solver(p.objective, p.x0, options);
 else
@@ -44,8 +44,8 @@ if isfield(output, "xhist")
         [~,gradient] = p.objective(output.xhist(:,eval_g));
         g_hist(eval_g) = norm(gradient);
     end
-    gval = abs(g_hist(end));
-    ratio = gval/options.StepTolerance/abs(g_hist(1));
+    g_end = abs(g_hist(end));
+    ratio = g_end/options.StepTolerance/abs(g_hist(1));
 end
 
 rmpath(path_src)

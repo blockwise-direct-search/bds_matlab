@@ -3,6 +3,8 @@ function test_StepTolerance(Algorithm, options)
 % fhist.
 %
 
+format long
+
 if nargin < 2
     options = struct();
 end
@@ -59,7 +61,7 @@ try
     num_problems = length(problem_names);
     data = cell(num_problems, 4);
     % columnNames is a cell array of character vectors or string arrays.
-    columnNames = ["Name", "dimension", "ratio", "gval"];
+    columnNames = ["Name", "dimension", "ratio", "g_end"];
 
     % Set output_xhist to be true to have output.xhist for calculating the
     % norm of the gradient.
@@ -92,11 +94,11 @@ try
     % Make a txt file to store the ratio that are recorded.
     for i_problem = 1:num_problems
         p = macup(problem_names(1, i_problem));
-        [ratio, gval] = test_gradient_stepsize(p.name, options);
+        [ratio, g_end] = test_gradient_stepsize(p.name, options);
         data{i_problem} = p.name;
         data{num_problems + i_problem} = length(p.x0);
         data{num_problems*2 + i_problem} = ratio;
-        data{(num_problems)*3 + i_problem} = gval;
+        data{(num_problems)*3 + i_problem} = g_end;
     end
 
     T = cell2table(data, "VariableNames", columnNames);
@@ -105,7 +107,7 @@ try
     fprintf(fileID, "%-15s\t%-15s\t%-25s\t%-25s\n", columnNames{:});
     % Write table data to ratio.txt.
     for row = 1:size(T, 1)
-        fprintf(fileID, "%-15s\t%-15d\t%-25f\t%-25f\n", T.Name{row}, T.dimension(row), T.ratio(row), T.gval(row));
+        fprintf(fileID, "%-15s\t%-15d\t%-25f\t%-25f\n", T.Name{row}, T.dimension(row), T.ratio(row), T.g_end(row));
     end
 
     % 关闭文件

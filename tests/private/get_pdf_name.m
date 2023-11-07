@@ -7,14 +7,21 @@ switch parameters.solvers_options{i}.solver
         pdfname = upper(parameters.solvers_options{i}.Algorithm);
         if isfield(parameters.solvers_options{i}, "reduction_factor")
             for j = 1:length(parameters.solvers_options{i}.reduction_factor)
-                if parameters.solvers_options{i}.reduction_factor(j) == 0
-                    pdfname = strcat(pdfname, "_", ...
-                        num2str(parameters.solvers_options{i}.reduction_factor(j)));
-                elseif parameters.solvers_options{i}.reduction_factor(j) == eps
-                    pdfname = strcat(pdfname, "_", "eps");
-                else
-                    pdfname = strcat(pdfname, "_", ...
+                if (-log10(parameters.solvers_options{i}.reduction_factor(j))) < 10
+                    keyboard
+                    pdfname = strcat(pdfname, "_", "0", ...
                         int2str(int32(-log10(parameters.solvers_options{i}.reduction_factor(j)))));
+                else
+                    if parameters.solvers_options{i}.reduction_factor(j) == eps
+                        pdfname = strcat(pdfname, "_", "eps");
+                    elseif parameters.solvers_options{i}.reduction_factor(j) == 0
+                        keyboard
+                        pdfname = strcat(pdfname, "_", "00");
+                    else
+                        keyboard
+                        pdfname = strcat(pdfname, "_", ...
+                            int2str(int32(-log10(parameters.solvers_options{i}.reduction_factor(j)))));
+                    end
                 end
             end
         end
