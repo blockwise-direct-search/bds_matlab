@@ -6,7 +6,7 @@ BDS is a package for solving nonlinear optimization problems without using deriv
 
 BDS is a derivative-free package using blockwise direct-search methods. The current version is implemented in MATLAB and it will be implemented in other programming languages in the future.
 
-See [Haitian LI's presentation](https://lht97.github.io/documents/ICNONLA2023.pdf) on BDS for more information.
+See [Haitian LI's presentation](https://lht97.github.io/documents/9_th_Graduate_Forum.pdf) on BDS for more information.
 
 ## How to install BDS?
 
