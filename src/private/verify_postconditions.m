@@ -1,15 +1,15 @@
-function verify_postconditions(fun, xval, fval, exitflag, output)
+function verify_postconditions(fun, xopt, fopt, exitflag, output)
 %VERIFY_POSTCONDITIONS verifies whether output is in right form.
 %
 
-% Verify whether xval is a real column or scalar.
-if ~(isnumeric(xval) && isreal(xval) && iscolumn(xval))
-    error("xval is not a real column or scalar.");
+% Verify whether xopt is a real vector.
+if ~isrealvector(xopt)
+    error("xopt is not a real vector.");
 end
 
-% Verify whether fval is a real number.
-if ~(isrealscalar(fval))
-    error("fval is not a real number.");
+% Verify whether fopt is a real number.
+if ~(isrealscalar(fopt))
+    error("fopt is not a real number.");
 end
 
 % Verify whether exitflag is an integer.
@@ -41,7 +41,7 @@ nhist = length(fhist);
 if isfield(output, "xhist")
     xhist = output.xhist;
     % Verify whether xhist is a real matrix of size.
-    if ~(isrealmatrix(xhist) && any(size(xhist) == [length(xval), nhist]))
+    if ~(isrealmatrix(xhist) && any(size(xhist) == [length(xopt), nhist]))
         error("output.xhist is not a real matrix.");
     end
     
@@ -60,9 +60,9 @@ if isfield(output, "xhist")
     % assert(all( (isnan(A) & isnan(B)) | A==B ));
     assert(all( (isnan(fhist) & isnan(fhist_eval)) | fhist==fhist_eval ));
     
-    % Examine whether fval is the minimum of fhist and xval is the
+    % Examine whether fopt is the minimum of fhist and xopt is the
     % corresponding point (when receiving simple decrease)
-    % assert(fun(xval) == fval && min(fhist) == fval);
+    % assert(fun(xopt) == fopt && min(fhist) == fopt);
 end
 
 end

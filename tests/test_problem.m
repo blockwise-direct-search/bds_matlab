@@ -1,4 +1,4 @@
-function [xval, fval, exitflag, output] = test_problem(Algorithm)
+function [xopt, fopt, exitflag, output] = test_problem(Algorithm)
 %Test bds on some specific problems.
 %
 
@@ -12,7 +12,7 @@ options.StepTolerance = eps;
 options.output_xhist = true;
 options.output_alpha_hist = true;
 options.output_block_hist = true;
-[xval, fval, exitflag, output] = bds(@(x)hmlb(x), [0;0], options)
+[xopt, fopt, exitflag, output] = bds(@(x)hmlb(x), [0;0], options)
 end
 
 function f = goldp(x)

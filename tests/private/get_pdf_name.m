@@ -43,6 +43,10 @@ switch parameters.solvers_options{i}.solver
             pdfname = strcat(pdfname, "_", parameters.solvers_options{i}.forcing_function_type);
         end
 
+        if isfield(parameters.solvers_options{i}, "shuffling_period")
+            pdfname = strcat(pdfname, "_", num2str(parameters.solvers_options{i}.shuffling_period));
+        end
+
     case "bds_previous"
         pdfname = "bds_previous";
 

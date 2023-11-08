@@ -39,6 +39,10 @@ switch parameters.solvers_options{i}.solver
             solver_stamp = strcat(solver_stamp, "-", parameters.solvers_options{i}.forcing_function_type);
         end
 
+        if isfield(parameters.solvers_options{i}, "shuffling_period")
+            solver_stamp = strcat(solver_stamp, "-", num2str(parameters.solvers_options{i}.shuffling_period));
+        end
+
     case {"bds_previous"}
         solver_stamp = "bds_previous";
 

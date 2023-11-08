@@ -28,7 +28,7 @@ path_src = fullfile(path_bds, "src");
 addpath(path_src)
 
 % The following syntax is identical to fmincon:
-[xval, fval, exitflag, output] = bds(@chrosen, x0, options)
+[xopt, fopt, exitflag, output] = bds(@chrosen, x0, options)
 rmpath(path_src)
 return
 function f = chrosen(x)  % the subroutine defining the objective function

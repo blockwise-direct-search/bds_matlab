@@ -4,9 +4,9 @@ function constant_value = get_default_constant(constant_name)
 
 switch constant_name
     case {"maxfun"}
-        constant_value = 1e5;
+        constant_value = 10^5;
     case {"maxfun_factor"}
-        constant_value = 1e3;
+        constant_value = 10^3;
     case {"Algorithm"}
         constant_value = "cbds";
     case {"expand"}
@@ -16,7 +16,7 @@ switch constant_name
     case {"reduction_factor"}
         constant_value = [0, eps, eps];
     case {"forcing_function"}
-        constant_value = @(x)x.^2;
+        constant_value = @(alpha) alpha^2;
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}
@@ -25,6 +25,8 @@ switch constant_name
         constant_value = 1;
     case {"replacement_delay"}
         constant_value = 0;
+    case {"seed"}
+        constant_value = "shuffle";
     case {"ftarget"}
         constant_value = -inf;
     case {"polling_inner"}

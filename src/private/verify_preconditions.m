@@ -45,14 +45,14 @@ if isfield(options, "shrink")
 end
 
 if isfield(options, "reduction_factor")
-    if ~isnumvec(options.reduction_factor) || all(options.reduction_factor < 0)
-        error("options.reduction_factor is not a real vector than ..." + ...
-            "or there exists some element less than 0.");
+    if ~(isnumvec(options.reduction_factor) && length(options.reduction_factor) == 3)
+        error("options.reduction_factor should be a 3-dimensional real vector.");
     end
 
-    if options.reduction_factor(1) > options.reduction_factor(3) || ...
-            options.reduction_factor(2) > options.reduction_factor(3)
-        error("options.reduction_factor is incorrect.")
+    if ~(options.reduction_factor(1) <= options.reduction_factor(2) && ...
+            options.reduction_factor(2) <= options.reduction_factor(3) && ...
+        options.reduction_factor(1) >= 0 && options.reduction_factor(2) > 0)
+        error("options.reduction_factor should satisfy the conditions where 0 <= reduction_factor(1) < redcution_factor(2) < reduction_factor(3) and reduction_factor(2) > 0.")
     end
 end
 

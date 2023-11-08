@@ -135,15 +135,15 @@ function tests = unit_test
     %INNER_DIRECT_SEARCH_TEST tests the file private/inner_direct_search.m.
     
     fun = @(x) x(1)^2 + x(2)^2;
-    xval = [1; 1];
-    fval = 2;
+    xopt = [1; 1];
+    fopt = 2;
     D = [1 -1; 0 0];
     direction_indices = [1 2];
     alpha = 1;
     options.maxfun = 2;
 
-    xval_result = [0; 1];
-    fval_result = 1;
+    xopt_result = [0; 1];
+    fopt_result = 1;
     exitflag_result = NaN;
     direction_indices_result = [2 1];
     fhist_result = [5 1];
@@ -151,11 +151,11 @@ function tests = unit_test
     nf_result = 2;
     terminate_result = false;
 
-    [xval_update, fval_update, exitflag, output] = inner_direct_search(fun, ...
-    xval, fval, D, direction_indices, alpha, options);
+    [xopt_update, fopt_update, exitflag, output] = inner_direct_search(fun, ...
+    xopt, fopt, D, direction_indices, alpha, options);
     
-    verifyEqual(testCase, xval_update, xval_result);
-    verifyEqual(testCase, fval_update, fval_result);
+    verifyEqual(testCase, xopt_update, xopt_result);
+    verifyEqual(testCase, fopt_update, fopt_result);
     verifyEqual(testCase, exitflag, exitflag_result);
 
     verifyEqual(testCase, output.fhist, fhist_result);

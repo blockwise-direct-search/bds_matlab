@@ -1,43 +1,63 @@
 function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
-%BDS (blockwise direct search) solves unconstrained optimization problems without using derivatives. 
+%BDS solves unconstrained optimization problems without using derivatives by blockwise direct search methods. 
 %
-%   It is supported in MATLAB R2017b or later.
+%   BDS supports in MATLAB R2017b or later.
 %   
-%   XOPT = BDS(FUN, X0) returns an approximate minimizer XOPT of the function handle FUN, starting the
-%   calculations at X0. FUN must accept input X and return a scalar, which is the function value
-%   evaluated at X. X0 should be a vector.
+%   XOPT = BDS(FUN, X0) returns an approximate minimizer XOPT of the function FUN, starting the 
+%   calculations at X0. FUN must accept a vector input X and return a scalar.
 %
-%   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
-%   structure, with the following fields:
-%   
-%   nb                          Number of blocks.
-%   maxfun                      Maximum of function evaluations.
-%   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
-%                               of the dimension of the problem.    
-%   expand                      Expanding factor of step size.
-%   shrink                      Shrinking factor of step size.
-%   reduction_factor            Factor of reduction.
-%   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of the function value. If the function value is below target, 
-%                               then the algorithm terminates.
-%   polling_inner               Polling strategy of each block.
-%   searching_set               Searching set of directions.
-%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"), 
-%                               with_memory decides whether the cycling strategy memorizes 
-%                               the history or not.
-%   cycling_inner               Cycling strategy employed in the opportunistic case.
-%   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
-%   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
-%                               Use Algorithm not algorithm to have the same name as MATLAB.
-%   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
-%                               every shuffling_period iterations.    
-%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that 
-%                               replacement_delay is r. If block i is selected at iteration k, then it will 
-%                               not be selected at iterations k+1, ..., k+r. 
-%   seed                        Only used by randomized strategy for reproducibility.
-%   output_xhist                Whether the history of points visited is returned or not.
-%   output_alpha_hist           Whether the history of step sizes is returned or not.
-%   output_block_hist           Whether the history of blocks visited is returned or not.
+%   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. OPTIONS should be a
+%   structure with the following fields.
+%
+%   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct search), 
+%                               "pbds" (randomly permuted blockwise direct search), "rbds" (randomized 
+%                               blockwise direct search), "ds" (the classical direct search without blocks).
+%                               Default: "cbds".
+%   nb                          Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
+%                               or "rbds", 1 if Algorithm is "ds".
+%   maxfun                      Maximum of function evaluations. A positive integer. See also maxfun_factor.
+%   maxfun_factor               Factor to define the maximum number of function evaluations as a multiple
+%                               of the dimension of the problem. A positive integer. See also maxfun.
+%                               The maximum of function evaluations is min(maxfun, maxfun_factor*n) if the user
+%                               specify both maxfun and maxfun_factor; it is maxfun if the user only specifies 
+%                               maxfun; it is maxfun_factor*n if the user only specifies maxfun_factor; it is
+%                               min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n) if 
+%                               the user specifies neither maxfun nor maxfun_factor.
+%   direction_set               A set of directions used for polling. It can be "canonical", "identity", or
+%                               a matrix of n rows. See get_searching_set.m for details. Default: "canonical".
+%   expand                      Expanding factor of step size. A real number no less than 1. Default: 2.
+%   shrink                      Shrinking factor of step size. A positive number less than 1. Default: 0.5.
+%   forcing_function            The forcing function used for deciding whether the step achieves a sufficient
+%                               decrease. A function handle. Default: @(alpha) alpha^2. See also reduction_factor. 
+%   reduction_factor            Factors multiplied to the forcing function when deciding whether the step achieves
+%                               a sufficient decrease. A 3-dimentional vector such that 
+%                               reduction_factor(1) <= reduction_factor(2) <= reduction_factor(3),
+%                               reduction_factor(1) >= 0, and reduction_factor(2) > 0.
+%                               reduction_factor(0) is used for deciding whether to update the base point; 
+%                               reduction_factor(1) is used for deciding whether to shrink the step size; 
+%                               reduction_factor(2) is used for deciding whether to expand the step size.
+%                               Default: [0, eps, eps]. See also forcing_function.
+%   StepTolerance               Lower bound of the step size. If the step size is smaller than StepTolerance,
+%                               then the algorithm terminates. A (small) positive number. Default: 1e-10.
+%   ftarget                     Target of the function value. If the function value is smaller than or equal to
+%                               ftarget, then the algorithm terminates. A real number. Default: -Inf.
+%   polling_inner               Polling strategy in each block. It can be "complete" or "opportunistic". 
+%                               Default: "opportunistic".
+%   cycling_inner               Cycling strategy employed within each block. It is used only when polling_inner 
+%                               is "opportunistic". It can be 0, 1, 2, 3, 4. See cycling.m for details. 
+%                               Default: 3.
+%   with_cycling_memory         Whether the cycling strategy within each block memorizes the history or not. 
+%                               It is used only when polling_inner is "opportunistic". Default: true.
+%   shuffling_period            It is only used in PBDS, which shuffles the blocks every shuffling_period 
+%                               iterations. A positive integer. Default: 1.   
+%   replacement_delay           It is only used for RBDS. Suppose that replacement_delay is r. If block i
+%                               is selected at iteration k, then it will not be selected at iterations 
+%                               k+1, ..., k+r. An integer between 0 and nb-1. Default: 0.
+%   seed                        The seed for permuting blocks in PBDS or randomly choosing one block in RBDS.
+%                               It is only for reproducibility in experiments. A positive integer.
+%   output_xhist                Whether the history of points visited is returned or not. Default: false.
+%   output_alpha_hist           Whether the history of step sizes is returned or not. Default: false.
+%   output_block_hist           Whether the history of blocks visited is returned or not. Default: false.
 %
 %   [XOPT, FOPT] = BDS(...) also returns the value of the objective function FUN at the 
 %   solution XOPT.
@@ -69,6 +89,10 @@ if nargin < 3
     options = struct();
 end
 
+% Transpose x0 if it is a row.
+x0_is_row = isrow(x0);
+x0 = double(x0(:));
+
 % Check the inputs of the user when debug_flag is true.
 debug_flag = is_debugging();
 if debug_flag
@@ -79,9 +103,10 @@ end
 if ischarstr(fun)
     fun = str2func(fun);
 end
-
-% Transpose x0 if it is a row.
-x0 = double(x0(:));
+% Redefine fun to accept columns if x0 is a row, as we use columns internally.
+if x0_is_row
+    fun = @(x)fun(x');
+end
 
 % Set the polling directions in D.
 n = length(x0);
@@ -286,10 +311,9 @@ block_hist = NaN(1, maxfun);
 
 % To avoid that the users bring some randomized strings.
 if ~isfield(options, "seed")
-    random_stream = RandStream("mt19937ar", "Seed", "shuffle");
-else
-    random_stream = RandStream("mt19937ar", "Seed", options.seed);
+    options.seed = get_default_constant("seed");
 end
+random_stream = RandStream("mt19937ar", "Seed", options.seed);
 
 % Initialize the exitflag where the maximum number of iterations is reached. 
 exitflag = get_exitflag("MAXIT_REACHED");
@@ -305,7 +329,7 @@ xopt = xbase;
 fopt = fbase;
 terminate = false;
 
-% Check whether FTARGET is reached by FVAL. If it is true, then terminate.
+% Check whether FTARGET is reached by fopt. If it is true, then terminate.
 if fopt <= ftarget
     information = "FTARGET_REACHED";
     exitflag = get_exitflag(information);
@@ -394,8 +418,8 @@ for iter = 1:maxit
         nf = nf+sub_output.nf;
         
         % Update the step sizes and store the history of step sizes.
-        % fbase and xbase are used for the computation in the block. fval and
-        % xval are always the best function value and point so far.
+        % fbase and xbase are used for the computation in the block. fopt and
+        % xopt are always the best function value and point so far.
         if sub_fopt + reduction_factor(3) * forcing_function(alpha_all(i_real)) < fbase
             alpha_all(i_real) = expand * alpha_all(i_real);
         elseif sub_fopt + reduction_factor(2) * forcing_function(alpha_all(i_real)) >= fbase
@@ -470,6 +494,11 @@ switch exitflag
         output.message = "The maximum number of iterations is reached.";
     otherwise
         output.message = "Unknown exitflag";
+end
+
+% Transpose xopt if x0 is a row.
+if x0_is_row
+    xopt = xopt';
 end
 
 % verify_postconditions is to detect whether the output is in the right form when debug_flag is true.
