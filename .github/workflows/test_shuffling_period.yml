@@ -82,7 +82,7 @@ jobs:
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
-            if stcmpi(parameters.problems_dim, "small")
+            if strcmpi(parameters.problems_dim, "small")
                 parameters.num_random = 10;
             else
                 parameters.num_random = 5;

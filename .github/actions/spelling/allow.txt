@@ -375,6 +375,7 @@ diffc
 Diffpack
 Digabel
 Dijksterhuis
+dimentional
 Dinh
 dio
 discretized
@@ -1137,6 +1138,7 @@ dimrange
 epsfiles
 figname
 fprob
+fval
 gcf
 iprec
 matfile
@@ -1844,6 +1846,7 @@ Xpt
 xshift
 xspace
 Xuan
+xval
 xyz
 Yamazaki
 Yie
