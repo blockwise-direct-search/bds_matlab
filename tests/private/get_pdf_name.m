@@ -8,17 +8,14 @@ switch parameters.solvers_options{i}.solver
         if isfield(parameters.solvers_options{i}, "reduction_factor")
             for j = 1:length(parameters.solvers_options{i}.reduction_factor)
                 if (-log10(parameters.solvers_options{i}.reduction_factor(j))) < 10
-                    keyboard
                     pdfname = strcat(pdfname, "_", "0", ...
                         int2str(int32(-log10(parameters.solvers_options{i}.reduction_factor(j)))));
                 else
                     if parameters.solvers_options{i}.reduction_factor(j) == eps
                         pdfname = strcat(pdfname, "_", "eps");
                     elseif parameters.solvers_options{i}.reduction_factor(j) == 0
-                        keyboard
                         pdfname = strcat(pdfname, "_", "00");
                     else
-                        keyboard
                         pdfname = strcat(pdfname, "_", ...
                             int2str(int32(-log10(parameters.solvers_options{i}.reduction_factor(j)))));
                     end
@@ -51,12 +48,21 @@ switch parameters.solvers_options{i}.solver
                 pdfname = strcat(pdfname, "_", "shuffling_period", "_", ...
                     num2str(parameters.solvers_options{i}.shuffling_period));
             end
-
         end
 
         if isfield(parameters.solvers_options{i}, "cycling_inner")
             pdfname = strcat(pdfname, "_", "cycling_inner", "_", ...
                 num2str(parameters.solvers_options{i}.cycling_inner));
+        end
+
+        if isfield(parameters.solvers_options{i}, "replacement_delay")
+            if parameters.solvers_options{i}.replacement_delay < 10
+                pdfname = strcat(pdfname, "_", "replacement_delay", "_", "0", ...
+                    num2str(parameters.solvers_options{i}.replacement_delay));
+            else
+                pdfname = strcat(pdfname, "_", "replacement_delay", "_", ...
+                    num2str(parameters.solvers_options{i}.replacement_delay));
+            end
         end
 
     case "bds_previous"

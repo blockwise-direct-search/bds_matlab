@@ -26,9 +26,9 @@ switch parameters.solvers_options{i}.solver
 
         if isfield(parameters.solvers_options{i}, "forcing_function")
             if strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^2))
-               solver_legend = strcat(solver_legend, "-", "quadratic");
-            elseif strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^3)) 
-               solver_legend = strcat(solver_legend, "-", "cubic");
+                solver_legend = strcat(solver_legend, "-", "quadratic");
+            elseif strcmp(func2str(parameters.solvers_options{i}.forcing_function), func2str(@(x)x.^3))
+                solver_legend = strcat(solver_legend, "-", "cubic");
             end
         end
 
@@ -42,6 +42,10 @@ switch parameters.solvers_options{i}.solver
 
         if isfield(parameters.solvers_options{i}, "cycling_inner")
             solver_legend = strcat(solver_legend, "-", num2str(parameters.solvers_options{i}.cycling_inner));
+        end
+
+        if isfield(parameters.solvers_options{i}, "replacement_delay")
+            solver_legend = strcat(solver_legend, "-", num2str(parameters.solvers_options{i}.replacement_delay));
         end
 
     case {"bds_previous"}

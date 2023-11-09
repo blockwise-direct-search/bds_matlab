@@ -47,6 +47,10 @@ switch parameters.solvers_options{i}.solver
             solver_stamp = strcat(solver_stamp, "-", num2str(parameters.solvers_options{i}.cycling_inner));
         end
 
+        if isfield(parameters.solvers_options{i}, "replacement_delay")
+            solver_stamp = strcat(solver_stamp, "-", num2str(parameters.solvers_options{i}.replacement_delay));
+        end
+
     case {"bds_previous"}
         solver_stamp = "bds_previous";
 

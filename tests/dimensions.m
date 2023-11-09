@@ -6,9 +6,9 @@ path_locate = fullfile(path_bds, "tests", "private");
 cd(path_locate)
 locate_matcutest()
 
-dim = 10;
-s.mindim = dim;
-s.maxdim = dim;
+s.type = "u";
+s.mindim = 61;
+s.maxdim = 100;
 secup(s)
 
 % s = ["ARGTRIGLS",...

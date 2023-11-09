@@ -1,4 +1,4 @@
-name: Test shuffling period for bds
+name: Test replacement delay for bds, small
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,18 +13,18 @@ env:
 
 jobs:
   test:
-    name: Set shuffling_period for pbds
+    name: Set replacement_delay for rbds, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [small, big]
+        dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [pbds]
-        shuffling_period: [2, 3, 4, 5, 6, 7, 8, 9, 10]
+        competitor: [rbds]
+        replacement_delay: [1, 2, 3, 4, 5]
         feature: [plain]
 
     steps:
@@ -87,12 +87,12 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{2}.shuffling_period = ${{matrix.shuffling_period}};
+            parameters.solvers_options{2}.replacement_delay = ${{matrix.replacement_delay}};
             
             plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_shuffling_period
+          name: test_replacement_delay_small
           path: ./tests/testdata
