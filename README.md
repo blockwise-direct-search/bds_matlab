@@ -32,6 +32,8 @@ The tests are **automated** by
 - [![Stress test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml)
 - [![Parallel test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/parallel_test_matlab.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/parallel_test_matlab.yml)
 - [![Recursive test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/recursive_test_matlab.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/recursive_test_matlab.yml)
+- [![Test default, small](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_small.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_small.yml)
+- [![Test default, big](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_big.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_big.yml)
 - [![Test StepTolerance](https://github.com/blockwise-direct-search/bds/actions/workflows/test_StepTolerance.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_StepTolerance.yml)
 - [![Test forcing function](https://github.com/blockwise-direct-search/bds/actions/workflows/test_forcing_function.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_forcing_function.yml)
 - [![Test shuffling_period](https://github.com/blockwise-direct-search/bds/actions/workflows/test_shuffling_period.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_shuffling_period.yml)
