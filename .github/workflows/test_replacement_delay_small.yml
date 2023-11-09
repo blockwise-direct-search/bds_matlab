@@ -2,7 +2,7 @@ name: Test replacement delay for bds, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   # schedule:
   #  - cron: '0 22 */3 * *'
@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [rbds]
-        replacement_delay: [1, 2, 3, 4, 5, 6]
+        replacement_delay: [0, 7, 8, 9]
         feature: [plain]
 
     steps:
