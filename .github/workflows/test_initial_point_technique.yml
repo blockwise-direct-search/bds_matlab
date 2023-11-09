@@ -2,7 +2,7 @@ name: Test the technique of initial step size using initial point
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   #schedule:
   #  - cron: '0 12 */7 * *'
@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [CBDS]
-        feature: [plain, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
+        feature: [plain]
 
     steps:
 
@@ -81,11 +81,12 @@ jobs:
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.num_random = 10;
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{1}.alpha_init_perturbed = true;
+            parameters.solvers_options{2}.alpha_init_scaling = true;
             
             plot_profile(parameters);
 
