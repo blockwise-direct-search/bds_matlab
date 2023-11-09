@@ -47,16 +47,16 @@ function tests = unit_test
     
     end
     
-    function divide_searching_set_test(testCase)
-    %DIVIDE_SEARCHING_SET_TEST tests the file private/divide_searching_set.m
+    function divide_direction_set_test(testCase)
+    %DIVIDE_direction_set_TEST tests the file private/divide_direction_set.m
     m = 11;
     nb = 3;
-    INDEX_SEARCHING_SET = cell(1,nb);
-    INDEX_SEARCHING_SET{1} = [1, 2, 3, 4];
-    INDEX_SEARCHING_SET{2} = [5, 6, 7, 8];
-    INDEX_SEARCHING_SET{3} = [9, 10, 11];
+    INDEX_direction_set = cell(1,nb);
+    INDEX_direction_set{1} = [1, 2, 3, 4];
+    INDEX_direction_set{2} = [5, 6, 7, 8];
+    INDEX_direction_set{3} = [9, 10, 11];
     
-    verifyEqual(testCase, divide_searching_set(m, nb), INDEX_SEARCHING_SET)
+    verifyEqual(testCase, divide_direction_set(m, nb), INDEX_direction_set)
     
     end
     
@@ -167,8 +167,8 @@ function tests = unit_test
 
     end
     
-    function searching_set_test(testCase)
-    %SEARCHING_SET_TEST tests the file private/searching_set.m.
+    function direction_set_test(testCase)
+    %direction_set_TEST tests the file private/direction_set.m.
     n = 5;
     D = [zeros(n) zeros(n)];
     for i = 1:n
@@ -176,38 +176,38 @@ function tests = unit_test
         D(i, 2*i) = -1;
     end
     options.direction = "canonical";    
-    verifyEqual(testCase, get_searching_set(n,options), D)
+    verifyEqual(testCase, get_direction_set(n,options), D)
 
     options = struct();
-    verifyEqual(testCase, get_searching_set(n, options), D)
+    verifyEqual(testCase, get_direction_set(n, options), D)
     
     options.direction = "identity";
     D = [eye(n) -eye(n)];
-    verifyEqual(testCase, get_searching_set(n, options), D)
+    verifyEqual(testCase, get_direction_set(n, options), D)
 
     n = 3;
     options = struct();
-    options.searching_set = [1 0;0 0;0 0];
+    options.direction_set = [1 0;0 0;0 0];
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_searching_set(n, options), D)
+    verifyEqual(testCase, get_direction_set(n, options), D)
 
     n = 3;
     options = struct();
-    options.searching_set = [1 0;0 1;0 0];
+    options.direction_set = [1 0;0 1;0 0];
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_searching_set(n, options), D)
+    verifyEqual(testCase, get_direction_set(n, options), D)
 
     n = 3;
     options = struct();
-    options.searching_set = eye(3);
+    options.direction_set = eye(3);
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_searching_set(n, options), D)
+    verifyEqual(testCase, get_direction_set(n, options), D)
 
     n = 3;
     options = struct();
-    options.searching_set = [];
+    options.direction_set = [];
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_searching_set(n, options), D)
+    verifyEqual(testCase, get_direction_set(n, options), D)
 
     end
     

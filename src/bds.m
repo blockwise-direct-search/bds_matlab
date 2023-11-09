@@ -24,7 +24,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n) if 
 %                               the user specifies neither maxfun nor maxfun_factor.
 %   direction_set               A set of directions used for polling. It can be "canonical", "identity", or
-%                               a matrix of n rows. See get_searching_set.m for details. Default: "canonical".
+%                               a matrix of n rows. See get_direction_set.m for details. Default: "canonical".
 %   expand                      Expanding factor of step size. A real number no less than 1. Default: 2.
 %   shrink                      Shrinking factor of step size. A positive number less than 1. Default: 0.5.
 %   forcing_function            The forcing function used for deciding whether the step achieves a sufficient
@@ -115,8 +115,8 @@ if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
 
-% Get the searching set of directions.
-D = get_searching_set(n, options);
+% Get the direction set of directions.
+D = get_direction_set(n, options);
 
 % Set the value of expanding factor.
 if isfield(options, "expand")
@@ -278,7 +278,7 @@ else
 end
 
 % Decide which polling direction belongs to which block.
-searching_set_indices = divide_searching_set(m, nb);
+direction_set_indices = divide_direction_set(m, nb);
 
 % Initialize the history of function values.
 fhist = NaN(1, maxfun);
@@ -388,7 +388,7 @@ for iter = 1:maxit
         block_hist(num_visited+1) = i_real;       
        
         % Get indices of directions in the i-th block.
-        direction_indices = searching_set_indices{i_real}; 
+        direction_indices = direction_set_indices{i_real}; 
         
         suboptions.maxfun = maxfun - nf;
         suboptions.cycling_inner = cycling_inner;
@@ -437,8 +437,8 @@ for iter = 1:maxit
             fopt = sub_fopt;
         end
                         
-        % Retrieve the order of the polling directions in the searching set.
-        searching_set_indices{i_real} = sub_output.direction_indices;
+        % Retrieve the order of the polling directions in the direction set.
+        direction_set_indices{i_real} = sub_output.direction_indices;
 
         % If sub_output.terminate is true, then inner_direct_search returns 
         % boolean value of terminate because either the maximum number of function

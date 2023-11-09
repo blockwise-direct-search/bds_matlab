@@ -21,7 +21,7 @@ function [xopt, fopt, exitflag, output] = dspd(fun, x0, options)
 %   ftarget                     Target of the function value. If the function value is below target,
 %                               then the algorithm terminates.
 %   polling_inner               Polling strategy of each block.
-%   searching_set               Searching set of directions.
+%   direction_set               direction set of directions.
 %   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"),
 %                               with_memory decides whether the cycling strategy memorizes
 %                               the history or not.
@@ -264,7 +264,7 @@ for iter = 1:maxit
         alpha_hist(iter) = alpha;
     end
 
-    % Generate the searching set whose directions are uniformly distributed on the unit sphere
+    % Generate the direction set whose directions are uniformly distributed on the unit sphere
     % for each iteration when the Algorithm is "dspd".
     if ~choice
         rv = random_stream.randn(n, 1);

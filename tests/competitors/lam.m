@@ -28,9 +28,9 @@ x0 = double(x0(:));
 % Get the dimension of the problem.
 n = length(x0);
 
-% Get the searching set, the number of directions and blocks respectively.
+% Get the direction set, the number of directions and blocks respectively.
 %options.direction = "canonical";
-D = get_searching_set(n, options);
+D = get_direction_set(n, options);
 m = size(D, 2);
 nb = n;
 
@@ -124,7 +124,7 @@ else
 end
 
 % Decide which polling direction belongs to which block.
-searching_set_indices = divide_searching_set(m, nb);
+direction_set_indices = divide_direction_set(m, nb);
 
 % Initialize the history of function values.
 fhist = NaN(1, maxfun);
@@ -164,7 +164,7 @@ for iter = 1:maxit
         alpha_bar = max(alpha_all(i_real), stepsize_factor*alpha_max);
 
         % Get indices of directions in the i-th block.
-        direction_indices = searching_set_indices{i_real}; 
+        direction_indices = direction_set_indices{i_real}; 
         
         suboptions.maxfun = maxfun - nf;
         suboptions.reduction_factor = reduction_factor;
@@ -195,7 +195,7 @@ for iter = 1:maxit
         
         % Retrieve the order of the polling directions and check whether a
         % sufficient decrease has been achieved in inner_direct_search.
-        searching_set_indices{i_real} = suboutput.direction_indices;
+        direction_set_indices{i_real} = suboutput.direction_indices;
         success = suboutput.success;
         
         % Update the step sizes.
