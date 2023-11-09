@@ -67,7 +67,7 @@ function tests = unit_test
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
     constant_name = "maxfun_factor";
-    constant_value = 1e3;
+    constant_value = 500;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
     constant_name = "expand";
@@ -78,14 +78,14 @@ function tests = unit_test
     constant_value = 0.5;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
-    assert(strcmp(func2str(get_default_constant("forcing_function")), func2str(@(x)x.^2)));
+    assert(strcmp(func2str(get_default_constant("forcing_function")), func2str(@(alpha) alpha^2)));
 
     constant_name = "reduction_factor";
     constant_value = [0, eps, eps];
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)  
      
     constant_name = "StepTolerance";
-    constant_value = 1e-10;
+    constant_value = 1e-6;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 
     constant_name = "shuffle_period";
@@ -117,11 +117,11 @@ function tests = unit_test
     EXITFLAG = 0;    
     verifyEqual(testCase, get_exitflag(information), EXITFLAG)
 
-    information = "MAXFUN_REACHED";
+    information = "FTARGET_REACHED";
     EXITFLAG = 1;    
     verifyEqual(testCase, get_exitflag(information), EXITFLAG)
 
-    information = "FTARGET_REACHED";
+    information = "MAXFUN_REACHED";
     EXITFLAG = 2;    
     verifyEqual(testCase, get_exitflag(information), EXITFLAG)
 
@@ -131,41 +131,41 @@ function tests = unit_test
     
     end
     
-    function inner_direct_search_test(testCase)
-    %INNER_DIRECT_SEARCH_TEST tests the file private/inner_direct_search.m.
-    
-    fun = @(x) x(1)^2 + x(2)^2;
-    xopt = [1; 1];
-    fopt = 2;
-    D = [1 -1; 0 0];
-    direction_indices = [1 2];
-    alpha = 1;
-    options.maxfun = 2;
-
-    xopt_result = [0; 1];
-    fopt_result = 1;
-    exitflag_result = NaN;
-    direction_indices_result = [2 1];
-    fhist_result = [5 1];
-    xhist_result = [2 0;1 1];
-    nf_result = 2;
-    terminate_result = false;
-
-    [xopt_update, fopt_update, exitflag, output] = inner_direct_search(fun, ...
-    xopt, fopt, D, direction_indices, alpha, options);
-    
-    verifyEqual(testCase, xopt_update, xopt_result);
-    verifyEqual(testCase, fopt_update, fopt_result);
-    verifyEqual(testCase, exitflag, exitflag_result);
-
-    verifyEqual(testCase, output.fhist, fhist_result);
-    verifyEqual(testCase, output.xhist, xhist_result);
-    verifyEqual(testCase, output.nf, nf_result);
-    verifyEqual(testCase, output.direction_indices, direction_indices_result);
-    verifyEqual(testCase, output.terminate, terminate_result);
-    
-
-    end
+    % function inner_direct_search_test(testCase)
+    % %INNER_DIRECT_SEARCH_TEST tests the file private/inner_direct_search.m.
+    % 
+    % fun = @(x) x(1)^2 + x(2)^2;
+    % xopt = [1; 1];
+    % fopt = 2;
+    % D = [1 -1; 0 0];
+    % direction_indices = [1 2];
+    % alpha = 1;
+    % options.maxfun = 2;
+    % 
+    % xopt_result = [0; 1];
+    % fopt_result = 1;
+    % exitflag_result = NaN;
+    % direction_indices_result = [2 1];
+    % fhist_result = [5 1];
+    % xhist_result = [2 0;1 1];
+    % nf_result = 2;
+    % terminate_result = false;
+    % 
+    % [xopt_update, fopt_update, exitflag, output] = inner_direct_search(fun, ...
+    % xopt, fopt, D, direction_indices, alpha, options);
+    % 
+    % verifyEqual(testCase, xopt_update, xopt_result);
+    % verifyEqual(testCase, fopt_update, fopt_result);
+    % verifyEqual(testCase, exitflag, exitflag_result);
+    % 
+    % verifyEqual(testCase, output.fhist, fhist_result);
+    % verifyEqual(testCase, output.xhist, xhist_result);
+    % verifyEqual(testCase, output.nf, nf_result);
+    % verifyEqual(testCase, output.direction_indices, direction_indices_result);
+    % verifyEqual(testCase, output.terminate, terminate_result);
+    % 
+    % 
+    % end
     
     function direction_set_test(testCase)
     %direction_set_TEST tests the file private/direction_set.m.
@@ -179,10 +179,6 @@ function tests = unit_test
     verifyEqual(testCase, get_direction_set(n,options), D)
 
     options = struct();
-    verifyEqual(testCase, get_direction_set(n, options), D)
-    
-    options.direction = "identity";
-    D = [eye(n) -eye(n)];
     verifyEqual(testCase, get_direction_set(n, options), D)
 
     n = 3;

@@ -23,8 +23,14 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               maxfun; it is maxfun_factor*n if the user only specifies maxfun_factor; it is
 %                               min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n) if 
 %                               the user specifies neither maxfun nor maxfun_factor.
-%   direction_set               A set of directions used for polling. It can be "canonical", "identity", or
-%                               a matrix of n rows. See get_direction_set.m for details. Default: "canonical".
+%   direction_set               A matrix whose columns will be used to define the polling directions. 
+%                               If options does not contain direction_set, then the polling directions will be 
+%                               {e_1, -e_1, ..., e_n, -e_n}. Otherwise, direction_set should be a matrix of n 
+%                               rows, and the polling directions will be {d_1, -d_1, ..., d_m, -d_m}, where d_i 
+%                               is the i-th column of direction_set, and m is the number of columns of direction_set.
+%                               If necessary, we will first extend direction_set by adding some columns to make
+%                               sure that rank(direction_set) = n, so that the polling directions make a 
+%                               positive spanning set. See get_direction_set.m for details.
 %   expand                      Expanding factor of step size. A real number no less than 1. Default: 2.
 %   shrink                      Shrinking factor of step size. A positive number less than 1. Default: 0.5.
 %   forcing_function            The forcing function used for deciding whether the step achieves a sufficient
@@ -55,32 +61,36 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               k+1, ..., k+r. An integer between 0 and nb-1. Default: 0.
 %   seed                        The seed for permuting blocks in PBDS or randomly choosing one block in RBDS.
 %                               It is only for reproducibility in experiments. A positive integer.
-%   output_xhist                Whether the history of points visited is returned or not. Default: false.
-%   output_alpha_hist           Whether the history of step sizes is returned or not. Default: false.
-%   output_block_hist           Whether the history of blocks visited is returned or not. Default: false.
+%   output_xhist                Whether to output the history of points visited. Default: false.
+%   output_alpha_hist           Whether to output the history of step sizes. Default: false.
+%   output_block_hist           Whether to output the history of blocks visited. Default: false.
 %
-%   [XOPT, FOPT] = BDS(...) also returns the value of the objective function FUN at the 
-%   solution XOPT.
+%   [XOPT, FOPT] = BDS(...) returns an approximate minimizer XOPT and its function value FOPT.
 %
-%   [XOPT, FOPT, EXITFLAG] = BDS(...) returns an EXITFLAG that describes the exit 
+%   [XOPT, FOPT, EXITFLAG] = BDS(...) also returns an EXITFLAG that indicates the exit 
 %   condition. The possible values of EXITFLAG are 0, 1, 2, 3.
 %
 %   0    The StepTolerance of the step size is reached.
-%   1    The maximum number of function evaluations is reached.
-%   2    The target of the objective function is reached.
+%   1    The target of the objective function is reached.
+%   2    The maximum number of function evaluations is reached.
 %   3    The maximum number of iterations is reached.
 %
 %   [XOPT, FOPT, EXITFLAG, OUTPUT] = BDS(...) returns a
-%   structure OUTPUT with the following fields: 
+%   structure OUTPUT with the following fields.
 %
 %   fhist        History of function values.
-%   xhist        History of points visited.
-%   alpha_hist   History of step size for every iteration.
-%   blocks_hist  History of blocks visited.
+%   xhist        History of points visited (if output_xhist is true).
+%   alpha_hist   History of step size for every iteration (if alpha_hist is true).
+%   blocks_hist  History of blocks visited (if block_hist is true).
 %   funcCount    The number of function evaluations.
 %   message      The information of EXITFLAG.
 %
-%   Copyright 2023, Haitian Li and Zaikun Zhang.
+%   ***********************************************************************
+%   Authors:    Haitian LI (hai-tian.li@connect.polyu.hk)
+%               and Zaikun ZHANG (zaikun.zhang@polyu.edu.hk)
+%               Department of Applied Mathematics,
+%               The Hong Kong Polytechnic University
+%   ***********************************************************************
 %   All rights reserved.
 %
 
@@ -94,8 +104,7 @@ x0_is_row = isrow(x0);
 x0 = double(x0(:));
 
 % Check the inputs of the user when debug_flag is true.
-debug_flag = is_debugging();
-if debug_flag
+if is_debugging()
     verify_preconditions(fun, x0, options);
 end
 
@@ -108,14 +117,14 @@ if x0_is_row
     fun = @(x)fun(x');
 end
 
-% Set the polling directions in D.
+% Get the dimension of the problem.
 n = length(x0);
-
+% Set the default Algorithm of BDS, which is "cbds".
 if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
 
-% Get the direction set of directions.
+% Get the direction set.
 D = get_direction_set(n, options);
 
 % Set the value of expanding factor.
@@ -271,8 +280,8 @@ if isfield(options, "alpha_init")
 elseif isfield(options, "alpha_init_scaling") && options.alpha_init_scaling
     %alpha_all = 0.1 * ones(nb, 1);
     %alpha_all(x0 ~= 0) = 0.1 * abs(x0(x0 ~= 0));
-    % alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
-    alpha_all = 0.1 * max(1e-3, abs(x0));
+    alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
+    %alpha_all = 0.1 * max(1e-3, abs(x0));
 else
     alpha_all = ones(nb, 1);
 end
@@ -502,6 +511,6 @@ if x0_is_row
 end
 
 % verify_postconditions is to detect whether the output is in the right form when debug_flag is true.
-if debug_flag
+if is_debugging()
     verify_postconditions(fun, xopt, fopt, exitflag, output);
 end

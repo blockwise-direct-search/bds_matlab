@@ -5,8 +5,6 @@ function plot_profile(parameters)
 % where options are structures.  
 % 
 
-parameters.maxfun_factor = 1e3;
-
 if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};
 end

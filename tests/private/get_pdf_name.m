@@ -65,6 +65,16 @@ switch parameters.solvers_options{i}.solver
             end
         end
 
+        if isfield(parameters.solvers_options{i}, "StepTolerance")
+            pdfname = strcat(pdfname, "_", "StepTolerance", "_", ...
+                num2str(-log10(parameters.solvers_options{i}.StepTolerance)));
+        end
+
+        if isfield(parameters.solvers_options{i}, "maxfun_factor")
+            pdfname = strcat(pdfname, "_", "maxfun_factor", "_", ...
+                num2str(parameters.solvers_options{i}.maxfun_factor));
+        end
+
     case "bds_previous"
         pdfname = "bds_previous";
 

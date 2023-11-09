@@ -6,7 +6,7 @@ switch constant_name
     case {"maxfun"}
         constant_value = 10^5;
     case {"maxfun_factor"}
-        constant_value = 10^3;
+        constant_value = 500;
     case {"Algorithm"}
         constant_value = "cbds";
     case {"expand"}
@@ -20,7 +20,7 @@ switch constant_name
     case {"alpha_init"}
         constant_value = 1;
     case {"StepTolerance"}
-        constant_value = 1e-10;
+        constant_value = 1e-6;
     case {"shuffle_period"}
         constant_value = 1;
     case {"replacement_delay"}

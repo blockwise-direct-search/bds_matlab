@@ -45,7 +45,7 @@ if isfield(output, "xhist")
         g_hist(eval_g) = norm(gradient);
     end
     g_end = abs(g_hist(end));
-    ratio = g_end/options.StepTolerance/abs(g_hist(1));
+    ratio = (g_end/abs(g_hist(1)))/options.StepTolerance;
 end
 
 rmpath(path_src)

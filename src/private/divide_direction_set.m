@@ -7,10 +7,10 @@ function index_direction_set = divide_direction_set(m, nb)
 %     M = 11, NB = 3.
 %     Since 11/3 = 3...2,
 %     then indices are [4 4 3].
-%     Thus, INDEX_direction_set is a cell, where
-%     INDEX_direction_set{1} = [1, 2, 3, 4],
-%     INDEX_direction_set{2} = [5, 6, 7, 8],
-%     INDEX_direction_set{3} = [9, 10, 11].
+%     Thus, INDEX_DIRECTION_SET is a cell, where
+%     index_direction_set{1} = [1, 2, 3, 4],
+%     index_direction_set{2} = [5, 6, 7, 8],
+%     index_direction_set{3} = [9, 10, 11].
 %
 
 % Detect whether the input is given in the correct type when debug_flag is true.
