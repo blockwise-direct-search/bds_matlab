@@ -55,7 +55,7 @@ if isfield(options, "reduction_factor")
     if ~(options.reduction_factor(1) <= options.reduction_factor(2) && ...
             options.reduction_factor(2) <= options.reduction_factor(3) && ...
         options.reduction_factor(1) >= 0 && options.reduction_factor(2) > 0)
-        error("options.reduction_factor should satisfy the conditions where 0 <= reduction_factor(1) < redcution_factor(2) < reduction_factor(3) and reduction_factor(2) > 0.")
+        error("options.reduction_factor should satisfy the conditions where 0 <= reduction_factor(1) < reduction_factor(2) < reduction_factor(3) and reduction_factor(2) > 0.")
     end
 end
 
