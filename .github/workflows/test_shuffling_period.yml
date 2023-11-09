@@ -2,7 +2,7 @@ name: Test shuffling period for bds
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */3 * *'
@@ -82,6 +82,11 @@ jobs:
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
             parameters.problems_dim = "${{ matrix.dim }}";
+            if stcmpi(parameters.problems_dim, "small")
+                parameters.num_random = 10;
+            else
+                parameters.num_random = 5;
+            end
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";

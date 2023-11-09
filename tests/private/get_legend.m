@@ -40,6 +40,10 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", num2str(parameters.solvers_options{i}.shuffling_period));
         end
 
+        if isfield(parameters.solvers_options{i}, "cycling_inner")
+            solver_legend = strcat(solver_legend, "-", num2str(parameters.solvers_options{i}.cycling_inner));
+        end
+
     case {"bds_previous"}
         solver_legend = "bds-previous";
 

@@ -44,7 +44,19 @@ switch parameters.solvers_options{i}.solver
         end
 
         if isfield(parameters.solvers_options{i}, "shuffling_period")
-            pdfname = strcat(pdfname, "_", num2str(parameters.solvers_options{i}.shuffling_period));
+            if parameters.solvers_options{i}.shuffling_period < 10
+                pdfname = strcat(pdfname, "_", "shuffling_period", "_", "0", ...
+                    num2str(parameters.solvers_options{i}.shuffling_period));
+            else
+                pdfname = strcat(pdfname, "_", "shuffling_period", "_", ...
+                    num2str(parameters.solvers_options{i}.shuffling_period));
+            end
+
+        end
+
+        if isfield(parameters.solvers_options{i}, "cycling_inner")
+            pdfname = strcat(pdfname, "_", "cycling_inner", "_", ...
+                num2str(parameters.solvers_options{i}.cycling_inner));
         end
 
     case "bds_previous"

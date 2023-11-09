@@ -759,6 +759,7 @@ isrealrow
 isrealscalar
 isrealvector
 isrm
+isrow
 isrr
 isrs
 isrv
