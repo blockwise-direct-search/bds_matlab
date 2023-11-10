@@ -1,5 +1,5 @@
-name: Parallel test
-# This file is cited from https://github.com/libprima/prima/blob/main/.github/workflows/parallel_test_matlab.yml,
+name: Recursive test
+# This file is cited from https://github.com/libprima/prima/blob/main/.github/workflows/recursive_test_matlab.yml,
 # which is written by Zaikun Zhang.
 
 on:
@@ -8,7 +8,7 @@ on:
   pull_request:  # DANGEROUS! MUST be disabled for self-hosted runners!
   # Trigger the workflow by cron. The default time zone of GitHub Actions is UTC.
   schedule:
-    - cron: '0 14 2-31/2 * *'
+    - cron: '0 14 1-31/5 * *'
   # Trigger the workflow manually
   workflow_dispatch:
     inputs:
@@ -21,31 +21,79 @@ on:
       dimension:
         description: Dimension (Optional)
         required: false
-      np:
-        description: Number of Parallel Calls (Optional)
+      depth:
+        description: Depth of recursion (Optional)
         required: false
 
 # Show the git ref in the workflow name if it is invoked manually.
-run-name: ${{ github.event_name == 'workflow_dispatch' && format('Manual run {0} , seed {1}, dimension {2}, {3} parallel calls', inputs.git-ref, inputs.random-seed, inputs.dimension, inputs.np) || '' }}
-
-env:
-    GFORTRAN_VERSION: 12
+run-name: ${{ github.event_name == 'workflow_dispatch' && format('Manual run {0} , seed {1}, dimension {2}, recursion depth {3}', inputs.git-ref, inputs.random-seed, inputs.dimension, inputs.depth) || '' }}
 
 jobs:
   test:
-    name: Parallel test of BDS
+    name: Recursive test of BDS
     runs-on: ${{ matrix.os }}
     continue-on-error: true
     strategy:
       fail-fast: false
       matrix:
-        # Only the following combinations of OS and MATLAB support parfor
-        os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
-        matlab: [R2023a, latest]
+        os: [ubuntu-20.04, ubuntu-latest, windows-2019, windows-latest, macos-11, macos-latest, macos-13]
+        matlab: [R2020b, R2021a, R2022a, R2023a, latest]
         Algorithm: [cbds, pbds, rbds, ds]
 
-        # Exclude some versions of OS and MATLAB.
+        # Exclude some versions of OS and MATLAB. In addition to the latest versions, we intend to
+        # test the earliest version of MATLAB on each OS.
         exclude:
+          - os: ubuntu-latest
+            matlab: R2020b
+          - os: ubuntu-latest
+            matlab: R2021a
+          - os: ubuntu-latest
+            matlab: R2022a
+          - os: ubuntu-20.04
+            matlab: R2021a
+          - os: ubuntu-20.04
+            matlab: R2022a
+          - os: ubuntu-20.04
+            matlab: R2023a
+          - os: ubuntu-20.04
+            matlab: latest
+
+          - os: macos-13
+            matlab: R2020b
+          - os: macos-13
+            matlab: R2021a
+          - os: macos-13
+            matlab: R2022a
+          - os: macos-latest
+            matlab: R2020b
+          - os: macos-latest
+            matlab: R2021a
+          - os: macos-latest
+            matlab: R2022a
+          - os: macos-11
+            matlab: R2020b
+          - os: macos-11
+            matlab: R2021a
+          - os: macos-11
+            matlab: R2023a
+          - os: macos-11
+            matlab: latest
+
+          - os: windows-latest
+            matlab: R2020b
+          - os: windows-latest
+            matlab: R2021a
+          - os: windows-latest
+            matlab: R2022a
+          - os: windows-2019
+            matlab: R2020b
+          - os: windows-2019
+            matlab: R2022a
+          - os: windows-2019
+            matlab: R2023a
+          - os: windows-2019
+            matlab: latest
+
           # The following combinations are not available as of 20230928.
           - os: windows-latest
             matlab: latest
@@ -53,6 +101,8 @@ jobs:
             matlab: latest
           - os: macos-latest
             matlab: latest
+
+
 
     steps:
 
@@ -72,7 +122,15 @@ jobs:
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')
-        run: bash .github/scripts/link_gfortran ${{ env.GFORTRAN_VERSION }}
+        run: |
+          GFVER=12
+          if [[ "${{ matrix.os }}" = "ubuntu-20.04" ]] ; then
+              GFVER=11
+          fi
+          if [[ "${{ matrix.matlab }}" = "R2020b" || "${{ matrix.matlab }}" = "R2021a" ]] ; then
+              GFVER=9
+          fi
+          bash .github/scripts/link_gfortran "$GFVER"
 
       - name: Install Intel oneAPI on macOS
         if: startsWith(matrix.os, 'macos')
@@ -108,18 +166,20 @@ jobs:
             if ~isempty('${{ inputs.dimension }}')
                 options.n = str2num('${{ inputs.dimension }}');
             end
-            if ~isempty('${{ inputs.np }}')
-                options.np = str2num('${{ inputs.np }}');
+            if ~isempty('${{ inputs.depth }}')
+                options.depth = str2num('${{ inputs.depth }}');
             end
             options
 
-            % Conduct the test multiple times. Some errors may not occur during the first test.
+            % Conduct the test multiple times, in case some errors occur not during the first time but later.
             exception = [];
             try
-              parallel('${{ matrix.Algorithm }}', options);
-              options.compile = false;
-              parallel('${{ matrix.Algorithm }}', options);
-              parallel('${{ matrix.Algorithm }}', options);
+                recursive('${{ matrix.Algorithm }}', options);
+                options.compile = false;
+                % Test parallel invocation of the solvers
+                parfor i = 1 : 2
+                    recursive('${{ matrix.Algorithm }}', options);
+                end
             catch exception
             end
 
