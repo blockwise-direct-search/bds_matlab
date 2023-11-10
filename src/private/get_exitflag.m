@@ -27,7 +27,7 @@ switch information
         exitflag = -1;
 end
 
-exitflag = find(break_conditions == information) - 1;
+%exitflag = find(break_conditions == information) - 1;
 if isempty(exitflag)
     exitflag = -1;
     disp("New break condition happens."); 

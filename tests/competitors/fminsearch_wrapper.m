@@ -38,7 +38,7 @@ end
 
 
 % [X,FVAL,EXITFLAG,OUTPUT] = fminsearch(FUN, x0, options)
-fminsearch(FUN, x0, options)
+fminsearch(FUN, x0, options);
 
 end
 

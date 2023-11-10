@@ -51,7 +51,7 @@ else
 end
 
 %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
-fminunc(FUN, x0, options)
+fminunc(FUN, x0, options);
 
 end
 
