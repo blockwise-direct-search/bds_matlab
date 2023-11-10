@@ -2,7 +2,7 @@ name: Test default parameters of bds, big
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   # schedule:
   # - cron: '0 12 */7 * *'
@@ -34,6 +34,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Clone PRIMA
+        uses: actions/checkout@v4
+        with:
+          repository: libprima/prima
+          path: prima
           
       - name: Install GCC
         run: sudo apt-get update && sudo apt-get install gcc-10 
@@ -111,6 +117,16 @@ jobs:
             % Install MatCUTEst
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
+
+            % Compile prima
+            path_prima = fullfile(root_dir, 'prima');
+            cd(path_prima);
+            setup
+
+            % Move bfo.m to the competitor.
+            path_bfo = fullfile(root_dir, 'bfo', 'bfo.m');
+            path_competitors = fullfile(root_dir, 'tests', 'competitors');
+            movefile(path_bfo, path_competitors);
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
