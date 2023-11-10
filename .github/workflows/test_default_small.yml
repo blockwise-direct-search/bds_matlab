@@ -2,7 +2,7 @@ name: Test default parameters of bds, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   # schedule:
   # - cron: '0 12 */7 * *'
@@ -34,6 +34,33 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+          
+      - name: Install GCC
+        run: sudo apt-get update && sudo apt-get install gcc-10 
+    
+      - name: Set GCC version
+        run: |
+          echo "CC=gcc-10" >> $GITHUB_ENV
+          echo "CXX=g++-10" >> $GITHUB_ENV
+      
+      - name: check gcc version
+        run: /usr/bin/gcc-10 --version
+  
+      - name: Clone NLOPT
+        uses: actions/checkout@v4
+        with:
+          repository: stevengj/nlopt
+          path: nlopt
+
+      - name: Clone BFO
+        uses: actions/checkout@v4
+        with:
+          repository: m01marpor/BFO
+          path: bfo
+    
+      - name: modify BFO
+        run: 
+          cd ./bfo && sed -i '/^found  /{s/.*/found = 1/;n;d;}' bfo.m
 
       - name: Clone MatCUTEst
         uses: actions/checkout@v4
@@ -68,6 +95,12 @@ jobs:
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
+
+      - name: Install cmake
+        run: sudo apt-get install cmake
+  
+      - name: Install NLOPT
+        run: cd ./nlopt && cmake . && make && sudo make install
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.0

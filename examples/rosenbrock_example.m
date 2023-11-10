@@ -15,11 +15,12 @@ function rosenbrock_example()
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %rng(267);
-x0 = randn(15,1);  % starting point
+x0 = [0; 0; 0];  % starting point
+%x0 = randn(15,1);  % starting point
 
 %options.maxfun = 1e4;
 %options.StepTolerance = eps;
-%options.Algorithm = "cbds";
+options.Algorithm = "cbds";
 %options.StepTolerance = 1e-6;
 
 fullpath = mfilename("fullpath");
@@ -32,14 +33,15 @@ addpath(path_competitors)
 
 % The following syntax is identical to fmincon:
 %[X,FVAL,EXITFLAG,OUTPUT] = fminsearch(@chrosen, x0)
-[X,FVAL,EXITFLAG,OUTPUT] = fminunc(@chrosen, x0)
+%[X,FVAL,EXITFLAG,OUTPUT] = fminunc(@chrosen, x0)
 [xopt, fopt, exitflag, output] = bds(@chrosen, x0)
-[xopt, fopt, exitflag, output] = newuoa(@chrosen, x0)
+%[xopt, fopt, exitflag, output] = newuoa(@chrosen, x0)
 rmpath(path_src)
 rmpath(path_competitors)
 return
 
 function f = chrosen(x)  % the subroutine defining the objective function
 f = sum((x(1:end-1)-1).^2 + 4*(x(2:end)-x(1:end-1).^2).^2);
-f = f*(1+1e-8*randn(1));
+% f = f*(1+1e-8*randn(1));
 return
+

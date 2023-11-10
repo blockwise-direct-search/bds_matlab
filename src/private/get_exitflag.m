@@ -14,7 +14,18 @@ if is_debugging
     end
 end
 
-break_conditions = ["SMALL_ALPHA";"FTARGET_REACHED";"MAXFUN_REACHED";"MAXIT_REACHED"];
+switch information
+    case "SMALL_ALPHA"
+        exitflag = 0;
+    case "FTARGET_REACHED"
+        exitflag = 1;
+    case "MAXFUN_REACHED"
+        exitflag = 2;
+    case "MAXIT_REACHED"
+        exitflag = 3;
+    otherwise
+        exitflag = -1;
+end
 
 exitflag = find(break_conditions == information) - 1;
 if isempty(exitflag)
