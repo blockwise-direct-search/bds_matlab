@@ -232,6 +232,7 @@ Cengage
 centerdot
 ceq
 Cesa
+cfiles
 chapterheadstart
 chaptername
 chapterstyle
@@ -678,6 +679,7 @@ hlmann
 hmlb
 Hogben
 hom
+homedir
 hookleftarrow
 hookrightarrow
 Horvath
@@ -697,6 +699,7 @@ idx
 idz
 Ierapetritou
 ifdraft
+ifiles
 iflag
 ifun
 IIT
@@ -1231,6 +1234,7 @@ pagestyle
 Palem
 Paquette
 params
+parcluster
 Pardalos
 parfor
 Parikh
@@ -1641,6 +1645,7 @@ techreport
 tempa
 tempb
 tempc
+tempdir
 tempq
 Tenorio
 Terlaky
