@@ -74,13 +74,13 @@ else
     [~, m] = size(R);
     
     % We add some columns from Q in direction set, where the corresponding index of diagonal elements of R 
-    % are too small. When we judge which elements are too small, consider two types of matrix R separately.
-    % 1. R is a vector. Then we only check the absolute value of the first element of R to see whether it is 
-    %    large enough. 
-    % 2. R is a matrix but not vector. Then we transpose diag(R) since the vecnorm will return
-    %    a column vector.
+    % are relatively small. When we determine which elements are too small, consider two types of matrix R 
+    % separately.
+    % 1. R is a vector. Then we only check the absolute value of the first element of R. 
+    % 2. R is a matrix but not vector. Then we consider the absolute value of the diagonal elements of R.
+    % we transpose diag(R) since the vecnorm will return a column vector.
     if min(m, n) == 1
-        rank_direction_set_clean = sum(abs(R(1)) > 10*eps*max(m,n)*R(1));
+        rank_direction_set_clean = sum(abs(R(1)) > 10*eps*max(m,n)*norm(R));
     else
         % rank_direction_set_clean = sum(abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
         rank_direction_set_clean = find((abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n)))) == 0);

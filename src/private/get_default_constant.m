@@ -21,7 +21,7 @@ switch constant_name
         constant_value = 1;
     case {"StepTolerance"}
         constant_value = 1e-6;
-    case {"shuffle_period"}
+    case {"permuting_period"}
         constant_value = 1;
     case {"replacement_delay"}
         constant_value = 0;

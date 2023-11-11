@@ -172,8 +172,8 @@ else
 end
 
 % Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
-% In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite 
-% cycling if there is a bug.
+% We set maxit in the following way to avoid that maxit is reached but maxfun is not exhausted when the 
+% algorithm terminates.
 maxit = maxfun;
 
 % Set the value of reduction factor.
@@ -183,14 +183,13 @@ else
     reduction_factor = get_default_constant("reduction_factor");
 end
 
-
-% Set the forcing function, which is a function handle.
+% Set the forcing function, which should be the function handle.
 if isfield(options, "forcing_function")
     forcing_function = options.forcing_function;
 else
     forcing_function = get_default_constant("forcing_function");
 end
-
+% If the forcing function is a string, then convert it to a function handle.
 if isfield(options, "forcing_function_type")
     switch options.forcing_function_type
         case "quadratic"
@@ -227,14 +226,15 @@ else
     cycling_inner = get_default_constant("cycling_inner");
 end
 
-% Set the value of permuting_period, which shuffles the blocks every permuting_period iterations.
+% Set the value of permuting_period, which permutes the blocks every permuting_period iterations.
 if strcmpi(options.Algorithm, "pbds") && isfield(options, "permuting_period")
     permuting_period = options.permuting_period;
 else
-    permuting_period = get_default_constant("shuffle_period");
+    permuting_period = get_default_constant("permuting_period");
 end
 
-% Set the value of replacement_delay. The default value of replacement_delay is set to 0. 
+% Set the value of replacement_delay. The default value is 1. If replacement_delay is larger than
+% nb-1, then there are no blocks that we can select in the nb-1 iterations after the current block.
 if strcmpi(options.Algorithm, "rbds") && isfield(options, "replacement_delay")
     replacement_delay = min(options.replacement_delay, nb-1);
 else
@@ -258,7 +258,7 @@ if isfield(options, "output_alpha_hist")
 else
     output_alpha_hist = get_default_constant("output_alpha_hist");
 end
-
+% If alpha_hist exceeds the maximum of memory size limit, then we will not output alpha_hist.
 if output_alpha_hist
     try
         alpha_hist = NaN(nb, maxit);
@@ -286,7 +286,7 @@ else
     alpha_all = ones(nb, 1);
 end
 
-% Decide which polling direction belongs to which block.
+% Determine the indices of directions in each block.
 direction_set_indices = divide_direction_set(m, nb);
 
 % Initialize the history of function values.
@@ -298,7 +298,7 @@ if isfield(options, "output_xhist")
 else
     output_xhist = get_default_constant("output_xhist");
 end
-
+% If xhist exceeds the maximum of memory size limit, then we will not output xhist.
 if output_xhist
     try
         xhist = NaN(n, maxfun);
@@ -314,8 +314,7 @@ else
     output_block_hist = get_default_constant("output_block_hist");
 end
 
-% Initialize the history of blocks visited. If output_block_hist is true, then we will return the
-% history of blocks visited in the output.
+% Initialize the history of blocks visited.
 block_hist = NaN(1, maxfun);
 
 % To avoid that the users bring some randomized strings.
@@ -350,43 +349,43 @@ if fopt <= ftarget
 end
 
 for iter = 1:maxit
-    % Record the value of alpha_all of the current iteration in alpha_hist.
-    if output_alpha_hist
-        alpha_hist(:, iter) = alpha_all;
-    end
+
+    % % Record the step size used in the previous iteration.
+    % if output_alpha_hist
+    %     alpha_hist(:, iter) = alpha_all;
+    % end
     
-    % Permute the blocks every permuting_period iterations.
+    % Permute the blocks every permuting_period iterations if the Algorithm is "pbds".
     % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, permuting_period) == 0
         % Make sure that permuting_period is defined when the Algorithm is "pbds".
         block_indices = random_stream.randperm(nb);
     end
     
-    % Get the block that is going to be visited.
+    % Get the block that is going to be visited if the Algorithm is "rbds".
     if strcmpi(options.Algorithm, "rbds")
         % If replacement_delay is 0, then select a block randomly from block_indices for 
-        % each iteration. If iter is equal to 1, then the block that we are going to visit
-        % is selected randomly from block_indices.
+        % each iteration. If iter is equal to 1, select a block randomly from block_indices.
         if replacement_delay == 0 || iter == 1
             block_indices = random_stream.randi([1, nb]);
         else
             % Record the number of blocks visited.
             num_visited = sum(~isnan(block_hist));
-            % Get the number of blocks that we are going to exclude in the following selection.
+            % Get the number of blocks that we are going to exclude in the block_indices.
             block_visited_slices_length = min(num_visited, replacement_delay);
-            % Get the indices of blocks that we are going to exclude in the following selection.
+            % Get the indices of blocks that we are going to exclude in the block_indices.
             block_visited_slices = block_hist(num_visited-block_visited_slices_length+1:num_visited);
-            % Set the default value of initial block_indices.
-            block_initial_indices = 1:nb;
-            % Remove elements of block_indices appearing in block_visited_slice.
-            block_real_indices = block_initial_indices(~ismember(block_initial_indices, block_visited_slices));
-            % Generate a random index from block_real_indices.
+            % Get the indices of blocks that we may visit in this iteration.
+            block_real_indices = block_initial_indices(~ismember(block_indices, block_visited_slices));
+            % Select a block randomly from block_real_indices.
             idx = random_stream.randi(length(block_real_indices));
             block_indices = block_real_indices(idx);
         end
+
     end
     
     for i = 1:length(block_indices)
+
         % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
         % going to visit.
         i_real = block_indices(i);
@@ -411,8 +410,7 @@ for iter = 1:maxit
             fbase, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
 
-
-        % Update the history of step size.
+        % Record the step size when the algorithm executes inner_direct_search above.
         if output_alpha_hist
             alpha_hist(:, iter) = alpha_all;
         end
@@ -420,13 +418,13 @@ for iter = 1:maxit
         % Store the history of the evaluations by inner_direct_search, 
         % and accumulate the number of function evaluations.
         fhist((nf+1):(nf+sub_output.nf)) = sub_output.fhist;
+        % Accumulate the points visited by inner_direct_search.
         if output_xhist
             xhist(:, (nf+1):(nf+sub_output.nf)) = sub_output.xhist;
         end
-
         nf = nf+sub_output.nf;
         
-        % Update the step sizes and store the history of step sizes.
+        % Update the step size, xopt and fopt.
         % fbase and xbase are used for the computation in the block. fopt and
         % xopt are always the best function value and point so far.
         if sub_fopt + reduction_factor(3) * forcing_function(alpha_all(i_real)) < fbase
@@ -446,7 +444,7 @@ for iter = 1:maxit
             fopt = sub_fopt;
         end
                         
-        % Retrieve the order of the polling directions in the direction set.
+        % Retrieve the indices of the i_real-th block in the direction set.
         direction_set_indices{i_real} = sub_output.direction_indices;
 
         % If sub_output.terminate is true, then inner_direct_search returns 
