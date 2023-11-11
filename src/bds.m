@@ -54,7 +54,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               Default: 3.
 %   with_cycling_memory         Whether the cycling strategy within each block memorizes the history or not. 
 %                               It is used only when polling_inner is "opportunistic". Default: true.
-%   shuffling_period            It is only used in PBDS, which shuffles the blocks every shuffling_period 
+%   permuting_period            It is only used in PBDS, which shuffles the blocks every permuting_period 
 %                               iterations. A positive integer. Default: 1.   
 %   replacement_delay           It is only used for RBDS. Suppose that replacement_delay is r. If block i
 %                               is selected at iteration k, then it will not be selected at iterations 
@@ -227,11 +227,11 @@ else
     cycling_inner = get_default_constant("cycling_inner");
 end
 
-% Set the value of shuffling_period, which shuffles the blocks every shuffling_period iterations.
-if strcmpi(options.Algorithm, "pbds") && isfield(options, "shuffling_period")
-    shuffling_period = options.shuffling_period;
+% Set the value of permuting_period, which shuffles the blocks every permuting_period iterations.
+if strcmpi(options.Algorithm, "pbds") && isfield(options, "permuting_period")
+    permuting_period = options.permuting_period;
 else
-    shuffling_period = get_default_constant("shuffle_period");
+    permuting_period = get_default_constant("shuffle_period");
 end
 
 % Set the value of replacement_delay. The default value of replacement_delay is set to 0. 
@@ -355,10 +355,10 @@ for iter = 1:maxit
         alpha_hist(:, iter) = alpha_all;
     end
     
-    % Shuffle the blocks every shuffling_period iterations.
+    % Permute the blocks every permuting_period iterations.
     % Why iter-1? Since we will permute block_indices at the initial stage.
-    if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
-        % Make sure that shuffling_period is defined when the Algorithm is "pbds".
+    if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, permuting_period) == 0
+        % Make sure that permuting_period is defined when the Algorithm is "pbds".
         block_indices = random_stream.randperm(nb);
     end
     
