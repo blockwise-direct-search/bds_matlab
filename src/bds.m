@@ -227,18 +227,22 @@ else
 end
 
 % Set the value of permuting_period, which permutes the blocks every permuting_period iterations.
-if strcmpi(options.Algorithm, "pbds") && isfield(options, "permuting_period")
-    permuting_period = options.permuting_period;
-else
-    permuting_period = get_default_constant("permuting_period");
+if strcmpi(options.Algorithm, "pbds") 
+    if isfield(options, "permuting_period")
+        permuting_period = options.permuting_period;
+    else
+        permuting_period = get_default_constant("permuting_period");
+    end
 end
 
 % Set the value of replacement_delay. The default value is 1. If replacement_delay is larger than
 % nb-1, then there are no blocks that we can select in the nb-1 iterations after the current block.
-if strcmpi(options.Algorithm, "rbds") && isfield(options, "replacement_delay")
-    replacement_delay = min(options.replacement_delay, nb-1);
-else
-    replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
+if strcmpi(options.Algorithm, "rbds") 
+    if isfield(options, "replacement_delay")
+        replacement_delay = min(options.replacement_delay, nb-1);
+    else
+        replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
+    end
 end
 
 % Set the boolean value of WITH_CYCLING_MEMORY. 
