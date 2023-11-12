@@ -368,6 +368,7 @@ for iter = 1:maxit
     
     % Get the block that is going to be visited if the Algorithm is "rbds".
     if strcmpi(options.Algorithm, "rbds")
+        
         % If replacement_delay is 0, then select a block randomly from block_indices for 
         % each iteration. If iter is equal to 1, select a block randomly from block_indices.
         if replacement_delay == 0 || iter == 1

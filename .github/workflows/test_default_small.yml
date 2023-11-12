@@ -144,5 +144,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_default_big_${{ matrix.StepTolerance }}_${{ matrix.maxfun_factor }}_${{ matrix.feature }}
+          name: test_default_small_${{ matrix.StepTolerance }}_${{ matrix.maxfun_factor }}_${{ matrix.feature }}
           path: ./tests/testdata

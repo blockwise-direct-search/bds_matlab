@@ -1,4 +1,4 @@
-name: Test shuffling period for bds
+name: Test permuting period for bds
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Set shuffling_period for pbds
+    name: Set permuting_period for pbds
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [pbds]
-        shuffling_period: [2, 3, 4, 5, 6, 7, 8, 9, 10]
+        permuting_period: [2, 3, 4, 5, 6, 7, 8, 9, 10]
         feature: [plain]
 
     steps:
@@ -87,12 +87,12 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{2}.shuffling_period = ${{matrix.shuffling_period}};
+            parameters.solvers_options{2}.permuting_period = ${{matrix.permuting_period}};
             
             plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_shuffling_period
+          name: test_permuting_period
           path: ./tests/testdata
