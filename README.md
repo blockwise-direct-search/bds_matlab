@@ -27,8 +27,7 @@ https://github.com/blockwise-direct-search/bds/issues.
 ## Test of BDS.
 The tests are **automated** by
 [GitHub Actions](https://docs.github.com/en/actions).
-- [![Check spelling](https://img.shields.io/github/actions/workflow/status/blockwise-direct-search/bds/spelling.yml?style=for-the-badge&logo=github)
-](https://github.com/blockwise-direct-search/bds/actions/workflows/spelling.yml)
+- [![Check Spelling](https://github.com/blockwise-direct-search/bds/actions/workflows/spelling.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/spelling.yml)
 - [![Unit test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/unit_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/unit_test.yml)
 - [![Stress test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml)
 - [![Parallel test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/parallel_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/parallel_test.yml)
