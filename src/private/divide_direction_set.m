@@ -1,7 +1,8 @@
 function index_direction_set = divide_direction_set(m, nb)
 %DIVIDE_DIRECTION_SET gets indices of the direction set in each block.
 %   INDEX_direction_set = DIVIDE_DIRECTION_SET(M, NB) returns a cell that records indices of each 
-%   block, where M is the number of directions and NB is the number of blocks.
+%   block, where M is the number of directions and NB is the number of blocks. We try to make the
+%   number of directions in each block as equal as possible. The last block may have fewer elements.
 %
 %   Example
 %     M = 11, NB = 3.
