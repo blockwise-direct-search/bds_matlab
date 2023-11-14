@@ -35,8 +35,6 @@ else
     options = optimset("MaxFunEvals", maxfun, "maxiter", maxfun, "tolfun", tol, "tolx", tol);
 end
 
-
-
 % [X,FVAL,EXITFLAG,OUTPUT] = fminsearch(FUN, x0, options)
 fminsearch(FUN, x0, options);
 

@@ -53,8 +53,6 @@ else
     end
 end
 
-
-
 nlopt_optimize(opt, x0');
 
 end

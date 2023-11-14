@@ -25,7 +25,7 @@ jobs:
         solver: [CBDS]
         StepTolerance: [1e-5, 1e-6, 1e-7]
         maxfun_factor: [200, 300, 400, 500]
-        competitor: [bfgs, bfo, nlopt_newuoa, newuoa, simplex]
+        competitor: [bfgs, bfo, newuoa, simplex]
         feature: [plain]
 
     steps:
