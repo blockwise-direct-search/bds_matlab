@@ -3,9 +3,7 @@ function constant_value = get_default_constant(constant_name)
 %
 
 switch constant_name
-    case {"maxfun"}
-        constant_value = 10^5;
-    case {"maxfun_factor"}
+    case {"maxfun_dim_factor"}
         constant_value = 500;
     case {"Algorithm"}
         constant_value = "cbds";
@@ -24,7 +22,7 @@ switch constant_name
     case {"permuting_period"}
         constant_value = 1;
     case {"replacement_delay"}
-        constant_value = 0;
+        constant_value = 1;
     case {"seed"}
         constant_value = "shuffle";
     case {"ftarget"}

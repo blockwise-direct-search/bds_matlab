@@ -35,6 +35,18 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Change the StepTolerance in get_default_constant.m
+        run: 
+          cd ./src/private && sed -i '/StepTolerance/{n;s/.*/constant_value = ${{ matrix.StepTolerance }};/;}' get_default_constant.m 
+
+      - name: Change the maxfun_factor in get_default_constant.m
+        run: 
+          cd ./src/private && sed -i '/maxfun_factor/{n;s/.*/constant_value = ${{ matrix.maxfun_factor }};/;}' get_default_constant.m 
+
+      - name: Display the get_default_constant.m to see whether it is changed correctly
+        run:
+          cd ./src/private && cat get_default_constant.m
+
       - name: Clone PRIMA
         uses: actions/checkout@v4
         with:
@@ -136,9 +148,7 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{1}.StepTolerance = ${{ matrix.StepTolerance }};
-            parameters.solvers_options{1}.maxfun_factor = ${{ matrix.maxfun_factor }};
-            parameters.solvers_options{2}.default = true;
+            parameters.default = true;
             
             plot_profile(parameters);
 

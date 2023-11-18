@@ -26,6 +26,8 @@ for i = 1:solvers_num
 end
 
 parameters = get_solvers(parameters);
+options = struct();
+test_options = struct();
 
 for i = 1:solvers_num
     
@@ -38,7 +40,7 @@ for i = 1:solvers_num
         [~, ~, ~, output] = solver(p.objective, p.x0, options);
     else
         obj = ScalarFunction(p);
-        solver(@(x)obj.fun(x,false,0,struct()), p.x0);
+        solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, struct());
         output.fhist = obj.valHist;
     end  
  

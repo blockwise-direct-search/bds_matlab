@@ -8,7 +8,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
-%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_factor,
+%   BLOCKWISE_DIRECT_SEARCH uses these options: num_blocks, maxfun, maxfun_factor,
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
 %   blocks_strategy, with_cycling_memory, cycling, accept_simple_decrease.
 %
@@ -22,7 +22,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %   [XVAL, FVAL, EXITFLAG, OUTPUT] = BDS(...) returns a
 %   structure OUTPUT with fields
 %
-%   nb - number of blocks
+%   num_blocks - number of blocks
 %   maxfun - maximum of function evaluation
 %   maxfun_factor - factor of maximum of function evaluation regarding to
 %               dimensions.
@@ -79,24 +79,24 @@ elseif strcmpi(options.Algorithm, "dspd")
 end
 
 % number of directions
-m = size(D, 2); 
+num_directions = size(D, 2); 
 % Set the default number of blocks.
-if isfield(options, "nb")
-    nb = options.nb;
+if isfield(options, "num_blocks")
+    num_blocks = options.num_blocks;
 elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
         || strcmpi(options.Algorithm, "rbds")
     % Default value is set as n, which is good for canonical with 2n directions. For
     % other situations, other value may be good.
-    nb = n;
+    num_blocks = n;
 elseif strcmpi(options.Algorithm, "dspd") || strcmpi(options.Algorithm, "ds")
-    nb = 1;
+    num_blocks = 1;
 end
 
 % If number of directions is less than number of blocks, then the number of
 % blocks is defined as the number of directions.
-nb = min(m, nb);
-% Default indices of blocks are 1:nb.
-block_indices = 1:nb;
+num_blocks = min(num_directions, num_blocks);
+% Default indices of blocks are 1:num_blocks.
+block_indices = 1:num_blocks;
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e5.
@@ -114,7 +114,7 @@ end
 % maximum number of iterations given below CANNOT be reached. If the
 % opportunistic case is used, then the maximum number of iterations may
 % be reached (although, we hope that it does not).
-% ceil(10*maxfun/m) may not be enough. Since there are some cases that
+% ceil(10*maxfun/num_directions) may not be enough. Since there are some cases that
 % maxit is exhausted and other terminations are not reached.
 maxit = maxfun;
 
@@ -188,12 +188,12 @@ end
 
 % Set default value of replacement_delay. Default value of
 % replacement_delay is set to be 0. Also, the value of replacement_delay
-% should be less than or equal to nb-1, otherwise, there will not exist
-% such block going to be visited after nb blocks have been visited.
+% should be less than or equal to num_blocks-1, otherwise, there will not exist
+% such block going to be visited after num_blocks blocks have been visited.
 if strcmpi(options.Algorithm, "rbds") && isfield(options, "replacement_delay")
-    replacement_delay = min(options.replacement_delay, nb-1);
+    replacement_delay = min(options.replacement_delay, num_blocks-1);
 else
-    replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
+    replacement_delay = min(get_default_constant("replacement_delay"), num_blocks-1);
 end
 
 % Set the default value for the boolean indicating whether the cycling
@@ -205,15 +205,15 @@ else
 end
 
 % Set initial step size and alpha_hist to store the history of step size.
-alpha_hist = NaN(nb, maxit);
+alpha_hist = NaN(num_blocks, maxit);
 if isfield(options, "alpha_init")
-    alpha_all = options.alpha_init*ones(nb, 1);
+    alpha_all = options.alpha_init*ones(num_blocks, 1);
 else
-    alpha_all = ones(nb, 1);
+    alpha_all = ones(num_blocks, 1);
 end
 
 % Divide the indices of the polling directions for each block.
-searching_set_indices = divide_searching_set(m, nb);
+searching_set_indices = divide_searching_set(num_directions, num_blocks);
 
 % Initialize the computations.
 % history of function values
@@ -253,30 +253,30 @@ else
 end
 
 % Start the actual computations.
-% nb blocks have been explored after the number of iteration goes from k to k+1.
+% num_blocks blocks have been explored after the number of iteration goes from k to k+1.
 for iter = 1 : maxit
     % record the value of alpha_all of the current iteration in alpha_hist.
     alpha_hist(:, iter) = alpha_all;
     
     % Why iter-1? Because the initial value of iter is 1 and when iter
-    % increases by 1, the algorithm will visit nb blocks when 
+    % increases by 1, the algorithm will visit num_blocks blocks when 
     % options.Algorithm = "pbds".
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
         % Make sure that `shuffling_period` is defined when `Algorithm` is "pbds".
-        block_indices = randperm(nb);
+        block_indices = randperm(num_blocks);
     end
     
     % Get the block that are going to be visited in this iteration.
     if strcmpi(options.Algorithm, "rbds")
         if replacement_delay == 0 || sum(~isnan(block_hist)) == 0
-            block_indices = randi([1, nb]);
+            block_indices = randi([1, num_blocks]);
         else
             % Recorder the number of blocks having been visited
             num_visited = sum(~isnan(block_hist));
             block_visited_slices_length = min(num_visited, replacement_delay);
             block_visited_slices = block_hist(num_visited-block_visited_slices_length+1:num_visited);
             % Set default value of block_indices
-            block_initial_indices = 1:nb;
+            block_initial_indices = 1:num_blocks;
             % Remove elements of block_indices appearing in block_visited_slice 
             block_real_indices = block_initial_indices(~ismember(block_initial_indices, block_visited_slices));
             % Produce a random index from block_real_indices.
@@ -368,7 +368,7 @@ for iter = 1 : maxit
     if (max(alpha_all) <= powell_factor(1))
         powell_factor = shrink^powell_factor_period*powell_factor;
     else
-        for i = 1:nb
+        for i = 1:num_blocks
             if alpha_all(i)<=powell_factor(2)
                 alpha_all(i) = powell_factor(2);
             end

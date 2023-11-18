@@ -27,5 +27,10 @@ if isfield(parameters, "StepTolerance")
     end
 end
 
+if isfield(parameters, "default") && parameters.default
+    for i = 1:length(parameters.solvers_name)
+        parameters.solvers_options{i}.default = true;
+    end
+end
 
 end

@@ -10,7 +10,7 @@ function [xopt, fopt, exitflag, output] = dspd(fun, x0, options)
 %   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
 %   structure, with the following fields:
 %
-%   nb                          Number of blocks.
+%   num_blocks                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
 %   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.
@@ -31,7 +31,7 @@ function [xopt, fopt, exitflag, output] = dspd(fun, x0, options)
 %                               Use Algorithm not algorithm to have the same name as MATLAB.
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
 %                               every shuffling_period iterations.
-%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that
+%   replacement_delay           An integer between 0 and num_blocks-1. This is only used for RBDS. Suppose that
 %                               replacement_delay is r. If block i is selected at iteration k, then it will
 %                               not be selected at iterations k+1, ..., k+r.
 %   seed                        Only used by randomized strategy for reproducibility.
@@ -102,7 +102,7 @@ end
 
 % Get the number of directions.
 if isfield(options, "num_random_vectors")
-    m = max(options.num_random_vectors, 1 + floor(log2(1-log(shrink)/log(expand))));
+    num_directions = max(options.num_random_vectors, 1 + floor(log2(1-log(shrink)/log(expand))));
     choice = true;
 else
     choice = false;
@@ -176,10 +176,10 @@ else
 end
 
 % Set the boolean value of WITH_CYCLING_MEMORY.
-% WITH_CYCLING_MEMORY is only used when we need to permute the directions_indices. If
-% WITH_CYCLING_MEMORY is true, then we will permute the directions_indices by using the
-% directions_indices of the previous iteration. Otherwise, we will permute the directions_indices
-% with the initial directions_indices of ascending orders.
+% WITH_CYCLING_MEMORY is only used when we need to permute the direction_indices. If
+% WITH_CYCLING_MEMORY is true, then we will permute the direction_indices by using the
+% direction_indices of the previous iteration. Otherwise, we will permute the direction_indices
+% with the initial direction_indices of ascending orders.
 if isfield(options, "with_cycling_memory")
     with_cycling_memory = options.with_cycling_memory;
 else
@@ -272,7 +272,7 @@ for iter = 1:maxit
         rv = rv ./ norm(rv);
         D = [rv, -rv];
     else
-        D = random_stream.randn(n, m);
+        D = random_stream.randn(n, num_directions);
         % Normalize D. vecnorm is introduced in MATLAB 2017a for the first time.
         % Here we are dividing a matrix by a row vector using implicit expansion.
         D = D ./ vecnorm(D);

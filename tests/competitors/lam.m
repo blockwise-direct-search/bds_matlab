@@ -31,11 +31,11 @@ n = length(x0);
 % Get the direction set, the number of directions and blocks respectively.
 %options.direction = "canonical";
 D = get_direction_set(n, options);
-m = size(D, 2);
-nb = n;
+num_directions = size(D, 2);
+num_blocks = n;
 
-% Set indices of blocks as 1:nb.
-block_indices = 1:nb;
+% Set indices of blocks as 1:num_blocks.
+block_indices = 1:num_blocks;
 
 % Set MAXFUN to the maximum number of function evaluations.
 if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
@@ -118,13 +118,13 @@ end
 
 % Initialize the step sizes.
 if isfield(options, "alpha_init")
-    alpha_all = options.alpha_init*ones(nb, 1);
+    alpha_all = options.alpha_init*ones(num_blocks, 1);
 else
-    alpha_all = ones(nb, 1);
+    alpha_all = ones(num_blocks, 1);
 end
 
 % Decide which polling direction belongs to which block.
-direction_set_indices = divide_direction_set(m, nb);
+direction_set_indices = divide_direction_set(num_directions, num_blocks);
 
 % Initialize the history of function values.
 fhist = NaN(1, maxfun);

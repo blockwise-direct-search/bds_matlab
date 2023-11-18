@@ -10,11 +10,11 @@ function [xval, fval, exitflag, output] = bds_cycling(fun, x0, options)
 %
 %   XVAL = BLOCKWISE_DIRECT_SEARCH(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
-%   BLOCKWISE_DIRECT_SEARCH uses these options: nb, maxfun, maxfun_factor,
+%   BLOCKWISE_DIRECT_SEARCH uses these options: num_blocks, maxfun, maxfun_factor,
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
 %   polling_outer, with_cycling_memory, cycling.
 %
-%   nb - number of blocks
+%   num_blocks - number of blocks
 %   maxfun - maximum of function evaluation
 %   maxfun_factor - factor of maximum of function evaluation regarding to
 %               dimensions.
@@ -106,20 +106,20 @@ x0 = double(x0(:));
 % Set the polling directions in D.
 n = length(x0);
 D = searching_set(n, options);
-m = size(D, 2); % number of directions
+num_directions = size(D, 2); % number of directions
 
 % Set the default number of blocks.
-if isfield(options, "nb")
-    nb = options.nb;
+if isfield(options, "num_blocks")
+    num_blocks = options.num_blocks;
 else
     % TODO: this default value is good for canonical with 2n directions. For
     % other situations, other value may be good.
-    nb = n;
+    num_blocks = n;
 end
 
 % If number of directions is less than number of blocks, then the number of
 % blocks is defined as the number of directions.
-nb = min(m, nb);
+num_blocks = min(num_directions, num_blocks);
 
 % Set maxfun to the maximum number of function evaluations. The default
 % value is 1e4.
@@ -138,7 +138,7 @@ end
 % maximum number of iterations given below CANNOT be reached. If the
 % opportunistic case is used, then the maximum number of iterations may
 % be reached (although, we hope that it does not).
-% ceil(10*maxfun/m) may not be enough. Since there are some cases that
+% ceil(10*maxfun/num_directions) may not be enough. Since there are some cases that
 % maxit is exhausted and other terminations are not reached.
 maxit = maxfun;
 
@@ -228,17 +228,17 @@ else
 end
 
 % Set the initial block indices and the corresponding initial step sizes.
-block_indices = 1:nb;
+block_indices = 1:num_blocks;
 
 if isfield(options, "alpha_init")
-    alpha_all = options.alpha_init*ones(nb, 1);
+    alpha_all = options.alpha_init*ones(num_blocks, 1);
 else
-    alpha_all = ones(nb, 1);
+    alpha_all = ones(num_blocks, 1);
 end
 
 % Divide the indices of the polling directions for each block.
 % TODO: Tell Zaikun that Tom disagrees with this name.
-searching_set_indices = divide_searching_set(m, nb);
+searching_set_indices = divide_searching_set(num_directions, num_blocks);
 
 % Initialize the computations.
 fhist = NaN(1, maxfun); % history of function values
@@ -262,7 +262,7 @@ if fval <= ftarget
 end
 
 % Initialize success_block_index. It is the index of the block where a
-% success occurred and is hence a value between 1 and nb. When no
+% success occurred and is hence a value between 1 and num_blocks. When no
 % sufficient decrease is observed for all directions in all blocks, we set
 % success_block_index to -1, which will be more easier to port python and C in
 % the future.

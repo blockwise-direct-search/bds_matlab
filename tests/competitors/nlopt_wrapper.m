@@ -9,7 +9,9 @@ n = numel(x0);
 opt.min_objective = fun;
 
 if isfield(options, "default") && options.default
+
     opt.algorithm = NLOPT_LN_NEWUOA;
+    
 else
     if isfield(options, "Algorithm")
         switch options.Algorithm
@@ -42,14 +44,10 @@ else
         opt.maxtime = 0;
     end
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-        opt.maxeval = min(options.maxfun_factor*n, options.maxfun);
-    elseif isfield(options, "maxfun_factor")
-        opt.maxeval = options.maxfun_factor*n;
-    elseif isfield(options, "maxfun")
+    if isfield(options, "maxfun")
         opt.maxeval = options.maxfun;
     else
-        opt.maxeval = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
+        opt.maxeval = get_default_constant("maxfun_dim_factor")*n;
     end
 end
 

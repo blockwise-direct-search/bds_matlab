@@ -31,7 +31,7 @@ else
     % Determine whether the direction set contains NaN or Inf values and replace those
     % elements with 0.
     if any(isnan(direction_set) | isinf(direction_set), "all")
-        warning("Some directions contain NaN or inf. They are replaced with 0.");
+        warning("Some directions contain NaN or inf, which are replaced with 0.");
         direction_set(isnan(direction_set) | isinf(direction_set)) = 0;
     end
 
@@ -50,49 +50,48 @@ else
     % Find those directions that are almost parallel. Preserve the first one appearing in the
     % direction set and remove the others.
     parallel_directions = (abs(direction_set'*direction_set) > (1 - 1.0e-10) * (direction_norms' * direction_norms));
-    % Parallel_directions is a symmetric matrix, whose diagonal is 1. Triu(parallel_directions, 1) returns
-    % the indices of the upper triangular part of the matrix parallel_directions, setting the diagonal as zero.
-    % By using find, we can get the row and column indices of the elements in the upper triangular part of
-    % parallel_directions in pair, whose boolean value is 1. The column indices are the indices of the parallel
-    % directions that do not appear for the first time in the direction set.
-    [~, parallel_directions_indices] = find(triu(parallel_directions, 1));
-    % Remove the duplicate indices appearing in the parallel_directions_indices.
-    parallel_directions_indices = unique(parallel_directions_indices);
-    
-    % We remove the directions that are almost parallel, not appearing for the first time.
-    preserved_indices = ~ismember(1:size(direction_set, 2), parallel_directions_indices);
-    % Keep the remaining directions.
+    % Parallel_directions is a symmetric binary matrix, where the (i,j)-th element is 1 if and 
+    % only if the i-th and j-th vectors are almost parallel in the direction_set. 
+    % Triu(parallel_directions, 1) returns a matrix whose strict upper triangular part of 
+    % parallel_directions and the other part consists of only zero. Applying `find` to this 
+    % matrix, we can get the row and column indices of the 1's in the strict upper triangular
+    % part of parallel_directions, the column indices being contained in parallel_direction_indices below. 
+    % An index i appears in parallel_direction_indices if and only if there exists a j < i such that
+    % the i-th and j-th vectors are almost parallel in the direction_set. Hence we will remove the
+    % directions indexed by parallel_direction_indices.
+    [~, parallel_direction_indices] = find(triu(parallel_directions, 1));
+    % Remove the duplicate indices appearing in the parallel_direction_indices.
+    %parallel_direction_indices = unique(parallel_direction_indices);
+    % Directions not indexed by parallel_direction_indices are preserved.
+    preserved_indices = ~ismember(1:size(direction_set, 2), parallel_direction_indices);
     direction_set = direction_set(:, preserved_indices);
-    % If the direction set is empty, we set it to be the identity matrix.
+
+    % If the direction set is empty, we set it to be the identity matrix. Indeed, the removal of 
+    % almost parallel directions cannot make an nonempty direction set become empty. Thus the
+    % following code can be moved above the removal of almost parallel directions. However, we 
+    % keep it here to make the code more robust. 
     if isempty(direction_set)
         direction_set = eye(n);
     end
 
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 
+    % The following columns of Q will be added to direction_set.
+    % 1. The corresponding diagonal elements of R are tiny.
+    % 2. Columns m+1 to n with m being the number of columns in diretion_set, provided that m < n.
     [Q, R, ~] = qr(direction_set);
-    [~, m] = size(R);
-    
-    % We add some columns from Q in direction set, where the corresponding index of diagonal elements of R 
-    % are relatively small. When we determine which elements are too small, consider two types of matrix R 
-    % separately.
-    % 1. R is a vector. Then we only check the absolute value of the first element of R. 
-    % 2. R is a matrix but not vector. Then we consider the absolute value of the diagonal elements of R.
-    % we transpose diag(R) since the vecnorm will return a column vector.
-    if min(m, n) == 1
-        rank_direction_set_clean = sum(abs(R(1)) > 10*eps*max(m,n)*norm(R));
-    else
-        % rank_direction_set_clean = sum(abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
-        rank_direction_set_clean = find((abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n)))) == 0);
-    end
-    % To make D linearly span the full space, we add some columns in Q if necessary. 
-    direction_set = [direction_set, Q(:, rank_direction_set_clean)];
+    [~, m] = size(direction_set);
+    % deficient_columns contains the indices of the tiny diagonal elements of R. 
+    % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
+    % comparison will return a matrix due to the implicit expansion.
+    deficient_columns = ~(abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
+    direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
 
-    % Make the direction set positively span the full space.
-    [direction_set_row_num, direction_set_col_num] = size(direction_set);
-    D = NaN(direction_set_row_num, 2*direction_set_col_num);
-    D(:,1:2:size(D, 2)-1) = direction_set;
-    D(:,2:2:size(D, 2)) = -direction_set;
+    % Finally, set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th vector in direction_set.
+    [~, m] = size(direction_set);
+    D = NaN(n, 2*m);
+    D(:, 1:2:2*m-1) = direction_set;
+    D(:, 2:2:2*m) = -direction_set;
 
 end
 

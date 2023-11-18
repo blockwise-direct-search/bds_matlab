@@ -75,6 +75,9 @@ switch parameters.solvers_options{i}.solver
                 num2str(parameters.solvers_options{i}.maxfun_factor));
         end
 
+    case "bds_norma"
+        pdfname = "bds_norma";
+
     case "bds_previous"
         pdfname = "bds_previous";
 

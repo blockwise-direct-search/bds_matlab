@@ -7,8 +7,9 @@ n = numel(x0);
 
 if isfield(options, "default") && options.default
 
-    options = struct();
     Algorithm = "newuoa";
+    solver = str2func(Algorithm);
+    solver(fun, x0);
     
 else
 
@@ -28,22 +29,16 @@ else
     % window. When the value of iprint is negative, no information will be
     % printed on command window and will be stored in a file.
     % options.iprint = 0;
-    
+    options.iprint = 0;
+
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-        maxfun = min(options.maxfun_factor*n, options.maxfun);
-    elseif isfield(options, "maxfun_factor")
-        maxfun = options.maxfun_factor*n;
-    elseif isfield(options, "maxfun")
+    if isfield(options, "maxfun")
         maxfun = options.maxfun;
     else
-        maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
+        maxfun = get_default_constant("maxfun_dim_factor")*n;
     end
     
     options.maxfun = maxfun;
-    if isfield(options, "maxfun_factor")
-        options = rmfield(options, "maxfun_factor");
-    end
     
     if isfield(options, "Algorithm")
         Algorithm = options.Algorithm;
@@ -51,11 +46,11 @@ else
         Algorithm = "newuoa";
     end
 
+    solver = str2func(Algorithm);
+    options = rmfield(options, "Algorithm");
+    solver(fun, x0, options);
+
 end
-
-solver = str2func(Algorithm);
-
-solver(fun, x0, options);
 
 end
 

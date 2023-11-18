@@ -13,16 +13,9 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               "pbds" (randomly permuted blockwise direct search), "rbds" (randomized 
 %                               blockwise direct search), "ds" (the classical direct search without blocks).
 %                               Default: "cbds".
-%   nb                          Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
+%   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
 %                               or "rbds", 1 if Algorithm is "ds".
-%   maxfun                      Maximum of function evaluations. A positive integer. See also maxfun_factor.
-%   maxfun_factor               Factor to define the maximum number of function evaluations as a multiple
-%                               of the dimension of the problem. A positive integer. See also maxfun.
-%                               The maximum of function evaluations is min(maxfun, maxfun_factor*n) if the user
-%                               specify both maxfun and maxfun_factor; it is maxfun if the user only specifies 
-%                               maxfun; it is maxfun_factor*n if the user only specifies maxfun_factor; it is
-%                               min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n) if 
-%                               the user specifies neither maxfun nor maxfun_factor.
+%   maxfun                      Maximum of function evaluations. A positive integer.
 %   direction_set               A matrix whose columns will be used to define the polling directions. 
 %                               If options does not contain direction_set, then the polling directions will be 
 %                               {e_1, -e_1, ..., e_n, -e_n}. Otherwise, direction_set should be a matrix of n 
@@ -58,7 +51,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               iterations. A positive integer. Default: 1.   
 %   replacement_delay           It is only used for RBDS. Suppose that replacement_delay is r. If block i
 %                               is selected at iteration k, then it will not be selected at iterations 
-%                               k+1, ..., k+r. An integer between 0 and nb-1. Default: 0.
+%                               k+1, ..., k+r. An integer between 0 and num_blocks-1. Default: 0.
 %   seed                        The seed for permuting blocks in PBDS or randomly choosing one block in RBDS.
 %                               It is only for reproducibility in experiments. A positive integer.
 %   output_xhist                Whether to output the history of points visited. Default: false.
@@ -126,57 +119,37 @@ end
 
 % Get the direction set.
 D = get_direction_set(n, options);
+% Get the number of directions.
+num_directions = size(D, 2);
 
-% Set the value of expanding factor.
+% Get the number of blocks.
+if strcmpi(options.Algorithm, "ds")
+    % For ds, num_blocks can only be 1.
+    num_blocks = 1;
+elseif isfield(options, "block")
+    % num_blocks cannot exceed num_directions.
+    num_blocks = min(num_directions, options.block);
+elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") ...
+    || strcmpi(options.Algorithm, "rbds")
+    % For these algorithms, the default value of num_blocks is num_directions/2. 
+    num_blocks = ceil(num_directions/2);
+end
+
+% Set the factor for expanding the step sizes.
 if isfield(options, "expand")
     expand = options.expand;
 else
     expand = get_default_constant("expand");
 end
 
-% Set the value of shrinking factor.
+% Set the factor for shrinking the step sizes.
 if isfield(options, "shrink")
     shrink = options.shrink;
 else
     shrink = get_default_constant("shrink");
 end
-
-% Get the number of directions.
-m = size(D, 2);
  
-% Get the number of blocks.
-if isfield(options, "nb")
-    % The number of directions should be greater or equal to the number of blocks.
-    nb = min(m, options.nb);
-elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
-        || strcmpi(options.Algorithm, "rbds")
-    % Default value is set as n, which is good for canonical with 2n directions. For
-    % other situations, other value may be good.
-    nb = n;
-elseif strcmpi(options.Algorithm, "ds")
-    nb = 1;
-end
-
-% Set indices of blocks as 1:nb.
-block_indices = 1:nb;
-
-% Set MAXFUN to the maximum number of function evaluations.
-if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-    maxfun = min(options.maxfun_factor*n, options.maxfun);
-elseif isfield(options, "maxfun_factor")
-    maxfun = options.maxfun_factor*n;
-elseif isfield(options, "maxfun")
-    maxfun = options.maxfun;
-else
-    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
-end
-
-% Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
-% We set maxit in the following way to avoid that maxit is reached but maxfun is not exhausted when the 
-% algorithm terminates.
-maxit = maxfun;
-
-% Set the value of reduction factor.
+% Set the value of reduction_factor.
 if isfield(options, "reduction_factor")
     reduction_factor = options.reduction_factor;
 else
@@ -199,6 +172,64 @@ if isfield(options, "forcing_function_type")
     end
 end
 
+% Set polling_inner, which is the polling strategy employed within one block.
+if ~isfield(options, "polling_inner")
+    options.polling_inner = get_default_constant("polling_inner");
+end
+
+% Set cycling_inner, which represents the cycling strategy inside each block.
+if isfield(options, "cycling_inner")
+    cycling_inner = options.cycling_inner;
+else
+    cycling_inner = get_default_constant("cycling_inner");
+end
+
+% Set permuting_period. This is done only when Algorithm is "pbds", which 
+% permutes the blocks every permuting_period iterations.
+if strcmpi(options.Algorithm, "pbds") 
+    if isfield(options, "permuting_period")
+        permuting_period = options.permuting_period;
+    else
+        permuting_period = get_default_constant("permuting_period");
+    end
+end
+
+% Set replacement_delay. This is done only when Algorithm is "rbds", which 
+% randomly selects a block to visit in each iteration. If replacement_delay is r,
+% then the block that is selected in the current iteration will not be selected in
+% the next r iterations. Note that replacement_delay cannot exceed num_blocks-1. 
+if strcmpi(options.Algorithm, "rbds") 
+    if isfield(options, "replacement_delay")
+        replacement_delay = min(options.replacement_delay, num_blocks-1);
+    else
+        replacement_delay = min(get_default_constant("replacement_delay"), num_blocks-1);
+    end
+end
+
+% Set the boolean value of with_cycling_memory, which will be used in cycling.m.
+% cycling.m decides the order of the directions in each block when we perform direct search
+% in this block. This order is represented by direction_indices. If with_cycling_memory is true, 
+% then direction_indices is decided based on the last direction_indices; otherwise, it is 
+% decided based on the initial direction_indices.
+if isfield(options, "with_cycling_memory")
+    with_cycling_memory = options.with_cycling_memory;
+else
+    with_cycling_memory = get_default_constant("with_cycling_memory");
+end
+
+% Set the maximum number of function evaluations. If the options do not contain maxfun,
+% it is set to maxfun_dim_factor*n, where n is the dimension of the problem.
+if isfield(options, "maxfun")
+    maxfun = options.maxfun;
+else
+    maxfun = get_default_constant("maxfun_dim_factor")*n;
+end
+
+% Set the maximum number of iterations. 
+% Each iteration will use at least one function evaluation. Setting maxit to maxfun will 
+% ensure that maxfun is exhausted before maxit is reached. 
+maxit = maxfun; 
+
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
 % the StepTolerance.
 if isfield(options, "StepTolerance")
@@ -214,84 +245,41 @@ else
     ftarget = get_default_constant("ftarget");
 end
 
-% Set the value of polling_inner. This is the polling strategy employed within one block.
-if ~isfield(options, "polling_inner")
-    options.polling_inner = get_default_constant("polling_inner");
-end
-
-% Set the value of cycling_inner, which represents the cycling strategy inside each block.
-if isfield(options, "cycling_inner")
-    cycling_inner = options.cycling_inner;
-else
-    cycling_inner = get_default_constant("cycling_inner");
-end
-
-% Set the value of permuting_period, which permutes the blocks every permuting_period iterations.
-if strcmpi(options.Algorithm, "pbds") 
-    if isfield(options, "permuting_period")
-        permuting_period = options.permuting_period;
-    else
-        permuting_period = get_default_constant("permuting_period");
-    end
-end
-
-% Set the value of replacement_delay. The default value is 1. If replacement_delay is larger than
-% nb-1, then there are no blocks that we can select in the nb-1 iterations after the current block.
-if strcmpi(options.Algorithm, "rbds") 
-    if isfield(options, "replacement_delay")
-        replacement_delay = min(options.replacement_delay, nb-1);
-    else
-        replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
-    end
-end
-
-% Set the boolean value of WITH_CYCLING_MEMORY. 
-% WITH_CYCLING_MEMORY is only used when we need to permute the directions_indices. If
-% WITH_CYCLING_MEMORY is true, then we will permute the directions_indices by using the
-% directions_indices of the previous iteration. Otherwise, we will permute the directions_indices
-% with the initial directions_indices of ascending orders.
-if isfield(options, "with_cycling_memory")
-    with_cycling_memory = options.with_cycling_memory;
-else
-    with_cycling_memory = get_default_constant("with_cycling_memory");
-end
-
-% Initialize the step sizes and alpha_hist, which is the history of step sizes.
+% Check whether the history of step sizes is outputted.
 if isfield(options, "output_alpha_hist")
     output_alpha_hist = options.output_alpha_hist;
 else
     output_alpha_hist = get_default_constant("output_alpha_hist");
 end
-% If alpha_hist exceeds the maximum of memory size limit, then we will not output alpha_hist.
+% If alpha_hist exceeds the maximum memory size limit, then we will not output alpha_hist.
 if output_alpha_hist
     try
-        alpha_hist = NaN(nb, maxit);
+        alpha_hist = NaN(num_blocks, maxit);
     catch
         output_alpha_hist = false;
-        warning("The size of alpha_hist exceeds the maximum of memory size limit.")
+        warning("The size of alpha_hist exceeds the maximum memory size limit. output_alpha_hist is set to false." )
     end
 end
 
 if isfield(options, "alpha_init")
     if length(options.alpha_init) == 1
-        alpha_all = options.alpha_init*ones(nb, 1);
-    elseif length(options.alpha_init) == nb
+        alpha_all = options.alpha_init*ones(num_blocks, 1);
+    elseif length(options.alpha_init) == num_blocks
         alpha_all = options.alpha_init;
     else
-        error("The length of alpha_init should be equal to nb or equal to 1.");
+        error("The length of alpha_init should be equal to num_blocks or equal to 1.");
     end
-    % Try alpha_all = 0.5 * max(abs(x0), 1) in the canonical case.
-elseif isfield(options, "alpha_init_scaling") && options.alpha_init_scaling
-    %alpha_all = 0.1 * ones(nb, 1);
-    %alpha_all(x0 ~= 0) = 0.1 * abs(x0(x0 ~= 0));
-    alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
-    %alpha_all = 0.1 * max(1e-3, abs(x0));
+elseif (num_blocks == n && size(D, 2) == 2*n && isfield(options, "alpha_init_scaling")) ...
+     && options.alpha_init_scaling
+    x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
+    alpha_all = 0.5 * max(1, abs(x0_coordinates));
+    %alpha_all = 0.1 * max(1e-3, abs(x0_coordinates));
 else
-    alpha_all = ones(nb, 1);
+    alpha_all = ones(num_blocks, 1);
 end
 
 % Determine the indices of directions in each block.
-direction_set_indices = divide_direction_set(m, nb);
+direction_set_indices = divide_direction_set(num_directions, num_blocks);
 
 % Initialize the history of function values.
 fhist = NaN(1, maxfun);
@@ -352,57 +340,44 @@ if fopt <= ftarget
     maxit = 0;
 end
 
+
+all_block_indices = (1:num_blocks);
+num_visited_blocks = 0;
+
 for iter = 1:maxit
 
-    % % Record the step size used in the previous iteration.
-    % if output_alpha_hist
-    %     alpha_hist(:, iter) = alpha_all;
-    % end
-    
-    % Permute the blocks every permuting_period iterations if the Algorithm is "pbds".
-    % Why iter-1? Since we will permute block_indices at the initial stage.
-    if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, permuting_period) == 0
-        % Make sure that permuting_period is defined when the Algorithm is "pbds".
-        block_indices = random_stream.randperm(nb);
-    end
-    
-    % Get the block that is going to be visited if the Algorithm is "rbds".
-    if strcmpi(options.Algorithm, "rbds")
-        
-        % If replacement_delay is 0, then select a block randomly from block_indices for 
-        % each iteration. If iter is equal to 1, select a block randomly from block_indices.
-        if replacement_delay == 0 || iter == 1
-            block_indices = random_stream.randi([1, nb]);
-        else
-            % Record the number of blocks visited.
-            num_visited = sum(~isnan(block_hist));
-            % Get the number of blocks that we are going to exclude in the block_indices.
-            block_visited_slices_length = min(num_visited, replacement_delay);
-            % Get the indices of blocks that we are going to exclude in the block_indices.
-            block_visited_slices = block_hist(num_visited-block_visited_slices_length+1:num_visited);
-            % Get the indices of blocks that we may visit in this iteration.
-            block_real_indices = block_initial_indices(~ismember(block_indices, block_visited_slices));
-            % Select a block randomly from block_real_indices.
-            idx = random_stream.randi(length(block_real_indices));
-            block_indices = block_real_indices(idx);
-        end
-
+    % Define block_indices, which is a vector containing the indices of blocks that we 
+    % are going to visit in this iteration.
+    if strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "cbds")
+        % If the Algorithm is "ds" or "cbds", then we will visit all blocks in order.
+        % When the Algorithm is "ds", note that num_blocks = 1 and block_indices = [1],
+        % a vector of length 1.
+        block_indices = all_block_indices;
+    elseif strcmpi(options.Algorithm, "pbds") && mod(iter - 1, permuting_period) == 0
+        % Starting from the very first iteration, permute the blocks every permuting_period 
+        % iterations if the Algorithm is "pbds". Note that block_indices gets initialized when iter = 1. 
+        block_indices = random_stream.randperm(num_blocks);
+    elseif strcmpi(options.Algorithm, "rbds")
+        % Get the block that is going to be visited in this iteration if the Algorithm is "rbds".
+        % This block should not have been visited in the previous replacement_delay iterations.
+        % Note that block_indices is a vector of length 1 in this case. 
+        unavailable_block_indices = block_hist(max(1, iter-replacement_delay) : iter - 1);
+        available_block_indices = setdiff(all_block_indices, unavailable_block_indices);
+        % Select a block randomly from available_block_indices.
+        idx = random_stream.randi(length(available_block_indices));
+        block_indices = available_indices(idx);  % a vector of length 1
     end
     
     for i = 1:length(block_indices)
 
-        % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
-        % going to visit.
+        % i_real = block_indices(i) is the real index of the block to be visited. For example, 
+        % if block_indices is [1 3 2] and i = 2, then we are going to visit the 3rd block.
         i_real = block_indices(i);
         
-        % Record the number of blocks visited.
-        num_visited = sum(~isnan(block_hist));
-        % Record the block that is going to be visited.
-        block_hist(num_visited+1) = i_real;       
-       
-        % Get indices of directions in the i-th block.
+        % Get indices of directions in the i_real-th block.
         direction_indices = direction_set_indices{i_real}; 
         
+        % Set the options for the direct search within the i_real-th block. 
         suboptions.maxfun = maxfun - nf;
         suboptions.cycling_inner = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
@@ -411,59 +386,66 @@ for iter = 1:maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         
+        % Perform the direct search within the i_real-th block.
         [sub_xopt, sub_fopt, sub_exitflag, sub_output] = inner_direct_search(fun, xbase,...
             fbase, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
 
-        % Record the step size when the algorithm executes inner_direct_search above.
+        % Record the index of the block visited.
+        num_visited_blocks = num_visited_blocks + 1;     
+        block_hist(num_visited_blocks) = i_real;   
+
+        % Record the step size used by inner_direct_search above.
         if output_alpha_hist
             alpha_hist(:, iter) = alpha_all;
         end
         
-        % Store the history of the evaluations by inner_direct_search, 
-        % and accumulate the number of function evaluations.
-        fhist((nf+1):(nf+sub_output.nf)) = sub_output.fhist;
-        % Accumulate the points visited by inner_direct_search.
+        % Record the points visited by inner_direct_search if output_xhist is true.
         if output_xhist
             xhist(:, (nf+1):(nf+sub_output.nf)) = sub_output.xhist;
         end
+
+        % Record the function values calculated by inner_direct_search, 
+        fhist((nf+1):(nf+sub_output.nf)) = sub_output.fhist;
+
+        % Update the number of function evaluations.
         nf = nf+sub_output.nf;
         
-        % Update the step size, xopt and fopt.
-        % fbase and xbase are used for the computation in the block. fopt and
-        % xopt are always the best function value and point so far.
+        % Update the step size alpha_all according to the reduction achieved. 
         if sub_fopt + reduction_factor(3) * forcing_function(alpha_all(i_real)) < fbase
             alpha_all(i_real) = expand * alpha_all(i_real);
         elseif sub_fopt + reduction_factor(2) * forcing_function(alpha_all(i_real)) >= fbase
             alpha_all(i_real) = shrink * alpha_all(i_real);
         end
 
+        % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
+        % meaning that reduction will be calculated with respect to xbase, as shown above. 
+        % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
         if (reduction_factor(1) <= 0 && sub_fopt < fbase) || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fbase
             xbase = sub_xopt;
             fbase = sub_fopt;
         end
 
-        % Update xopt and fopt.
+        % Update xopt and fopt, which are always the best function value and point so far.
+        % Note that xopt may differ from xbase unless the latter is updated whenever a simple decrease is achieved. 
         if sub_fopt < fopt
             xopt = sub_xopt;
             fopt = sub_fopt;
         end
                         
-        % Retrieve the indices of the i_real-th block in the direction set.
+        % Retrieve the direction indices of the i_real-th block, which represent the order of the 
+        % directions in the i_real-th block when we perform the direct search in this block next time.
         direction_set_indices{i_real} = sub_output.direction_indices;
 
-        % If sub_output.terminate is true, then inner_direct_search returns 
-        % boolean value of terminate because either the maximum number of function
-        % evaluations or the target of the objective function value is reached. 
-        % In both cases, the exitflag is set by inner_direct_search.
+        % Terminate the computations if sub_output.terminate is true, which means that inner_direct_search
+        % decides that the algorithm should be terminated for some reason indicated by sub_exitflag.
         if sub_output.terminate
             terminate = true;
             exitflag = sub_exitflag;
             break;
         end
 
-        % Terminate the computations if the largest component of step size is below a
-        % given StepTolerance.
+        % Terminate the computations if the largest step size is below StepTolerance.
         if max(alpha_all) < alpha_tol
             terminate = true;
             exitflag = get_exitflag("SMALL_ALPHA");
@@ -471,30 +453,29 @@ for iter = 1:maxit
         end 
     end
     
-    % Check whether one of SMALL_ALPHA, MAXFUN_REACHED, and FTARGET_REACHED is reached.
+    % Terminate the computations if terminate is true.
     if terminate
         break;
     end
     
 end
 
-% Truncate HISTORY into a vector of nf length.
 output.funcCount = nf;
-output.fhist = fhist(1:nf);
 
+% Truncate the histories of the blocks visited, the step sizes, the points visited, 
+% and the function values. 
+if output_block_hist
+    output.blocks_hist = block_hist(1:num_visited_blocks);
+end
+if output_alpha_hist
+    output.alpha_hist = alpha_hist(:, 1:min(iter, maxit));
+end
 if output_xhist
     output.xhist = xhist(:, 1:nf);
 end
+output.fhist = fhist(1:nf);
 
-if output_alpha_hist
-    output.alpha_hist = alpha_hist(1:min(iter, maxit));
-end
-
-num_blocks_visited = sum(~isnan(block_hist));
-if output_block_hist
-    output.blocks_hist = block_hist(1:num_blocks_visited);
-end
-
+% Set the message according to exitflag.
 switch exitflag
     case {get_exitflag("SMALL_ALPHA")}
         output.message = "The StepTolerance of the step size is reached.";
@@ -513,7 +494,7 @@ if x0_is_row
     xopt = xopt';
 end
 
-% verify_postconditions is to detect whether the output is in the right form when debug_flag is true.
+% verify_postconditions is to detect whether the output is valid when debug_flag is true.
 if is_debugging()
     verify_postconditions(fun, xopt, fopt, exitflag, output);
 end

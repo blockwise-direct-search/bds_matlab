@@ -68,7 +68,7 @@ try
     s.maxdim = parameters.problems_maxdim; % Maximum of dimension
     s.blacklist = [];
     %s.blacklist = [s.blacklist, {}];
-    % Problems that takes too long to solve.
+    % Problems that take too long to solve.
     % {'FBRAIN3LS'} and {'STRATEC'} take too long for fminunc.
     if ismember("matlab_fminunc", parameters.solvers_name)
         s.blacklist = [s.blacklist, {'FBRAIN3LS'}, {'STRATEC'}];
@@ -95,34 +95,40 @@ try
     problem_names = secup(s);
 
     fprintf("We will load %d problems\n\n", length(problem_names))
-    
+
     % Some fixed (relatively) options
     % Read two papers: What Every Computer Scientist Should Know About
     % Floating-Point Arithmetic; stability and accuracy numerical(written by Higham).
 
-    % Set maxfun for frec.
-    if isfield(parameters, "maxfun_factor") && isfield(parameters, "maxfun")
-        maxfun_frec = max(parameters.maxfun_factor*parameters.problems_maxdim, parameters.maxfun);
-    elseif isfield(parameters, "maxfun_factor")
-        maxfun_frec = parameters.maxfun_factor*parameters.problems_maxdim;
-    elseif isfield(parameters, "maxfun")
-        maxfun_frec = parameters.maxfun;
-    else
-        maxfun_frec = max(get_default_profile_options("maxfun"), ...
-            get_default_profile_options("maxfun_factor")*parameters.problems_maxdim);
+    % Initialize the number of solvers.
+    num_solvers = length(parameters.solvers_options);
+    % Set maxfun_frec for performance profile.
+    maxfun_frec = max(get_default_profile_options("maxfun"), ...
+        get_default_profile_options("maxfun_dim_factor")*parameters.problems_maxdim);
+    for i = 1:num_solvers
+        if isfield(parameters, "default") && parameters.default 
+            switch parameters.solvers_options{i}.solver
+                case "bfo_wrapper"
+                    maxfun_frec = max(maxfun_frec, 5000*parameters.problems_maxdim);
+                case "fminsearch_wrapper"
+                    maxfun_frec = max(maxfun_frec, 200*parameters.problems_maxdim);
+                case "fminunc_wrapper"
+                    maxfun_frec = max(maxfun_frec, 100*parameters.problems_maxdim);
+                case "prima_wrapper"
+                    maxfun_frec = max(maxfun_frec, 500*parameters.problems_maxdim);
+            end
+        end
     end
 
-    % Initialize fmin and frec.
-    num_solvers = length(parameters.solvers_options);
-    % Get number of problems.
+    % Get the number of problems.
     num_problems = length(problem_names);
     % Get Number of random tests(If num_random = 1, it means no random test).
     num_random = parameters.num_random;
-    % Record minimum value of the problems of the random test.
+    % Record the minimum value of the problems of the random test.
     fmin = NaN(num_problems, num_random);
     frec = NaN(num_problems, num_solvers, num_random, maxfun_frec);
 
-    % Set noisy parts of test.
+    % Set noisy parts of the test.
     test_options.is_noisy = parameters.is_noisy;
     if parameters.is_noisy
 
@@ -160,10 +166,10 @@ try
     parameters = get_options(parameters);
     solvers_options = parameters.solvers_options;
 
-    % If parameters.noise_initial_point is true, then initial point will be
+    % If parameters.noise_initial_point is true, then the initial point will be
     % selected for each problem num_random times.
     % The default value of parameters.fmin_type is set to be "randomized", then there is
-    % no need to test without noise, which makes the curve of performance profile
+    % no need to test without noise, which makes the curve of the performance profile
     % more higher. If parallel is true, use parfor to calculate (parallel computation),
     % otherwise, use for to calculate (sequential computation).
     if parameters.parallel == true
@@ -260,7 +266,7 @@ try
     % Trim time string.
     time_str = trim_time(time_str);
     % tst = sprintf("test_%s", time_str);
-    % Rename tst as mixture of time stamp and pdfname.
+    % Rename tst as the mixture of time stamp and pdfname.
     tst = strcat(parameters.pdfname, "_", time_str);
     path_testdata = fullfile(path_tests, "testdata");
     path_testdata_outdir = fullfile(path_tests, "testdata", tst);
@@ -280,7 +286,7 @@ try
     path_testdata_private = fullfile(path_testdata_tests, "private");
     mkdir(path_testdata_private);
 
-    % Make a txt file to store the problems that are tested.
+    % Make a Txt file to store the problems that are tested.
     problem_names_str = strings(1, length(problem_names));
     for i = 1:length(problem_names)
         problem_names_str(i) = problem_names{i};
@@ -292,7 +298,7 @@ try
     end
     fclose(fileID);
 
-    % Make a txt file to store the parameters that are used.
+    % Make a Txt file to store the parameters that are used.
     filePath = strcat(path_testdata_perf, "/parameters.txt");
     fileID = fopen(filePath, 'w');
     parameters_saved = parameters;
@@ -342,7 +348,7 @@ try
     end
 
     % Draw performance profiles.
-    % Set tolerance of convergence test in performance profile.
+    % Set tolerance of convergence test in the performance profile.
     tau = parameters.tau;
     %tau_length = length(tau);
 

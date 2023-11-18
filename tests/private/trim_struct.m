@@ -1,10 +1,10 @@
 function parameters_saved = trim_struct(parameters_saved)
 % Trim the string using "_" to replace " ", "-" and ":".
 
-% 获取结构体的字段名
+% Get the field names of a structure.
 fields = fieldnames(parameters_saved);
 
-% 将字段和对应的值写入文件
+% Write the fields and their corresponding values to a file.
 for i = 1:numel(fields)
     field = fields{i};
     value = parameters_saved.(field);
@@ -31,6 +31,8 @@ for i = 1:numel(fields)
         elseif strcmp(func2str(value), func2str(@(x)x.^3))
             parameters_saved.(field) = "cubic";
         end
+    elseif isstruct(value) && isempty(fieldnames(value))
+        parameters_saved.(field) = "true";
     end
 end
 

@@ -7,8 +7,8 @@ cd(path_locate)
 locate_matcutest()
 
 s.type = "u";
-s.mindim = 61;
-s.maxdim = 100;
+s.mindim = 10;
+s.maxdim = 10;
 secup(s)
 
 % s = ["ARGTRIGLS",...

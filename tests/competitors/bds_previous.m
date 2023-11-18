@@ -10,7 +10,7 @@ function [xval, fval, exitflag, output] = bds_previous(fun, x0, options)
 %   XVAL = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
 %   structure, with the following fields:
 %
-%   nb                          Number of blocks.
+%   num_blocks                          Number of blocks.
 %   maxfun                      Maximum of function evaluations.
 %   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.
@@ -33,7 +33,7 @@ function [xval, fval, exitflag, output] = bds_previous(fun, x0, options)
 %                               Use Algorithm not algorithm to have the same name as MATLAB.
 %   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
 %                               every shuffling_period iterations.
-%   replacement_delay           An integer between 0 and nb-1. This is only used for RBDS. Suppose that
+%   replacement_delay           An integer between 0 and num_blocks-1. This is only used for RBDS. Suppose that
 %                               replacement_delay is r. If block i is selected at iteration k, then it will
 %                               not be selected at iterations k+1, ..., k+r.
 %   seed                        Only used by randomized strategy for reproducibility.
@@ -113,23 +113,23 @@ else
 end
 
 % Get the number of directions.
-m = size(D, 2);
+num_directions = size(D, 2);
 
 % Get the number of blocks.
-if isfield(options, "nb")
+if isfield(options, "num_blocks")
     % The number of directions should be greater or equal to the number of blocks.
-    nb = min(m, options.nb);
+    num_blocks = min(num_directions, options.num_blocks);
 elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds")...
         || strcmpi(options.Algorithm, "rbds")
     % Default value is set as n, which is good for canonical with 2n directions. For
     % other situations, other value may be good.
-    nb = n;
+    num_blocks = n;
 elseif strcmpi(options.Algorithm, "ds")
-    nb = 1;
+    num_blocks = 1;
 end
 
-% Set indices of blocks as 1:nb.
-block_indices = 1:nb;
+% Set indices of blocks as 1:num_blocks.
+block_indices = 1:num_blocks;
 
 % Set MAXFUN to the maximum number of function evaluations.
 if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
@@ -227,16 +227,16 @@ end
 
 % Set the value of replacement_delay. The default value of replacement_delay is set to 0.
 if strcmpi(options.Algorithm, "rbds") && isfield(options, "replacement_delay")
-    replacement_delay = min(options.replacement_delay, nb-1);
+    replacement_delay = min(options.replacement_delay, num_blocks-1);
 else
-    replacement_delay = min(get_default_constant("replacement_delay"), nb-1);
+    replacement_delay = min(get_default_constant("replacement_delay"), num_blocks-1);
 end
 
 % Set the boolean value of WITH_CYCLING_MEMORY.
-% WITH_CYCLING_MEMORY is only used when we need to permute the directions_indices. If
-% WITH_CYCLING_MEMORY is true, then we will permute the directions_indices by using the
-% directions_indices of the previous iteration. Otherwise, we will permute the directions_indices
-% with the initial directions_indices of ascending orders.
+% WITH_CYCLING_MEMORY is only used when we need to permute the direction_indices. If
+% WITH_CYCLING_MEMORY is true, then we will permute the direction_indices by using the
+% direction_indices of the previous iteration. Otherwise, we will permute the direction_indices
+% with the initial direction_indices of ascending orders.
 if isfield(options, "with_cycling_memory")
     with_cycling_memory = options.with_cycling_memory;
 else
@@ -252,7 +252,7 @@ end
 
 if output_alpha_hist
     try
-        alpha_hist = NaN(nb, maxit);
+        alpha_hist = NaN(num_blocks, maxit);
     catch
         output_alpha_hist = false;
         warning("The size of alpha_hist exceeds the maximum of memory size limit.")
@@ -261,23 +261,23 @@ end
 
 if isfield(options, "alpha_init")
     if length(options.alpha_init) == 1
-        alpha_all = options.alpha_init*ones(nb, 1);
-    elseif length(options.alpha_init) == nb
+        alpha_all = options.alpha_init*ones(num_blocks, 1);
+    elseif length(options.alpha_init) == num_blocks
         alpha_all = options.alpha_init;
     else
-        error("The length of alpha_init should be equal to nb or equal to 1.");
+        error("The length of alpha_init should be equal to num_blocks or equal to 1.");
     end
     % Try alpha_all = 0.5 * max(abs(x0), 1) in the canonical case.
 elseif isfield(options, "alpha_init_perturbed") && options.alpha_init_perturbed
-    alpha_all = 0.00025 * ones(nb, 1);
+    alpha_all = 0.00025 * ones(num_blocks, 1);
     alpha_all(x0 ~= 0) = 1.05 * abs(x0(x0 ~= 0));
-    % alpha_all = 0.5 * max(abs(x0), ones(nb, 1));
+    % alpha_all = 0.5 * max(abs(x0), ones(num_blocks, 1));
 else
-    alpha_all = ones(nb, 1);
+    alpha_all = ones(num_blocks, 1);
 end
 
 % Decide which polling direction belongs to which block.
-searching_set_indices = divide_searching_set(m, nb);
+searching_set_indices = divide_searching_set(num_directions, num_blocks);
 
 % Initialize the history of function values.
 fhist = NaN(1, maxfun);
@@ -345,7 +345,7 @@ for iter = 1:maxit
     % Why iter-1? Since we will permute block_indices at the initial stage.
     if strcmpi(options.Algorithm, "pbds") && mod(iter - 1, shuffling_period) == 0
         % Make sure that shuffling_period is defined when the Algorithm is "pbds".
-        block_indices = random_stream.randperm(nb);
+        block_indices = random_stream.randperm(num_blocks);
     end
 
     % Get the block that is going to be visited.
@@ -354,7 +354,7 @@ for iter = 1:maxit
         % each iteration. If iter is equal to 1, then the block that we are going to visit
         % is selected randomly from block_indices.
         if replacement_delay == 0 || iter == 1
-            block_indices = random_stream.randi([1, nb]);
+            block_indices = random_stream.randi([1, num_blocks]);
         else
             % Record the number of blocks visited.
             num_visited = sum(~isnan(block_hist));
@@ -363,7 +363,7 @@ for iter = 1:maxit
             % Get the indices of blocks that we are going to exclude in the following selection.
             block_visited_slices = block_hist(num_visited-block_visited_slices_length+1:num_visited);
             % Set the default value of initial block_indices.
-            block_initial_indices = 1:nb;
+            block_initial_indices = 1:num_blocks;
             % Remove elements of block_indices appearing in block_visited_slice.
             block_real_indices = block_initial_indices(~ismember(block_initial_indices, block_visited_slices));
             % Generate a random index from block_real_indices.

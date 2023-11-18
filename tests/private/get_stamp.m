@@ -51,6 +51,9 @@ switch parameters.solvers_options{i}.solver
             solver_stamp = strcat(solver_stamp, "-", num2str(parameters.solvers_options{i}.replacement_delay));
         end
 
+    case {"bds_norma"}
+        solver_stamp = "bds_norma";
+
     case {"bds_previous"}
         solver_stamp = "bds_previous";
 

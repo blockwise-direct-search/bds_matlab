@@ -1,27 +1,19 @@
-function rosenbrock_example()
+function test_Rosenbrock_function()
 %This file is cited from https://github.com/libprima/prima/blob/main/matlab/examples/rosenbrock_example.m, which is
 %written by Zaikun Zhang.
 %ROSENBROCK_EXAMPLE illustrates how to use bds.
-%
-%   ***********************************************************************
-%   Authors:    Haitian Li (hai-tian.li@connect.polyu.hk)
-%               and Zaikun ZHANG (zaikun.zhang@polyu.edu.hk)
-%               Department of Applied Mathematics,
-%               The Hong Kong Polytechnic University
-%
-%   ***********************************************************************
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Attribute: public (can be called directly by users)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %rng(267);
 %x0 = [0; 0; 0];  % starting point
-x0 = randn(30,1);  % starting point
+x0 = randn(20,1);  % starting point
 
 %options.maxfun = 1e4;
 %options.StepTolerance = eps;
-options.Algorithm = "cbds";
-%options.StepTolerance = 1e-6;
+options = struct();
+options.StepTolerance = eps;
 
 fullpath = mfilename("fullpath");
 path_examples = fileparts(fullpath);
@@ -30,14 +22,12 @@ path_src = fullfile(path_bds, "src");
 path_competitors = fullfile(path_bds, "tests", "competitors");
 addpath(path_src)
 addpath(path_competitors)
-p = macup('HILBERTB');
-x0 = (1+0.1*randn(size(p.x0))).*p.x0;
+
 % The following syntax is identical to fmincon:
 %[X,FVAL,EXITFLAG,OUTPUT] = fminsearch(@chrosen, x0)
 %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(@chrosen, x0)
-[xopt, fopt, exitflag, output_bds] = bds(p.objective, x0)
-[xopt, fopt, exitflag, output_newuoa] = newuoa(p.objective, x0)
-keyboard
+[xopt, fopt, exitflag, output] = bds(@chrosen, x0)
+bfo_wrapper(@chrosen, x0, options)
 rmpath(path_src)
 rmpath(path_competitors)
 return

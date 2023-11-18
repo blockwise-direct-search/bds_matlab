@@ -46,7 +46,7 @@ jobs:
           path: bfo
 
       - name: modify BFO 
-        run: cd ./bfo && sed -i '/^found  /{s/.*/found = 1/;n;d;}' bfo.m
+        run: cd ./bfo && sed -i '/^found  /{s/.*/found = 1/;n;d;}' bfo.m && cat bfo.m | grep found
 
       - name: Link gfortran for MATLAB on Linux
         if: startsWith(matrix.os, 'ubuntu')

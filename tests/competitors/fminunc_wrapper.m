@@ -11,17 +11,17 @@ if nargin < 3
 end
 
 if isfield(options, "default") && options.default
-    options = struct();
+    
+    %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0)
+    fminunc(FUN, x0);
+
 else
+
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-        maxfun = min(options.maxfun_factor*n, options.maxfun);
-    elseif isfield(options, "maxfun_factor")
-        maxfun = options.maxfun_factor*n;
-    elseif isfield(options, "maxfun")
+    if isfield(options, "maxfun")
         maxfun = options.maxfun;
     else
-        maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
+        maxfun = get_default_constant("maxfun_dim_factor")*n;
     end
 
     % Set the value of StepTolerance.
@@ -46,12 +46,15 @@ else
     end
 
     options = optimoptions("fminunc", "Algorithm", "quasi-newton", "HessUpdate", ...
-        fminunc_type, "MaxFunctionEvaluations", maxfun, "MaxIterations", maxfun,...
-        "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", tol);
+        fminunc_type, "MaxFunctionEvaluations", maxfun, "MaxIterations", 10^20,...
+        "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", eps);
+
+    %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
+    fminunc(FUN, x0, options);
+
 end
 
-%[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
-fminunc(FUN, x0, options);
+
 
 end
 

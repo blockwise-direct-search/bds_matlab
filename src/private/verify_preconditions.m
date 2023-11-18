@@ -22,9 +22,9 @@ if isfield(options, "maxfun_factor")
     end
 end
 
-if isfield(options, "nb")
-    if ~(isintegerscalar(options.nb) && options.nb > 0)
-        error("options.nb should be a positive integer.");
+if isfield(options, "num_blocks")
+    if ~(isintegerscalar(options.num_blocks) && options.num_blocks > 0)
+        error("options.num_blocks should be a positive integer.");
     end
 end
 
