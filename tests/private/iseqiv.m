@@ -22,6 +22,9 @@ orig_rng_state = rng();  % Save the current random number generator settings
 rng(rseed);  % Set the random seed for reproducibility
 p.x0 = x0 + 0.5*randn(size(x0));
 test_options = struct();
+if isfield(options, "Algorithm")
+    test_options.Algorithm = options.Algorithm;
+end
 test_options.alpha_init = 1 + 0.5*(2*rand-1);
 test_options.StepTolerance = 1e-3*(1 + 0.5*(2*rand-1));
 test_options.npt = max(min(floor(6*rand*n), (n+2)*(n+1)/2), n+2);

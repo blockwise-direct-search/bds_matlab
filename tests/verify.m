@@ -90,9 +90,9 @@ try
     end
 
     if ~isfield(parameters, "num_random")
-        num_random = get_default_profile_options("num_random");
+        num_random = 20;
     end
-
+    
     if parallel
         parfor i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
@@ -109,68 +109,6 @@ try
                 iseqiv(solvers, p, i_run, prec, single_test, parameters);
             end
         end
-    end
-
-    % Use time to distinguish.
-    time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
-    % Trim time string.
-    time_str = trim_time(time_str);
-    % tst = sprintf("test_%s", time_str);
-    % Rename tst as the mixture of time stamp and pdfname.
-    tst = strcat(parameters.pdfname, "_", time_str);
-    path_testdata = fullfile(path_tests, "testdata");
-    path_testdata_outdir = fullfile(path_tests, "testdata", tst);
-
-    % Make a new folder to save numerical results and source code.
-    mkdir(path_testdata, tst);
-    mkdir(path_testdata_outdir, "src");
-    path_testdata_src = fullfile(path_testdata_outdir, "src");
-
-    % Make a Txt file to store the parameters that are used.
-    filePath = strcat(path_testdata_perf, "/parameters.txt");
-    fileID = fopen(filePath, 'w');
-    parameters_saved = parameters;
-    parameters_saved = trim_struct(parameters_saved);
-    % Get the field names of a structure.
-    parameters_saved_fields = fieldnames(parameters_saved);
-    % Write field names and their corresponding values into a file line by line.
-    for i = 1:numel(parameters_saved_fields)
-        field = parameters_saved_fields{i};
-        value = parameters_saved.(field);
-        if ~iscell(value)
-            fprintf(fileID, '%s: %s\n', field, value);
-        else
-            for j = 1:length(value)
-                solvers_options_saved = trim_struct(value{j});
-                solvers_options_saved_fields = fieldnames(solvers_options_saved);
-                for k = 1:numel(solvers_options_saved_fields)
-                    solvers_options_saved_field = solvers_options_saved_fields{k};
-                    solvers_options_saved_value = solvers_options_saved.(solvers_options_saved_field);
-                    fprintf(fileID, '%s: %s ', solvers_options_saved_field, ...
-                        solvers_options_saved_value);
-                end
-                fprintf(fileID, '\n');
-            end
-        end
-    end
-    fclose(fileID);
-
-    % Copy the source code and test code to path_outdir.
-    copyfile(fullfile(path_src, "*"), path_testdata_src);
-    copyfile(fullfile(path_root, "setup.m"), path_testdata_outdir);
-
-    source_folder = path_tests;
-    destination_folder = path_testdata_tests;
-
-    % Get all files in the source folder.
-    file_list = dir(fullfile(source_folder, '*.*'));
-    file_list = file_list(~[file_list.isdir]);
-
-    % Copy all files (excluding subfolders) to the destination folder.
-    for i = 1:numel(file_list)
-        source_file = fullfile(source_folder, file_list(i).name);
-        destination_file = fullfile(destination_folder, file_list(i).name);
-        copyfile(source_file, destination_file);
     end
 
 catch exception

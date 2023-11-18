@@ -20,7 +20,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         matlab: [latest]
-        dim: [small, big]
         with_optim_toolbox: [yes]
         Algorithm: [cbds, pbds, rbds, ds]
         version: [231114]
@@ -82,19 +81,11 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
-            % Setup bds.
-            setup;
-
-            % Setup bds_norma.
-            path_norma = fullfile(root_dir, "bds_development", "norma", "${{ matrix.version }}");
-            cd(path_norma); setup; cd(root_dir);
-
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.problems_dim = "${{ matrix.dim }}";
-            parameters.parallel = true;
-            parameters.fmin_type = "randomized";
-            parameters.solvers_name = ["${{ matrix.Algorithm }}", "bds_norma"];
+            parameters.version = "${{ matrix.version }}";
+            parameters.Algorithm = "${{ matrix.Algorithm }}";
+            verify(parameters);
 
-
+            
