@@ -14,9 +14,8 @@ function rosenbrock_example()
 % Attribute: public (can be called directly by users)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%rng(267);
-%x0 = [0; 0; 0];  % starting point
-x0 = randn(30,1);  % starting point
+
+x0 = [0; 0; 0];  % starting point
 
 %options.maxfun = 1e4;
 %options.StepTolerance = eps;
@@ -30,14 +29,10 @@ path_src = fullfile(path_bds, "src");
 path_competitors = fullfile(path_bds, "tests", "competitors");
 addpath(path_src)
 addpath(path_competitors)
-p = macup('HILBERTB');
-x0 = (1+0.1*randn(size(p.x0))).*p.x0;
+
 % The following syntax is identical to fmincon:
-%[X,FVAL,EXITFLAG,OUTPUT] = fminsearch(@chrosen, x0)
-%[X,FVAL,EXITFLAG,OUTPUT] = fminunc(@chrosen, x0)
-[xopt, fopt, exitflag, output_bds] = bds(p.objective, x0)
-[xopt, fopt, exitflag, output_newuoa] = newuoa(p.objective, x0)
-keyboard
+[X,FVAL,EXITFLAG,OUTPUT] = bds(@chrosen, x0, options)
+
 rmpath(path_src)
 rmpath(path_competitors)
 return

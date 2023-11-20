@@ -38,7 +38,6 @@ test_options.output_block_hist = (rand > 0.5);
 if single_test
     % DO NOT INVOKE ANY RANDOMIZATION WITHIN THIS IF. Otherwise, a single test cannot reproduce the
     % corresponding test in a multiple one.
-    test_options.maxhist = test_options.maxfun;
     test_options.output_xhist = true;
     test_options.output_block_hist = true;
 end
@@ -192,9 +191,6 @@ function eq = iseq(x, f, exitflag, output, xx, ff, ee, oo, prec)
     if (prec == 0 && (exitflag ~= ee|| oo.funcCount ~= output.funcCount))
         eq = false;
     end
-    
-    %diff = max([abs(ff-f)/(1+abs(f)), norm(xx-x)/(1+norm(x)), ...
-    %    abs(oo.constrviolation-output.constrviolation)/(1+abs(output.constrviolation))]);
     
     return
 

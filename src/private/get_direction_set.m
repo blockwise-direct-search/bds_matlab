@@ -78,7 +78,7 @@ else
     % We use QR factorization with permutation to find such columns. 
     % The following columns of Q will be added to direction_set.
     % 1. The corresponding diagonal elements of R are tiny.
-    % 2. Columns m+1 to n with m being the number of columns in diretion_set, provided that m < n.
+    % 2. Columns m+1 to n with m being the number of columns in direction_set, provided that m < n.
     [Q, R, ~] = qr(direction_set);
     [~, m] = size(direction_set);
     % deficient_columns contains the indices of the tiny diagonal elements of R. 

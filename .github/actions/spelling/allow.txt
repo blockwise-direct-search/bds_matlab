@@ -744,6 +744,8 @@ iscs
 isdir
 isempty
 Iserles
+iseq
+iseqiv
 isfield
 isinf
 isintegerscalar
@@ -1039,6 +1041,7 @@ Microw
 midsloppy
 Mikaitis
 mindim
+minfhist
 Mirsky
 mjdp
 mkdir
@@ -1106,6 +1109,7 @@ Nesterov
 Netrapalli
 neue
 Neumaier
+neval
 newcommand
 newpage
 newuoa
@@ -1200,6 +1204,7 @@ ODonoghe
 ODorney
 odot
 Oevieto
+olddir
 oldpath
 Olkin
 ominus
@@ -1285,7 +1290,9 @@ PMLR
 pmpaths
 pms
 pmtools
+pname
 pnas
+png
 Polyak
 Polymathematics
 polyu
@@ -1483,6 +1490,7 @@ setaftersubsubsecskip
 setbeforesecskip
 setbeforesubsecskip
 setbeforesubsubsecskip
+setdiff
 sethangfrom
 setheaderspaces
 setheadfoot
@@ -1817,6 +1825,7 @@ Waanders
 Walster
 warnoff
 Wcheck
+weeknum
 wholename
 whos
 widehat
@@ -1829,6 +1838,7 @@ workflow
 workflows
 wp
 wr
+wrn
 Wujek
 Wvec
 xbase

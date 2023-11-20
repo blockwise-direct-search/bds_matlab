@@ -16,7 +16,7 @@ try
         error("The version of archiva should be input.")
     end
 
-    % Compile the verison of archiva.
+    % Compile the version of archiva.
     path_norma = locate_norma();
     path_version = fullfile(path_norma, parameters.version);
     path_verify = fileparts(mfilename('fullpath'));
@@ -34,6 +34,10 @@ try
 
     % Tell MATLAB where to find MatCUTEst.
     locate_matcutest();
+
+    % Record `olddir` in `options` so that we can come back to `olddir` during `isequiv` if
+    % necessary (for example, when a single test fails).
+    parameters.olddir = olddir;
 
     % Get list of problems
     if isfield(parameters, "problems_type")
