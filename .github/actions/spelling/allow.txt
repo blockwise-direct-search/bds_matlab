@@ -746,6 +746,7 @@ isempty
 Iserles
 iseq
 iseqiv
+isequiv
 isfield
 isinf
 isintegerscalar
