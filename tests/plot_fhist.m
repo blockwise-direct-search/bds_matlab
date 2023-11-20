@@ -30,6 +30,22 @@ else
     maxdim = 10;
 end
 
+hfig = figure("visible", true);  % Plot the figure with displaying it.
+
+fullpath = mfilename("fullpath");
+path_tests = fileparts(fullpath);
+path_bds = fileparts(path_tests);
+path_src = fullfile(path_bds, "src");
+path_competitors = fullfile(path_bds, "tests", "competitors");
+addpath(path_tests)
+addpath(path_src)
+addpath(path_competitors)
+
+cd(path_tests)
+cd ./private
+locate_matcutest();
+cd (path_tests)
+
 % If the folder of testdata does not exist, make a new one.
 current_path = mfilename("fullpath");
 path_tests = fileparts(current_path);
@@ -62,6 +78,10 @@ for i = 1:length(prob_list)
     problem_name = prob_list{i};
     fhist_solvers(problem_name, parameters);
 end
+
+rmpath(path_tests);
+rmpath(path_src);
+rmpath(path_competitors);
 
 end
 

@@ -38,14 +38,10 @@ num_blocks = n;
 block_indices = 1:num_blocks;
 
 % Set MAXFUN to the maximum number of function evaluations.
-if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-    maxfun = min(options.maxfun_factor*n, options.maxfun);
-elseif isfield(options, "maxfun_factor")
-    maxfun = options.maxfun_factor*n;
-elseif isfield(options, "maxfun")
+if isfield(options, "maxfun")
     maxfun = options.maxfun;
 else
-    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
+    maxfun = get_default_constant("maxfun_dim_factor")*n;
 end
 
 % Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
