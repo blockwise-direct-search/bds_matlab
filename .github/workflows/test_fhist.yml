@@ -79,7 +79,7 @@ jobs:
             parameters.mindim = ${{ matrix.mindim }};
             parameters.maxdim = ${{ matrix.maxdim }};
             parameters.log_x_axis = ${{ matrix.log_x_axis }};
-            parameters.features = ${{ matrix.feature }};
+            parameters.features = "${{ matrix.feature }}";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             plot_fhist(parameters);
 
