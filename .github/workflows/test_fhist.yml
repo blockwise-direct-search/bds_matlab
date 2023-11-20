@@ -20,8 +20,10 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [simplex, bfgs, newuoa]
-        mindim : [10]
-        maxdim : [100]
+        feature: [plain, low, medium, high, randomx0_10]
+        log_x_axis: [true, false]
+        mindim : [1]
+        maxdim : [5]
 
     steps:
 
@@ -76,6 +78,8 @@ jobs:
             cd(path_tests)
             parameters.mindim = ${{ matrix.mindim }};
             parameters.maxdim = ${{ matrix.maxdim }};
+            parameters.log_x_axis = ${{ matrix.log_x_axis }};
+            parameters.features = ${{ matrix.feature }};
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             plot_fhist(parameters);
 
@@ -84,5 +88,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_fhist_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.mindim }}_${{ matrix.maxdim }}
+          name: test_fhist_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.mindim }}_${{ matrix.maxdim }}_${{ matrix.feature }}_logx_${{ matrix.log_x_axis }}
           path: ./tests/testdata

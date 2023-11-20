@@ -30,8 +30,6 @@ else
     maxdim = 10;
 end
 
-hfig = figure("visible", true);  % Plot the figure with displaying it.
-
 fullpath = mfilename("fullpath");
 path_tests = fileparts(fullpath);
 path_bds = fileparts(path_tests);
@@ -67,18 +65,78 @@ for i = 1:length(parameters.solvers_name)
     end
 end
 
-stamp = strcat(pdfname, "_", "mindim", "_", num2str(mindim), "_", "maxdim", "_", num2str(maxdim), "_", time_str);
+if isfield(parameters, "feature")
+    if startsWith(lower(parameters.feature), "randomx0")
+        test_options.is_noisy = false;
+        test_options.random_initial_point = true;
+        level_str = split(lower(parameters.feature), "_");
+        parameters.x0_perturbation_level = str2double(level_str{2});
+    else
+        switch lower(parameters.feature)
+            case "plain"
+                test_options.is_noisy = false;
+                test_options.noise_level = 0;
+                parameters.feature = "no_noise";
+            case "negligible"
+                test_options.is_noisy = true;
+                test_options.noise_level = 1.0e-7;
+                parameters.feature = strcat(parameters.noise_type, "_", "-7", "_noise");
+            case "low"
+                test_options.is_noisy = true;
+                test_options.noise_level = 1.0e-5;
+                parameters.feature = strcat(parameters.noise_type, "_", "-5", "_noise");
+            case "medium"
+                test_options.is_noisy = true;
+                test_options.noise_level = 1.0e-3;
+                parameters.feature = strcat(parameters.noise_type, "_", "-3", "_noise");
+            case "high"
+                test_options.is_noisy = true;
+                test_options.noise_level = 1.0e-1;
+                parameters.feature = strcat(parameters.noise_type, "_", "-1", "_noise");
+            otherwise
+                error("Unknown feature %s", parameters.feature);
+        end
+    end
+end
+
+if ~isfield(parameters, "log_x_axis")
+    parameters.log_x_axis = false;
+end
+
+if ~isfield(parameters, "feature")
+    parameters.feature = '';
+end
+
+if parameters.log_x_axis
+    stamp = strcat(pdfname, "_", "mindim", "_", num2str(mindim), "_", ...
+        "maxdim", "_", num2str(maxdim), "_", parameters.feature, "_", "log_x_axis", "_", time_str);
+else
+    stamp = strcat(pdfname, "_", "mindim", "_", num2str(mindim), "_", ...
+        "maxdim", "_", num2str(maxdim), "_", parameters.feature, "_", time_str);
+end
+
 savepath = fullfile(path_testdata, stamp);
 mkdir(savepath);
 parameters.savepath = savepath;
 
 prob_list = dimensions(type, mindim, maxdim);
 
-for i = 1:length(prob_list)
-    problem_name = prob_list{i};
-    fhist_solvers(problem_name, parameters);
+if ~exist('test_options', 'var') 
+    test_options = struct();
+    test_options.is_noisy = false;
 end
 
+for i = 1:length(prob_list)
+    problem_name = prob_list{i};
+    fhist_solvers(problem_name, parameters, test_options);
+end
+
+outdir = savepath; 
+outputfile = char(strcat("merged", "_", stamp, ".pdf"));
+compdf_location = char(fullfile(path_tests, "private", "compdf"));
+merge_pdf(outdir, outputfile, compdf_location);
+
+cd(path_tests);
 rmpath(path_tests);
 rmpath(path_src);
 rmpath(path_competitors);
