@@ -17,9 +17,6 @@ inputfiles = strjoin(pdfNamesCell, ' ');
 inputfiles = strtrim(inputfiles);
 
 % Merge pdf.
-% outputfile = 'merged_CBDS_5_200_big_plain.pdf';
-%system(['bash ', '/home/lhtian97/Documents/bds/tests/private/compdf', ' ', inputfiles, ' -o ', outputfile]);
-keyboard
 system(['bash ', compdf_location, ' ', inputfiles, ' -o ', outputfile]);
 
 

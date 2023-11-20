@@ -65,6 +65,11 @@ for i = 1:length(parameters.solvers_name)
     end
 end
 
+test_options = struct();
+if ~isfield(parameters, "noise_type")
+    test_options.noise_type = "gaussian";
+end
+
 if isfield(parameters, "feature")
     if startsWith(lower(parameters.feature), "randomx0")
         test_options.is_noisy = false;
@@ -80,23 +85,35 @@ if isfield(parameters, "feature")
             case "negligible"
                 test_options.is_noisy = true;
                 test_options.noise_level = 1.0e-7;
-                parameters.feature = strcat(parameters.noise_type, "_", "-7", "_noise");
+                parameters.feature = strcat(test_options.noise_type, "_", "-7", "_noise");
             case "low"
                 test_options.is_noisy = true;
                 test_options.noise_level = 1.0e-5;
-                parameters.feature = strcat(parameters.noise_type, "_", "-5", "_noise");
+                parameters.feature = strcat(test_options.noise_type, "_", "-5", "_noise");
             case "medium"
                 test_options.is_noisy = true;
                 test_options.noise_level = 1.0e-3;
-                parameters.feature = strcat(parameters.noise_type, "_", "-3", "_noise");
+                parameters.feature = strcat(test_options.noise_type, "_", "-3", "_noise");
             case "high"
                 test_options.is_noisy = true;
                 test_options.noise_level = 1.0e-1;
-                parameters.feature = strcat(parameters.noise_type, "_", "-1", "_noise");
+                parameters.feature = strcat(test_options.noise_type, "_", "-1", "_noise");
             otherwise
                 error("Unknown feature %s", parameters.feature);
         end
     end
+end
+
+if isfield(parameters, 'is_noisy') 
+    test_options.is_noisy = parameters.is_noisy;
+else
+    test_options.is_noisy = false;
+end
+
+if isfield(parameters, 'is_abs_noise') 
+    test_options.is_abs_noise = parameters.is_abs_noise;
+else
+    test_options.is_abs_noise = false;
 end
 
 if ~isfield(parameters, "log_x_axis")
@@ -121,10 +138,7 @@ parameters.savepath = savepath;
 
 prob_list = dimensions(type, mindim, maxdim);
 
-if ~exist('test_options', 'var') 
-    test_options = struct();
-    test_options.is_noisy = false;
-end
+
 
 for i = 1:length(prob_list)
     problem_name = prob_list{i};
