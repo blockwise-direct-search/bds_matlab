@@ -23,7 +23,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [simplex, bfgs, newuoa]
-        feature: [plain, low, medium, high, randomx0_10]
+        feature: [plain, low, medium, high, randomx0_100]
         log_x_axis: [true, false]
         mindim : [1]
         maxdim : [100]

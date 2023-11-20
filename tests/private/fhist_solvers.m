@@ -3,7 +3,14 @@ function fhist_solvers(problem_name, parameters, test_options)
 %
 
 p = macup(problem_name);
-dim = length(p.x0);
+x0 = p.x0;
+dim = length(x0);
+
+if isfield(parameters, "x0_perturbation_level")
+    rr = randn(size(x0));
+    rr = rr / norm(rr);
+    x0 = x0 + parameters.x0_perturbation_level * max(1, norm(x0)) * rr;
+end
 
 color_set = ["red", "blue", "green", "yellow"];
 solvers_num = length(parameters.solvers_options);
@@ -15,7 +22,7 @@ for i = 1:solvers_num
 
     solver = str2func(parameters.solvers_options{i}.solver);
     obj = ScalarFunction(p);
-    solver(@(x)obj.fun(x,test_options.is_noisy,1,test_options), p.x0, parameters.solvers_options{i});
+    solver(@(x)obj.fun(x,test_options.is_noisy,1,test_options), x0, parameters.solvers_options{i});
     fhist{i} = obj.valHist;
 
 end
