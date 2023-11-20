@@ -2,7 +2,7 @@ name: Test fhist for bds
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   #schedule:
   # - cron: '0 12 */7 * *'
@@ -21,7 +21,7 @@ jobs:
         solver: [CBDS]
         competitor: [simplex, bfgs, newuoa]
         mindim : [10]
-        maxdim : [60]
+        maxdim : [100]
 
     steps:
 
