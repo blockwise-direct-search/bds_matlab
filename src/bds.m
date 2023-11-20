@@ -365,7 +365,7 @@ for iter = 1:maxit
         available_block_indices = setdiff(all_block_indices, unavailable_block_indices);
         % Select a block randomly from available_block_indices.
         idx = random_stream.randi(length(available_block_indices));
-        block_indices = available_indices(idx);  % a vector of length 1
+        block_indices = available_block_indices(idx);  % a vector of length 1
     end
     
     for i = 1:length(block_indices)
