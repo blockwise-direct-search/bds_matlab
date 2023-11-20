@@ -1,0 +1,85 @@
+name: Test fhist for bds
+
+on:
+  # Trigger the workflow on push or pull request
+  # push:
+  # Trigger the workflow manually
+  #schedule:
+  # - cron: '0 12 */7 * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Test fhist for bds
+    runs-on: ${{matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        matlab: [latest]
+        with_optim_toolbox: [yes]
+        mindim : [10]
+        maxdim : [60]
+
+    steps:
+
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Clone MatCUTEst
+        uses: actions/checkout@v4
+        with:
+          repository: matcutest/matcutest_compiled
+          path: matcutest
+
+      - name: Clone PRIMA
+        uses: actions/checkout@v4
+        with:
+          repository: libprima/prima
+          path: prima
+
+      - name: Cache MATLAB
+        id: cache-matlab
+        uses: actions/cache@v3.3.2
+        with:
+          path: ${{ runner.tool_cache }}/MATLAB
+          key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
+
+      - name: Set up MATLAB with optimization toolbox
+        if: ${{ matrix.with_optim_toolbox == 'yes' }}
+        uses: matlab-actions/setup-matlab@v2-beta
+        with:
+          release: ${{ matrix.matlab }}
+          products: Optimization_Toolbox
+
+      - name: Run test
+        uses: matlab-actions/run-command@v1.2.2
+        with:
+          command: |
+            root_dir = pwd()
+
+            % Install MatCUTEst
+            cd(fullfile(root_dir, 'matcutest'));
+            install(); cd(root_dir);
+
+            % Compile prima
+            path_prima = fullfile(root_dir, 'prima');
+            cd(path_prima);
+            setup
+
+            % Conduct your tests
+            path_tests = fullfile(root_dir, 'tests');
+            cd(path_tests)
+            parameters.mindim = ${{ matrix.mindim }};
+            parameters.maxdim = ${{ matrix.maxdim }};
+            plot_fhist(parameters);
+
+
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: test_fhist_bds
+          path: ./tests/testdata

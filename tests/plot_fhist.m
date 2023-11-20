@@ -1,59 +1,53 @@
-function plot_fhist(problem_name, parameters)
-% This file is to draw the function value history of the solvers.
-% 
+function plot_fhist(parameters)
 
-fullpath = mfilename("fullpath");
-path_examples = fileparts(fullpath);
-path_bds = fileparts(path_examples);
-path_src = fullfile(path_bds, "src");
-path_competitors = fullfile(path_bds, "tests", "competitors");
-addpath(path_src)
-addpath(path_competitors)
 
-locate_matcutest();
-p = macup(problem_name);
-
-color_set = ["red", "blue", "green", "yellow"];
-solvers_num = length(parameters.solvers_name);
-fhist = cell(1, solvers_num);
-
-if ~isfield(parameters, "solvers_options")
-    parameters.solvers_options = {};
+if nargin < 3
+    parameters = struct();
 end
 
-for i = 1:solvers_num
-    parameters.solvers_options{i}.solver = parameters.solvers_name(i);
+if isfield(parameters, "type")
+    type = parameters.type;
+else
+    type = 'u';
 end
 
-parameters = get_solvers(parameters);
-options = struct();
-test_options = struct();
-
-for i = 1:solvers_num
-    
-    solver = str2func(parameters.solvers_options{i}.solver);
-    if i <= length(parameters.solvers_options)
-        options = parameters.solvers_options{i};
-    end
-
-    if strcmpi(parameters.solvers_name(i), "bds")
-        [~, ~, ~, output] = solver(p.objective, p.x0, options);
-    else
-        obj = ScalarFunction(p);
-        solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, struct());
-        output.fhist = obj.valHist;
-    end  
- 
-    fhist{i} = output.fhist;
+if isfield(parameters, "mindim")
+    mindim = parameters.mindim;
+else
+    mindim = 10;
 end
 
-for i = 1:solvers_num
-    loglog(fhist{i}, color_set(i));
-    hold on
+if isfield(parameters, "maxdim")
+    maxdim = parameters.maxdim;
+else
+    maxdim = 10;
 end
 
-rmpath(path_src)
-rmpath(path_competitors)
+% If the folder of testdata does not exist, make a new one.
+current_path = mfilename("fullpath");
+path_tests = fileparts(current_path);
+path_testdata = fullfile(path_tests, "testdata");
+if ~exist(path_testdata, "dir")
+    mkdir(path_testdata);
+end
+
+% Use time to distinguish.
+time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
+% Trim time string.
+time_str = trim_time(time_str);
+stamp = strcat("mindim", "_", num2str(mindim), "_", "maxdim", "_", num2str(maxdim), "_", time_str);
+savepath = fullfile(path_testdata, stamp);
+mkdir(savepath);
+
+parameters.solvers_name = ["bds", "newuoa"];
+parameters.savepath = savepath;
+
+prob_list = dimensions(type, mindim, maxdim);
+
+for i = 1:length(prob_list)
+    problem_name = prob_list{i};
+    fhist_solvers(problem_name, parameters);
+end
 
 end
 

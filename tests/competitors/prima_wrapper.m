@@ -2,6 +2,9 @@ function prima_wrapper(fun, x0, options)
 %A wrapper for PRIMA.
 %
 
+% Tell MATLAB where to find PRIMA.
+locate_prima();
+
 % Dimension
 n = numel(x0);
 
@@ -10,7 +13,7 @@ if isfield(options, "default") && options.default
     Algorithm = "newuoa";
     solver = str2func(Algorithm);
     solver(fun, x0);
-    
+
 else
 
     if isfield(options, "StepTolerance")
@@ -18,7 +21,7 @@ else
     else
         options.rhoend = get_default_constant("StepTolerance");
     end
-    
+
     if isfield(options, "alpha_init")
         options.rhobeg = options.alpha_init;
     else
@@ -37,9 +40,9 @@ else
     else
         maxfun = get_default_constant("maxfun_dim_factor")*n;
     end
-    
+
     options.maxfun = maxfun;
-    
+
     if isfield(options, "Algorithm")
         Algorithm = options.Algorithm;
     else
@@ -47,7 +50,6 @@ else
     end
 
     solver = str2func(Algorithm);
-    options = rmfield(options, "Algorithm");
     solver(fun, x0, options);
 
 end
