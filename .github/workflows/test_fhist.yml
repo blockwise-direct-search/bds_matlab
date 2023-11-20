@@ -2,7 +2,7 @@ name: Test fhist for bds
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   #schedule:
   # - cron: '0 12 */7 * *'
@@ -18,6 +18,8 @@ jobs:
         os: [ubuntu-latest]
         matlab: [latest]
         with_optim_toolbox: [yes]
+        solver: [CBDS]
+        competitor: [simplex, bfgs, newuoa]
         mindim : [10]
         maxdim : [60]
 
@@ -74,6 +76,7 @@ jobs:
             cd(path_tests)
             parameters.mindim = ${{ matrix.mindim }};
             parameters.maxdim = ${{ matrix.maxdim }};
+            parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             plot_fhist(parameters);
 
 
@@ -81,5 +84,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_fhist_bds
+          name: test_fhist_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.mindim }}_${{ matrix.maxdim }}
           path: ./tests/testdata
