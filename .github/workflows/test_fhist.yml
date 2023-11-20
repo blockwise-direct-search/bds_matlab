@@ -26,7 +26,7 @@ jobs:
         feature: [plain, low, medium, high, randomx0_10]
         log_x_axis: [true, false]
         mindim : [1]
-        maxdim : [5]
+        maxdim : [100]
         
     steps:
 
