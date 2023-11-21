@@ -53,12 +53,14 @@ if parameters.log_x_axis
     end
 else
     for i = 1:solvers_num
-        semilogx(fhist_plot{i}, color_set(i));
+        semilogy(fhist_plot{i}, color_set(i));
         hold on
     end
 end
 
-legend(parameters.solvers_name(1), parameters.solvers_name(2));
+title_name = char(strcat(p.name, '-', num2str(dim)));
+title(title_name);
+legend(parameters.solvers_name(1), parameters.solvers_name(2), 'Location', 'southwest', 'FontSize', 8);
 
 if dim < 10
     filename = strcat("0", num2str(dim), "_", problem_name);
