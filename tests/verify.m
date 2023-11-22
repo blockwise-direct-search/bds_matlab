@@ -11,16 +11,10 @@ exception = [];
 
 try
 
-    % In case no version of archiva is input.
-    if ~isfield(parameters, "version")
-        error("The version of archiva should be input.")
-    end
-
-    % Compile the version of archiva.
+    % Compile the version of norma.
     path_norma = locate_norma();
-    path_version = fullfile(path_norma, parameters.version);
     path_verify = fileparts(mfilename('fullpath'));
-    cd(path_version);
+    cd(path_norma);
     setup
     cd(path_verify);
 

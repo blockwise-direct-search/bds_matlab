@@ -21,11 +21,11 @@ fhist_plot = cell(1, solvers_num);
 for i = 1:solvers_num
 
     solver = str2func(parameters.solvers_options{i}.solver);
-    if strcmpi(parameters.solvers_options{i}.solver, "fminunc_wrapper")
-        test_options.fd = true;
-    else
-        test_options.fd = false;
-    end
+    % Set the value of with_gradient. If the solver is fminunc_wrapper and
+    % the problem is noisy, then with_gradient is true, which means that
+    % fminunc will accept the gradient which is provided by the user using 
+    % finite difference with a new FiniteDifferenceStepSize.
+    test_options.with_gradient = strcmpi(parameters.solvers_options{i}.solver, "fminunc_wrapper") && test_options.is_noisy;
     obj = ScalarFunction(p);
     solver(@(x)obj.fun(x,test_options.is_noisy,1,test_options), x0, parameters.solvers_options{i});
     fhist{i} = obj.valHist;

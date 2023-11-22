@@ -33,4 +33,13 @@ if isfield(parameters, "default") && parameters.default
     end
 end
 
+% Set with_gradient for fminunc. Note that when the problem is noisy, we
+% should use the gradient we provide in ScalarFunction. Make sure that
+% the value of with_gradient is consistent with the value in get_fhist.m.
+for i = 1:length(parameters.solvers_name)
+    if strcmpi(parameters.solvers_options{i}.solver, "fminunc_wrapper")
+        parameters.solvers_options{i}.with_gradient = parameters.is_noisy;
+    end
+end
+
 end

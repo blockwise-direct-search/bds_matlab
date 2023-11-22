@@ -30,6 +30,7 @@ else
     else
         tol = get_default_constant("StepTolerance");
     end
+    % tol = eps;
 
     % Set the target of the objective function.
     if isfield(options, "ftarget")
@@ -45,12 +46,19 @@ else
         fminunc_type = "bfgs";
     end
 
+    % Set the value of with_gradient. If and only if fminunc is invoked
+    % and the problem is noisy, with_gradient should be true.
+    with_gradient = options.with_gradient;
+    
+    % Set the options of fminunc. If and only if SpecifyObjectiveGradient is true,
+    % fminunc will accept the gradient provided by the user. 
     options = optimoptions("fminunc", "Algorithm", "quasi-newton", "HessUpdate", ...
-        fminunc_type, "MaxFunctionEvaluations", maxfun, "MaxIterations", 10^20,...
-        "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", eps);
+        fminunc_type, "MaxFunctionEvaluations", maxfun, "MaxIterations", 10^20, ...
+        "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", eps, ...
+        'SpecifyObjectiveGradient', with_gradient);
 
-    [X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
-    %fminunc(FUN, x0, options);
+    %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
+    fminunc(FUN, x0, options);
 
 end
 

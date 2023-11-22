@@ -5,6 +5,7 @@ function [f] = eval_fun(fun, x)
 try
     f = fun(x);    
 catch
+    keyboard
     warning('The function evaluation failed.');
     f = NaN; 
 end

@@ -32,11 +32,12 @@ classdef ScalarFunction < handle
         end
 
         function [f, g] = fun(obj,x,is_noisy,k_run,options)
-            %FUN Evaluation the scalar function.
+            %FUN evaluates the scalar function. If and only if the
+            %   function is noisy and the with_gradient is true, it also
+            %   returns the gradient of the function.
             %
             %   F = OBJ.FUN(X) returns the function evaluation at X.
-            [f, g] = obj.userFun(x);
-           
+            f = obj.userFun(x);
             obj.nEval = obj.nEval+1;
             if obj.storeHist
                 obj.valHist(end+1) = f;
@@ -63,16 +64,38 @@ classdef ScalarFunction < handle
                 else
                     f = f*(1.0+options.noise_level*noise);
                 end
-                if options.fd
-                    h = sqrt(abs(f)*options.noise_level); 
-                    f_fd = obj.userFun(x + h*ones(length(x), 1));
-                    obj.nEval = obj.nEval+1;
-                    if obj.storeHist
-                        obj.valHist(end+1) = f;
+                % If with_gradient is true, it means that we are calculating the fhist of 
+                % fminunc and the problem is noisy. In this case, we offer the gradient
+                % by finite difference using another FiniteDifferenceStepSize, which
+                % is sqrt(max(abs(f), 1)*options.noise_level). It will improve 
+                % the performance of fminunc than using the default FiniteDifferenceStepSize.
+                % We need to make sure the function evaluations during the finite difference
+                % are included in the fhist. Since fminunc does not accept the gradient that
+                % contains nan, we set nan in the gradient to be zero. Since fminunc also does
+                % not accept the gradient which contains inf or -inf, we set the gradient to 
+                % be 10^10 if it is larger than 10^10 and -10^10 if it is smaller than -10^10 piecewisely. 
+                if isfield(options, "with_gradient") && options.with_gradient && nargout >= 2
+                    if options.is_abs_noise
+                        h = sqrt(options.noise_level);
+                    else
+                        h = sqrt(max(abs(f), 1)*options.noise_level); 
                     end
-                    g = (f_fd - f)/h;
+                    dim = length(x);
+                    g = NaN(dim, 1);
+                    V = eye(dim);
+                    for i = 1:dim
+                        f_fd = obj.userFun(x + h*V(:, i));
+                        if obj.storeHist
+                            obj.valHist(end+1) = f_fd;
+                        end
+                        obj.nEval = obj.nEval+1;
+                        g(i) = (f_fd - f)/h;
+                    end
+                    g(isnan(g)) = 0;
+                    grad_max = 10^10;
+                    g = min(grad_max, max(-grad_max, g)); 
                 end
-            end
+            end 
         end
 
         function valHist = get.valHist(obj)

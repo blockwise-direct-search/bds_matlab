@@ -7,11 +7,13 @@ name_solver = options.solver;
 solver = str2func(name_solver);
 % Initialize fhist for performance profile.
 fhist_perfprof = NaN(maxfun_frec, 1);
-if strcmpi(name_solver, "fminunc_wrapper")
-    test_options.fd = true;
-else
-    test_options.fd = false;
-end
+% Set with_gradient for test_options. If the solver is fminunc_wrapper, then
+% and the problem is noisy, then we will set with_gradient to be true.
+% Make sure that the value of with_gradient is consistent with the value of
+% with_gradient in the get_options.m. The only case for which we set
+% with_gradient to be true is when the solver is fminunc_wrapper and the
+% problem is noisy. 
+test_options.with_gradient = strcmpi(name_solver, "fminunc_wrapper") && test_options.is_noisy;
 
 % Scaling_matrix
 % Gradient will be affected by scaling_matrix
@@ -25,12 +27,12 @@ end
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
-try
+
+try 
     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
-catch
-
+catch 
+    warning('!!!Solver %s RAISE AN ERROR on problem %s with r = %d!!!', name_solver, p.name, r);
 end
-
 %solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 
 % Get length of fhist.
