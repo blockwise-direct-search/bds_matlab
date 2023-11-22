@@ -31,11 +31,12 @@ classdef ScalarFunction < handle
             obj.valHist = [];
         end
 
-        function f = fun(obj,x,is_noisy,k_run,options)
+        function [f, g] = fun(obj,x,is_noisy,k_run,options)
             %FUN Evaluation the scalar function.
             %
             %   F = OBJ.FUN(X) returns the function evaluation at X.
-            f = obj.userFun(x);
+            [f, g] = obj.userFun(x);
+           
             obj.nEval = obj.nEval+1;
             if obj.storeHist
                 obj.valHist(end+1) = f;
@@ -61,6 +62,15 @@ classdef ScalarFunction < handle
                     f = f+options.noise_level*noise;
                 else
                     f = f*(1.0+options.noise_level*noise);
+                end
+                if options.fd
+                    h = sqrt(abs(f)*options.noise_level); 
+                    f_fd = obj.userFun(x + h*ones(length(x), 1));
+                    obj.nEval = obj.nEval+1;
+                    if obj.storeHist
+                        obj.valHist(end+1) = f;
+                    end
+                    g = (f_fd - f)/h;
                 end
             end
         end

@@ -21,6 +21,11 @@ fhist_plot = cell(1, solvers_num);
 for i = 1:solvers_num
 
     solver = str2func(parameters.solvers_options{i}.solver);
+    if strcmpi(parameters.solvers_options{i}.solver, "fminunc_wrapper")
+        test_options.fd = true;
+    else
+        test_options.fd = false;
+    end
     obj = ScalarFunction(p);
     solver(@(x)obj.fun(x,test_options.is_noisy,1,test_options), x0, parameters.solvers_options{i});
     fhist{i} = obj.valHist;
@@ -28,8 +33,8 @@ for i = 1:solvers_num
 end
 
 % Get fval.
+fval = min(fhist{1});
 for i = 1:solvers_num
-    fval = min(fhist{i});
     if i ~= 1
         fval = min(fval, min(fhist{i}));
     end
@@ -41,7 +46,8 @@ for i = 1:solvers_num
 end
 
 for i = 1:solvers_num
-    fhist_plot{i} = abs(fhist_plot{i} - fval + eps)/max(abs(fhist{i}(1) - fval), eps);
+    fhist_plot{i} = abs(fhist_plot{i} - fval + eps)/max(abs(fhist{i}(1)), eps);
+    %fhist_plot{i} = abs(fhist{i} - fval + eps);
 end
 
 hfig = figure("visible", false);  % Plot the figure without displaying it.
@@ -58,8 +64,7 @@ else
     end
 end
 
-title_name = char(strcat(p.name, '-', num2str(dim)));
-title(title_name);
+title(char(strcat(p.name, '-', num2str(dim))));
 legend(parameters.solvers_name(1), parameters.solvers_name(2), 'Location', 'southwest', 'FontSize', 8);
 
 if dim < 10

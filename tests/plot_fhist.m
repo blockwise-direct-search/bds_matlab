@@ -104,15 +104,11 @@ if isfield(parameters, "feature")
     end
 end
 
-if isfield(parameters, 'is_noisy') 
-    test_options.is_noisy = parameters.is_noisy;
-else
+if ~isfield(test_options, 'is_noisy')
     test_options.is_noisy = false;
 end
 
-if isfield(parameters, 'is_abs_noise') 
-    test_options.is_abs_noise = parameters.is_abs_noise;
-else
+if ~isfield(test_options, 'is_abs_noise')
     test_options.is_abs_noise = false;
 end
 
@@ -138,14 +134,12 @@ parameters.savepath = savepath;
 
 prob_list = dimensions(type, mindim, maxdim);
 
-
-
 for i = 1:length(prob_list)
     problem_name = prob_list{i};
     fhist_solvers(problem_name, parameters, test_options);
 end
 
-outdir = savepath; 
+outdir = savepath;
 outputfile = char(strcat("merged", "_", stamp, ".pdf"));
 compdf_location = char(fullfile(path_tests, "private", "compdf"));
 merge_pdf(outdir, outputfile, compdf_location);

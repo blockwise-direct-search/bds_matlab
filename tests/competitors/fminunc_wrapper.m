@@ -49,8 +49,8 @@ else
         fminunc_type, "MaxFunctionEvaluations", maxfun, "MaxIterations", 10^20,...
         "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", eps);
 
-    %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
-    fminunc(FUN, x0, options);
+    [X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
+    %fminunc(FUN, x0, options);
 
 end
 
