@@ -1,4 +1,4 @@
-function verify(parameters)
+function verify_bds(parameters)
 
 % Record the current path.
 oldpath = path();
