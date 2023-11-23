@@ -1,4 +1,4 @@
-function rosenbrock_example()
+function rosenbrock_example(options)
 %This file is cited from https://github.com/libprima/prima/blob/main/matlab/examples/rosenbrock_example.m, which is
 %written by Zaikun Zhang.
 %ROSENBROCK_EXAMPLE illustrates how to use bds.
@@ -14,6 +14,11 @@ function rosenbrock_example()
 % Attribute: public (can be called directly by users)
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Set options to an empty structure if it is not provided.
+if nargin < 3
+    options = struct();
+end
 
 x0 = [0; 0; 0];  % starting point
 

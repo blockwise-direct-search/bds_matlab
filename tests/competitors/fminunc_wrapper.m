@@ -46,8 +46,8 @@ else
         fminunc_type = "bfgs";
     end
 
-    % Set the value of with_gradient. If and only if fminunc is invoked
-    % and the problem is noisy, with_gradient should be true.
+    % If and only if fminunc is invoked and the problem is noisy, with_gradient should be true, which
+    % means that the gradient is provided by the user.
     with_gradient = options.with_gradient;
     
     % Set the options of fminunc. If and only if SpecifyObjectiveGradient is true,

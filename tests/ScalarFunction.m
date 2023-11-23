@@ -66,25 +66,16 @@ classdef ScalarFunction < handle
                 end
                 % If with_gradient is true, it means that we are calculating the fhist of 
                 % fminunc and the problem is noisy. 
-                % 
-                % 
                 % In this case, we provide fmiunc with an approximate gradient obtained by
                 % finite difference, the step size for the finite difference being 
                 % h = sqrt(eps_f), where eps_f is an estimation of the noise in f. 
                 % This value of h will improve the performance of fminunc, which 
                 % approximates the gradient by finite difference with step size 
                 % h_default = sign(x).*sqrt(eps*|x|) when no gradient is provided. 
-
-
-
-
-
-                % Indeed, 
-                % the step size that minimizes the error of the finite difference is 
+                % Indeed, the step size that minimizes the error of the finite difference is 
                 % h_optimal = sqrt(eps_f/|f''|), where f'' is the second derivative of f, 
                 % and h is an approximation of h_optimal when no second-order information
                 % is available.
-
                 if isfield(options, "with_gradient") && options.with_gradient && nargout >= 2
                     if options.is_abs_noise
                         h = sqrt(options.noise_level);

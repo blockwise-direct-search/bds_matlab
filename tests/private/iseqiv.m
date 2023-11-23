@@ -46,7 +46,7 @@ if ir == 2
     test_options.shrink = rand;
 end
 if ir == 3
-    test_options.maxfun = test_options.maxfun + 1;
+    test_options.maxfun = 1 + ceil(100*n*abs(randn));
 end
 if ir == 4
     test_options.maxfun = 1000*n;
