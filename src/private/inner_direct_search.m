@@ -1,12 +1,12 @@
 function [xopt, fopt, exitflag, output] = inner_direct_search(fun, ...
-    xopt, fopt, D, direction_indices, alpha, options)
+    xbase, fbase, D, direction_indices, alpha, options)
 %INNER_DIRECT_SEARCH performs a single iteration of classical direct search 
 %   within a given block.
 %
-%   xopt = INNER_DIRECT_SEARCH(FUN, xopt, fopt, D, DIRECTION_INDICES, ALPHA, OPTIONS)
+%   xopt = INNER_DIRECT_SEARCH(FUN, xbase, fbase, D, DIRECTION_INDICES, ALPHA, OPTIONS)
 %   returns an xopt.
 %
-%   xopt = INNER_DIRECT_SEARCH(FUN, xopt, fopt, D, ...
+%   xopt = INNER_DIRECT_SEARCH(FUN, xbase, fbase, D, ...
 %   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS, which includes
 %   reduction_factor, ftarget, polling, with_cycling_memory, cycling.
 %
@@ -53,13 +53,13 @@ maxfun = options.maxfun;
 exitflag = NaN;
 
 % Initialize some parameters before entering the loop.
-n = length(xopt);
+n = length(xbase);
 num_directions = length(direction_indices);
 fhist = NaN(1, num_directions);
 xhist = NaN(n, num_directions);
 nf = 0; 
-fbase = fopt;
-xbase = xopt;
+fopt = fbase;
+xopt = xbase;
 
 for j = 1 : num_directions
     

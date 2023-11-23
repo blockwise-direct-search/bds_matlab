@@ -278,6 +278,11 @@ else
     alpha_all = ones(num_blocks, 1);
 end
 
+% fopt_all(i) records the best function values encountered in the i-th block after one iteration, 
+% and xopt_all(:, i) is the corresponding value of x.
+fopt_all = NaN(1, num_blocks);
+xopt_all = NaN(n, num_blocks);
+
 % Determine the indices of directions in each block.
 direction_set_indices = divide_direction_set(num_directions, num_blocks);
 
@@ -344,6 +349,7 @@ end
 all_block_indices = (1:num_blocks);
 num_visited_blocks = 0;
 
+
 for iter = 1:maxit
 
     % Define block_indices, which is a vector containing the indices of blocks that we 
@@ -367,7 +373,7 @@ for iter = 1:maxit
         idx = random_stream.randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
     end
-    
+
     for i = 1:length(block_indices)
 
         % i_real = block_indices(i) is the real index of the block to be visited. For example, 
@@ -418,17 +424,11 @@ for iter = 1:maxit
             alpha_all(i_real) = shrink * alpha_all(i_real);
         end
         
-        if strcmpi(options.Algorithm, "pads")
-            if i == length(block_indices)
-            % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
-            % meaning that reduction will be calculated with respect to xbase, as shown above. 
-            % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
-                if (reduction_factor(1) <= 0 && sub_fopt < fbase) || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fbase
-                    xbase = sub_xopt;
-                    fbase = sub_fopt;
-                end
-            end
-        else
+        % Record the best function value and point encountered in the i_real-th block.
+        fopt_all(i_real) = sub_fopt;
+        xopt_all(:, i_real) = sub_xopt;
+
+        if ~strcmpi(options.Algorithm, "pads")
             % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
             % meaning that reduction will be calculated with respect to xbase, as shown above. 
             % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
@@ -437,14 +437,7 @@ for iter = 1:maxit
                 fbase = sub_fopt;
             end
         end
-
-        % Update xopt and fopt, which are always the best function value and point so far.
-        % Note that xopt may differ from xbase unless the latter is updated whenever a simple decrease is achieved. 
-        if sub_fopt < fopt
-            xopt = sub_xopt;
-            fopt = sub_fopt;
-        end
-                        
+                       
         % Retrieve the direction indices of the i_real-th block, which represent the order of the 
         % directions in the i_real-th block when we perform the direct search in this block next time.
         direction_set_indices{i_real} = sub_output.direction_indices;
@@ -465,6 +458,24 @@ for iter = 1:maxit
         end 
     end
     
+    % Update xopt and fopt. Note that we do this only if the iteration encounters a strictly better point.
+    [~, index] = min(fopt_all, [], "omitnan");
+    if fopt_all(index) < fopt
+        fopt = fopt_all(index);
+        xopt = xopt_all(:, index);
+    end
+    fopt == min(fhist)
+
+    if strcmpi(options.Algorithm, "pads")
+        % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
+        % meaning that reduction will be calculated with respect to xbase, as shown above. 
+        % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
+        if (reduction_factor(1) <= 0 && fopt < fbase) || fopt + reduction_factor(1) * forcing_function(min(alpha_all)) < fbase
+            xbase = xopt;
+            fbase = fopt;
+        end
+    end
+
     % Terminate the computations if terminate is true.
     if terminate
         break;

@@ -12,6 +12,11 @@ if ~(isrealscalar(fopt))
     error("fopt is not a real number.");
 end
 
+% Verify whether fun(xopt) == fopt.
+if ~(eval_fun(fun, xopt) == fopt)
+    error("fun(xopt) is not equal to fopt.");
+end
+
 % Verify whether exitflag is an integer.
 if ~(isintegerscalar(exitflag))
     error("exitflag is not an integer.");
@@ -36,6 +41,11 @@ if ~isfield(output, "fhist")
     error("output.fhist does not exist.");
 end
 fhist = output.fhist;
+% Verify whether fopt is the minimum of fhist.
+if ~(isrealvector(fhist) && fopt == min(fhist))
+    error("fopt is not the minimum of fhist.");
+end
+
 nhist = length(fhist);
 
 if isfield(output, "xhist")

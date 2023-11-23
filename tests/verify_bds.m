@@ -9,11 +9,15 @@ old_dir = pwd();
 
 exception = [];
 
+% Set options to an empty structure if it is not provided.
+if nargin < 1
+    parameters = struct();
+end
+
 try
 
     % Compile the version of norma.
-    path_norma = locate_norma()
-    path_norma{1}
+    path_norma = locate_norma();
     path_verify_bds = fileparts(mfilename('fullpath'));
     cd(path_norma{1});
     setup
