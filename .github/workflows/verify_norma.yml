@@ -81,4 +81,13 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
+            % Install MatCUTEst
+            cd(fullfile(root_dir, 'tests', 'private'));
+            locate_norma 
+            cd(root_dir);
+
+            % Run test
+            parameters.Algorithm = '${{ matrix.Algorithm }}';
+            parameters.sequential = ${{ matrix.sequential }};
+            verify(parameters);
             
