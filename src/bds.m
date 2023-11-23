@@ -12,6 +12,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct search), 
 %                               "pbds" (randomly permuted blockwise direct search), "rbds" (randomized 
 %                               blockwise direct search), "ds" (the classical direct search without blocks).
+%                               "pads" (parallel blockwise direct search).
 %                               Default: "cbds".
 %   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
 %                               or "rbds", 1 if Algorithm is "ds".
@@ -355,7 +356,7 @@ for iter = 1:maxit
     % Define block_indices, which is a vector containing the indices of blocks that we 
     % are going to visit in this iteration.
     if strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pads")
-        % If the Algorithm is "ds" or "cbds", then we will visit all blocks in order.
+        % If the Algorithm is "ds", "cbds" or "pads", then we will visit all blocks in order.
         % When the Algorithm is "ds", note that num_blocks = 1 and block_indices = [1],
         % a vector of length 1.
         block_indices = all_block_indices;
@@ -428,6 +429,9 @@ for iter = 1:maxit
         fopt_all(i_real) = sub_fopt;
         xopt_all(:, i_real) = sub_xopt;
 
+        % If the Algorithm is not "pads", then we will update xbase and fbase after finishing the
+        % direct search in the i_real-th block. For "pads", we will update xbase and fbase after
+        % one iteration of the outer loop.
         if ~strcmpi(options.Algorithm, "pads")
             % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
             % meaning that reduction will be calculated with respect to xbase, as shown above. 
@@ -459,13 +463,19 @@ for iter = 1:maxit
     end
     
     % Update xopt and fopt. Note that we do this only if the iteration encounters a strictly better point.
+    % Make sure that fopt is always the minimum of fhist after the moment we update fopt.
+    % The determination between fopt_all and fopt is to avoid the case that fopt_all is
+    % bigger than fopt due to the update of xbase and fbase.
     [~, index] = min(fopt_all, [], "omitnan");
     if fopt_all(index) < fopt
         fopt = fopt_all(index);
         xopt = xopt_all(:, index);
     end
-    fopt == min(fhist)
+    
+    % fopt == min(fhist)
 
+    % For "pads", we will update xbase and fbase only after one iteration of the outer loop.
+    % During the inner loop, every block will use the same xbase and fbase.
     if strcmpi(options.Algorithm, "pads")
         % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
         % meaning that reduction will be calculated with respect to xbase, as shown above. 
