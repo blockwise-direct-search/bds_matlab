@@ -13,6 +13,7 @@ try
 
     % Compile the version of norma.
     path_norma = locate_norma()
+    path_norma{1}
     path_verify = fileparts(mfilename('fullpath'));
     cd(path_norma{1});
     setup
