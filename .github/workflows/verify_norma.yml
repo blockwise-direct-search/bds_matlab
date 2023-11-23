@@ -83,7 +83,7 @@ jobs:
 
             % Setup bds_development
             cd(fullfile(root_dir, 'bds_development', 'norma'));
-            setup; cd(root_dir);
+            setup; pwd; cd(root_dir);
 
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
