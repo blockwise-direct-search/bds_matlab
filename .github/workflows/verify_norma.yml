@@ -87,6 +87,7 @@ jobs:
             cd(root_dir);
 
             % Run test
+            cd(fullfile(root_dir, 'tests'));
             parameters.Algorithm = '${{ matrix.Algorithm }}';
             parameters.sequential = ${{ matrix.sequential }};
             verify_bds(parameters);
