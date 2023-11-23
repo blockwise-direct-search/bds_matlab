@@ -86,6 +86,7 @@ jobs:
             pwd
             ls
             cd(fullfile(root_dir, 'bds_development', 'norma'));
+            
             ls
 
             % Run test
