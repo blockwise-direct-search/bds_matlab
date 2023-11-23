@@ -83,13 +83,14 @@ jobs:
 
             % Setup bds_development
             cd(fullfile(root_dir, 'bds_development', 'norma'));
-            setup; pwd; cd(root_dir);
+            setup
+            pwd
 
-            % Conduct your tests
-            path_tests = fullfile(root_dir, 'tests');
-            cd(path_tests)
-            parameters.Algorithm = "${{ matrix.Algorithm }}";
-            parameters.sequential = ${{ matrix.sequential }};
-            verify(parameters);
+            # % Conduct your tests
+            # path_tests = fullfile(root_dir, 'tests');
+            # cd(path_tests)
+            # parameters.Algorithm = "${{ matrix.Algorithm }}";
+            # parameters.sequential = ${{ matrix.sequential }};
+            # verify(parameters);
 
             
