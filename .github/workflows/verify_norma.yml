@@ -89,5 +89,5 @@ jobs:
             % Run test
             parameters.Algorithm = '${{ matrix.Algorithm }}';
             parameters.sequential = ${{ matrix.sequential }};
-            verify(parameters);
+            verify_bds(parameters);
             

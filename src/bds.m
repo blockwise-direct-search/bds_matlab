@@ -348,7 +348,7 @@ for iter = 1:maxit
 
     % Define block_indices, which is a vector containing the indices of blocks that we 
     % are going to visit in this iteration.
-    if strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "cbds")
+    if strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pads")
         % If the Algorithm is "ds" or "cbds", then we will visit all blocks in order.
         % When the Algorithm is "ds", note that num_blocks = 1 and block_indices = [1],
         % a vector of length 1.
