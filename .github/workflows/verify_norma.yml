@@ -81,6 +81,10 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
+            % Setup bds_development
+            cd(fullfile(root_dir, 'bds_development', 'norma'));
+            setup; cd(root_dir);
+
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
