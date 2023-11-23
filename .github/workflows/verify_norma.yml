@@ -81,6 +81,13 @@ jobs:
             cd(fullfile(root_dir, 'matcutest'));
             install(); cd(root_dir);
 
+            % Install bds_development
+            cd(fullfile(root_dir, 'bds_development'));
+            pwd
+            ls
+            cd(fullfile(root_dir, 'bds_development', 'norma'));
+            ls
+
             % Run test
             cd(fullfile(root_dir, 'tests'))
             parameters.Algorithm = '${{ matrix.Algorithm }}';

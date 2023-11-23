@@ -100,7 +100,7 @@ function path_saved = add_save_path(path_strings, path_string_stamp)
 for i = 1:length(path_strings)
 
     if ~exist(path_strings{i}, "dir")
-        error("bds:PathNotExist", "The string %s does not correspond to an existing directory.", path_strings);
+        error("bds:PathNotExist", "The string %s does not correspond to an existing directory.", path_strings{i});
     end
     
     addpath(path_strings{i});
