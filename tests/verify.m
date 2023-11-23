@@ -14,7 +14,7 @@ try
     % Compile the version of norma.
     path_norma = locate_norma();
     path_verify = fileparts(mfilename('fullpath'));
-    cd(path_norma);
+    cd(path_norma{1});
     setup
     cd(path_verify);
 
@@ -31,7 +31,7 @@ try
 
     % Record `olddir` in `options` so that we can come back to `olddir` during `isequiv` if
     % necessary (for example, when a single test fails).
-    parameters.olddir = olddir;
+    parameters.olddir = old_dir;
 
     % Get list of problems
     if isfield(parameters, "problems_type")
@@ -89,6 +89,8 @@ try
 
     if ~isfield(parameters, "num_random")
         num_random = 20;
+    else
+        num_random = parameters.num_random;
     end
     
     if parallel

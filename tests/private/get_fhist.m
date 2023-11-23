@@ -30,7 +30,8 @@ obj = ScalarFunction(p);
 
 try 
     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
-catch 
+catch ME
+    warning(ME.identifier, '%s', ME.message);
     warning('!!!Solver %s RAISE AN ERROR on problem %s with r = %d!!!', name_solver, p.name, r);
 end
 %solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);

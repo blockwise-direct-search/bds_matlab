@@ -1,8 +1,8 @@
-name: Verification, archiva
+name: Verification, norma
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   # schedule:
   #  - cron: '0 22 */7 * *'
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Verify PRIMA.
+    name: Verify BDS.
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -22,7 +22,7 @@ jobs:
         matlab: [latest]
         with_optim_toolbox: [yes]
         Algorithm: [cbds, pbds, rbds, ds]
-        version: [231114]
+        sequential: [true, false]
 
     steps:
 
@@ -84,8 +84,8 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.version = "${{ matrix.version }}";
             parameters.Algorithm = "${{ matrix.Algorithm }}";
+            parameters.sequential = ${{ matrix.sequential }};
             verify(parameters);
 
             

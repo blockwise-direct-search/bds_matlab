@@ -25,9 +25,6 @@ test_options = struct();
 if isfield(options, "Algorithm")
     test_options.Algorithm = options.Algorithm;
 end
-test_options.alpha_init = 1 + 0.5*(2*rand-1);
-test_options.StepTolerance = 1e-3*(1 + 0.5*(2*rand-1));
-test_options.npt = max(min(floor(6*rand*n), (n+2)*(n+1)/2), n+2);
 test_options.maxfun = max(ceil(20*n*(1+rand)), n+3);  % For reproducibility, do not remove this even if `options` contains `maxfun`.
 if isfield(options, 'maxfun')
     test_options.maxfun = options.maxfun;
@@ -43,13 +40,13 @@ if single_test
 end
 
 if ir == 1
-    test_options.npt = (n+2)*(n+1)/2;
+    test_options.expand = max(1.1, abs(randn));
 end
 if ir == 2
-    test_options.npt = n + 2;
+    test_options.shrink = min(0.9, abs(randn));
 end
 if ir == 3
-    test_options.maxfun = test_options.npt + 1;
+    test_options.maxfun = test_options.maxfun + 1;
 end
 if ir == 4
     test_options.maxfun = 1000*n;
@@ -64,17 +61,18 @@ if ir == 7
     test_options.ftarget = inf;
 end
 if ir == 8
+    test_options.alpha_init = 1 + 0.5*(2*rand-1);
     test_options.StepTolerance = test_options.alpha_init;
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if ir == 9
-    test_options.npt = 2*n;
+    test_options.alpha_init = 1 + 0.5*(2*rand-1);
 end
 if 10 <= ir && ir <= 12
-    test_options.npt = ceil(rand*n^2);
+    test_options.StepTolerance = 1e-3*(1 + 0.5*(2*rand-1));
 end
 if 13 <= ir && ir <= 15
-    test_options.npt = floor(2*rand*n);
+    test_options.reduction_factor = sort(rand(1, 3));
 end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if 1 <= ir && ir <= 20
@@ -107,21 +105,12 @@ if ~endsWith(solvers{2}, '_norma')
     end
 end
 
-exception = [];
-
-try
-
-    %tic;
-    [x1, fx1, exitflag1, output1] = solver1(p.objective, p.x0, test_options);
-    %T = toc; fprintf('\nRunning time for %s:\t %f\n', solvers{1}, T);
-    %tic;
-    [x2, fx2, exitflag2, output2] = solver2(p.objective, p.x0, test_options);
-    %T = toc; fprintf('\nRunning time for %s:\t %f\n', solvers{2}, T);
-
-
-catch exception
-    % Do nothing for the moment
-end
+%tic;
+[x1, fx1, exitflag1, output1] = solver1(p.objective, p.x0, test_options);
+%T = toc; fprintf('\nRunning time for %s:\t %f\n', solvers{1}, T);
+%tic;
+[x2, fx2, exitflag2, output2] = solver2(p.objective, p.x0, test_options);
+%T = toc; fprintf('\nRunning time for %s:\t %f\n', solvers{2}, T);
 
 % Restore the random number generator state
 rng(orig_rng_state);

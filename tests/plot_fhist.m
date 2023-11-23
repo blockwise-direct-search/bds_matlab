@@ -10,14 +10,6 @@ for i = 1:length(parameters.solvers_name)
 end
 
 parameters = get_solvers(parameters);
-% Set with_gradient for fminunc. Note that when the problem is noisy, we
-% should use the gradient we provide in ScalarFunction. Make sure that
-% the value of with_gradient is consistent with the value in get_fhist.m.
-for i = 1:length(parameters.solvers_name)
-    if strcmpi(parameters.solvers_options{i}.solver, "fminunc_wrapper")
-        parameters.solvers_options{i}.with_gradient = parameters.is_noisy;
-    end
-end
 %parameters = rmfield(parameters, "solvers_name");
 
 if isfield(parameters, "type")
@@ -118,6 +110,15 @@ end
 
 if ~isfield(test_options, 'is_abs_noise')
     test_options.is_abs_noise = false;
+end
+
+% Set with_gradient for fminunc. Note that when the problem is noisy, we
+% should use the gradient we provide in ScalarFunction. Make sure that
+% the value of with_gradient is consistent with the value in get_fhist.m.
+for i = 1:length(parameters.solvers_name)
+    if strcmpi(parameters.solvers_options{i}.solver, "fminunc_wrapper")
+        parameters.solvers_options{i}.with_gradient = test_options.is_noisy;
+    end
 end
 
 if ~isfield(parameters, "log_x_axis")
