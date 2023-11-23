@@ -65,8 +65,12 @@ try
             }];
     end
 
-    problem_names = secup(s);
-
+    if ~isfield(parameters, "problem_names")
+        problem_names = secup(s);
+    else
+        problem_names = parameters.problem_names;
+    end
+    
     fprintf("We will load %d problems\n\n", length(problem_names))
 
     % Get the number of problems.
@@ -78,14 +82,17 @@ try
         prec = 0;
     end
 
-    if isfield(parameters, 'single_test')
-        single_test = parameters.single_test;
-    else
-        single_test = false;
-    end
-
     if ~isfield(parameters, "parallel")
         parallel = get_default_profile_options("parallel");
+    else
+        parallel = parameters.parallel;
+    end
+    parameters.sequential = ~parallel;
+
+    if ~isfield(parameters, "i_run_init")
+        i_run_init = 1;
+    else
+        i_run_init = parameters.i_run_init;
     end
 
     if ~isfield(parameters, "num_random")
@@ -93,21 +100,27 @@ try
     else
         num_random = parameters.num_random;
     end
+
+    if isfield(parameters, 'single_test')
+        single_test = parameters.single_test;
+    else
+        single_test = (num_random == 1);
+    end
     
     if parallel
         parfor i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
-            for i_run = 1:num_random
+            for i_run = i_run_init:i_run_init+num_random-1
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
-                iseqiv(solvers, p, i_run, prec, single_test, parameters);
+                iseqiv(solvers, p, i_run, single_test, prec, parameters);
             end
         end
     else
         for i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
-            for i_run = 1:num_random
+            for i_run = i_run_init:i_run_init+num_random-1
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
-                iseqiv(solvers, p, i_run, prec, single_test, parameters);
+                iseqiv(solvers, p, i_run, single_test, prec, parameters);
             end
         end
     end

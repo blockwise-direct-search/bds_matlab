@@ -40,10 +40,10 @@ if single_test
 end
 
 if ir == 1
-    test_options.expand = max(1.1, abs(randn));
+    test_options.expand = exp(abs(randn));
 end
 if ir == 2
-    test_options.shrink = min(0.9, abs(randn));
+    test_options.shrink = rand;
 end
 if ir == 3
     test_options.maxfun = test_options.maxfun + 1;

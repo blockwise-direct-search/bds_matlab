@@ -19,7 +19,7 @@ x0 = [0; 0; 0];  % starting point
 
 %options.maxfun = 1e4;
 %options.StepTolerance = eps;
-options.Algorithm = "cbds";
+options.Algorithm = "pads";
 %options.StepTolerance = 1e-6;
 
 fullpath = mfilename("fullpath");

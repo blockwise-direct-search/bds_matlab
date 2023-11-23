@@ -130,7 +130,7 @@ elseif isfield(options, "block")
     % num_blocks cannot exceed num_directions.
     num_blocks = min(num_directions, options.block);
 elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") ...
-    || strcmpi(options.Algorithm, "rbds")
+    || strcmpi(options.Algorithm, "rbds") || strcmpi(options.Algorithm, "pads")
     % For these algorithms, the default value of num_blocks is num_directions/2. 
     num_blocks = ceil(num_directions/2);
 end
@@ -417,13 +417,25 @@ for iter = 1:maxit
         elseif sub_fopt + reduction_factor(2) * forcing_function(alpha_all(i_real)) >= fbase
             alpha_all(i_real) = shrink * alpha_all(i_real);
         end
-
-        % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
-        % meaning that reduction will be calculated with respect to xbase, as shown above. 
-        % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
-        if (reduction_factor(1) <= 0 && sub_fopt < fbase) || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fbase
-            xbase = sub_xopt;
-            fbase = sub_fopt;
+        
+        if strcmpi(options.Algorithm, "pads")
+            if i == length(block_indices)
+            % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
+            % meaning that reduction will be calculated with respect to xbase, as shown above. 
+            % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
+                if (reduction_factor(1) <= 0 && sub_fopt < fbase) || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fbase
+                    xbase = sub_xopt;
+                    fbase = sub_fopt;
+                end
+            end
+        else
+            % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
+            % meaning that reduction will be calculated with respect to xbase, as shown above. 
+            % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
+            if (reduction_factor(1) <= 0 && sub_fopt < fbase) || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fbase
+                xbase = sub_xopt;
+                fbase = sub_fopt;
+            end
         end
 
         % Update xopt and fopt, which are always the best function value and point so far.

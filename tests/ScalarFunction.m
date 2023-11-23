@@ -65,15 +65,26 @@ classdef ScalarFunction < handle
                     f = f*(1.0+options.noise_level*noise);
                 end
                 % If with_gradient is true, it means that we are calculating the fhist of 
-                % fminunc and the problem is noisy. In this case, we offer the gradient
-                % by finite difference using another FiniteDifferenceStepSize, which
-                % is sqrt(max(abs(f), 1)*options.noise_level). It will improve 
-                % the performance of fminunc than using the default FiniteDifferenceStepSize.
-                % We need to make sure the function evaluations during the finite difference
-                % are included in the fhist. Since fminunc does not accept the gradient that
-                % contains nan, we set nan in the gradient to be zero. Since fminunc also does
-                % not accept the gradient which contains inf or -inf, we set the gradient to 
-                % be 10^10 if it is larger than 10^10 and -10^10 if it is smaller than -10^10 piecewisely. 
+                % fminunc and the problem is noisy. 
+                % 
+                % 
+                % In this case, we provide fmiunc with an approximate gradient obtained by
+                % finite difference, the step size for the finite difference being 
+                % h = sqrt(eps_f), where eps_f is an estimation of the noise in f. 
+                % This value of h will improve the performance of fminunc, which 
+                % approximates the gradient by finite difference with step size 
+                % h_default = sign(x).*sqrt(eps*|x|) when no gradient is provided. 
+
+
+
+
+
+                % Indeed, 
+                % the step size that minimizes the error of the finite difference is 
+                % h_optimal = sqrt(eps_f/|f''|), where f'' is the second derivative of f, 
+                % and h is an approximation of h_optimal when no second-order information
+                % is available.
+
                 if isfield(options, "with_gradient") && options.with_gradient && nargout >= 2
                     if options.is_abs_noise
                         h = sqrt(options.noise_level);
@@ -85,12 +96,15 @@ classdef ScalarFunction < handle
                     V = eye(dim);
                     for i = 1:dim
                         f_fd = obj.userFun(x + h*V(:, i));
+                        % Record the function evaluations used by the finite difference in the fhist. 
                         if obj.storeHist
                             obj.valHist(end+1) = f_fd;
                         end
                         obj.nEval = obj.nEval+1;
                         g(i) = (f_fd - f)/h;
                     end
+
+                    % fminunc does not accept the gradient that contains NaN or Inf. Remove such values.
                     g(isnan(g)) = 0;
                     grad_max = 10^10;
                     g = min(grad_max, max(-grad_max, g)); 

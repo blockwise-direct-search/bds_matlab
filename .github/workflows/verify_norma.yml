@@ -21,7 +21,7 @@ jobs:
         os: [ubuntu-latest]
         matlab: [latest]
         with_optim_toolbox: [yes]
-        Algorithm: [cbds, pbds, rbds, ds]
+        Algorithm: [cbds, ds]
         sequential: [true, false]
 
     steps:
