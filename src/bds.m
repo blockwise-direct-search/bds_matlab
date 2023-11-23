@@ -21,7 +21,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               If options does not contain direction_set, then the polling directions will be 
 %                               {e_1, -e_1, ..., e_n, -e_n}. Otherwise, direction_set should be a matrix of n 
 %                               rows, and the polling directions will be {d_1, -d_1, ..., d_m, -d_m}, where d_i 
-%                               is the i-th column of direction_set, and m is the number of columns of direction_set.
+%                               is the i-th column of direction_set, and m is the number of columns of   %                               direction_set.
 %                               If necessary, we will first extend direction_set by adding some columns to make
 %                               sure that rank(direction_set) = n, so that the polling directions make a 
 %                               positive spanning set. See get_direction_set.m for details.
@@ -62,7 +62,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %   [XOPT, FOPT] = BDS(...) returns an approximate minimizer XOPT and its function value FOPT.
 %
 %   [XOPT, FOPT, EXITFLAG] = BDS(...) also returns an EXITFLAG that indicates the exit 
-%   condition. The possible values of EXITFLAG are 0, 1, 2, 3.
+%   condition. The possible values of EXITFLAG are 0, 1, 2, and 3.
 %
 %   0    The StepTolerance of the step size is reached.
 %   1    The target of the objective function is reached.

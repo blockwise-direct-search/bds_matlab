@@ -3,24 +3,9 @@ function [xopt, fopt, exitflag, output] = inner_direct_search(fun, ...
 %INNER_DIRECT_SEARCH performs a single iteration of classical direct search 
 %   within a given block.
 %
-%   xopt = INNER_DIRECT_SEARCH(FUN, xbase, fbase, D, DIRECTION_INDICES, ALPHA, OPTIONS)
-%   returns an xopt.
-%
-%   xopt = INNER_DIRECT_SEARCH(FUN, xbase, fbase, D, ...
-%   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS, which includes
-%   reduction_factor, ftarget, polling, with_cycling_memory, cycling.
-%
-%   [xopt, fopt] = INNER_DIRECT_SEARCH(...) returns the value of the objective function fopt 
-%   at xopt.
-%
-%   [xopt, fopt, EXITFLAG] = INNER_DIRECT_SEARCH(...) returns an EXITFLAG that describes 
-%   the exit condition.
-%
-%   [xopt, fopt, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(...) returns a structure OUTPUT including
-%   funcCount, fhist, xhist, success, terminate, and direction_indices.
-%
-%   TERMINATE is initialized to be false. If terminate is updated to be true,
-%   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
+%   [xopt, fopt, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(FUN, xbase, fbase, D, ...
+%   DIRECTION_INDICES, ALPHA, OPTIONS) returns a structure OUTPUT including
+%   funcCount, fhist, xhist, success, terminate, and direction_indices, working with the structure OPTIONS, which %   includes reduction_factor, ftarget, polling, with_cycling_memory, cycling.
 %
 %   DIRECTION_INDICES is the indices of directions of this block in D.
 %
