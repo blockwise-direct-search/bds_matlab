@@ -80,7 +80,7 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.problem_dim = "${{ matrix.dim }}";
             parameters.num_random = 10;
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";

@@ -12,7 +12,8 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct search), 
 %                               "pbds" (randomly permuted blockwise direct search), "rbds" (randomized 
 %                               blockwise direct search), "ds" (the classical direct search without blocks).
-%                               "pads" (parallel blockwise direct search).
+%                               "pads" (parallel blockwise direct search). "scbds" (symmetric blockwise direct
+%                               search).
 %                               Default: "cbds".
 %   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
 %                               or "rbds", 1 if Algorithm is "ds".
@@ -374,13 +375,7 @@ for iter = 1:maxit
         idx = random_stream.randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
     elseif strcmpi(options.Algorithm, "sCBDS")
-        if length(all_block_indices) == 1
-            block_indices = all_block_indices;
-        elseif length(all_block_indices) == 2
-            block_indices = [all_block_indices 1];
-        else
-            block_indices = [all_block_indices (num_blocks-1):-1:1];
-        end
+        block_indices = [all_block_indices (num_blocks-1):-1:1];
     end
     
     for i = 1:length(block_indices)

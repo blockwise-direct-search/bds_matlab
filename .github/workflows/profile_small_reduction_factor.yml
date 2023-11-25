@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Profile BDS on problems of small dimensions with different reduction factors
+    name: Profile BDS on problem of small dimensions with different reduction factors
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -80,7 +80,7 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.problem_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";

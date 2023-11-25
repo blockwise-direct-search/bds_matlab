@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and pads, small
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 16 */5 * *'
@@ -80,7 +80,7 @@ jobs:
             % Conduct your tests
             path_tests = fullfile(root_dir, 'tests');
             cd(path_tests)
-            parameters.problems_dim = "${{ matrix.dim }}";
+            parameters.problem_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
