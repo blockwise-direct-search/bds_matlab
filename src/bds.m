@@ -375,7 +375,7 @@ for iter = 1:maxit
         idx = random_stream.randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
     elseif strcmpi(options.Algorithm, "sCBDS")
-        block_indices = [all_block_indices (num_blocks-1):-1:1];
+        block_indices = [all_block_indices (num_blocks-1):-1:2];
     end
     
     for i = 1:length(block_indices)
