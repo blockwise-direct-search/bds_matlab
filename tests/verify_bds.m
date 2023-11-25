@@ -1,4 +1,26 @@
 function verify_bds(parameters)
+%This function tests the modernized version of Powell's solver against Powell's version, verifying
+% whether they produce the same results on CUTEst problems.
+%
+% 
+%
+% where
+% - `solver` is the name of the solver to test
+% - `dimrange` is the vector [mindim, maxdim], or "small", or "big", or "large"
+% - `problem` is the name of the problem to test
+% - `ir` is the index of the random run in `isequiv`.
+% - `nocompile_flag` is either 'nocompile' or 'ncp', indicating not to compile the solves
+% - `sequential_flag` (optional) is either 'sequential' or 'seq', which means to test the problems sequentially
+% - `reverse_flag` (optional) is either 'reverse' or 'rev', which means to test the solvers in the reverse order
+% - `problem_type` can be any of {'u', 'b', 'l', 'n', 'ub', 'ubl', 'ubln', 'bl', 'bln', 'ln'},
+%   indicating the problem type to test
+%
+% Coded by LI Haitian (hai-tian.li@connect.polyu.hk) and Zaikun ZHANG (www.zhangzk.net).
+%
+% Started: Nov 2023
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 % Record the current path.
 oldpath = path();
@@ -39,20 +61,20 @@ try
     parameters.olddir = old_dir;
 
     % Get list of problems
-    if isfield(parameters, "problems_type")
-        s.type = parameters.problems_type;
+    if isfield(parameters, "problem_type")
+        s.type = parameters.problem_type;
     else
-        s.type = get_default_profile_options("problems_type");
+        s.type = get_default_profile_options("problem_type");
     end
 
-    if isfield(parameters, "problems_mindim")
-        s.mindim = parameters.problems_mindim;
+    if isfield(parameters, "problem_mindim")
+        s.mindim = parameters.problem_mindim;
     else
-        s.mindim = get_default_profile_options("problems_mindim");
+        s.mindim = get_default_profile_options("problem_mindim");
     end
 
-    if isfield(parameters, "problems_maxdim")
-        s.maxdim = parameters.problems_maxdim;
+    if isfield(parameters, "problem_maxdim")
+        s.maxdim = parameters.problem_maxdim;
     else
         s.maxdim = 20;
     end

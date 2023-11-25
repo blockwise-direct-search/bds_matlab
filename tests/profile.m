@@ -58,9 +58,9 @@ try
     locate_matcutest();
 
     % Get list of problems
-    s.type = parameters.problems_type; % Unconstrained: 'u'
-    s.mindim = parameters.problems_mindim; % Minimum of dimension
-    s.maxdim = parameters.problems_maxdim; % Maximum of dimension
+    s.type = parameters.problem_type; % Unconstrained: 'u'
+    s.mindim = parameters.problem_mindim; % Minimum of dimension
+    s.maxdim = parameters.problem_maxdim; % Maximum of dimension
     s.blacklist = [];
     %s.blacklist = [s.blacklist, {}];
     % Problems that take too long to solve.
@@ -99,18 +99,18 @@ try
     num_solvers = length(parameters.solvers_options);
     % Set maxfun_frec for performance profile.
     maxfun_frec = max(get_default_profile_options("maxfun"), ...
-        get_default_profile_options("maxfun_dim_factor")*parameters.problems_maxdim);
+        get_default_profile_options("maxfun_dim_factor")*parameters.problem_maxdim);
     for i = 1:num_solvers
         if isfield(parameters, "default") && parameters.default 
             switch parameters.solvers_options{i}.solver
                 case "bfo_wrapper"
-                    maxfun_frec = max(maxfun_frec, 5000*parameters.problems_maxdim);
+                    maxfun_frec = max(maxfun_frec, 5000*parameters.problem_maxdim);
                 case "fminsearch_wrapper"
-                    maxfun_frec = max(maxfun_frec, 200*parameters.problems_maxdim);
+                    maxfun_frec = max(maxfun_frec, 200*parameters.problem_maxdim);
                 case "fminunc_wrapper"
-                    maxfun_frec = max(maxfun_frec, 100*parameters.problems_maxdim);
+                    maxfun_frec = max(maxfun_frec, 100*parameters.problem_maxdim);
                 case "prima_wrapper"
-                    maxfun_frec = max(maxfun_frec, 500*parameters.problems_maxdim);
+                    maxfun_frec = max(maxfun_frec, 500*parameters.problem_maxdim);
             end
         end
     end

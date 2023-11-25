@@ -12,8 +12,10 @@ if ~(isrealscalar(fopt))
     error("fopt is not a real number.");
 end
 
-% Verify whether fun(xopt) == fopt.
-if ~(eval_fun(fun, xopt) == fopt)
+% Verify whether fun(xopt) == fopt. Why we need to force xopt to be a column vector?
+% For CUTest problem, function handle only accept column vector (if a row vector is input,
+% the value is not correct). 
+if ~(eval_fun(fun, double(xopt(:))) == fopt)
     error("fun(xopt) is not equal to fopt.");
 end
 

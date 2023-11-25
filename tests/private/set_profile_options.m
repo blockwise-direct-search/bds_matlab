@@ -7,40 +7,40 @@ parameters = get_solvers(parameters);
 num_solvers = length(parameters.solvers_options);
 
 % Set parameters for cutest problems.
-if ~isfield(parameters, "problems_type")
-    parameters.problems_type = get_default_profile_options("problems_type");
+if ~isfield(parameters, "problem_type")
+    parameters.problem_type = get_default_profile_options("problem_type");
 end
 
-if isfield(parameters, "problems_dim")
-    if strcmpi(parameters.problems_dim, "small")
-        parameters.problems_mindim = 1;
-        parameters.problems_maxdim = 5;
-    elseif strcmpi(parameters.problems_dim, "big")
-        parameters.problems_mindim = 6;
-        parameters.problems_maxdim = 100;
+if isfield(parameters, "problem_dim")
+    if strcmpi(parameters.problem_dim, "small")
+        parameters.problem_mindim = 1;
+        parameters.problem_maxdim = 5;
+    elseif strcmpi(parameters.problem_dim, "big")
+        parameters.problem_mindim = 6;
+        parameters.problem_maxdim = 100;
     end
 end
 
 for i = 1:num_solvers
     if strcmpi(parameters.solvers_options{i}.solver, "uobyqa")
-        parameters.problems_maxdim = 60;
+        parameters.problem_maxdim = 60;
     end
 
     if strcmpi(parameters.solvers_options{i}.solver, "nlopt") && ...
             isfield(parameters.solvers_options{i}, "Algorithm") && ...
             strcmpi(parameters.solvers_options{i}.Algorithm, "newuoa")
-        if isfield(parameters, "problems_mindim") && parameters.problems_mindim == 1
-            parameters.problems_mindim = 2;
+        if isfield(parameters, "problem_mindim") && parameters.problem_mindim == 1
+            parameters.problem_mindim = 2;
         end
     end
 end
 
-if ~isfield(parameters, "problems_mindim")
-    parameters.problems_mindim = 1;
+if ~isfield(parameters, "problem_mindim")
+    parameters.problem_mindim = 1;
 end
 
-if ~isfield(parameters, "problems_maxdim")
-    parameters.problems_maxdim = 5;
+if ~isfield(parameters, "problem_maxdim")
+    parameters.problem_maxdim = 5;
 end
 
 % Set tau for performance profile.
@@ -128,14 +128,14 @@ if parameters.random_initial_point
 end
 
 if ~isfield(parameters, "num_random")
-    if isfield(parameters, "problems_dim")
-        if parameters.is_noisy && strcmpi(parameters.problems_dim, "small")
+    if isfield(parameters, "problem_dim")
+        if parameters.is_noisy && strcmpi(parameters.problem_dim, "small")
             parameters.num_random = 10;
-        elseif parameters.is_noisy && strcmpi(parameters.problems_dim, "big")
+        elseif parameters.is_noisy && strcmpi(parameters.problem_dim, "big")
             parameters.num_random = 5;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problems_dim, "small") && parameters.random_initial_point
+        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && parameters.random_initial_point
             parameters.num_random = 10;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problems_dim, "big") && parameters.random_initial_point
+        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "big") && parameters.random_initial_point
             parameters.num_random = 5;
         end
     end
@@ -187,27 +187,27 @@ if ~isfield(parameters, "feature")
 end
 
 if isfield(parameters, "feature")
-    pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-        num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
+    pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+        num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
         "_", num2str(parameters.num_random));
 else
     if ~parameters.is_noisy
         if ~parameters.random_initial_point
-            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-                num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", num2str(parameters.num_random));
+            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+                num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", num2str(parameters.num_random));
         else
-            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-                num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", "randomx0", "_",...
+            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+                num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", "randomx0", "_",...
                 num2str(log10(parameters.x0_perturbation_level)), "_", num2str(parameters.num_random));
         end
     else
         if ~parameters.random_initial_point
-            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-                num2str(parameters.problems_maxdim),"_", "_", parameters.fmin_type, "_", parameters.noise_type,...
+            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+                num2str(parameters.problem_maxdim),"_", "_", parameters.fmin_type, "_", parameters.noise_type,...
                 "_", num2str(log10(parameters.noise_level)), "_", num2str(parameters.num_random));
         else
-            pdfname = strcat(pdfname, "_", num2str(parameters.problems_mindim), "_",...
-                num2str(parameters.problems_maxdim), "_", parameters.fmin_type, "_", "rand", "_", parameters.noise_type,...
+            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+                num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", "rand", "_", parameters.noise_type,...
                 "_", num2str(log10(parameters.noise_level)), "_", "randomx0", "_",...
                 num2str(log10(parameters.x0_perturbation_level)), "_", num2str(parameters.num_random));
         end

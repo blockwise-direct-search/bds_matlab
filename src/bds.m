@@ -131,7 +131,8 @@ elseif isfield(options, "block")
     % num_blocks cannot exceed num_directions.
     num_blocks = min(num_directions, options.block);
 elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") ...
-    || strcmpi(options.Algorithm, "rbds") || strcmpi(options.Algorithm, "pads")
+    || strcmpi(options.Algorithm, "rbds") || strcmpi(options.Algorithm, "pads") ...
+    || strcmpi(options.Algorithm, "sCBDS")
     % For these algorithms, the default value of num_blocks is num_directions/2. 
     num_blocks = ceil(num_directions/2);
 end
@@ -350,7 +351,6 @@ end
 all_block_indices = (1:num_blocks);
 num_visited_blocks = 0;
 
-
 for iter = 1:maxit
 
     % Define block_indices, which is a vector containing the indices of blocks that we 
@@ -373,8 +373,16 @@ for iter = 1:maxit
         % Select a block randomly from available_block_indices.
         idx = random_stream.randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
+    elseif strcmpi(options.Algorithm, "sCBDS")
+        if length(all_block_indices) == 1
+            block_indices = all_block_indices;
+        elseif length(all_block_indices) == 2
+            block_indices = [all_block_indices 1];
+        else
+            block_indices = [all_block_indices (num_blocks-1):-1:1];
+        end
     end
-
+    
     for i = 1:length(block_indices)
 
         % i_real = block_indices(i) is the real index of the block to be visited. For example, 
@@ -466,7 +474,8 @@ for iter = 1:maxit
     % Make sure that fopt is always the minimum of fhist after the moment we update fopt.
     % The determination between fopt_all and fopt is to avoid the case that fopt_all is
     % bigger than fopt due to the update of xbase and fbase.
-    [~, index] = min(fopt_all, [], "omitnan");
+    % [~, index] = min(fopt_all, [], "omitnan");
+    [~, index] = min(fopt_all);
     if fopt_all(index) < fopt
         fopt = fopt_all(index);
         xopt = xopt_all(:, index);

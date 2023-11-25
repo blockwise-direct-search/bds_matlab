@@ -16,15 +16,14 @@ function rosenbrock_example(options)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Set options to an empty structure if it is not provided.
-if nargin < 3
+if nargin < 1
     options = struct();
 end
-
+keyboard
 x0 = [0; 0; 0];  % starting point
 
 %options.maxfun = 1e4;
 %options.StepTolerance = eps;
-options.Algorithm = "cbds";
 %options.StepTolerance = 1e-6;
 
 fullpath = mfilename("fullpath");

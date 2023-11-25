@@ -15,11 +15,11 @@ switch constant_name
         constant_value = false;
     case {"scale_variable"}
         constant_value = false;
-    case {"problems_type"}
+    case {"problem_type"}
         constant_value = "u";
-    case {"problems_mindim"}
+    case {"problem_mindim"}
         constant_value = 1;
-    case {"problems_maxdim"}
+    case {"problem_maxdim"}
         constant_value = 60;
     case {"maxfun_dim_factor"}
         constant_value = 500;

@@ -1,4 +1,4 @@
-name: Plot performance profiles for bds and pads, small
+name: Plot performance profiles for bds and scbds, small
 
 on:
   # Trigger the workflow on push or pull request
@@ -13,7 +13,7 @@ env:
 
 jobs:
   test:
-    name: Profile BDS and pads, small
+    name: Profile BDS and scbds, small
     runs-on: ${{matrix.os }}
     strategy:
       fail-fast: false
@@ -23,7 +23,7 @@ jobs:
         dim: [small]
         with_optim_toolbox: [yes]
         solver: [CBDS]
-        competitor: [pads]
+        competitor: [scbds]
         feature: [plain, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
 
     steps:
@@ -91,5 +91,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_bds_pads_small
+          name: test_bds_scbds_small
           path: ./tests/testdata

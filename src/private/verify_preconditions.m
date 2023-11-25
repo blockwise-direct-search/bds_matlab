@@ -28,7 +28,7 @@ if isfield(options, "num_blocks")
     end
 end
 
-BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS"];
+BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
 if isfield(options, "Algorithm")
     if ~(ischarstr(options.Algorithm) && any(ismember(lower(options.Algorithm), lower(BDS_list))))
         error("options.Algorithm should be a string in the BDS_list");

@@ -8,7 +8,7 @@ solvers_num = length(parameters.solvers_name);
 % DSPD - Direct Search based on probabilistic descent.
 % CBDS - Cyclic Blockwise Direct Search.
 % DS   - Direct search without blocks.
-BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS"];
+BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
 % MATLAB_fminunc
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
 NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
