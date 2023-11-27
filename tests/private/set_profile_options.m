@@ -79,6 +79,10 @@ if isfield(parameters, "feature")
                 parameters.is_noisy = false;
                 parameters.noise_level = 0;
                 parameters.feature = "no_noise";
+            case "badly_scaled"
+                parameters.is_noisy = false;
+                parameters.noise_level = 0;
+                parameters.feature = "badly_scaled";
             case "negligible"
                 parameters.is_noisy = true;
                 parameters.noise_level = 1.0e-7;

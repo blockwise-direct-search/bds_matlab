@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [no]
         solver: [CBDS]
         competitor: [nomad]
-        feature: [plain]
+        feature: [plain, badly_scaled]
 
     steps:
       - name: Check out repository

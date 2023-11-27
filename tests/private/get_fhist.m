@@ -15,14 +15,12 @@ fhist_perfprof = NaN(maxfun_frec, 1);
 % problem is noisy. 
 test_options.with_gradient = strcmpi(name_solver, "fminunc_wrapper") && test_options.is_noisy;
 
-% Scaling_matrix
-% Gradient will be affected by scaling_matrix
-% Find better way to deal with scaling_matrix
-% if test_options.scaling_matrix
-%    scaling_matrix = get_scaling_matrix(p,test_options);
-% else
-%    scaling_matrix = eye(length(p.x0));
-% end
+% Badly_scaled is a flag to indicate whether the problem is badly scaled.
+if isfield(test_options, "badly_scaled") && test_options.badly_scaled
+    n = length(p.x0);
+    scale_matrix = hilb(n);
+    p.x0 = scale_matrix * p.x0;
+end
 
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.

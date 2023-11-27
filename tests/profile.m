@@ -155,7 +155,9 @@ try
     end
 
     % Set scaling matrix.
-    test_options.scale_variable = false;
+    if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
+        test_options.badly_scaled = true;
+    end
 
     % Set solvers_options.
     parameters = get_options(parameters);

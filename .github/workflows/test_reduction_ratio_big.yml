@@ -21,7 +21,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [CBDS]
-        feature: [plain, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
+        feature: [plain, badly_scaled, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
         reduction_ratio_1: [1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-16]
         reduction_ratio_2: [1e-6, 1e-8, 1e-10, 1e-12, 1e-14, 1e-16]
         exclude: 

@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [bfgs]
-        feature: [plain, low, medium, high]
+        feature: [plain, badly_scaled, low, medium, high]
 
     steps:
 
