@@ -74,6 +74,15 @@ else
         direction_set = eye(n);
     end
 
+    % To find the maximal linearly independent set in the direction_set using the rref function in MATLAB.
+    % rref returns the reduced row echelon form of the input matrix. Thus we transpose the direction_set first
+    % and then do row elimination to find the maximal linearly independent set. 
+    reduced_direction_set = rref(direction_set');
+    % Find the indices of the columns in the direction_set which is the maximal linearly independent set.
+    maximal_linear_independent_set_indices = (diag(reduced_direction_set) <= 0);
+    % To obtain the maximal linearly independent set in the direction_set.
+    direction_set = direction_set(:, ~maximal_linear_independent_set_indices);
+
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 
     % The following columns of Q will be added to direction_set.

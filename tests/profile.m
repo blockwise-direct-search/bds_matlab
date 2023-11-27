@@ -87,7 +87,11 @@ try
             }];
     end
 
-    problem_names = secup(s);
+    if isfield(parameters, "problem_names")
+        problem_names = parameters.problem_names;
+    else
+        problem_names = secup(s);
+    end
 
     fprintf("We will load %d problems\n\n", length(problem_names))
 
@@ -195,6 +199,14 @@ try
     else
         for i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
+            % Set scaling matrix.
+            if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
+                % Badly_scaled is a flag to indicate whether the problem is badly scaled.
+                dim = length(p.x0);
+                scale_matrix = hilb(dim);
+                h = @(x) scale_matrix * x;
+                p.objective = @(x) p.objective(h(x));
+            end
             for i_run = 1:num_random
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
@@ -224,6 +236,14 @@ try
         if parameters.parallel == true
             parfor i_problem = 1:num_problems
                 p = macup(problem_names(1, i_problem));
+                % Set scaling matrix.
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
+                    % Badly_scaled is a flag to indicate whether the problem is badly scaled.
+                    dim = length(p.x0);
+                    scale_matrix = hilb(dim);
+                    h = @(x) scale_matrix * x;
+                    p.objective = @(x) p.objective(h(x));
+                end
                 frec_local = NaN(num_solvers, maxfun_frec);
                 if parameters.random_initial_point
                     rr = randn(size(x0));
@@ -240,6 +260,14 @@ try
         else
             for i_problem = 1:num_problems
                 p = macup(problem_names(1, i_problem));
+                % Set scaling matrix.
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
+                    % Badly_scaled is a flag to indicate whether the problem is badly scaled.
+                    dim = length(p.x0);
+                    scale_matrix = hilb(dim);
+                    h = @(x) scale_matrix * x;
+                    p.objective = @(x) p.objective(h(x));
+                end
                 frec_local = NaN(num_solvers, maxfun_frec);
                 if parameters.random_initial_point
                     rr = randn(size(x0));
