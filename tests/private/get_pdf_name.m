@@ -75,6 +75,10 @@ switch parameters.solvers_options{i}.solver
                 num2str(parameters.solvers_options{i}.maxfun_factor));
         end
 
+        if isfield(parameters.solvers_options{i}, "block_indices_permuted_init")
+            pdfname = strcat(pdfname, "_", "block_permuted_init");
+        end
+
     case "bds_norma"
         pdfname = "bds_norma";
 

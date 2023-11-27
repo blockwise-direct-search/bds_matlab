@@ -348,8 +348,11 @@ if fopt <= ftarget
     maxit = 0;
 end
 
-
-all_block_indices = (1:num_blocks);
+if isfield(options, "block_indices_permuted_init") && options.block_indices_permuted_init
+    all_block_indices = random_stream.randperm(num_blocks);
+else
+    all_block_indices = (1:num_blocks);
+end
 num_visited_blocks = 0;
 
 for iter = 1:maxit

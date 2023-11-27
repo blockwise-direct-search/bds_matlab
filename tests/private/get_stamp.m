@@ -51,6 +51,10 @@ switch parameters.solvers_options{i}.solver
             solver_stamp = strcat(solver_stamp, "-", num2str(parameters.solvers_options{i}.replacement_delay));
         end
 
+        if isfield(parameters.solvers_options{i}, "block_indices_permuted_init")
+            solver_stamp = strcat(solver_stamp, "-", "block-permuted-init");
+        end
+
     case {"bds_norma"}
         solver_stamp = "bds_norma";
 

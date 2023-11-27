@@ -48,6 +48,10 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", num2str(parameters.solvers_options{i}.replacement_delay));
         end
 
+        if isfield(parameters.solvers_options{i}, "block_indices_permuted_init")
+            solver_legend = strcat(solver_legend, "-", "block-permuted-init");
+        end
+
     case {"bds_norma"}
         solver_legend = "bds-norma";
 
