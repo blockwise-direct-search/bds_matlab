@@ -154,11 +154,6 @@ try
 
     end
 
-    % Set scaling matrix.
-    if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
-        test_options.badly_scaled = true;
-    end
-
     % Set solvers_options.
     parameters = get_options(parameters);
     solvers_options = parameters.solvers_options;
@@ -172,6 +167,14 @@ try
     if parameters.parallel == true
         parfor i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
+                % Set scaling matrix.
+            if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
+                % Badly_scaled is a flag to indicate whether the problem is badly scaled.
+                dim = length(p.x0);
+                scale_matrix = hilb(dim);
+                h = @(x) scale_matrix * x;
+                p.objective = @(x) p.objective(h(x));
+            end
             for i_run = 1:num_random
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point

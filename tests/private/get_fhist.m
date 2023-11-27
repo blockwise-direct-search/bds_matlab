@@ -15,24 +15,17 @@ fhist_perfprof = NaN(maxfun_frec, 1);
 % problem is noisy. 
 test_options.with_gradient = strcmpi(name_solver, "fminunc_wrapper") && test_options.is_noisy;
 
-% Badly_scaled is a flag to indicate whether the problem is badly scaled.
-if isfield(test_options, "badly_scaled") && test_options.badly_scaled
-    n = length(p.x0);
-    scale_matrix = hilb(n);
-    p.x0 = scale_matrix * p.x0;
-end
-
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
 
-% try 
-%     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
-% catch ME
-%     warning(ME.identifier, '%s', ME.message);
-%     warning('!!!Solver %s RAISE AN ERROR on problem %s with r = %d!!!', name_solver, p.name, r);
-% end
-solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+try 
+    solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+catch ME
+    warning(ME.identifier, '%s', ME.message);
+    warning('!!!Solver %s RAISE AN ERROR on problem %s with r = %d!!!', name_solver, p.name, r);
+end
+% solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 
 % Get length of fhist.
 fhist_length = length(obj.valHist);
