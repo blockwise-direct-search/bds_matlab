@@ -39,9 +39,11 @@ if single_test
     test_options.output_block_hist = true;
 end
 
-% Set seed using pname, n, and ir. We ALTER THE SEED weekly to test the solvers as much as possible.
+% Set seed using pname, n, ir, ftarget, and options.Algorithm. We use the seed to make the test reproducible for 
+% randomized algorithms (including pbds and rbds).
 if isfield(options, 'Algorithm')
-    seed = max(0, min(2^32 - 1,  sum(pname) + n + ir + str2double(options.Algorithm) + norm(p.x0)));
+    seed = max(0, min(2^32 - 1,  sum(pname) + n + ir + test_options.ftarget + str2double(options.Algorithm) ...
+    + norm(p.x0)));
     test_options.seed = seed;
 end
 
