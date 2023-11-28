@@ -66,7 +66,7 @@ classdef ScalarFunction < handle
                 end
                 % If with_gradient is true, it means that we are calculating the fhist of 
                 % fminunc and the problem is noisy. 
-                % In this case, we provide fmiunc with an approximate gradient obtained by
+                % In this case, we provide fminunc with an approximate gradient obtained by
                 % finite difference, the step size for the finite difference being 
                 % h = sqrt(eps_f), where eps_f is an estimation of the noise in f. 
                 % This value of h will improve the performance of fminunc, which 

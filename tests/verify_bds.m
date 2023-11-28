@@ -2,18 +2,14 @@ function verify_bds(parameters)
 %This function tests the modernized version of Powell's solver against Powell's version, verifying
 % whether they produce the same results on CUTEst problems.
 %
-% 
-%
 % where
-% - `solver` is the name of the solver to test
-% - `dimrange` is the vector [mindim, maxdim], or "small", or "big", or "large"
-% - `problem` is the name of the problem to test
-% - `ir` is the index of the random run in `isequiv`.
-% - `nocompile_flag` is either 'nocompile' or 'ncp', indicating not to compile the solves
-% - `sequential_flag` (optional) is either 'sequential' or 'seq', which means to test the problems sequentially
-% - `reverse_flag` (optional) is either 'reverse' or 'rev', which means to test the solvers in the reverse order
-% - `problem_type` can be any of {'u', 'b', 'l', 'n', 'ub', 'ubl', 'ubln', 'bl', 'bln', 'ln'},
-%   indicating the problem type to test
+% - `Algorithm` is the name of the Algorithm to test, including "cbds", "pbds", "ds", "rbds", "pads" and "scbds".
+%   If it is not provided, then the default Algorithm is "cbds", which is the default Algorithm of BDS.
+% - `problem_names` are the names of the problems to test.
+% - `i_run_init` is the index of the first random run in iseqiv.m. Default is 1.
+% - `num_random` is the number of random runs in iseqiv.m. Default is 20.
+% - `sequential_flag` (optional) is either 'sequential' or 'seq', which means to test the problems sequentially.
+% - `problem_type` can only be "u", indicating the problem type to test
 %
 % Coded by LI Haitian (hai-tian.li@connect.polyu.hk) and Zaikun ZHANG (www.zhangzk.net).
 %

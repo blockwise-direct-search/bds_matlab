@@ -46,7 +46,7 @@ else
         direction_set = direction_set(:, ~short_directions);
         direction_norms = direction_norms(~short_directions);
     end
-
+    
     % Find those directions that are almost parallel. Preserve the first one appearing in the
     % direction set and remove the others.
     parallel_directions = (abs(direction_set'*direction_set) > (1 - 1.0e-10) * (direction_norms' * direction_norms));
@@ -65,7 +65,6 @@ else
     % Directions not indexed by parallel_direction_indices are preserved.
     preserved_indices = ~ismember(1:size(direction_set, 2), parallel_direction_indices);
     direction_set = direction_set(:, preserved_indices);
-
     % If the direction set is empty, we set it to be the identity matrix. Indeed, the removal of 
     % almost parallel directions cannot make an nonempty direction set become empty. Thus the
     % following code can be moved above the removal of almost parallel directions. However, we 
@@ -90,10 +89,11 @@ else
     % 2. Columns m+1 to n with m being the number of columns in direction_set, provided that m < n.
     [Q, R, ~] = qr(direction_set);
     [~, m] = size(direction_set);
-    % deficient_columns contains the indices of the tiny diagonal elements of R. 
+    % deficient_columns contains the indices of the tiny diagonal elements of R(1:min(m, n), 1:min(m, n)). 
     % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
     % comparison will return a matrix due to the implicit expansion.
-    deficient_columns = ~(abs(diag(R))' > 10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
+    deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n))))' > ...
+        10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
     direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
 
     % Finally, set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th vector in direction_set.

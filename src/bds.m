@@ -378,7 +378,9 @@ for iter = 1:maxit
         idx = random_stream.randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
     elseif strcmpi(options.Algorithm, "sCBDS")
-        
+        % Get the block that is going to be visited in this iteration if the Algorithm is "sCBDS".
+        % In this case, we regard the indices of blocks as a cycle, and we will visit the blocks
+        % in the cycle in order. For example, if num_blocks = 3, then the cycle is [1 2 3 2 1 2 3 2 1 ...].   
         block_indices = [all_block_indices (num_blocks-1):-1:2];
     end
     

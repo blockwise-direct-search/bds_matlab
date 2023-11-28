@@ -416,6 +416,7 @@ dsq
 dstemp
 dstep
 dtest
+dth
 Duchi
 Dumbgen
 durch
@@ -667,6 +668,7 @@ heoretical
 Hestenes
 hfig
 Higham
+hilb
 HIMMELBH
 Himmelblau
 hinf
@@ -939,6 +941,7 @@ lneqq
 lnsim
 localfunctions
 logallrefupdates
+logx
 Loh
 Loneland
 longleftarrow
@@ -1209,6 +1212,7 @@ olddir
 oldpath
 Olkin
 ominus
+omitnan
 Omojokun
 oneapi
 onelineskip
@@ -1439,6 +1443,7 @@ rosenb
 rosenbrock
 Rothe
 Royer
+rref
 rseed
 rsh
 rstad
@@ -1462,6 +1467,7 @@ savepath
 Sca
 SCALARFUNCTION
 scalb
+scbds
 Schaum
 Scheinberg
 Schiffer
@@ -1480,6 +1486,7 @@ sectsty
 secup
 Seide
 semilogx
+semilogy
 seminorm
 Semismooth
 Semrl
@@ -1842,6 +1849,7 @@ wr
 wrn
 Wujek
 Wvec
+www
 xbase
 xe
 xelatex
@@ -1885,6 +1893,7 @@ Zdunek
 Zeffiro
 Zeitouni
 zhang
+zhangzk
 Zhao
 Zhou
 Zhuang
