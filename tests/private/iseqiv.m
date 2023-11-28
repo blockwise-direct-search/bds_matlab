@@ -39,6 +39,12 @@ if single_test
     test_options.output_block_hist = true;
 end
 
+% Set seed using pname, n, and ir. We ALTER THE SEED weekly to test the solvers as much as possible.
+if isfield(options, 'Algorithm')
+    seed = max(0, min(2^32 - 1,  sum(pname) + n + ir + str2double(options.Algorithm) + norm(p.x0)));
+    test_options.seed = seed;
+end
+
 if ir == 1
     test_options.expand = exp(abs(randn));
 end
@@ -82,7 +88,7 @@ if 1 <= ir && ir <= 20
 else
     p.objective  = objective;
 end
-
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% BEGIN: Call the solvers %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % N.B.: In some tests, we may invoke this function with solvers{1} == solvers{2}. So do NOT assume
 % that one of the solvers is 'SOLVER' and the other is 'SOLVER_norma'.
