@@ -22,7 +22,7 @@ jobs:
         matlab: [latest]
         with_optim_toolbox: [yes]
         Algorithm: [cbds, ds, pbds, rbds, pads, scbds]
-        sequential: [true, false]
+        parallel: [true, false]
 
     steps:
 
@@ -92,6 +92,6 @@ jobs:
             % Run test
             cd(fullfile(root_dir, 'tests'))
             parameters.Algorithm = '${{ matrix.Algorithm }}';
-            parameters.sequential = ${{ matrix.sequential }};
+            parameters.parallel = ${{ matrix.parallel }};
             verify_bds(parameters);
             

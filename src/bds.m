@@ -475,8 +475,8 @@ for iter = 1:maxit
     % Make sure that fopt is always the minimum of fhist after the moment we update fopt.
     % The determination between fopt_all and fopt is to avoid the case that fopt_all is
     % bigger than fopt due to the update of xbase and fbase.
-    % [~, index] = min(fopt_all, [], "omitnan");
-    [~, index] = min(fopt_all);
+    [~, index] = min(fopt_all, [], "omitnan");
+    %[~, index] = min(fopt_all);
     if fopt_all(index) < fopt
         fopt = fopt_all(index);
         xopt = xopt_all(:, index);
