@@ -8,8 +8,8 @@ function verify_bds(parameters)
 % - `problem_names` are the names of the problems to test.
 % - `i_run_init` is the index of the first random run in iseqiv.m. Default is 1.
 % - `num_random` is the number of random runs in iseqiv.m. Default is 20.
-% - `sequential_flag` (optional) is either 'sequential' or 'seq', which means to test the problems sequentially.
-% - `problem_type` can only be "u", indicating the problem type to test
+% - `parallel` is either true or false, which means whether to test the problems parallelly.
+% - `problem_type` can only be "u" now, indicating the problem type to test.
 %
 % Coded by LI Haitian (hai-tian.li@connect.polyu.hk) and Zaikun ZHANG (www.zhangzk.net).
 %
