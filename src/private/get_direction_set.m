@@ -92,8 +92,8 @@ else
     % deficient_columns contains the indices of the tiny diagonal elements of R(1:min(m, n), 1:min(m, n)). 
     % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
     % comparison will return a matrix due to the implicit expansion.
-    deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n))))' > ...
-        10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n))));
+    deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n)))))' > ...
+        10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n)));
     direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
 
     % Finally, set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th vector in direction_set.

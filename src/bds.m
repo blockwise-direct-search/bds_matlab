@@ -108,6 +108,7 @@ if ischarstr(fun)
     fun = str2func(fun);
 end
 % Redefine fun to accept columns if x0 is a row, as we use columns internally.
+fun_orig = fun;
 if x0_is_row
     fun = @(x)fun(x');
 end
@@ -476,12 +477,12 @@ for iter = 1:maxit
     % The determination between fopt_all and fopt is to avoid the case that fopt_all is
     % bigger than fopt due to the update of xbase and fbase.
     [~, index] = min(fopt_all, [], "omitnan");
-    %[~, index] = min(fopt_all);
     if fopt_all(index) < fopt
         fopt = fopt_all(index);
         xopt = xopt_all(:, index);
     end
     
+    % Test whether fopt is always the minimum of fhist after the moment we update fopt.
     % fopt == min(fhist)
 
     % For "pads", we will update xbase and fbase only after one iteration of the outer loop.
@@ -539,5 +540,5 @@ end
 
 % verify_postconditions is to detect whether the output is valid when debug_flag is true.
 if is_debugging()
-    verify_postconditions(fun, xopt, fopt, exitflag, output);
+    verify_postconditions(fun_orig, xopt, fopt, exitflag, output);
 end

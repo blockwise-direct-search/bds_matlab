@@ -162,6 +162,32 @@ try
     parameters = get_options(parameters);
     solvers_options = parameters.solvers_options;
 
+    % We put time_str and tst here for the sake of plot_fhist.
+    % Use time to distinguish.
+    time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
+    % Trim time string.
+    time_str = trim_time(time_str);
+    % Rename tst as the mixture of time stamp and pdfname.
+    tst = strcat(parameters.pdfname, "_", time_str);
+
+
+    if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+        if ~isfield(parameters, "log_x_axis")
+            parameters.log_x_axis = false;
+        end
+        
+        if parameters.log_x_axis
+            parameters.stamp_fhist = strcat(parameters.pdfname, "_", "log_x_axis", "_", time_str, "_fhist");
+        else
+            parameters.stamp_fhist = strcat(parameters.pdfname, "_", time_str, "_fhist");
+        end
+        
+        savepath = fullfile(path_testdata, parameters.stamp_fhist);
+        mkdir(savepath);
+        parameters.savepath = savepath;
+
+    end
+
     % If parameters.noise_initial_point is true, then the initial point will be
     % selected for each problem num_random times.
     % The default value of parameters.fmin_type is set to be "randomized", then there is
@@ -171,11 +197,13 @@ try
     if parameters.parallel == true
         parfor i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
+            dim = length(p.x0);
                 % Set scaling matrix.
             if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                 % Badly_scaled is a flag to indicate whether the problem is badly scaled.
                 dim = length(p.x0);
-                scale_matrix = hilb(dim);
+                scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                % scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
             end
@@ -187,23 +215,34 @@ try
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
+                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                    fhist_plot = cell(1, num_solvers);
+                end
                 for i_solver = 1:num_solvers
-                    fhist = get_fhist(p, maxfun_frec, i_solver,...
+                    [fhist, fhist_perfprof] = get_fhist(p, maxfun_frec, i_solver,...
                         i_run, solvers_options, test_options);
+                    if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                        fhist_plot{i_solver} = fhist;
+                    end
                     fval_tmp(i_solver) = min(fhist);
-                    frec(i_problem,i_solver,i_run,:) = fhist;
+                    frec(i_problem,i_solver,i_run,:) = fhist_perfprof;
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
+                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                    plot_fhist(dim, fhist_plot, p.name, parameters);
+                end
             end
         end
     else
         for i_problem = 1:num_problems
             p = macup(problem_names(1, i_problem));
+            dim = length(p.x0);
             % Set scaling matrix.
             if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                 % Badly_scaled is a flag to indicate whether the problem is badly scaled.
-                dim = length(p.x0);
-                scale_matrix = hilb(dim);
+                scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                %scale_matrix = hilb(dim);
+                %keyboard
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
             end
@@ -215,13 +254,23 @@ try
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
+                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                    fhist_plot = cell(1, num_solvers);
+                end
+                %plot_fhist(time_str, path_tests, path_testdata, parameters, p, test_options);
                 for i_solver = 1:num_solvers
-                    fhist = get_fhist(p, maxfun_frec, i_solver,...
+                    [fhist, fhist_perfprof] = get_fhist(p, maxfun_frec, i_solver,...
                         i_run, solvers_options, test_options);
+                    if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                        fhist_plot{i_solver} = fhist;
+                    end
                     fval_tmp(i_solver) = min(fhist);
-                    frec(i_problem,i_solver,i_run,:) = fhist;
+                    frec(i_problem,i_solver,i_run,:) = fhist_perfprof;
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
+                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                    plot_fhist(dim, fhist_plot, p.name, parameters);
+                end
             end
         end
     end
@@ -240,7 +289,8 @@ try
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                     % Badly_scaled is a flag to indicate whether the problem is badly scaled.
                     dim = length(p.x0);
-                    scale_matrix = hilb(dim);
+                    scale_matrix = diag(2.^(1:dim).');
+                    % scale_matrix = hilb(dim);
                     h = @(x) scale_matrix * x;
                     p.objective = @(x) p.objective(h(x));
                 end
@@ -264,7 +314,8 @@ try
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                     % Badly_scaled is a flag to indicate whether the problem is badly scaled.
                     dim = length(p.x0);
-                    scale_matrix = hilb(dim);
+                    scale_matrix = diag(2.^(1:dim).');
+                    %scale_matrix = hilb(dim);
                     h = @(x) scale_matrix * x;
                     p.objective = @(x) p.objective(h(x));
                 end
@@ -289,13 +340,12 @@ try
         fmin = min(fmin_total, [], 2);
     end
 
-    % Use time to distinguish.
-    time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
-    % Trim time string.
-    time_str = trim_time(time_str);
-    % tst = sprintf("test_%s", time_str);
-    % Rename tst as the mixture of time stamp and pdfname.
-    tst = strcat(parameters.pdfname, "_", time_str);
+    if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+        outputfile = char(strcat("merged", "_", parameters.stamp_fhist, ".pdf"));
+        compdf_location = char(fullfile(path_tests, "private", "compdf"));
+        merge_pdf(parameters.savepath, outputfile, compdf_location);
+    end
+
     path_testdata = fullfile(path_tests, "testdata");
     path_testdata_outdir = fullfile(path_tests, "testdata", tst);
 

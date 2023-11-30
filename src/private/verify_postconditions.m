@@ -15,7 +15,7 @@ end
 % Verify whether fun(xopt) == fopt. Why we need to force xopt to be a column vector?
 % For CUTest problem, function handle only accept column vector (if a row vector is input,
 % the value is not correct). 
-if ~(eval_fun(fun, double(xopt(:))) == fopt)
+if ~(eval_fun(fun, xopt) == fopt)
     error("fun(xopt) is not equal to fopt.");
 end
 
@@ -65,16 +65,15 @@ if isfield(output, "xhist")
     % Check whether fhist == fun(xhist).
     fhist_eval = NaN(1, length(fhist));
     for i = 1:length(fhist)
-        fhist_eval(i) = eval_fun(fun, xhist(:, i));
+        if isrow(xopt)
+            fhist_eval(i) = eval_fun(fun, xhist(:, i)');
+        else
+            fhist_eval(i) = eval_fun(fun, xhist(:, i));
+        end      
     end
-    
     % In case of fhist_eval(i) = NaN or fhist(i) = NaN.
-    % assert(all( (isnan(A) & isnan(B)) | A==B ));
     assert(all( (isnan(fhist) & isnan(fhist_eval)) | fhist==fhist_eval ));
     
-    % Examine whether fopt is the minimum of fhist and xopt is the
-    % corresponding point (when receiving simple decrease)
-    % assert(fun(xopt) == fopt && min(fhist) == fopt);
 end
 
 end

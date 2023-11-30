@@ -112,7 +112,6 @@ if ~endsWith(solvers{2}, '_norma')
         p.objective = @(x) p.objective(x');
     end
 end
-
 %tic;
 [x1, fx1, exitflag1, output1] = solver1(p.objective, p.x0, test_options);
 %T = toc; fprintf('\nRunning time for %s:\t %f\n', solvers{1}, T);

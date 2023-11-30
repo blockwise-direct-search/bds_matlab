@@ -1,4 +1,4 @@
-function fhist_perfprof = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
+function [fhist, fhist_perfprof] = get_fhist(p, maxfun_frec, j, r, solvers_options, test_options)
 % GET_FHIST gets return value of j-th solver on the r-th randomized
 % experiment of problem p.
 
@@ -27,9 +27,10 @@ catch ME
 end
 % solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 
+fhist = obj.valHist;
 % Get length of fhist.
 fhist_length = length(obj.valHist);
-fhist_perfprof(1:fhist_length) = obj.valHist;
+fhist_perfprof(1:fhist_length) = fhist;
 
 % Trim fhist for performance profile. If the length of fhist is less than maxfun,
 % then the prolonged parts will be imparted the value of the last function evaluation

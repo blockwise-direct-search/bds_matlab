@@ -144,6 +144,7 @@ function tests = unit_test
     n = 3;
     options = struct();
     options.direction_set = [1 0;0 0;0 0];
+    get_direction_set(n, options)
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
     verifyEqual(testCase, get_direction_set(n, options), D)
 
