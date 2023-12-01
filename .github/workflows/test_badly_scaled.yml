@@ -24,7 +24,7 @@ jobs:
         solver: [CBDS]
         competitor: [bfgs, newuoa]
         feature: [badly_scaled]
-        badly_scaled_factor: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        badly_scaled_sigma: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         dim: [small]
         
     steps:
@@ -95,7 +95,7 @@ jobs:
             parameters.fmin_type = "randomized";
             parameters.problem_dim = "${{ matrix.dim }}";
             parameters.feature = "${{ matrix.feature }}";
-            parameters.badly_scaled_factor = ${{ matrix.badly_scaled_factor }};
+            parameters.badly_scaled_sigma = ${{ matrix.badly_scaled_sigma }};
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             plot_profile(parameters);
 
