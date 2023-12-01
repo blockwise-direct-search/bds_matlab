@@ -36,6 +36,7 @@ The tests are **automated** by
 - [![Test default, big](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_big.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_big.yml)
 - [![Verify norma](https://github.com/blockwise-direct-search/bds/actions/workflows/verify_norma.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/verify_norma.yml)
 - [![Test fhist](https://github.com/blockwise-direct-search/bds/actions/workflows/test_fhist.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_fhist.yml)
+- [![Test badly_scaled](https://github.com/blockwise-direct-search/bds/actions/workflows/test_badly_scaled.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_badly_scaled.yml)
 - [![Test StepTolerance](https://github.com/blockwise-direct-search/bds/actions/workflows/test_StepTolerance.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_StepTolerance.yml)
 - [![Test forcing function](https://github.com/blockwise-direct-search/bds/actions/workflows/test_forcing_function.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_forcing_function.yml)
 - [![Test permuting_period](https://github.com/blockwise-direct-search/bds/actions/workflows/test_permuting_period.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_permuting_period.yml)

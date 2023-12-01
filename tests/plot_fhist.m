@@ -1,10 +1,14 @@
-function plot_fhist(dim, fhist, problem_name, parameters)
+function plot_fhist(dim, fhist, problem_name, i_run, parameters)
 % This file is to draw the function value history of the solvers.
 %
 
 color_set = ["red", "blue", "green", "yellow"];
 solvers_num = length(parameters.solvers_name);
-savepath = parameters.savepath;
+if iscell(parameters.savepath)
+    savepath = parameters.savepath{i_run};
+else
+    savepath = parameters.savepath;
+end
 fhist_plot = cell(1, solvers_num);
 
 % Get fval.
@@ -38,13 +42,13 @@ else
     end
 end
 
-title(char(strcat(num2str(dim), '-', problem_name)));
+title(char(strcat(num2str(dim), '-', num2str(i_run), "-", problem_name)));
 legend(parameters.solvers_name(1), parameters.solvers_name(2), 'Location', 'southwest', 'FontSize', 8);
 
 if dim < 10
-    filename = strcat("0", num2str(dim), "_", problem_name);
+    filename = strcat("0", num2str(dim), "_", num2str(i_run), "_", problem_name);
 else
-    filename = strcat(num2str(dim), "_", problem_name);
+    filename = strcat(num2str(dim), "_", num2str(i_run), "_", problem_name);
 end
 
 epsname = fullfile(savepath, strcat(filename,'.eps'));

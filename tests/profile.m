@@ -184,8 +184,15 @@ try
         
         savepath = fullfile(path_testdata, parameters.stamp_fhist);
         mkdir(savepath);
-        parameters.savepath = savepath;
-
+        if num_random == 1
+            parameters.savepath = savepath;
+        else
+            parameters.savepath = cell(1, num_random);
+            for i = 1:num_random
+                parameters.savepath{i} = fullfile(savepath, sprintf("random_%d", i));
+                mkdir(parameters.savepath{i});
+            end
+        end
     end
 
     % If parameters.noise_initial_point is true, then the initial point will be
@@ -202,12 +209,19 @@ try
             if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                 % Badly_scaled is a flag to indicate whether the problem is badly scaled.
                 dim = length(p.x0);
-                scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                if isfield(parameters, "badly_scaled_sigma")
+                    scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
+                else
+                    scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                end
                 % scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
             end
             for i_run = 1:num_random
+                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                    fhist_plot = cell(1, num_solvers);
+                end
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
@@ -215,9 +229,6 @@ try
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
-                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    fhist_plot = cell(1, num_solvers);
-                end
                 for i_solver = 1:num_solvers
                     [fhist, fhist_perfprof] = get_fhist(p, maxfun_frec, i_solver,...
                         i_run, solvers_options, test_options);
@@ -229,7 +240,7 @@ try
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    plot_fhist(dim, fhist_plot, p.name, parameters);
+                    plot_fhist(dim, fhist_plot, p.name, i_run, parameters);
                 end
             end
         end
@@ -240,13 +251,19 @@ try
             % Set scaling matrix.
             if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                 % Badly_scaled is a flag to indicate whether the problem is badly scaled.
-                scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                if isfield(parameters, "badly_scaled_sigma")
+                    scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
+                else
+                    scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                end
                 %scale_matrix = hilb(dim);
-                %keyboard
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
             end
             for i_run = 1:num_random
+                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+                    fhist_plot = cell(1, num_solvers);
+                end
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
                     rr = randn(size(p.x0));
@@ -254,10 +271,6 @@ try
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
-                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    fhist_plot = cell(1, num_solvers);
-                end
-                %plot_fhist(time_str, path_tests, path_testdata, parameters, p, test_options);
                 for i_solver = 1:num_solvers
                     [fhist, fhist_perfprof] = get_fhist(p, maxfun_frec, i_solver,...
                         i_run, solvers_options, test_options);
@@ -269,7 +282,7 @@ try
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    plot_fhist(dim, fhist_plot, p.name, parameters);
+                    plot_fhist(dim, fhist_plot, p.name, i_run, parameters);
                 end
             end
         end
@@ -341,10 +354,20 @@ try
     end
 
     if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-        outputfile = char(strcat("merged", "_", parameters.stamp_fhist, ".pdf"));
-        compdf_location = char(fullfile(path_tests, "private", "compdf"));
-        merge_pdf(parameters.savepath, outputfile, compdf_location);
+        if num_random == 1
+            outputfile = char(strcat("merged", "_", parameters.stamp_fhist, ".pdf"));
+            compdf_location = char(fullfile(path_tests, "private", "compdf"));
+            merge_pdf(parameters.savepath, outputfile, compdf_location);
+        else
+            for i = 1:num_random
+                outputfile = char(strcat("merged", "_", parameters.stamp_fhist, "_i", ".pdf"));
+                compdf_location = char(fullfile(path_tests, "private", "compdf"));
+                merge_pdf(parameters.savepath{i}, outputfile, compdf_location);
+            end
+        end
+        parameters = rmfield(parameters, "savepath");
     end
+
 
     path_testdata = fullfile(path_tests, "testdata");
     path_testdata_outdir = fullfile(path_tests, "testdata", tst);
