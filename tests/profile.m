@@ -217,6 +217,7 @@ try
                 % scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
+                p.x0 = inv(scale_matrix) * p.x0;
             end
             for i_run = 1:num_random
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
@@ -259,6 +260,7 @@ try
                 %scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
+                p.x0 = inv(scale_matrix) * p.x0;
             end
             for i_run = 1:num_random
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist

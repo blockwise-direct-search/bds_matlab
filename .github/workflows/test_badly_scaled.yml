@@ -97,6 +97,7 @@ jobs:
             parameters.feature = "${{ matrix.feature }}";
             parameters.badly_scaled_factor = ${{ matrix.badly_scaled_factor }};
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            plot_profile(parameters);
 
 
       - name: Upload artifact

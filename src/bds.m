@@ -113,6 +113,12 @@ if x0_is_row
     fun = @(x)fun(x');
 end
 
+% To avoid that the users bring some randomized strings.
+if ~isfield(options, "seed")
+    options.seed = get_default_constant("seed");
+end
+random_stream = RandStream("mt19937ar", "Seed", options.seed);
+
 % Get the dimension of the problem.
 n = length(x0);
 % Set the default Algorithm of BDS, which is "cbds".
@@ -120,6 +126,11 @@ if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
 
+if isfield(options, "direction_set_type") && strcmpi(options.direction_set_type, "randomized_orthogonal")
+    A = random_stream.randn(n); 
+    [Q, ~] = qr(A); 
+    options.direction_set = Q;
+end
 % Get the direction set.
 D = get_direction_set(n, options);
 % Get the number of directions.
@@ -317,12 +328,6 @@ end
 
 % Initialize the history of blocks visited.
 block_hist = NaN(1, maxfun);
-
-% To avoid that the users bring some randomized strings.
-if ~isfield(options, "seed")
-    options.seed = get_default_constant("seed");
-end
-random_stream = RandStream("mt19937ar", "Seed", options.seed);
 
 % Initialize the exitflag where the maximum number of iterations is reached. 
 exitflag = get_exitflag("MAXIT_REACHED");
