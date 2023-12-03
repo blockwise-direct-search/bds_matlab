@@ -1,32 +1,5 @@
 function [xval, fval, exitflag, output] = linesearch(fun, ...
     xval, fval, D, direction_indices, alpha, options)
-%LINESEARCH performs a single iteration of classical direct search 
-%   within a given block.
-%
-%   XVAL = LINESEARCH(FUN, XVAL, FVAL, D, DIRECTION_INDICES, ALPHA, OPTIONS)
-%   returns a XVAL.
-%
-%   XVAL = LINESEARCH(FUN, XVAL, FVAL, D, ...
-%   DIRECTION_INDICES, ALPHA, OPTIONS) works with the structure OPTIONS, which includes
-%   reduction_factor, ftarget.
-%
-%   [XVAL, FVAL] = LINESEARCH(...) returns the value of the objective function FVAL 
-%   at XVAL.
-%
-%   [XVAL, FVAL, EXITFLAG] = LINESEARCH(...) returns an EXITFLAG that describes 
-%   the exit condition.
-%
-%   [XVAL, FVAL, EXITFLAG, OUTPUT] = LINESEARCH(...) returns a structure OUTPUT including
-%   funcCount, fhist, xhist, success, terminate.
-%
-%   SUCCESS is initialized to be false. If success is updated to be true,
-%   it means that there at least exists some direction satisfying sufficient decrease.
-%
-%   TERMINATE is initialized to be false. If terminate is updated to be true,
-%   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
-%
-%   DIRECTION_INDICES is indices of directions of this block in D.
-%
 
 % Set the value of reduction_factor.
 reduction_factor = options.reduction_factor;
