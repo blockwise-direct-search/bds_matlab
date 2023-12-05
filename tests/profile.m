@@ -236,10 +236,13 @@ try
                     if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                         fhist_plot{i_solver} = fhist;
                     end
-                    fval_tmp(i_solver) = min(fhist);
+                    if isempty(fhist)
+                        fval_tmp(i_solver) = NaN;
+                    else
+                        fval_tmp(i_solver) = min(fhist);
+                    end
                     frec(i_problem,i_solver,i_run,:) = fhist_perfprof;
-                end
-                fmin(i_problem, i_run) = min(fval_tmp);
+                end            
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     plot_fhist(dim, fhist_plot, p.name, i_run, parameters);
                 end
@@ -279,7 +282,11 @@ try
                     if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                         fhist_plot{i_solver} = fhist;
                     end
-                    fval_tmp(i_solver) = min(fhist);
+                    if isempty(fhist)
+                        fval_tmp(i_solver) = NaN;
+                    else
+                        fval_tmp(i_solver) = min(fhist);
+                    end
                     frec(i_problem,i_solver,i_run,:) = fhist_perfprof;
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);

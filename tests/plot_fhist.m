@@ -11,6 +11,14 @@ else
 end
 fhist_plot = cell(1, solvers_num);
 
+% Deal with the empty fhist. We set a value of 10^30 for the empty fhist just for plotting.
+% In fact, the solver with empty fhist does not calculate the function value at all.
+for i = 1:solvers_num
+    if isempty(fhist{i})
+        fhist{i} = 10^30;
+    end
+end
+
 % Get fval.
 fval = min(fhist{1});
 for i = 1:solvers_num

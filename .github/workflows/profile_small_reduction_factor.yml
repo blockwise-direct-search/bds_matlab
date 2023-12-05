@@ -4,8 +4,8 @@ on:
   # Trigger the workflow on push or pull request
   push:
   # Trigger the workflow manually
-  #schedule:
-  #  - cron: '0 22 */7 * *'
+  # schedule:
+  #  - cron: '0 20 */7 * *'
   workflow_dispatch:
 
 env:
@@ -84,11 +84,10 @@ jobs:
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
-            parameters.maxfun_factor = 1e3;
 
             % Establish parameters for solvers.
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
-            parameters.solvers_options{1}.reduction_factor = [0, ${{ matrix.reduction_factor }}, 1000*${{ matrix.reduction_factor }}];
+            parameters.solvers_options{2}.reduction_factor = [0, ${{ matrix.reduction_factor }}, 1000*${{ matrix.reduction_factor }}];
 
             plot_profile(parameters);
 

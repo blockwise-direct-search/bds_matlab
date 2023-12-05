@@ -7,6 +7,9 @@ function nlopt_wrapper(fun, x0, options)
 n = numel(x0);
 
 opt.min_objective = fun;
+%The following code is for printing information as the optimization
+%progress.
+%opt.verbose = 1;
 
 if isfield(options, "default") && options.default
 

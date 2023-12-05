@@ -236,8 +236,8 @@ if isfield(parameters, "StepTolerance")
     pdfname = strcat(pdfname, "_", "StepTolerance", "_", num2str(-log10(parameters.StepTolerance)));
 end
 
-if isfield(parameters, "maxfun_factor")
-    pdfname = strcat(pdfname, "_", "maxfun_factor", "_", num2str(maxfun_factor));
+if isfield(parameters, "maxfun_dim_factor")
+    pdfname = strcat(pdfname, "_", "maxfun_dim_factor", "_", num2str(parameters.maxfun_dim_factor));
 end
 
 parameters.pdfname = pdfname;
