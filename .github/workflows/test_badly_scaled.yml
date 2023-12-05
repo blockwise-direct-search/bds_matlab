@@ -2,7 +2,7 @@ name: Test badly_scaled for bds
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   #schedule:
   # - cron: '0 12 */7 * *'
@@ -25,7 +25,7 @@ jobs:
         competitor: [bfgs, newuoa]
         feature: [badly_scaled]
         badly_scaled_sigma: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        dim: [small]
+        dim: [small, big]
         
     steps:
 
@@ -103,5 +103,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_badly_scaled
+          name: test_badly_scaled_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.feature }}_${{ matrix.dim }}
           path: ./tests/testdata

@@ -52,6 +52,10 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", "block-permuted-init");
         end
 
+        if isfield(parameters.solvers_options{i}, "direction_set_type")
+            solver_legend = strcat(solver_legend, "-", strrep(parameters.solvers_options{i}.direction_set_type, '_', '-'));
+        end
+
     case {"bds_norma"}
         solver_legend = "bds-norma";
 

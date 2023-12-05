@@ -51,7 +51,7 @@ else
 end
 
 title(char(strcat(num2str(dim), '-', num2str(i_run), "-", problem_name)));
-legend(parameters.solvers_name(1), parameters.solvers_name(2), 'Location', 'southwest', 'FontSize', 8);
+legend(get_legend(parameters, 1), get_legend(parameters, 2), 'Location', 'southwest', 'FontSize', 8);
 
 if dim < 10
     filename = strcat("0", num2str(dim), "_", num2str(i_run), "_", problem_name);

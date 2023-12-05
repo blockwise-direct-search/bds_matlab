@@ -166,5 +166,30 @@ function tests = unit_test
     D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
     verifyEqual(testCase, get_direction_set(n, options), D)
 
+    n = 3;
+    options = struct();
+    A = randn(n);
+    [Q, ~] = qr(A);
+    options.direction_set = Q;
+    D = get_direction_set(n, options);
+    if D(:, 1:2:5) ~= -D(:, 2:2:6)
+        error('D is not symmetric');
+    end    
+    if rank(D(:, 1:2:5)) ~= 3
+        error('The basis of D is not a basis.');
+    end
+
+    n = 3;
+    options = struct();
+    A = randn(n);
+    options.direction_set = A;
+    D = get_direction_set(n, options);    
+    if D(:, 1:2:5) ~= -D(:, 2:2:6)
+        error('D is not symmetric');
+    end
+    if rank(D(:, 1:2:5)) ~= 3
+        error('The basis of D is not a basis.');
+    end
+
     end
     
