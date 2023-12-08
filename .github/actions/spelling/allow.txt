@@ -1160,6 +1160,7 @@ perfdata
 plist
 qlist
 rmfield
+NELDERMEAD
 nmid
 nobottomtitles
 Nocedal
