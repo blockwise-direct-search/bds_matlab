@@ -24,6 +24,8 @@ else
                 opt.algorithm = NLOPT_LN_NEWUOA;
             case "bobyqa"
                 opt.algorithm = NLOPT_LN_BOBYQA;
+            case "simplex"
+                opt.algorithm = NLOPT_LN_NELDERMEAD;
         end
     else
         opt.algorithm = NLOPT_LN_NEWUOA;

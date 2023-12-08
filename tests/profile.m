@@ -227,6 +227,7 @@ function profile(parameters)
                     if parameters.random_initial_point
                         rr = randn(size(p.x0));
                         rr = rr / norm(rr);
+                        %p.x0 = p.x0 + 1 * max(1, norm(p.x0)) * rr;
                         p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                     end
                     fprintf("%d(%d). %s\n", i_problem, i_run, p.name);

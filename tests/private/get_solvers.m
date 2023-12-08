@@ -11,7 +11,7 @@ solvers_num = length(parameters.solvers_name);
 BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
 % MATLAB_fminunc
 fminunc_list = ["bfgs", "lbfgs", "dfp", "steepdesc"];
-NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla"];
+NLOPT_list = ["nlopt_newuoa", "nlopt_bobyqa", "nlopt_cobyla", "nlopt_simplex"];
 PRIMA_list = ["uobyqa", "newuoa", "bobyqa", "lincoa", "cobyla"];
 
 for i = 1:solvers_num

@@ -203,6 +203,10 @@ if isfield(parameters, "feature")
                 "_", "sigma", "_", num2str(parameters.badly_scaled_sigma), "_", ...
                 num2str(parameters.num_random));
         end
+        if parameters.random_initial_point
+            pdfname = strcat(pdfname, "_", "randomx0", "_", num2str(log10(parameters.x0_perturbation_level)));
+        end
+
     else
         pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
             num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...

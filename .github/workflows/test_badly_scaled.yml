@@ -103,5 +103,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_badly_scaled_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.feature }}_${{ matrix.dim }}
+          name: test_badly_scaled_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.dim }}
           path: ./tests/testdata

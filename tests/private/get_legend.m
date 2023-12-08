@@ -89,6 +89,8 @@ switch parameters.solvers_options{i}.solver
                 solver_legend = "nlopt-newuoa";
             case "bobyqa"
                 solver_legend = "nlopt-bobyqa";
+            case "simplex"
+                solver_legend = "nlopt-simplex";
         end
 
     case {"patternsearch"}

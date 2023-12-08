@@ -91,6 +91,8 @@ switch parameters.solvers_options{i}.solver
                 solver_stamp = "nlopt-newuoa";
             case "bobyqa"
                 solver_stamp = "nlopt-bobyqa";
+            case "simplex"
+                solver_stamp = "nlopt-simplex";
         end
 
     case {"nomad_wrapper"}

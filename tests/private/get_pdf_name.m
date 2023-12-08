@@ -115,6 +115,8 @@ switch parameters.solvers_options{i}.solver
                 pdfname = "nlopt_newuoa";
             case "bobyqa"
                 pdfname = "nlopt_bobyqa";
+            case "simplex"
+                pdfname = "nlopt_simplex";
         end
 
     case "fminsearch_wrapper"
