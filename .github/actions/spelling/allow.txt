@@ -334,6 +334,8 @@ dashleftarrow
 dashrightarrow
 dashv
 Datamodel
+dataprof
+datenum
 datetime
 Davidon
 dbstack
@@ -377,6 +379,7 @@ Diffpack
 Digabel
 Dijksterhuis
 dimentional
+dimrange
 Dinh
 dio
 discretized
@@ -454,6 +457,7 @@ enquote
 enumitem
 eps
 epsc
+epsfiles
 epsname
 epstopdf
 eqcirc
@@ -505,6 +509,7 @@ fhist
 Fiala
 Fidler
 fieldnames
+figname
 fignamebase
 fileattrib
 filecontents
@@ -539,6 +544,7 @@ forbound
 Forschungs
 FPGA
 fprintf
+fprob
 frac
 frec
 Freksen
@@ -561,6 +567,7 @@ functiontests
 Funktionalgleichungen
 Funval
 Furber
+fval
 Gachelin
 Gallivan
 GAMM
@@ -574,6 +581,7 @@ Gazaix
 gca
 gcc
 gcd
+gcf
 gcp
 geq
 geqq
@@ -730,6 +738,7 @@ intercal
 invp
 ip
 ipami
+iprec
 iprint
 ipschitz
 Ipsen
@@ -738,17 +747,17 @@ irun
 isa
 isave
 ISCA
+iscell
 ischarstr
 ischstr
-iscell
 iscolumn
 iscs
 isdir
 isempty
-Iserles
 iseq
 iseqiv
 isequiv
+Iserles
 isfield
 isinf
 isintegerscalar
@@ -994,6 +1003,7 @@ Marteau
 Martinsson
 matcutest
 matd
+matfile
 mathalfa
 mathbbm
 mathbbol
@@ -1049,6 +1059,7 @@ minfhist
 Mirsky
 mjdp
 mkdir
+mlist
 mmj
 mnewuoa
 models
@@ -1106,6 +1117,7 @@ nearrow
 Nedic
 neg
 Nelder
+NELDERMEAD
 nemann
 Nemirovsky
 neq
@@ -1143,24 +1155,6 @@ nleqslant
 nless
 nlopt
 nmath
-dataprof
-datenum
-dimrange
-epsfiles
-figname
-fprob
-fval
-gcf
-iprec
-matfile
-mlist
-pbaspect
-pdim
-perfdata
-plist
-qlist
-rmfield
-NELDERMEAD
 nmid
 nobottomtitles
 Nocedal
@@ -1260,6 +1254,7 @@ pathdef
 pathsep
 patternsearch
 Pauwels
+pbaspect
 pbds
 pdf
 pdfborder
@@ -1267,8 +1262,10 @@ pdflatex
 pdfname
 PDFO
 pdfwrite
+pdim
 Peherstorfer
 Peloquin
+perfdata
 perfprof
 Periaux
 perp
@@ -1290,6 +1287,7 @@ pjams
 pjm
 Planiden
 Plemmons
+plist
 Ploskas
 pm
 PMLR
@@ -1350,6 +1348,7 @@ Qian
 Qiu
 qjmath
 qjrms
+qlist
 qmin
 qnew
 qor
@@ -1431,6 +1430,7 @@ Rinaldi
 Rios
 risingdotseq
 rmfamily
+rmfield
 rmoustache
 rmpath
 rng
