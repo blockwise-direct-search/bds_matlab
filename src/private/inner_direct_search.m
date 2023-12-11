@@ -29,7 +29,7 @@ with_cycling_memory = options.with_cycling_memory;
 forcing_function = options.forcing_function;
 
 % The number of function evaluations allocated to this function.
-maxfun = options.maxfun;
+MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 
 % Explain why NaN is good. It is possible that this function returns
 % with exitflag=NaN and this is NOT a bug. This is because other situations
@@ -72,7 +72,7 @@ for j = 1 : num_directions
         break;
     end
 
-    if nf >= maxfun || fnew <= ftarget
+    if nf >= MaxFunctionEvaluations || fnew <= ftarget
         break;
     end
 
@@ -83,10 +83,10 @@ end
 % 2. The algorithm reaches the target function value.
 % 3. The algorithm achieves sufficient decrease.
 % We need to check whether the algorithm terminates by the first two cases.
-terminate = (nf >= maxfun || fnew <= ftarget);
+terminate = (nf >= MaxFunctionEvaluations || fnew <= ftarget);
 if fnew <= ftarget
     exitflag = get_exitflag( "FTARGET_REACHED");
-elseif nf >= maxfun
+elseif nf >= MaxFunctionEvaluations
     exitflag = get_exitflag("MAXFUN_REACHED");
 end
 

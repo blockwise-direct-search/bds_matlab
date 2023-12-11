@@ -10,15 +10,15 @@ if ~isrealvector(x0)
     error("x0 should be a real vector.");
 end
 
-if isfield(options, "maxfun")
-    if ~(isintegerscalar(options.maxfun) && options.maxfun > 0)
-        error("options.maxfun should be a positive integer.");
+if isfield(options, "MaxFunctionEvaluations")
+    if ~(isintegerscalar(options.MaxFunctionEvaluations) && options.MaxFunctionEvaluations > 0)
+        error("options.MaxFunctionEvaluations should be a positive integer.");
     end
 end
 
-if isfield(options, "maxfun_factor")
-    if ~(isintegerscalar(options.maxfun_factor) && options.maxfun_factor > 0)
-        error("options.maxfun_factor should a positive integer.");
+if isfield(options, "MaxFunctionEvaluations_factor")
+    if ~(isintegerscalar(options.MaxFunctionEvaluations_factor) && options.MaxFunctionEvaluations_factor > 0)
+        error("options.MaxFunctionEvaluations_factor should a positive integer.");
     end
 end
 

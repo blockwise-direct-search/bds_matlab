@@ -11,8 +11,8 @@ function [xval, fval, exitflag, output] = bds_previous(fun, x0, options)
 %   structure, with the following fields:
 %
 %   num_blocks                          Number of blocks.
-%   maxfun                      Maximum of function evaluations.
-%   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
+%   MaxFunctionEvaluations                      Maximum of function evaluations.
+%   MaxFunctionEvaluations_factor               Factor to define the maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
@@ -132,20 +132,20 @@ end
 block_indices = 1:num_blocks;
 
 % Set MAXFUN to the maximum number of function evaluations.
-if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-    maxfun = min(options.maxfun_factor*n, options.maxfun);
-elseif isfield(options, "maxfun_factor")
-    maxfun = options.maxfun_factor*n;
-elseif isfield(options, "maxfun")
-    maxfun = options.maxfun;
+if isfield(options, "MaxFunctionEvaluations_factor") && isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = min(options.MaxFunctionEvaluations_factor*n, options.MaxFunctionEvaluations);
+elseif isfield(options, "MaxFunctionEvaluations_factor")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations_factor*n;
+elseif isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 else
-    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
+    MaxFunctionEvaluations = min(get_default_constant("MaxFunctionEvaluations"), get_default_constant("MaxFunctionEvaluations_factor")*n);
 end
 
-% Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
+% Each iteration will at least use one function evaluation. We will perform at most MaxFunctionEvaluations iterations.
 % In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite
 % cycling if there is a bug.
-maxit = maxfun;
+maxit = MaxFunctionEvaluations;
 
 % % Set the value of sufficient decrease factor.
 % if isfield(options, "sufficient_decrease_factor_level")
@@ -280,7 +280,7 @@ end
 searching_set_indices = divide_searching_set(num_directions, num_blocks);
 
 % Initialize the history of function values.
-fhist = NaN(1, maxfun);
+fhist = NaN(1, MaxFunctionEvaluations);
 
 % Initialize the history of points visited.
 if isfield(options, "output_xhist")
@@ -291,7 +291,7 @@ end
 
 if output_xhist
     try
-        xhist = NaN(n, maxfun);
+        xhist = NaN(n, MaxFunctionEvaluations);
     catch
         output_xhist = false;
         warning("xhist will be not included in the output due to the limit of memory.");
@@ -305,7 +305,7 @@ else
 end
 
 % Initialize the history of blocks visited.
-block_hist = NaN(1, maxfun);
+block_hist = NaN(1, MaxFunctionEvaluations);
 xval = x0;
 fval = eval_fun(fun, xval);
 % Set the number of function evaluations.
@@ -386,7 +386,7 @@ for iter = 1:maxit
         % Get indices of directions in the i-th block.
         direction_indices = searching_set_indices{i_real};
 
-        suboptions.maxfun = maxfun - nf;
+        suboptions.MaxFunctionEvaluations = MaxFunctionEvaluations - nf;
         suboptions.cycling = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.sufficient_decrease_factor = sufficient_decrease_factor;

@@ -25,8 +25,8 @@ exitflag = NaN;
 % Initialize some parameters before entering the loop.
 n = length(xval);
 num_directions = length(direction_indices);
-fhist = NaN(1, options.maxfun);
-xhist = NaN(n, options.maxfun);
+fhist = NaN(1, options.MaxFunctionEvaluations);
+xhist = NaN(n, options.MaxFunctionEvaluations);
 success = false;
 nf = 0; 
 fbase = fval;
@@ -36,7 +36,7 @@ terminate = false;
 for j = 1 : num_directions
     % Stop the loop if no more function evaluations can be performed. 
     % Note that this should be checked before evaluating the objective function.
-    if nf >= options.maxfun
+    if nf >= options.MaxFunctionEvaluations
         terminate = true;
         exitflag = get_exitflag("MAXFUN_REACHED");
         break;
@@ -93,7 +93,7 @@ for j = 1 : num_directions
 
         % Stop the loop if no more function evaluations can be performed. 
         % Note that this should be checked before evaluating the objective function.
-        if nf >= options.maxfun
+        if nf >= options.MaxFunctionEvaluations
             terminate = true;
             exitflag = get_exitflag("MAXFUN_REACHED");
             break;

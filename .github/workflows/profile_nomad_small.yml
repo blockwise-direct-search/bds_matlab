@@ -115,7 +115,7 @@ jobs:
             parameters.parallel = false;
             parameters.feature = "${{ matrix.feature }}";
             parameters.fmin_type = "randomized";
-            parameters.maxfun_factor = 1e3;
+            parameters.MaxFunctionEvaluations_factor = 1e3;
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             
             plot_profile(parameters);

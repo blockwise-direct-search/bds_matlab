@@ -17,7 +17,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               Default: "cbds".
 %   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
 %                               or "rbds", 1 if Algorithm is "ds".
-%   maxfun                      Maximum of function evaluations. A positive integer.
+%   MaxFunctionEvaluations                      Maximum of function evaluations. A positive integer.
 %   direction_set               A matrix whose columns will be used to define the polling directions. 
 %                               If options does not contain direction_set, then the polling directions will be 
 %                               {e_1, -e_1, ..., e_n, -e_n}. Otherwise, direction_set should be a matrix of n 
@@ -236,18 +236,18 @@ else
     with_cycling_memory = get_default_constant("with_cycling_memory");
 end
 
-% Set the maximum number of function evaluations. If the options do not contain maxfun,
-% it is set to maxfun_dim_factor*n, where n is the dimension of the problem.
-if isfield(options, "maxfun")
-    maxfun = options.maxfun;
+% Set the maximum number of function evaluations. If the options do not contain MaxFunctionEvaluations,
+% it is set to MaxFunctionEvaluations_dim_factor*n, where n is the dimension of the problem.
+if isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 else
-    maxfun = get_default_constant("maxfun_dim_factor")*n;
+    MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
 end
 
 % Set the maximum number of iterations. 
-% Each iteration will use at least one function evaluation. Setting maxit to maxfun will 
-% ensure that maxfun is exhausted before maxit is reached. 
-maxit = maxfun; 
+% Each iteration will use at least one function evaluation. Setting maxit to MaxFunctionEvaluations will 
+% ensure that MaxFunctionEvaluations is exhausted before maxit is reached. 
+maxit = MaxFunctionEvaluations; 
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
 % the StepTolerance.
@@ -306,7 +306,7 @@ xopt_all = NaN(n, num_blocks);
 direction_set_indices = divide_direction_set(num_directions, num_blocks);
 
 % Initialize the history of function values.
-fhist = NaN(1, maxfun);
+fhist = NaN(1, MaxFunctionEvaluations);
 
 % Initialize the history of points visited.
 if isfield(options, "output_xhist")
@@ -317,7 +317,7 @@ end
 % If xhist exceeds the maximum of memory size limit, then we will not output xhist.
 if output_xhist
     try
-        xhist = NaN(n, maxfun);
+        xhist = NaN(n, MaxFunctionEvaluations);
     catch
         output_xhist = false;
         warning("xhist will be not included in the output due to the limit of memory.");
@@ -331,7 +331,7 @@ else
 end
 
 % Initialize the history of blocks visited.
-block_hist = NaN(1, maxfun);
+block_hist = NaN(1, MaxFunctionEvaluations);
 
 % Initialize the exitflag where the maximum number of iterations is reached. 
 exitflag = get_exitflag("MAXIT_REACHED");
@@ -404,7 +404,7 @@ for iter = 1:maxit
         direction_indices = direction_set_indices{i_real}; 
         
         % Set the options for the direct search within the i_real-th block. 
-        suboptions.maxfun = maxfun - nf;
+        suboptions.MaxFunctionEvaluations = MaxFunctionEvaluations - nf;
         suboptions.cycling_inner = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.reduction_factor = reduction_factor;

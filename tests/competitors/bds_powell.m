@@ -8,7 +8,7 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %
 %   XVAL = BDS(FUN, X0, OPTIONS) minimizes with the
 %   default optimization parameters replaced by values in the structure OPTIONS,
-%   BLOCKWISE_DIRECT_SEARCH uses these options: num_blocks, maxfun, maxfun_factor,
+%   BLOCKWISE_DIRECT_SEARCH uses these options: num_blocks, MaxFunctionEvaluations, MaxFunctionEvaluations_factor,
 %   expand, shrink, sufficient decrease factor, StepTolerance, ftarget, polling_inner,
 %   blocks_strategy, with_cycling_memory, cycling, accept_simple_decrease.
 %
@@ -23,8 +23,8 @@ function [xval, fval, exitflag, output] = bds_powell(fun, x0, options)
 %   structure OUTPUT with fields
 %
 %   num_blocks - number of blocks
-%   maxfun - maximum of function evaluation
-%   maxfun_factor - factor of maximum of function evaluation regarding to
+%   MaxFunctionEvaluations - maximum of function evaluation
+%   MaxFunctionEvaluations_factor - factor of maximum of function evaluation regarding to
 %               dimensions.
 %   expand - expanding factor of step size
 %   shrink - shrinking factor of step size
@@ -98,25 +98,25 @@ num_blocks = min(num_directions, num_blocks);
 % Default indices of blocks are 1:num_blocks.
 block_indices = 1:num_blocks;
 
-% Set maxfun to the maximum number of function evaluations. The default
+% Set MaxFunctionEvaluations to the maximum number of function evaluations. The default
 % value is 1e5.
-if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-    maxfun = min(options.maxfun_factor*n, options.maxfun);
-elseif isfield(options, "maxfun_factor")
-    maxfun = options.maxfun_factor*n;
-elseif isfield(options, "maxfun")
-    maxfun = options.maxfun;
+if isfield(options, "MaxFunctionEvaluations_factor") && isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = min(options.MaxFunctionEvaluations_factor*n, options.MaxFunctionEvaluations);
+elseif isfield(options, "MaxFunctionEvaluations_factor")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations_factor*n;
+elseif isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 else
-    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
+    MaxFunctionEvaluations = min(get_default_constant("MaxFunctionEvaluations"), get_default_constant("MaxFunctionEvaluations_factor")*n);
 end
 
 % Set the maximum of iterations. If complete polling is used, then the
 % maximum number of iterations given below CANNOT be reached. If the
 % opportunistic case is used, then the maximum number of iterations may
 % be reached (although, we hope that it does not).
-% ceil(10*maxfun/num_directions) may not be enough. Since there are some cases that
+% ceil(10*MaxFunctionEvaluations/num_directions) may not be enough. Since there are some cases that
 % maxit is exhausted and other terminations are not reached.
-maxit = maxfun;
+maxit = MaxFunctionEvaluations;
 
 % Set the default expanding factor.
 if isfield(options, "expand")
@@ -217,11 +217,11 @@ searching_set_indices = divide_searching_set(num_directions, num_blocks);
 
 % Initialize the computations.
 % history of function values
-fhist = NaN(1, maxfun);
+fhist = NaN(1, MaxFunctionEvaluations);
 % history of points having been visited
-xhist = NaN(n, maxfun); 
+xhist = NaN(n, MaxFunctionEvaluations); 
 % history of blocks having been visited
-block_hist = NaN(1, maxfun);
+block_hist = NaN(1, MaxFunctionEvaluations);
 xval = x0; % current iterate
 fval = eval_fun(fun, xval);
 nf = 1; % number of function evaluations
@@ -297,7 +297,7 @@ for iter = 1 : maxit
         % get indices in the i-th block
         direction_indices = searching_set_indices{i_real}; 
         
-        suboptions.maxfun = maxfun - nf;
+        suboptions.MaxFunctionEvaluations = MaxFunctionEvaluations - nf;
         % Memory and cycling are needed since we permutate indices in inner_direct_search
         suboptions.cycling = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;

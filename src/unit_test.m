@@ -62,7 +62,7 @@ function tests = unit_test
     
     function get_default_constant_test(testCase)
     %GET_DEFAULT_CONSTANT_TEST tests the file private/get_default_constant.m.
-    constant_name = "maxfun_dim_factor";
+    constant_name = "MaxFunctionEvaluations_dim_factor";
     constant_value = 500;
     verifyEqual(testCase, get_default_constant(constant_name), constant_value)
 

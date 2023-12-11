@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         StepTolerance: [1e-5, 1e-6, 1e-7]
-        maxfun_factor: [200, 300, 400, 500]
+        MaxFunctionEvaluations_dim_factor: [200, 300, 400, 500]
         competitor: [bfgs, bfo, newuoa, simplex]
         feature: [plain, badly_scaled]
 
@@ -35,11 +35,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Change the StepTolerance and maxfun_dim_factor in get_default_constant
+      - name: Change the StepTolerance and MaxFunctionEvaluations_dim_factor in get_default_constant
         run: |
           cd ./src/private
           sed -i '/StepTolerance/{n;s/.*/constant_value = ${{ matrix.StepTolerance }};/;}' get_default_constant.m
-          sed -i '/maxfun_factor/{n;s/.*/constant_value = ${{ matrix.maxfun_factor }};/;}' get_default_constant.m
+          sed -i '/MaxFunctionEvaluations_factor/{n;s/.*/constant_value = ${{ matrix.MaxFunctionEvaluations_dim_factor }};/;}' get_default_constant.m
           cat get_default_constant.m
 
       - name: Clone PRIMA
@@ -141,6 +141,7 @@ jobs:
             parameters.problem_dim = "${{ matrix.dim }}";
             parameters.parallel = true;
             parameters.feature = "${{ matrix.feature }}";
+            parameters.maxFunctionEvaluations_dim_factor = ${{ matrix.MaxFunctionEvaluations_dim_factor }};
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.default = true;
@@ -150,5 +151,5 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
-          name: test_default_big_${{ matrix.StepTolerance }}_${{ matrix.maxfun_factor }}_${{ matrix.feature }}
+          name: test_default_big_${{ matrix.StepTolerance }}_${{ matrix.MaxFunctionEvaluations_dim_factor }}_${{ matrix.feature }}
           path: ./tests/testdata

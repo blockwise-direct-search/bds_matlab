@@ -101,20 +101,20 @@ function profile(parameters)
     
         % Initialize the number of solvers.
         num_solvers = length(parameters.solvers_options);
-        % Set maxfun_frec for performance profile.
-        maxfun_frec = max(get_default_profile_options("maxfun"), ...
-            get_default_profile_options("maxfun_dim_factor")*parameters.problem_maxdim);
+        % Set MaxFunctionEvaluations_frec for performance profile.
+        MaxFunctionEvaluations_frec = max(get_default_profile_options("MaxFunctionEvaluations"), ...
+            get_default_profile_options("MaxFunctionEvaluations_dim_factor")*parameters.problem_maxdim);
         for i = 1:num_solvers
             if isfield(parameters, "default") && parameters.default 
                 switch parameters.solvers_options{i}.solver
                     case "bfo_wrapper"
-                        maxfun_frec = max(maxfun_frec, 5000*parameters.problem_maxdim);
+                        MaxFunctionEvaluations_frec = max(MaxFunctionEvaluations_frec, 5000*parameters.problem_maxdim);
                     case "fminsearch_wrapper"
-                        maxfun_frec = max(maxfun_frec, 200*parameters.problem_maxdim);
+                        MaxFunctionEvaluations_frec = max(MaxFunctionEvaluations_frec, 200*parameters.problem_maxdim);
                     case "fminunc_wrapper"
-                        maxfun_frec = max(maxfun_frec, 100*parameters.problem_maxdim);
+                        MaxFunctionEvaluations_frec = max(MaxFunctionEvaluations_frec, 100*parameters.problem_maxdim);
                     case "prima_wrapper"
-                        maxfun_frec = max(maxfun_frec, 500*parameters.problem_maxdim);
+                        MaxFunctionEvaluations_frec = max(MaxFunctionEvaluations_frec, 500*parameters.problem_maxdim);
                 end
             end
         end
@@ -125,7 +125,7 @@ function profile(parameters)
         num_random = parameters.num_random;
         % Record the minimum value of the problems of the random test.
         fmin = NaN(num_problems, num_random);
-        frec = NaN(num_problems, num_solvers, num_random, maxfun_frec);
+        frec = NaN(num_problems, num_solvers, num_random, MaxFunctionEvaluations_frec);
     
         % Set noisy parts of the test.
         test_options.is_noisy = parameters.is_noisy;
@@ -232,7 +232,7 @@ function profile(parameters)
                     end
                     fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                     for i_solver = 1:num_solvers
-                        [fhist, fhist_perfprof] = get_fhist(p, maxfun_frec, i_solver,...
+                        [fhist, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                             i_run, solvers_options, test_options);
                         if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                             fhist_plot{i_solver} = fhist;
@@ -279,7 +279,7 @@ function profile(parameters)
                     end
                     fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                     for i_solver = 1:num_solvers
-                        [fhist, fhist_perfprof] = get_fhist(p, maxfun_frec, i_solver,...
+                        [fhist, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                             i_run, solvers_options, test_options);
                         if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                             fhist_plot{i_solver} = fhist;
@@ -318,7 +318,7 @@ function profile(parameters)
                         h = @(x) scale_matrix * x;
                         p.objective = @(x) p.objective(h(x));
                     end
-                    frec_local = NaN(num_solvers, maxfun_frec);
+                    frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                     if parameters.random_initial_point
                         rr = randn(size(x0));
                         rr = rr / norm(rr);
@@ -326,7 +326,7 @@ function profile(parameters)
                     end
                     fprintf("%d. %s\n", i_problem, p.name);
                     for i_solver = 1:num_solvers
-                        frec_local(i_solver,:) = get_fhist(p, maxfun_frec,...
+                        frec_local(i_solver,:) = get_fhist(p, MaxFunctionEvaluations_frec,...
                             i_solver, i_run, solvers_options, test_options);
                     end
                     fmin_real(i_problem) = min(frec_local(:, :),[],"all");
@@ -343,7 +343,7 @@ function profile(parameters)
                         h = @(x) scale_matrix * x;
                         p.objective = @(x) p.objective(h(x));
                     end
-                    frec_local = NaN(num_solvers, maxfun_frec);
+                    frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                     if parameters.random_initial_point
                         rr = randn(size(x0));
                         rr = rr / norm(rr);
@@ -351,7 +351,7 @@ function profile(parameters)
                     end
                     fprintf("%d. %s\n", i_problem, p.name);
                     for i_solver = 1:num_solvers
-                        frec_local(i_solver,:) = get_fhist(p, maxfun_frec,...
+                        frec_local(i_solver,:) = get_fhist(p, MaxFunctionEvaluations_frec,...
                             i_solver, i_run, solvers_options, test_options);
                     end
                     fmin_real(i_problem) = min(frec_local(:, :),[],"all");

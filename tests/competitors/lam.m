@@ -38,16 +38,16 @@ num_blocks = n;
 block_indices = 1:num_blocks;
 
 % Set MAXFUN to the maximum number of function evaluations.
-if isfield(options, "maxfun")
-    maxfun = options.maxfun;
+if isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 else
-    maxfun = get_default_constant("maxfun_dim_factor")*n;
+    MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
 end
 
-% Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
+% Each iteration will at least use one function evaluation. We will perform at most MaxFunctionEvaluations iterations.
 % In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite 
 % cycling if there is a bug.
-maxit = maxfun;
+maxit = MaxFunctionEvaluations;
 
 % Set the value of sufficient decrease factor.
 if isfield(options, "reduction_factor")
@@ -123,10 +123,10 @@ end
 direction_set_indices = divide_direction_set(num_directions, num_blocks);
 
 % Initialize the history of function values.
-fhist = NaN(1, maxfun);
+fhist = NaN(1, MaxFunctionEvaluations);
 
 % Initialize the history of points visited.
-xhist = NaN(n, maxfun); 
+xhist = NaN(n, MaxFunctionEvaluations); 
 
 xval = x0; 
 fval = eval_fun(fun, xval);
@@ -162,7 +162,7 @@ for iter = 1:maxit
         % Get indices of directions in the i-th block.
         direction_indices = direction_set_indices{i_real}; 
         
-        suboptions.maxfun = maxfun - nf;
+        suboptions.MaxFunctionEvaluations = MaxFunctionEvaluations - nf;
         suboptions.reduction_factor = reduction_factor;
         suboptions.with_cycling_memory = with_cycling_memory;
         suboptions.expand = expand;

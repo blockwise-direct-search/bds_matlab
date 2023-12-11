@@ -11,8 +11,8 @@ function [xopt, fopt, exitflag, output] = dspd(fun, x0, options)
 %   structure, with the following fields:
 %
 %   num_blocks                          Number of blocks.
-%   maxfun                      Maximum of function evaluations.
-%   maxfun_factor               Factor to define the maximum number of function evaluations as a multiplier
+%   MaxFunctionEvaluations                      Maximum of function evaluations.
+%   MaxFunctionEvaluations_factor               Factor to define the maximum number of function evaluations as a multiplier
 %                               of the dimension of the problem.
 %   expand                      Expanding factor of step size.
 %   shrink                      Shrinking factor of step size.
@@ -109,16 +109,16 @@ else
 end
 
 % Set MAXFUN to the maximum number of function evaluations.
-if isfield(options, "maxfun")
-    maxfun = options.maxfun;
+if isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 else
-    maxfun = get_default_constant("maxfun_dim_factor")*n;
+    MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
 end
 
-% Each iteration will at least use one function evaluation. We will perform at most maxfun iterations.
+% Each iteration will at least use one function evaluation. We will perform at most MaxFunctionEvaluations iterations.
 % In theory, setting the maximum of function evaluations is not needed. But we do it to avoid infinite
 % cycling if there is a bug.
-maxit = maxfun;
+maxit = MaxFunctionEvaluations;
 
 % Set the value of reduction factor.
 if isfield(options, "reduction_factor")
@@ -205,7 +205,7 @@ else
 end
 
 % Initialize the history of function values.
-fhist = NaN(1, maxfun);
+fhist = NaN(1, MaxFunctionEvaluations);
 
 % Initialize the history of points visited.
 if isfield(options, "output_xhist")
@@ -216,7 +216,7 @@ end
 
 if output_xhist
     try
-        xhist = NaN(n, maxfun);
+        xhist = NaN(n, MaxFunctionEvaluations);
     catch
         output_xhist = false;
         warning("xhist will be not included in the output due to the limit of memory.");
@@ -274,7 +274,7 @@ for iter = 1:maxit
         D = D ./ vecnorm(D);
     end
 
-    suboptions.maxfun = maxfun - nf;
+    suboptions.MaxFunctionEvaluations = MaxFunctionEvaluations - nf;
     suboptions.cycling_inner = cycling_inner;
     suboptions.with_cycling_memory = with_cycling_memory;
     suboptions.reduction_factor = reduction_factor;

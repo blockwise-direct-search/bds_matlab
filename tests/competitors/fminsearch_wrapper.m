@@ -10,10 +10,10 @@ if isfield(options, "default") && options.default
     fminsearch(FUN, x0);
 else
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun")
-        maxfun = options.maxfun;
+    if isfield(options, "MaxFunctionEvaluations")
+        MaxFunctionEvaluations = options.MaxFunctionEvaluations;
     else
-        maxfun = get_default_constant("maxfun_dim_factor")*n;
+        MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
     end
 
     % Set the value of StepTolerance.
@@ -23,7 +23,7 @@ else
         tol = get_default_constant("StepTolerance");
     end
 
-    options = optimset("MaxFunEvals", maxfun, "maxiter", 10^20, "tolfun", eps, "tolx", tol);
+    options = optimset("MaxFunEvals", MaxFunctionEvaluations, "maxiter", 10^20, "tolfun", eps, "tolx", tol);
 
     % [X,FVAL,EXITFLAG,OUTPUT] = fminsearch(FUN, x0, options)
     fminsearch(FUN, x0, options);

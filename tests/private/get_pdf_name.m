@@ -70,9 +70,9 @@ switch parameters.solvers_options{i}.solver
                 num2str(-log10(parameters.solvers_options{i}.StepTolerance)));
         end
 
-        if isfield(parameters.solvers_options{i}, "maxfun_factor")
-            pdfname = strcat(pdfname, "_", "maxfun_factor", "_", ...
-                num2str(parameters.solvers_options{i}.maxfun_factor));
+        if isfield(parameters.solvers_options{i}, "MaxFunctionEvaluations_factor")
+            pdfname = strcat(pdfname, "_", "MaxFunctionEvaluations_factor", "_", ...
+                num2str(parameters.solvers_options{i}.MaxFunctionEvaluations_factor));
         end
 
         if isfield(parameters.solvers_options{i}, "block_indices_permuted_init")

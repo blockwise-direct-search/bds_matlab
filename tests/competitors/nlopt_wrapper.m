@@ -49,10 +49,10 @@ else
         opt.maxtime = 0;
     end
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun")
-        opt.maxeval = options.maxfun;
+    if isfield(options, "MaxFunctionEvaluations")
+        opt.maxeval = options.MaxFunctionEvaluations;
     else
-        opt.maxeval = get_default_constant("maxfun_dim_factor")*n;
+        opt.maxeval = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
     end
 end
 

@@ -2,16 +2,16 @@ function parameters = get_options(parameters)
 % GET_OPTIONS get options that needed by solvers.
 %
 
-% Set maxfun and maxfun_factor for test_options.
-if isfield(parameters, "maxfun")
+% Set MaxFunctionEvaluations and MaxFunctionEvaluations_factor for test_options.
+if isfield(parameters, "MaxFunctionEvaluations")
     for i = 1:length(parameters.solvers_name)
-        parameters.solvers_options{i}.maxfun = parameters.maxfun;
+        parameters.solvers_options{i}.MaxFunctionEvaluations = parameters.MaxFunctionEvaluations;
     end
 end
 
-if isfield(parameters, "maxfun_factor")
+if isfield(parameters, "MaxFunctionEvaluations_factor")
     for i = 1:length(parameters.solvers_name)
-        parameters.solvers_options{i}.maxfun_factor = parameters.maxfun_factor;
+        parameters.solvers_options{i}.MaxFunctionEvaluations_factor = parameters.MaxFunctionEvaluations_factor;
     end
 end
 

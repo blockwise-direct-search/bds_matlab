@@ -21,10 +21,10 @@ else
     end
     
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun")
-        maxeval = options.maxfun;
+    if isfield(options, "MaxFunctionEvaluations")
+        maxeval = options.MaxFunctionEvaluations;
     else
-        maxeval = get_default_constant("maxfun_dim_factor")*n;
+        maxeval = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
     end
     
     %[ x, fx, msg, wrn, neval ] = bfo(FUN, x0, 'epsilon', StepTolerance, 'maxeval', maxeval)

@@ -10,19 +10,19 @@ lb = -inf(1, n);
 ub = inf(1, n);
 
 % Set MAXFUN to the maximum number of function evaluations.
-if isfield(options, "maxfun_factor") && isfield(options, "maxfun")
-    maxfun = min(options.maxfun_factor*n, options.maxfun);
-elseif isfield(options, "maxfun_factor")
-    maxfun = options.maxfun_factor*n;
-elseif isfield(options, "maxfun")
-    maxfun = options.maxfun;
+if isfield(options, "MaxFunctionEvaluations_factor") && isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = min(options.MaxFunctionEvaluations_factor*n, options.MaxFunctionEvaluations);
+elseif isfield(options, "MaxFunctionEvaluations_factor")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations_factor*n;
+elseif isfield(options, "MaxFunctionEvaluations")
+    MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 else
-    maxfun = min(get_default_constant("maxfun"), get_default_constant("maxfun_factor")*n);
+    MaxFunctionEvaluations = min(get_default_constant("MaxFunctionEvaluations"), get_default_constant("MaxFunctionEvaluations_factor")*n);
 end
 
-maxfun = num2str(maxfun);
+MaxFunctionEvaluations = num2str(MaxFunctionEvaluations);
 
-params = struct("initial_mesh_size","* 10","MAX_BB_EVAL", maxfun);
+params = struct("initial_mesh_size","* 10","MAX_BB_EVAL", MaxFunctionEvaluations);
 
 nomadOpt(fun, x0, lb, ub, params);
 

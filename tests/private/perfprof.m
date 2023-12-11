@@ -27,7 +27,7 @@ colors  = {bleu, 'k', 'b', 'r', vert, bleu, 'k', 'b', 'r', vert};
 lines   = {'-', '-.', '--', ':', '-', '-.', '--', ':', '-', '-.'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[np, ns, nr, maxfun] = size(frec);
+[np, ns, nr, MaxFunctionEvaluations] = size(frec);
 
 % nf_return(ip, is, ir) is the number of function evaluations that the is-th solver uses when it
 % returns from solving the ip-th problem at the ir-th random run, and f_return(ip, is, ir) is the
@@ -42,7 +42,7 @@ for ip = 1:np
     for is = 1:ns
         for ir = 1:nr
             if all(isnan(frec(ip, is, ir, :)))
-                nf_return(ip, is, ir) = maxfun;
+                nf_return(ip, is, ir) = MaxFunctionEvaluations;
                 f_return(ip, is, ir) = NaN;
             else
                 nf_return(ip, is, ir) = find(~isnan(frec(ip, is, ir, :)), 1, 'last') - 1;

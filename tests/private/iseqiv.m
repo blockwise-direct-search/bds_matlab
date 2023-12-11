@@ -25,9 +25,9 @@ test_options = struct();
 if isfield(options, "Algorithm")
     test_options.Algorithm = options.Algorithm;
 end
-test_options.maxfun = max(ceil(20*n*(1+rand)), n+3);  % For reproducibility, do not remove this even if `options` contains `maxfun`.
-if isfield(options, 'maxfun')
-    test_options.maxfun = options.maxfun;
+test_options.MaxFunctionEvaluations = max(ceil(20*n*(1+rand)), n+3);  % For reproducibility, do not remove this even if `options` contains `MaxFunctionEvaluations`.
+if isfield(options, 'MaxFunctionEvaluations')
+    test_options.MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 end
 test_options.ftarget = objective(x0) - 10*abs(randn)*max(1, objective(x0));
 test_options.output_xhist = (rand > 0.5);
@@ -54,16 +54,16 @@ if ir == 2
     test_options.shrink = rand;
 end
 if ir == 3
-    test_options.maxfun = 1 + ceil(100*n*abs(randn));
+    test_options.MaxFunctionEvaluations = 1 + ceil(100*n*abs(randn));
 end
 if ir == 4
-    test_options.maxfun = 1000*n;
+    test_options.MaxFunctionEvaluations = 1000*n;
 end
 if ir == 5
-    test_options.maxfun = 1;
+    test_options.MaxFunctionEvaluations = 1;
 end
 if ir == 6
-    test_options.maxfun = ceil(n/2);
+    test_options.MaxFunctionEvaluations = ceil(n/2);
 end
 if ir == 7
     test_options.ftarget = inf;

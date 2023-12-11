@@ -35,13 +35,13 @@ else
     options.iprint = 1;
 
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun")
-        maxfun = options.maxfun;
+    if isfield(options, "MaxFunctionEvaluations")
+        MaxFunctionEvaluations = options.MaxFunctionEvaluations;
     else
-        maxfun = get_default_constant("maxfun_dim_factor")*n;
+        MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
     end
 
-    options.maxfun = maxfun;
+    options.MaxFunctionEvaluations = MaxFunctionEvaluations;
 
     if isfield(options, "Algorithm")
         Algorithm = options.Algorithm;

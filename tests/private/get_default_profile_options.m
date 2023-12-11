@@ -21,9 +21,9 @@ switch constant_name
         constant_value = 1;
     case {"problem_maxdim"}
         constant_value = 60;
-    case {"maxfun_dim_factor"}
+    case {"MaxFunctionEvaluations_dim_factor"}
         constant_value = 500;
-    case {"maxfun"}
+    case {"MaxFunctionEvaluations"}
         constant_value = 1e5;
     case {"num_random"}
         constant_value = 1;

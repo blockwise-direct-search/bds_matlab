@@ -18,10 +18,10 @@ if isfield(options, "default") && options.default
 else
 
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "maxfun")
-        maxfun = options.maxfun;
+    if isfield(options, "MaxFunctionEvaluations")
+        MaxFunctionEvaluations = options.MaxFunctionEvaluations;
     else
-        maxfun = get_default_constant("maxfun_dim_factor")*n;
+        MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
     end
 
     % Set the value of StepTolerance.
@@ -53,7 +53,7 @@ else
     % Set the options of fminunc. If and only if SpecifyObjectiveGradient is true,
     % fminunc will accept the gradient provided by the user. 
     options = optimoptions("fminunc", "Algorithm", "quasi-newton", "HessUpdate", ...
-        fminunc_type, "MaxFunctionEvaluations", maxfun, "MaxIterations", 10^20, ...
+        fminunc_type, "MaxFunctionEvaluations", MaxFunctionEvaluations, "MaxIterations", 10^20, ...
         "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", eps, ...
         'SpecifyObjectiveGradient', with_gradient);
 

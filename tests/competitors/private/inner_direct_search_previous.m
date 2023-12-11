@@ -27,7 +27,7 @@ function [xval, fval, exitflag, output] = inner_direct_search_previous(fun, ...
 %   reduction_ratio. In this case, we will not shrink the step size.
 %
 %   TERMINATE is initialized to be false. If terminate is updated to be true,
-%   it means that either the number of function evaluations reaches maxfun, or ftarget is reached.
+%   it means that either the number of function evaluations reaches MaxFunctionEvaluations, or ftarget is reached.
 %
 %   DIRECTION_INDICES is the indices of directions of this block in D.
 %
@@ -95,7 +95,7 @@ terminate = false;
 for j = 1 : num_directions
     % Stop the loop if no more function evaluations can be performed.
     % Note that this should be checked before evaluating the objective function.
-    if nf >= options.maxfun
+    if nf >= options.MaxFunctionEvaluations
         terminate = true;
         exitflag = get_exitflag("MAXFUN_REACHED");
         break;

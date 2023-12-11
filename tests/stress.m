@@ -58,11 +58,11 @@ if isfield(options, "output_xhist")
     solver_options.output_xhist = options.output_xhist;
 end
 
-% Set the maxfun of the problem.
-if isfield(options, "maxfun")
-    solver_options.maxfun = options.maxfun;
+% Set the MaxFunctionEvaluations of the problem.
+if isfield(options, "MaxFunctionEvaluations")
+    solver_options.MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 else
-    solver_options.maxfun = 500*n;
+    solver_options.MaxFunctionEvaluations = 500*n;
 end
 
 % Set the StepTolerance of the solver.

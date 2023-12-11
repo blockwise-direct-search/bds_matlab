@@ -67,10 +67,10 @@ try
     % norm of the gradient.
     options.output_xhist = true;
 
-    % Set maxfun large enough to see the ratio between the norm of the
+    % Set MaxFunctionEvaluations large enough to see the ratio between the norm of the
     % gradient and the StepTolerance.
-    if ~isfield(options, "maxfun")
-        options.maxfun = 1e5;
+    if ~isfield(options, "MaxFunctionEvaluations")
+        options.MaxFunctionEvaluations = 1e5;
     end
 
     % Use time to distinguish.

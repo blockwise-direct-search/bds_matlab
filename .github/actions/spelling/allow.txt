@@ -1027,7 +1027,7 @@ maxdepth
 maxdim
 maxeval
 Maxfilt
-maxfun
+MaxFunctionEvaluations
 Maxhist
 maximality
 maxit

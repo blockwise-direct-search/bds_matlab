@@ -7,7 +7,7 @@ if nargin < 1
 end
 
 options.Algorithm = Algorithm;
-options.maxfun = 1e5;
+options.MaxFunctionEvaluations = 1e5;
 options.StepTolerance = eps;
 options.output_xhist = true;
 options.output_alpha_hist = true;
