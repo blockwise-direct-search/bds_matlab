@@ -17,7 +17,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               Default: "cbds".
 %   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
 %                               or "rbds", 1 if Algorithm is "ds".
-%   MaxFunctionEvaluations                      Maximum of function evaluations. A positive integer.
+%   MaxFunctionEvaluations      Maximum of function evaluations. A positive integer.
 %   direction_set               A matrix whose columns will be used to define the polling directions. 
 %                               If options does not contain direction_set, then the polling directions will be 
 %                               {e_1, -e_1, ..., e_n, -e_n}. Otherwise, direction_set should be a matrix of n 
