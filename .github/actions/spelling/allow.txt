@@ -756,6 +756,7 @@ isdir
 isempty
 iseq
 iseqiv
+isequal
 isequiv
 Iserles
 isfield
