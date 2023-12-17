@@ -19,7 +19,7 @@ function rosenbrock_example(options)
 if nargin < 1
     options = struct();
 end
-keyboard
+
 x0 = [0; 0; 0];  % starting point
 
 %options.MaxFunctionEvaluations = 1e4;

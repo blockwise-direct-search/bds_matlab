@@ -308,6 +308,13 @@ direction_set_indices = divide_direction_set(num_directions, num_blocks);
 % Initialize the history of function values.
 fhist = NaN(1, MaxFunctionEvaluations);
 
+% Initialize the history of points which failed for one iteration.
+xhist_failed = NaN(n, MaxFunctionEvaluations);
+if isfield(options, "output_xhist_failed")
+    output_xhist_failed = options.output_xhist_failed;
+else
+    output_xhist_failed = get_default_constant("output_xhist_failed");
+end
 % Initialize the history of points visited.
 if isfield(options, "output_xhist")
     output_xhist = options.output_xhist;
@@ -393,7 +400,13 @@ for iter = 1:maxit
         % in the cycle in order. For example, if num_blocks = 3, then the cycle is [1 2 3 2 1 2 3 2 1 ...].   
         block_indices = [all_block_indices (num_blocks-1):-1:2];
     end
-    
+
+    if output_xhist_failed && iter > 1 && isequal(xopt, xopt_old)
+        % Record the function values of the points which failed for one iteration.
+        xhist_failed(:, iter-1) = xopt;
+    end
+    xopt_old = xopt;
+
     for i = 1:length(block_indices)
 
         % i_real = block_indices(i) is the real index of the block to be visited. For example, 
@@ -527,6 +540,9 @@ if output_xhist
     output.xhist = xhist(:, 1:nf);
 end
 output.fhist = fhist(1:nf);
+if output_xhist_failed
+    output.xhist_failed = xhist_failed(:, ~all(isnan(xhist_failed)));
+end
 
 % Set the message according to exitflag.
 switch exitflag

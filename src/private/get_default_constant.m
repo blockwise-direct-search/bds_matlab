@@ -39,6 +39,8 @@ switch constant_name
         constant_value = false;
     case {"output_block_hist"}
         constant_value = false;
+    case {"output_xhist_failed"}
+        constant_value = false;
     otherwise
         error("Unknown constant name")
 end
