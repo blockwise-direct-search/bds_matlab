@@ -49,14 +49,14 @@ function tests = unit_test
     
     function divide_direction_set_test(testCase)
     %DIVIDE_direction_set_TEST tests the file private/divide_direction_set.m
-    m = 11;
+    n = 11;
     nb = 3;
     INDEX_direction_set = cell(1,nb);
-    INDEX_direction_set{1} = [1, 2, 3, 4];
-    INDEX_direction_set{2} = [5, 6, 7, 8];
-    INDEX_direction_set{3} = [9, 10, 11];
+    INDEX_direction_set{1} = [1 2 3 4 5 6 7 8];
+    INDEX_direction_set{2} = [9 10 11 12 13 14 15 16];
+    INDEX_direction_set{3} = [17 18 19 20 21 22];
     
-    verifyEqual(testCase, divide_direction_set(m, nb), INDEX_direction_set)
+    verifyEqual(testCase, divide_direction_set(n, nb), INDEX_direction_set)
     
     end
     
@@ -143,28 +143,16 @@ function tests = unit_test
 
     n = 3;
     options = struct();
-    options.direction_set = [1 0;0 0;0 0];
-    get_direction_set(n, options)
-    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_direction_set(n, options), D)
-
-    n = 3;
-    options = struct();
-    options.direction_set = [1 0;0 1;0 0];
-    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_direction_set(n, options), D)
-
-    n = 3;
-    options = struct();
-    options.direction_set = eye(3);
-    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_direction_set(n, options), D)
-
-    n = 3;
-    options = struct();
-    options.direction_set = [];
-    D = [1 -1 0 0 0 0;0 0 1 -1 0 0;0 0 0 0 1 -1];
-    verifyEqual(testCase, get_direction_set(n, options), D)
+    A = randn(n);
+    [Q, ~] = qr(A);
+    options.direction_set = Q;
+    D = get_direction_set(n, options);
+    if D(:, 1:2:5) ~= -D(:, 2:2:6)
+        error('D is not symmetric');
+    end    
+    if rank(D(:, 1:2:5)) ~= 3
+        error('The basis of D is not a basis.');
+    end
 
     n = 3;
     options = struct();
@@ -181,15 +169,20 @@ function tests = unit_test
 
     n = 3;
     options = struct();
-    A = randn(n);
+    A = zeros(3);
+    detA = 0;
+    while detA == 0
+            A = randn(3);
+            detA = det(A);
+    end
     options.direction_set = A;
-    D = get_direction_set(n, options);    
+    D = get_direction_set(n, options);
     if D(:, 1:2:5) ~= -D(:, 2:2:6)
         error('D is not symmetric');
-    end
+    end    
     if rank(D(:, 1:2:5)) ~= 3
         error('The basis of D is not a basis.');
     end
-
+  
     end
     

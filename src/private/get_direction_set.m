@@ -3,10 +3,10 @@ function D = get_direction_set(n, options)
 %
 %   If the user does not input OPTIONS or the OPTIONS does not contain direction_set.
 %   D will be [e_1, -e_1, ..., e_n, -e_n], where e_i is the i-th coordinate vector.
-%   Otherwise, options.direction_set should be a matrix of n rows, and set D to
-%   [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th column of direction_set, 
-%   and m is the number of columns of direction_set. Before doing so, we revise 
-%   direction_set in the following way.
+%   Otherwise, options.direction_set should be a matrix of n rows, whose columns are
+%   linear independent. Set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th
+%   vector in options.direction_set and m is the number of columns of options.direction_set.
+%   Before doing so, we revise direction_set in the following way.
 %   1. Remove the directions whose norms are too small. 
 %   2. Find directions that are almost parallel. Then preserve the first one and remove the others.
 %   3. Make the direction set linearly span the full space by adding new columns if necessary.
@@ -41,7 +41,8 @@ else
     end
 
     % Remove the directions whose norms are too small.
-    % We include the factor sqrt(n) in the following threshold to reflect the dimension of the problem.
+    % We include the factor sqrt(n) in the following threshold to reflect the dimension of the
+    % problem.
     shortest_direction_norm = 10*sqrt(n)*eps;
     direction_norms = vecnorm(direction_set);
     short_directions = (direction_norms < shortest_direction_norm);
