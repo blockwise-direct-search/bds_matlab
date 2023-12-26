@@ -31,8 +31,9 @@ n = length(x0);
 % Get the direction set, the number of directions and blocks respectively.
 %options.direction = "canonical";
 D = get_direction_set(n, options);
-num_directions = size(D, 2);
 num_blocks = n;
+% Decide which polling direction belongs to which block.
+direction_set_indices = divide_direction_set(n, num_blocks);
 
 % Set indices of blocks as 1:num_blocks.
 block_indices = 1:num_blocks;
@@ -118,9 +119,6 @@ if isfield(options, "alpha_init")
 else
     alpha_all = ones(num_blocks, 1);
 end
-
-% Decide which polling direction belongs to which block.
-direction_set_indices = divide_direction_set(num_directions, num_blocks);
 
 % Initialize the history of function values.
 fhist = NaN(1, MaxFunctionEvaluations);

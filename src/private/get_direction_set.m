@@ -35,6 +35,11 @@ else
         direction_set(isnan(direction_set) | isinf(direction_set)) = 0;
     end
 
+    % Check whether the direction set is linearly independent.
+    if abs(rank(direction_set) - size(direction_set, 2)) >= 1.0e-10
+        error('The direction set is not linearly independent.');
+    end
+
     % Remove the directions whose norms are too small.
     % We include the factor sqrt(n) in the following threshold to reflect the dimension of the problem.
     shortest_direction_norm = 10*sqrt(n)*eps;
@@ -75,12 +80,12 @@ else
 
     % To find the maximal linearly independent set in the direction_set using the rref function in MATLAB.
     % rref returns the reduced row echelon form of the input matrix. Thus we transpose the direction_set first
-    % and then do row elimination to find the maximal linearly independent set. 
+    % and then do row elimination to find the maximal linearly independent set.
     reduced_direction_set = rref(direction_set');
     % Find the indices of the columns in the direction_set which is the maximal linearly independent set.
-    maximal_linear_independent_set_indices = (diag(reduced_direction_set) <= 0);
+    maximal_linear_independent_set_indices = (diag(reduced_direction_set) > 0);
     % To obtain the maximal linearly independent set in the direction_set.
-    direction_set = direction_set(:, ~maximal_linear_independent_set_indices);
+    direction_set = direction_set(:, maximal_linear_independent_set_indices);
 
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 

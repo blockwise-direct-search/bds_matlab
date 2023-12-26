@@ -6,55 +6,41 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %   XOPT = BDS(FUN, X0) returns an approximate minimizer XOPT of the function FUN, starting the 
 %   calculations at X0. FUN must accept a vector input X and return a scalar.
 %
-%   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. OPTIONS should be a
-%   structure with the following fields.
+%   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. OPTIONS %   should be a structure with the following fields.
 %
-%   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct search), 
-%                               "pbds" (randomly permuted blockwise direct search), "rbds" (randomized 
-%                               blockwise direct search), "ds" (the classical direct search without blocks).
-%                               "pads" (parallel blockwise direct search). "scbds" (symmetric blockwise direct
-%                               search).
-%                               Default: "cbds".
-%   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is "cbds", "pbds", 
-%                               or "rbds", 1 if Algorithm is "ds".
+%   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct
+%                               search) "pbds" (randomly permuted blockwise direct search), 
+%                               "rbds" (randomized blockwise direct search), "ds" (the classical 
+%                               direct search), "pads" (parallel blockwise direct search). "scbds" %                               (symmetric blockwise direct search). Default: "cbds".
+%   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is %                               "cbds", "pbds", or "rbds", 1 if Algorithm is "ds".
 %   MaxFunctionEvaluations      Maximum of function evaluations. A positive integer.
-%   direction_set               A matrix whose columns will be used to define the polling directions. 
-%                               If options does not contain direction_set, then the polling directions will be 
-%                               {e_1, -e_1, ..., e_n, -e_n}. Otherwise, direction_set should be a matrix of n 
-%                               rows, and the polling directions will be {d_1, -d_1, ..., d_m, -d_m}, where d_i 
-%                               is the i-th column of direction_set, and m is the number of columns of   %                               direction_set.
-%                               If necessary, we will first extend direction_set by adding some columns to make
-%                               sure that rank(direction_set) = n, so that the polling directions make a 
+%   direction_set               A matrix whose columns will be used to define the polling %                               directions. If options does not contain direction_set, then the %                               polling directions will be {e_1, -e_1, ..., e_n, -e_n}. 
+%                               Otherwise, direction_set should be a matrix of n rows, and the %                               polling directions will be {d_1, -d_1, ..., d_m, -d_m}, where d_i 
+%                               is the i-th column of direction_set, and m is the number of %                               columns of direction_set. If necessary, we will first extend  %                               direction_set by adding some columns to make sure that 
+%                               rank(direction_set) = n, so that the polling directions make a 
 %                               positive spanning set. See get_direction_set.m for details.
-%   expand                      Expanding factor of step size. A real number no less than 1. Default: 2.
-%   shrink                      Shrinking factor of step size. A positive number less than 1. Default: 0.5.
-%   forcing_function            The forcing function used for deciding whether the step achieves a sufficient
-%                               decrease. A function handle. Default: @(alpha) alpha^2. See also reduction_factor. 
-%   reduction_factor            Factors multiplied to the forcing function when deciding whether the step achieves
-%                               a sufficient decrease. A 3-dimentional vector such that 
+%   expand                      Expanding factor of step size. A real number no less than 1. %                               Default: 2.
+%   shrink                      Shrinking factor of step size. A positive number less than 1.
+%                               Default: 0.5.
+%   forcing_function            The forcing function used for deciding whether the step achieves a %                               sufficient decrease. A function handle. 
+%                               Default: @(alpha) alpha^2. See also reduction_factor. 
+%   reduction_factor            Factors multiplied to the forcing function when deciding whether %                               the step achieves a sufficient decrease. A 3-dimentional vector %                               such that 
 %                               reduction_factor(1) <= reduction_factor(2) <= reduction_factor(3),
 %                               reduction_factor(1) >= 0, and reduction_factor(2) > 0.
-%                               reduction_factor(0) is used for deciding whether to update the base point; 
-%                               reduction_factor(1) is used for deciding whether to shrink the step size; 
-%                               reduction_factor(2) is used for deciding whether to expand the step size.
+%                               reduction_factor(0) is used for deciding whether to update the %                               base point; 
+%                               reduction_factor(1) is used for deciding whether to shrink the %                               step size; 
+%                               reduction_factor(2) is used for deciding whether to expand the %                               step size.
 %                               Default: [0, eps, eps]. See also forcing_function.
-%   StepTolerance               Lower bound of the step size. If the step size is smaller than StepTolerance,
-%                               then the algorithm terminates. A (small) positive number. Default: 1e-10.
-%   ftarget                     Target of the function value. If the function value is smaller than or equal to
-%                               ftarget, then the algorithm terminates. A real number. Default: -Inf.
-%   polling_inner               Polling strategy in each block. It can be "complete" or "opportunistic". 
-%                               Default: "opportunistic".
-%   cycling_inner               Cycling strategy employed within each block. It is used only when polling_inner 
-%                               is "opportunistic". It can be 0, 1, 2, 3, 4. See cycling.m for details. 
-%                               Default: 3.
-%   with_cycling_memory         Whether the cycling strategy within each block memorizes the history or not. 
-%                               It is used only when polling_inner is "opportunistic". Default: true.
-%   permuting_period            It is only used in PBDS, which shuffles the blocks every permuting_period 
+%   StepTolerance               Lower bound of the step size. If the step size is smaller than %                               StepTolerance, then the algorithm terminates. A (small) positive %                               number. Default: 1e-10.
+%   ftarget                     Target of the function value. If the function value is smaller %                               than or equal to ftarget, then the algorithm terminates. A real %                               number. Default: -Inf.
+%   polling_inner               Polling strategy in each block. It can be "complete" or 
+%                               "opportunistic". Default: "opportunistic".
+%   cycling_inner               Cycling strategy employed within each block. It is used only when %                               polling_inner is "opportunistic". It can be 0, 1, 2, 3, 4. %                               See cycling.m for details. Default: 3.
+%   with_cycling_memory         Whether the cycling strategy within each block memorizes the %                               history or not. It is used only when polling_inner is %                               "opportunistic". Default: true.
+%   permuting_period            It is only used in PBDS, which shuffles the blocks every %                               permuting_period 
 %                               iterations. A positive integer. Default: 1.   
-%   replacement_delay           It is only used for RBDS. Suppose that replacement_delay is r. If block i
-%                               is selected at iteration k, then it will not be selected at iterations 
-%                               k+1, ..., k+r. An integer between 0 and num_blocks-1. Default: 0.
-%   seed                        The seed for permuting blocks in PBDS or randomly choosing one block in RBDS.
+%   replacement_delay           It is only used for RBDS. Suppose that replacement_delay is r. If %                               block i is selected at iteration k, then it will not be selected % %                               at iterations k+1, ..., k+r. An integer between 0 and %                               num_blocks-1. Default: 0.
+%   seed                        The seed for permuting blocks in PBDS or randomly choosing one %                               block in RBDS.
 %                               It is only for reproducibility in experiments. A positive integer.
 %   output_xhist                Whether to output the history of points visited. Default: false.
 %   output_alpha_hist           Whether to output the history of step sizes. Default: false.
@@ -138,9 +124,9 @@ if isfield(options, "direction_set_type")
 end
 % Get the direction set.
 D = get_direction_set(n, options);
-% Get the number of directions.
-num_directions = size(D, 2);
+
 % Get the number of blocks.
+num_directions = size(D, 2);
 if strcmpi(options.Algorithm, "ds")
     % For ds, num_blocks can only be 1.
     num_blocks = 1;
@@ -153,6 +139,9 @@ elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") 
     % For these algorithms, the default value of num_blocks is num_directions/2. 
     num_blocks = ceil(num_directions/2);
 end
+
+% Determine the indices of directions in each block.
+direction_set_indices = divide_direction_set(n, num_blocks);
 
 % Set the factor for expanding the step sizes.
 if isfield(options, "expand")
@@ -264,22 +253,24 @@ else
     ftarget = get_default_constant("ftarget");
 end
 
-% Check whether the history of step sizes is outputted.
+% Decide whether to output the history of step sizes.
 if isfield(options, "output_alpha_hist")
     output_alpha_hist = options.output_alpha_hist;
 else
     output_alpha_hist = get_default_constant("output_alpha_hist");
 end
-% If alpha_hist exceeds the maximum memory size limit, then we will not output alpha_hist.
+% Initialize alpha_hist if output_alpha_hist is true and alpha_hist does not exceed the 
+% maximum memory size allowed.
 if output_alpha_hist
     try
         alpha_hist = NaN(num_blocks, maxit);
     catch
         output_alpha_hist = false;
-        warning("The size of alpha_hist exceeds the maximum memory size limit. output_alpha_hist is set to false." )
+        warning("alpha_hist will be not included in the output due to the limit of memory." )
     end
 end
 
+% Set the initial step sizes. If options do not contain the field of alpha_init, then the initial % step size of each block is set to 1.
 if isfield(options, "alpha_init")
     if length(options.alpha_init) == 1
         alpha_all = options.alpha_init*ones(num_blocks, 1);
@@ -290,8 +281,11 @@ if isfield(options, "alpha_init")
     end
 elseif (num_blocks == n && size(D, 2) == 2*n && isfield(options, "alpha_init_scaling")) ...
      && options.alpha_init_scaling
+    % x0_coordinates is the coordinates of x0 with respect to the directions in D,
+    % where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
     x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
-    alpha_all = 0.5 * max(1, abs(x0_coordinates));
+    x0_scales = abs(x0_coordinates());
+    alpha_all = 0.5 * max(1, abs(x0_scales));
     %alpha_all = 0.1 * max(1e-3, abs(x0_coordinates));
 else
     alpha_all = ones(num_blocks, 1);
@@ -302,26 +296,16 @@ end
 fopt_all = NaN(1, num_blocks);
 xopt_all = NaN(n, num_blocks);
 
-% Determine the indices of directions in each block.
-direction_set_indices = divide_direction_set(num_directions, num_blocks);
-
 % Initialize the history of function values.
 fhist = NaN(1, MaxFunctionEvaluations);
 
-% Initialize the history of points which failed for one iteration.
-xhist_failed = NaN(n, MaxFunctionEvaluations);
-if isfield(options, "output_xhist_failed")
-    output_xhist_failed = options.output_xhist_failed;
-else
-    output_xhist_failed = get_default_constant("output_xhist_failed");
-end
 % Initialize the history of points visited.
 if isfield(options, "output_xhist")
     output_xhist = options.output_xhist;
 else
     output_xhist = get_default_constant("output_xhist");
 end
-% If xhist exceeds the maximum of memory size limit, then we will not output xhist.
+% If xhist exceeds the maximum memory size allowed, then we will not output xhist.
 if output_xhist
     try
         xhist = NaN(n, MaxFunctionEvaluations);
@@ -331,6 +315,7 @@ if output_xhist
     end
 end
 
+% Decide whether to output the history of blocks visited.
 if isfield(options, "output_block_hist")
     output_block_hist = options.output_block_hist;
 else
@@ -340,20 +325,29 @@ end
 % Initialize the history of blocks visited.
 block_hist = NaN(1, MaxFunctionEvaluations);
 
-% Initialize the exitflag where the maximum number of iterations is reached. 
+% Initialize exitflag. If exitflag is not set elsewhere, then the maximum number of iterations
+% is reached, and hence we initialize exitflag to the corresponding value. 
 exitflag = get_exitflag("MAXIT_REACHED");
+
+% Initialize xbase and fbase. xbase serves as the "base point" for the computation in the next 
+% block, meaning that reduction will be calculated with respect to xbase. fbase is the function 
+% value at xbase.
 xbase = x0; 
 fbase = eval_fun(fun, xbase);
-% Set the number of function evaluations.
+% Initialize xopt and fopt. xopt is the best point encountered so far, and fopt is the
+% corresponding function value. 
+xopt = xbase;
+fopt = fbase;
+
+% Initialize nf (the number of function evaluations), xhist (history of points visited), and 
+% fhist (history of function values).
 nf = 1; 
 if output_xhist
     xhist(:, nf) = xbase;
 end
 fhist(nf) = fbase;
-xopt = xbase;
-fopt = fbase;
-terminate = false;
 
+terminate = false;
 % Check whether FTARGET is reached by fopt. If it is true, then terminate.
 if fopt <= ftarget
     information = "FTARGET_REACHED";
@@ -376,7 +370,8 @@ for iter = 1:maxit
 
     % Define block_indices, which is a vector containing the indices of blocks that we 
     % are going to visit in this iteration.
-    if strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pads")
+    if strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "cbds") ...
+        || strcmpi(options.Algorithm, "pads")
         % If the Algorithm is "ds", "cbds" or "pads", then we will visit all blocks in order.
         % When the Algorithm is "ds", note that num_blocks = 1 and block_indices = [1],
         % a vector of length 1.
@@ -400,12 +395,6 @@ for iter = 1:maxit
         % in the cycle in order. For example, if num_blocks = 3, then the cycle is [1 2 3 2 1 2 3 2 1 ...].   
         block_indices = [all_block_indices (num_blocks-1):-1:2];
     end
-
-    if output_xhist_failed && iter > 1 && isequal(xopt, xopt_old)
-        % Record the function values of the points which failed for one iteration.
-        xhist_failed(:, iter-1) = xopt;
-    end
-    xopt_old = xopt;
 
     for i = 1:length(block_indices)
 
@@ -468,7 +457,8 @@ for iter = 1:maxit
             % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
             % meaning that reduction will be calculated with respect to xbase, as shown above. 
             % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
-            if (reduction_factor(1) <= 0 && sub_fopt < fbase) || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fbase
+            if (reduction_factor(1) <= 0 && sub_fopt < fbase) ...
+                || sub_fopt + reduction_factor(1) * forcing_function(alpha_all(i_real)) < fbase
                 xbase = sub_xopt;
                 fbase = sub_fopt;
             end
@@ -510,8 +500,8 @@ for iter = 1:maxit
     % For "pads", we will update xbase and fbase only after one iteration of the outer loop.
     % During the inner loop, every block will use the same xbase and fbase.
     if strcmpi(options.Algorithm, "pads")
-        % Update xbase and fbase. xbase serves as the "base point" for the computation in the next block,
-        % meaning that reduction will be calculated with respect to xbase, as shown above. 
+        % Update xbase and fbase. xbase serves as the "base point" for the computation in the 
+        % next block, meaning that reduction will be calculated with respect to xbase, as shown above. 
         % Note that their update requires a sufficient decrease if reduction_factor(1) > 0.
         if (reduction_factor(1) <= 0 && fopt < fbase) || fopt + reduction_factor(1) * forcing_function(min(alpha_all)) < fbase
             xbase = xopt;
@@ -526,6 +516,7 @@ for iter = 1:maxit
     
 end
 
+% Record the number of function evaluations in output.
 output.funcCount = nf;
 
 % Truncate the histories of the blocks visited, the step sizes, the points visited, 
@@ -540,9 +531,6 @@ if output_xhist
     output.xhist = xhist(:, 1:nf);
 end
 output.fhist = fhist(1:nf);
-if output_xhist_failed
-    output.xhist_failed = xhist_failed(:, ~all(isnan(xhist_failed)));
-end
 
 % Set the message according to exitflag.
 switch exitflag
