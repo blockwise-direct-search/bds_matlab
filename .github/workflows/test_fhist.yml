@@ -4,8 +4,8 @@ on:
   # Trigger the workflow on push or pull request
   # push:
   # Trigger the workflow manually
-  #schedule:
-  # - cron: '0 12 */7 * *'
+  schedule:
+    - cron: '0 12 */5 * *'
   workflow_dispatch:
 
 env:
@@ -98,6 +98,7 @@ jobs:
             parameters.log_x_axis = ${{ matrix.log_x_axis }};
             parameters.features = "${{ matrix.feature }}";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
+            parameters.plot_fhist = true;
             plot_fhist(parameters);
 
       - name: Upload artifact
