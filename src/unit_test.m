@@ -57,6 +57,15 @@ function tests = unit_test
     INDEX_direction_set{3} = [17 18 19 20 21 22];
     
     verifyEqual(testCase, divide_direction_set(n, nb), INDEX_direction_set)
+
+    n = 15;
+    nb = 3;
+    INDEX_direction_set = cell(1,nb);
+    INDEX_direction_set{1} = [1 2 3 4 5 6 7 8 9 10];
+    INDEX_direction_set{2} = [11 12 13 14 15 16 17 18 19 20];
+    INDEX_direction_set{3} = [21 22 23 24 25 26 27 28 29 30];
+    
+    verifyEqual(testCase, divide_direction_set(n, nb), INDEX_direction_set)
     
     end
     
@@ -135,8 +144,7 @@ function tests = unit_test
         D(i, 2*i-1) = 1;
         D(i, 2*i) = -1;
     end
-    options.direction = "canonical";    
-    verifyEqual(testCase, get_direction_set(n,options), D)
+    verifyEqual(testCase, get_direction_set(n), D)
 
     options = struct();
     verifyEqual(testCase, get_direction_set(n, options), D)

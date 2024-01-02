@@ -112,14 +112,14 @@ if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
 
+% If there exists the field "direction_set_type" of options, then we will generate the direction
+% set according to the value of "direction_set_type".
 if isfield(options, "direction_set_type") 
     if strcmpi(options.direction_set_type, "randomized_orthogonal")
-        A = random_stream.randn(n); 
-        [Q, ~] = qr(A); 
-        options.direction_set = Q;
+        random_matrix = random_stream.randn(n); 
+        [options.direction_set, ~] = qr(random_matrix); 
     elseif strcmpi(options.direction_set_type, "randomized")
-        A = random_stream.randn(n); 
-        options.direction_set = A;
+        options.direction_set = random_stream.randn(n); 
     end
 end
 % Get the direction set.
@@ -281,8 +281,8 @@ if isfield(options, "alpha_init")
     end
 elseif (num_blocks == n && size(D, 2) == 2*n && isfield(options, "alpha_init_scaling")) ...
      && options.alpha_init_scaling
-    % x0_coordinates is the coordinates of x0 with respect to the directions in D,
-    % where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
+    % x0_coordinates is the coordinates of x0 with respect to the directions in 
+    % D(:, 1 : 2 : 2*n-1), where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
     x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
     x0_scales = abs(x0_coordinates());
     alpha_all = 0.5 * max(1, abs(x0_scales));
@@ -359,11 +359,14 @@ if fopt <= ftarget
     maxit = 0;
 end
 
+% If there exists the field "block_indices_permuted_init" of options, and its value is true,
+% then we will permute the block_indices at the very beginning.
 if isfield(options, "block_indices_permuted_init") && options.block_indices_permuted_init
     all_block_indices = random_stream.randperm(num_blocks);
 else
     all_block_indices = (1:num_blocks);
 end
+% Initialize the number of blocks visited.
 num_visited_blocks = 0;
 
 for iter = 1:maxit
@@ -394,7 +397,9 @@ for iter = 1:maxit
         % Get the block that is going to be visited in this iteration when the Algorithm 
         % is "sCBDS".
         % In this case, we regard the indices of blocks as a cycle, and we will visit the blocks
-        % in the cycle in order. For example, if num_blocks = 3, then the cycle is [1 2 3 2 1 2 3 2 1 ...].  
+        % in the cycle in order. For example, if num_blocks = 3, then the cycle 
+        % is [1 2 3 2 1 2 3 2 1 ...]. For implementation, block_indices is a vector of 
+        % length 2n-2, where the order of the first n elements is [1 2 3 ... n n-1 ... 2].  
         block_indices = [all_block_indices (num_blocks-1):-1:2];
     end
 

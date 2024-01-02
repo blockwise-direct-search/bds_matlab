@@ -5,7 +5,9 @@ function [xopt, fopt, exitflag, output] = inner_direct_search(fun, ...
 %
 %   [xopt, fopt, EXITFLAG, OUTPUT] = INNER_DIRECT_SEARCH(FUN, xbase, fbase, D, ...
 %   DIRECTION_INDICES, ALPHA, OPTIONS) returns a structure OUTPUT including
-%   funcCount, fhist, xhist, success, terminate, and direction_indices, working with the structure OPTIONS, which %   includes reduction_factor, ftarget, polling, with_cycling_memory, cycling.
+%   funcCount, fhist, xhist, success, terminate, and direction_indices, working with the 
+%   structure OPTIONS, which includes reduction_factor, ftarget, polling, 
+%   with_cycling_memory, cycling.
 %
 %   DIRECTION_INDICES is the indices of directions of this block in D.
 %
@@ -66,7 +68,8 @@ for j = 1 : num_directions
 
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling directions. The reason  
-    % why we cycle indices here is because inner_direct_search is called in a loop in outer_direct_search. 
+    % that we cycle indices here is because inner_direct_search is called in a loop 
+    % in outer_direct_search. 
     if sufficient_decrease && ~strcmpi(polling_inner, "complete")
         direction_indices = cycling(direction_indices, j, cycling_strategy, with_cycling_memory);
         break;
@@ -81,7 +84,7 @@ end
 % When the algorithm reaches here, it means that there are three cases.
 % 1. The algorithm uses out of the allocated function evaluations.
 % 2. The algorithm reaches the target function value.
-% 3. The algorithm achieves sufficient decrease.
+% 3. The algorithm achieves a sufficient decrease when polling_inner is opportunistic.
 % We need to check whether the algorithm terminates by the first two cases.
 terminate = (nf >= MaxFunctionEvaluations || fnew <= ftarget);
 if fnew <= ftarget
