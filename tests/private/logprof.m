@@ -103,8 +103,14 @@ for ir = 1:nr
     bar(log_ratio(:, ir));
 
     % Add the ylabel.
-    ylabel_handle = ylabel('$log_2(\frac{\mathrm{evals}_{\mathrm{CBDS}}}{\mathrm{evals}_{\mathrm{NEWUOA}}})$',...
-    'Interpreter', 'latex');
+    % Define the original LaTeX string.
+    ylabel_prototype = '$log_2(\frac{\mathrm{evals}_{\mathrm{CBDS}}}{\mathrm{evals}_{\mathrm{NEWUOA}}})$';
+    % Replace the string using replacement method.
+    ylabel_updated = strrep(ylabel_prototype, 'CBDS', char(solvers_name(1)));
+    ylabel_updated = strrep(ylabel_updated, 'NEWUOA', char(solvers_name(2)));
+    
+    % Using the updated LaTeX string to create ylabel.
+    ylabel_handle = ylabel(ylabel_updated, 'Interpreter', 'latex');
 
     % Adjust the position of the ylabel.
     set(ylabel_handle, 'Units', 'normalized', 'Position', [-0.075, 0.5, 0]);
