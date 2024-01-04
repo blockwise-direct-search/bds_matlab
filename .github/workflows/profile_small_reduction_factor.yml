@@ -89,7 +89,7 @@ jobs:
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             parameters.solvers_options{2}.reduction_factor = [0, ${{ matrix.reduction_factor }}, 1000*${{ matrix.reduction_factor }}];
 
-            plot_profile(parameters);
+            parameters.log_profile = true; plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
