@@ -135,7 +135,7 @@ elseif isfield(options, "block")
     num_blocks = min(num_directions, options.block);
 elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") ...
     || strcmpi(options.Algorithm, "rbds") || strcmpi(options.Algorithm, "pads") ...
-    || strcmpi(options.Algorithm, "sCBDS")
+    || strcmpi(options.Algorithm, "scbds")
     % For these algorithms, the default value of num_blocks is num_directions/2. 
     num_blocks = ceil(num_directions/2);
 end
@@ -393,9 +393,9 @@ for iter = 1:maxit
         % Select a block randomly from available_block_indices.
         idx = random_stream.randi(length(available_block_indices));
         block_indices = available_block_indices(idx);  % a vector of length 1
-    elseif strcmpi(options.Algorithm, "sCBDS")
+    elseif strcmpi(options.Algorithm, "scbds")
         % Get the block that is going to be visited in this iteration when the Algorithm 
-        % is "sCBDS".
+        % is "scbds".
         % In this case, we regard the indices of blocks as a cycle, and we will visit the blocks
         % in the cycle in order. For example, if num_blocks = 3, then the cycle 
         % is [1 2 3 2 1 2 3 2 1 ...]. For implementation, block_indices is a vector of 

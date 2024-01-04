@@ -951,6 +951,8 @@ lneqq
 lnsim
 localfunctions
 logallrefupdates
+logperf
+logprof
 logx
 Loh
 Loneland

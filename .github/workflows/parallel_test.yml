@@ -42,7 +42,7 @@ jobs:
         # Only the following combinations of OS and MATLAB support parfor
         os: [ubuntu-latest, windows-latest, macos-latest, macos-13]
         matlab: [R2023a, latest]
-        Algorithm: [cbds, pbds, rbds, ds]
+        Algorithm: [cbds, pbds, rbds, ds, pads, scbds]
 
         # Exclude some versions of OS and MATLAB.
         exclude:
@@ -124,7 +124,7 @@ jobs:
             end
 
             % Copy the crash dump files to root_dir if exceptions occur.
-            if ~isempty(exception)
+            if ~isempty(exception)  
               copy_crash_dump_files(root_dir)
               dir(root_dir)
               rethrow(exception);

@@ -38,7 +38,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04, ubuntu-latest, windows-2019, windows-latest, macos-11, macos-latest, macos-13]
         matlab: [R2020b, R2021a, R2022a, R2023a, latest]
-        Algorithm: [cbds, pbds, rbds, ds]
+        Algorithm: [cbds, pbds, rbds, ds, pads, scbds]
 
         # Exclude some versions of OS and MATLAB. In addition to the latest versions, we intend to
         # test the earliest version of MATLAB on each OS.
