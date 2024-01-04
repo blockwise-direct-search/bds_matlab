@@ -364,21 +364,20 @@ function profile(parameters)
             fmin = min(fmin_total, [], 2);
         end
     
+        % Plot fhist.
+        compdf_location = char(fullfile(path_tests, "private", "compdf"));
         if isfield(parameters, "plot_fhist") && parameters.plot_fhist
             if num_random == 1
                 outputfile = char(strcat("merged", "_", parameters.stamp_fhist, ".pdf"));
-                compdf_location = char(fullfile(path_tests, "private", "compdf"));
                 merge_pdf(parameters.savepath, outputfile, compdf_location);
             else
                 for i = 1:num_random
                     outputfile = char(strcat("merged", "_", parameters.stamp_fhist, "_", num2str(i), ".pdf"));
-                    compdf_location = char(fullfile(path_tests, "private", "compdf"));
                     merge_pdf(parameters.savepath{i}, outputfile, compdf_location);
                 end
             end
             parameters = rmfield(parameters, "savepath");
         end
-    
     
         path_testdata = fullfile(path_tests, "testdata");
         path_testdata_outdir = fullfile(path_tests, "testdata", tst);
@@ -388,7 +387,11 @@ function profile(parameters)
         mkdir(path_testdata_outdir, "perf");
         path_testdata_perf = fullfile(path_testdata_outdir, "perf");
         mkdir(path_testdata_perf, parameters.pdfname);
-        options_perf.outdir = fullfile(path_testdata_perf, parameters.pdfname);
+        if isfield(parameters, "log_profile") && parameters.log_profile
+            log_profile = strcat(parameters.pdfname, "_", "log_perf");
+            path_testdata_log_perf = fullfile(path_testdata_perf, log_profile);
+            mkdir(path_testdata_log_perf);
+        end
         mkdir(path_testdata_outdir, "src");
         path_testdata_src = fullfile(path_testdata_outdir, "src");
         mkdir(path_testdata_outdir, "tests");
@@ -462,12 +465,30 @@ function profile(parameters)
         % Draw performance profiles.
         % Set tolerance of convergence test in the performance profile.
         tau = parameters.tau;
-        %tau_length = length(tau);
-    
+        tau_length = length(tau);
+
         options_perf.pdfname = parameters.pdfname;
         options_perf.solvers = parameters.solvers_legend;
         options_perf.natural_stop = false;
+
+        % Draw log-profiles if necessary.
+        if isfield(parameters, "log_profile") && parameters.log_profile
+            options_perf.outdir = path_testdata_log_perf;
+            for l = 1:tau_length
+                options_perf.tau = tau(l);
+                logprof(frec, fmin, parameters.solvers_name, options_perf);
+            end
+            outputfile = char(strcat("merged", "_", log_profile, ".pdf"));
+            merge_pdf(options_perf.outdir, outputfile, compdf_location);
+            movefile(fullfile(options_perf.outdir, outputfile), ...
+                fullfile(path_testdata_perf, outputfile));
+        end
     
+        options_perf.outdir = fullfile(path_testdata_perf, parameters.pdfname);
+        if isfield(options_perf, "tau")
+            options_perf = rmfield(options_perf, "tau");
+        end
+
         perfdata(tau, frec, fmin, options_perf);
     
         % for l = 1:tau_length
@@ -475,33 +496,37 @@ function profile(parameters)
         %     output = perfprof(frec, fmin, options_perf);
         % end
     
-        cd(options_perf.outdir);
-    
-        % Initialize string variable.
-        pdfFiles = dir(fullfile(options_perf.outdir, '*.pdf'));
-    
-        % Store filename in a cell.
-        pdfNamesCell = cell(numel(pdfFiles), 1);
-        for i = 1:numel(pdfFiles)
-            pdfNamesCell{i} = pdfFiles(i).name;
-        end
-    
-        % Use the strjoin function to concatenate the elements in a cell array into a single string.
-        inputfiles = strjoin(pdfNamesCell, ' ');
-    
-        % Remove spaces at the beginning of a string.
-        inputfiles = strtrim(inputfiles);
-    
         % Merge pdf.
-        outputfile = 'all.pdf';
-        system(['bash ', fullfile(path_tests, 'private', 'compdf'), ' ', inputfiles, ' -o ', outputfile]);
+        % cd(options_perf.outdir);
+        outputfile = char(strcat("merged", "_", parameters.pdfname, ".pdf"));
+        merge_pdf(options_perf.outdir, outputfile, compdf_location);
+        movefile(fullfile(options_perf.outdir, outputfile), ...
+        fullfile(path_testdata_perf, outputfile));
+        % % Initialize string variable.
+        % pdfFiles = dir(fullfile(options_perf.outdir, '*.pdf'));
+    
+        % % Store filename in a cell.
+        % pdfNamesCell = cell(numel(pdfFiles), 1);
+        % for i = 1:numel(pdfFiles)
+        %     pdfNamesCell{i} = pdfFiles(i).name;
+        % end
+    
+        % % Use the strjoin function to concatenate the elements in a cell array into a single string.
+        % inputfiles = strjoin(pdfNamesCell, ' ');
+    
+        % % Remove spaces at the beginning of a string.
+        % inputfiles = strtrim(inputfiles);
+    
+        % % Merge pdf.
+        % outputfile = 'all.pdf';
+        % system(['bash ', fullfile(path_tests, 'private', 'compdf'), ' ', inputfiles, ' -o ', outputfile]);
+        % % % Rename pdf.
+        % % movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
+        % % Move pdf.
+        % movefile(fullfile(options_perf.outdir, "all.pdf"), fullfile(path_testdata_perf, "all.pdf"));
         % % Rename pdf.
+        % cd(path_testdata_perf);
         % movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
-        % Move pdf.
-        movefile(fullfile(options_perf.outdir, "all.pdf"), fullfile(path_testdata_perf, "all.pdf"));
-        % Rename pdf.
-        cd(path_testdata_perf);
-        movefile("all.pdf", sprintf("%s.pdf", parameters.pdfname));
     
     catch exception
     

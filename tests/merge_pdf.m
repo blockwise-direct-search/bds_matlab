@@ -1,4 +1,8 @@
 function merge_pdf(outdir, outputfile, compdf_location)
+% merge_pdf Merge pdf files in a folder.
+% outdir: the folder where the pdf files are stored.
+% outputfile: the full name of the merged pdf file (including ".pdf").
+% compdf_location: the location of the compdf file.
 
 cd(outdir);
 % Initialize string variable.
@@ -18,7 +22,6 @@ inputfiles = strtrim(inputfiles);
 
 % Merge pdf.
 system(['bash ', compdf_location, ' ', inputfiles, ' -o ', outputfile]);
-
 
 end
 
