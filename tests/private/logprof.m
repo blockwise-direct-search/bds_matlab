@@ -1,9 +1,9 @@
-function logprof(frec, fmin, solvers_name, options)
+function logprof(frec, fmin, solvers_name, num_problems, options)
 % This file is cited from 
 % https://github.com/libprima/prima/blob/main/matlab/tests/private/perfprof.m, which is
 % written by Zaikun ZHANG.
 %
-% This function plots the performance profiles of solvers.
+% This function plots the log-profiles of solvers.
 % frec: trajectory of function values; frec(ip, is, ir, k) is the function value of the ip-th
 % problem obtained by the is-th solver at the ir-th random run at the k-th iteration.
 % fmin: the minimal function values; either fmin(ip) is the minimal function value of the ip-th
@@ -101,6 +101,15 @@ hfig = figure("visible", "off");
 for ir = 1:nr
 
     bar(log_ratio(:, ir));
+
+    % Set the y-axis range.
+    ylim([-20, 20]);
+
+    text(ceil(num_problems/2), 15, char(solvers_name(2)), 'HorizontalAlignment', 'center', 'FontSize', 22);
+    text(ceil(num_problems/2), -15, char(solvers_name(1)), 'HorizontalAlignment', 'center', 'FontSize', 22);
+
+    % Add the xlabel.
+    xlabel('Problem', 'FontSize', 18);
 
     % Add the ylabel.
     % Define the original LaTeX string.

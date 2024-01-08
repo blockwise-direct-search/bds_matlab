@@ -476,19 +476,20 @@ function profile(parameters)
             options_perf.outdir = path_testdata_log_perf;
             for l = 1:tau_length
                 options_perf.tau = tau(l);
-                logprof(frec, fmin, parameters.solvers_name, options_perf);
+                logprof(frec, fmin, parameters.solvers_name, length(problem_names), options_perf);
             end
             outputfile = char(strcat("merged", "_", log_profile, ".pdf"));
             merge_pdf(options_perf.outdir, outputfile, compdf_location);
             movefile(fullfile(options_perf.outdir, outputfile), ...
                 fullfile(path_testdata_perf, outputfile));
         end
-    
+
         options_perf.outdir = fullfile(path_testdata_perf, parameters.pdfname);
         if isfield(options_perf, "tau")
             options_perf = rmfield(options_perf, "tau");
         end
 
+        % Draw profiles.
         perfdata(tau, frec, fmin, options_perf);
     
         % for l = 1:tau_length

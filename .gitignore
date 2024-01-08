@@ -48,6 +48,11 @@ untitled.m
 
 testdspd.m
 test_temporary.m
+
+# imfil
+tests/competitors/private/imfil.m
+tests/competitors/imfil_wrapper.m
+tests/competitors/private/f_matcutest.m
 # setup
 # setup.m
 # recursive.m
