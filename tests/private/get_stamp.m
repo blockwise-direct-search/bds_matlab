@@ -95,6 +95,9 @@ switch parameters.solvers_options{i}.solver
                 solver_stamp = "nlopt-simplex";
         end
 
+    case {"imfil_wrapper"}
+        solver_stamp = "imfil";
+
     case {"nomad_wrapper"}
         solver_stamp = "nomad";
 

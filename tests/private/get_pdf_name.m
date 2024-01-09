@@ -132,6 +132,9 @@ switch parameters.solvers_options{i}.solver
     case "fminunc_wrapper"
         pdfname = strcat("fminunc", "_", parameters.solvers_options{i}.fminunc_type);
 
+    case "imfil_wrapper"
+        pdfname = "imfil";
+
     case "nomad_wrapper"
         pdfname = "nomad";
 

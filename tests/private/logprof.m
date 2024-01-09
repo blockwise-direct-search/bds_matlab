@@ -13,6 +13,9 @@ function logprof(frec, fmin, solvers_name, num_problems, options)
 % options: the options for plotting.
 
 [np, ns, nr, MaxFunctionEvaluations] = size(frec);
+% nr is the number of random runs. For logprof, we only compare two solvers and 
+% draw the log-profile for the first random run.
+nr = 1;
 if (ns ~= 2)
     error('logprof only supports two solvers.');
 end

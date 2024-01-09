@@ -109,6 +109,9 @@ switch parameters.solvers_options{i}.solver
     case {"prima_wrapper"}
         solver_legend = upper(parameters.solvers_options{i}.Algorithm);
 
+    case {"imfil_wrapper"}
+        solver_legend = "imfil";
+
     case {"nomad_wrapper"}
         solver_legend = "nomad";
 

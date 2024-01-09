@@ -42,9 +42,14 @@ for i = 1:solvers_num
         parameters.solvers_options{i}.solver = "dspd";
     end
 
-    % Set solver to be bfo (lower case) if it is BFO.
+    % Set solver to be bfo_wrapper (lower case) if it is BFO.
     if strcmpi(parameters.solvers_options{i}.solver, "BFO")
         parameters.solvers_options{i}.solver = "bfo_wrapper";
+    end
+
+    % Set solver to be imfil_wrapper (lower case) if it is imfil.
+    if strcmpi(parameters.solvers_options{i}.solver, "imfil")
+        parameters.solvers_options{i}.solver = "imfil_wrapper";
     end
 
     % Set solver to be nomad_wrapper (lower case) if it is nomad.

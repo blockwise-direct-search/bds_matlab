@@ -97,7 +97,7 @@ jobs:
             parameters.fmin_type = "randomized";
             parameters.solvers_name = ["${{ matrix.solver }}", "${{ matrix.competitor }}"];
             
-            parameters.log_profile = true; plot_profile(parameters);
+            parameters.log_profile = true; parameters.plot_fhist = true; plot_profile(parameters);
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
