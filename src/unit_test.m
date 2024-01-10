@@ -66,6 +66,15 @@ function tests = unit_test
     INDEX_direction_set{3} = [21 22 23 24 25 26 27 28 29 30];
     
     verifyEqual(testCase, divide_direction_set(n, nb), INDEX_direction_set)
+
+    n = 3;
+    nb = 3;
+    INDEX_direction_set = cell(1,nb);
+    INDEX_direction_set{1} = [1 2];
+    INDEX_direction_set{2} = [3 4];
+    INDEX_direction_set{3} = [5 6];
+
+    verifyEqual(testCase, divide_direction_set(n, nb), INDEX_direction_set)
     
     end
     
