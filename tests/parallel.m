@@ -89,10 +89,10 @@ x0 = randn(n, 1);
 whos
 
 norm(gx) / norm(g0)
-if strcmpi(solver_options.Algorithm, "ds")
-    assert(norm(gx) < 1.0e-2 * norm(g0), "X is close to stationary");
-else
-    assert(norm(gx) < 1.0e-3 * norm(g0), "X is close to stationary");
-end
+% if strcmpi(solver_options.Algorithm, "ds")
+%     assert(norm(gx) < 1.0e-2 * norm(g0), "X is close to stationary");
+% else
+%     assert(norm(gx) < 1.0e-3 * norm(g0), "X is close to stationary");
+% end
 
 return

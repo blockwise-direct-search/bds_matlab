@@ -85,7 +85,8 @@ for ip = 1:np
                 if (ftest <= fthreshold)
                     T(ip, is, ir) = find(frec(ip, is, ir, :) <= fthreshold, 1, 'first');
                 else
-                    T(ip, is, ir) = MaxFunctionEvaluations;
+                    % T(ip, is, ir) = MaxFunctionEvaluations;
+                    T(ip, is, ir) = 10^20;
                 end
             end
         end
@@ -98,6 +99,18 @@ for ip = 1:np
         log_ratio(ip, ir) = log2(T(ip, 1, ir)/T(ip, 2, ir));
     end
 end
+
+unsolved_problems = [];
+for ip = 1:np
+    if T(ip, 1, 1) == 10^20 || T(ip, 2, 1) == 10^20
+        unsolved_problems = [unsolved_problems, ip];
+    end
+end
+
+cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
+
+log_ratio(unsolved_problems, :) = cut;
+
 log_ratio = sort(log_ratio);
 % Plot the log-profiles.
 hfig = figure("visible", "off");
@@ -106,7 +119,7 @@ for ir = 1:nr
     bar(log_ratio(:, ir));
 
     % Set the y-axis range.
-    ylim([-20, 20]);
+    ylim([-cut, cut]);
 
     text(ceil(num_problems/2), 15, char(solvers_name(2)), 'HorizontalAlignment', 'center', 'FontSize', 22);
     text(ceil(num_problems/2), -15, char(solvers_name(1)), 'HorizontalAlignment', 'center', 'FontSize', 22);
