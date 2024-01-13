@@ -100,15 +100,16 @@ for ip = 1:np
     end
 end
 
+% For the case where one solver fails to solve a problem, we set the log-ratio for this problem
+% to be the maximum of the absolute values of the log-ratios of the other problems multiplied by
+% 1.1. This is to make the plot more readable.
 unsolved_problems = [];
 for ip = 1:np
     if T(ip, 1, 1) == 10^20 || T(ip, 2, 1) == 10^20
         unsolved_problems = [unsolved_problems, ip];
     end
 end
-
 cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
-
 log_ratio(unsolved_problems, :) = cut;
 
 log_ratio = sort(log_ratio);
