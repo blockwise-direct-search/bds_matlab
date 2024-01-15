@@ -110,9 +110,13 @@ for ip = 1:np
     end
 end
 cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
-log_ratio(unsolved_problems, :) = cut;
-
+% Notice the symbol of cut, positive or negative!
+positive_indices = intersect(find(log_ratio > 0), unsolved_problems);
+negative_indices = intersect(find(log_ratio < 0), unsolved_problems);
+log_ratio(positive_indices, :) = cut;
+log_ratio(negative_indices, :) = -cut;
 log_ratio = sort(log_ratio);
+%keyboard
 % Plot the log-profiles.
 hfig = figure("visible", "off");
 for ir = 1:nr
