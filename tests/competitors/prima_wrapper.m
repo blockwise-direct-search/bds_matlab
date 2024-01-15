@@ -41,10 +41,11 @@ else
         MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
     end
 
-    options.MaxFunctionEvaluations = MaxFunctionEvaluations;
+    options.maxfun = MaxFunctionEvaluations;
 
     if isfield(options, "Algorithm")
         Algorithm = options.Algorithm;
+        options = rmfield(options, "Algorithm");
     else
         Algorithm = "newuoa";
     end
