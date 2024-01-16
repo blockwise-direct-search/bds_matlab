@@ -8,7 +8,10 @@ function index_direction_set = divide_direction_set(n, num_blocks)
 %   Example
 %     n = 11, num_blocks = 3.
 %     Since 11/3 = 3...2,
-%     then the number of directions in each block is [4*2, 4*2, 3*2].
+%     then the number of directions in each block is 4*2, 3*2, 3*2 respectively.
+%     Here we multiply 2 because each dimension has two directions and we will
+%     include them all. In addition, the directions_set is
+%     the form of [d_1, -d_1, d_2, -d_2, ..., d_11, -d_11].
 %     Thus INDEX_DIRECTION_SET is a cell, where
 %     index_direction_set{1} = [1, 2, 3, 4, 5, 6, 7, 8],
 %     index_direction_set{2} = [9, 10, 11, 12, 13, 14, 15, 16],

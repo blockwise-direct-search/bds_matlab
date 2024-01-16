@@ -1,7 +1,7 @@
 function D = get_direction_set(n, options)
 %direction_set generates the set of polling directions.
 %
-%   If the user does not input OPTIONS or the OPTIONS does not contain direction_set.
+%   If the user does not input OPTIONS or the OPTIONS does not contain the field of direction_set,
 %   D will be [e_1, -e_1, ..., e_n, -e_n], where e_i is the i-th coordinate vector.
 %   Otherwise, options.direction_set should be a matrix of n rows, whose columns are
 %   linear independent. Set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th

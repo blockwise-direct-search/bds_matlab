@@ -109,14 +109,19 @@ for ip = 1:np
         unsolved_problems = [unsolved_problems, ip];
     end
 end
-cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
-% Notice the symbol of cut, positive or negative!
-positive_indices = intersect(find(log_ratio > 0), unsolved_problems);
-negative_indices = intersect(find(log_ratio < 0), unsolved_problems);
-log_ratio(positive_indices, :) = cut;
-log_ratio(negative_indices, :) = -cut;
+if isequal(sort(unsolved_problems), sort(1:np))
+    % For each problem, only one solver solves it.
+    cut = 5;
+else
+    cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
+    % Notice the symbol of cut, positive or negative!
+    positive_indices = intersect(find(log_ratio > 0), unsolved_problems);
+    negative_indices = intersect(find(log_ratio < 0), unsolved_problems);
+    log_ratio(positive_indices, :) = cut;
+    log_ratio(negative_indices, :) = -cut;
+end
 log_ratio = sort(log_ratio);
-%keyboard
+
 % Plot the log-profiles.
 hfig = figure("visible", "off");
 for ir = 1:nr
