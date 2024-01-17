@@ -114,11 +114,15 @@ if isequal(sort(unsolved_problems), sort(1:np))
     cut = 5;
 else
     cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
-    % Notice the symbol of cut, positive or negative!
-    positive_indices = intersect(find(log_ratio > 0), unsolved_problems);
-    negative_indices = intersect(find(log_ratio < 0), unsolved_problems);
-    log_ratio(positive_indices, :) = cut;
-    log_ratio(negative_indices, :) = -cut;
+    if cut > eps
+        % Notice the symbol of cut, positive or negative!
+        positive_indices = intersect(find(log_ratio > 0), unsolved_problems);
+        negative_indices = intersect(find(log_ratio < 0), unsolved_problems);
+        log_ratio(positive_indices, :) = cut;
+        log_ratio(negative_indices, :) = -cut;
+    else
+        cut = 5;
+    end
 end
 log_ratio = sort(log_ratio);
 
