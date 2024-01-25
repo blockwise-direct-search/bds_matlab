@@ -32,7 +32,7 @@ else
     % window. When the value of iprint is negative, no information will be
     % printed on command window and will be stored in a file.
     % options.iprint = 0;
-    options.iprint = 1;
+    options.iprint = 0;
 
     % Set MAXFUN to the maximum number of function evaluations.
     if isfield(options, "MaxFunctionEvaluations")
@@ -41,10 +41,11 @@ else
         MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
     end
 
-    options.MaxFunctionEvaluations = MaxFunctionEvaluations;
+    options.maxfun = MaxFunctionEvaluations;
 
     if isfield(options, "Algorithm")
         Algorithm = options.Algorithm;
+        options = rmfield(options, "Algorithm");
     else
         Algorithm = "newuoa";
     end

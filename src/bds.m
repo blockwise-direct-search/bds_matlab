@@ -1,46 +1,75 @@
 function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
-%BDS solves unconstrained optimization problems without using derivatives by blockwise direct search methods. 
+%BDS solves unconstrained optimization problems without using derivatives by 
+%blockwise direct search methods. 
 %
 %   BDS supports in MATLAB R2017b or later.
 %   
 %   XOPT = BDS(FUN, X0) returns an approximate minimizer XOPT of the function FUN, starting the 
 %   calculations at X0. FUN must accept a vector input X and return a scalar.
 %
-%   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. OPTIONS %   should be a structure with the following fields.
+%   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. 
+%   OPTIONS should be a structure with the following fields.
 %
 %   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct
 %                               search) "pbds" (randomly permuted blockwise direct search), 
 %                               "rbds" (randomized blockwise direct search), "ds" (the classical 
-%                               direct search), "pads" (parallel blockwise direct search). "scbds" %                               (symmetric blockwise direct search). Default: "cbds".
-%   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm is %                               "cbds", "pbds", or "rbds", 1 if Algorithm is "ds".
+%                               direct search), "pads" (parallel blockwise direct search). 
+%                               "scbds" (symmetric blockwise direct search). Default: "cbds".
+%   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm 
+%                               is "cbds", "pbds", or "rbds", 1 if Algorithm is "ds".
 %   MaxFunctionEvaluations      Maximum of function evaluations. A positive integer.
-%   direction_set               A matrix whose columns will be used to define the polling %                               directions. If options does not contain direction_set, then the %                               polling directions will be {e_1, -e_1, ..., e_n, -e_n}. 
-%                               Otherwise, direction_set should be a matrix of n rows, and the %                               polling directions will be {d_1, -d_1, ..., d_m, -d_m}, where d_i 
-%                               is the i-th column of direction_set, and m is the number of %                               columns of direction_set. If necessary, we will first extend  %                               direction_set by adding some columns to make sure that 
-%                               rank(direction_set) = n, so that the polling directions make a 
-%                               positive spanning set. See get_direction_set.m for details.
-%   expand                      Expanding factor of step size. A real number no less than 1. %                               Default: 2.
+%   direction_set               A matrix whose columns will be used to define the polling
+%                               directions. If options does not contain direction_set, then 
+%                               the polling directions will be {e_1, -e_1, ..., e_n, -e_n}. 
+%                               Otherwise, direction_set should be a matrix of n rows, and 
+%                               the polling directions will be {d_1, -d_1, ..., d_m, -d_m}, 
+%                               where d_i is the i-th column of direction_set, and m is the
+%                               number of columns of direction_set. If necessary, we will 
+%                               first extend direction_set by adding some columns to make 
+%                               sure that rank(direction_set) = n, so that the polling 
+%                               directions make a positive spanning set. 
+%                               See get_direction_set.m for details.
+%   expand                      Expanding factor of step size. A real number no less than 1.
+%                               Default: 2.
 %   shrink                      Shrinking factor of step size. A positive number less than 1.
 %                               Default: 0.5.
-%   forcing_function            The forcing function used for deciding whether the step achieves a %                               sufficient decrease. A function handle. 
+%   forcing_function            The forcing function used for deciding whether the step achieves
+%                               a sufficient decrease. A function handle. 
 %                               Default: @(alpha) alpha^2. See also reduction_factor. 
-%   reduction_factor            Factors multiplied to the forcing function when deciding whether %                               the step achieves a sufficient decrease. A 3-dimentional vector %                               such that 
+%   reduction_factor            Factors multiplied to the forcing function when deciding 
+%                               whether the step achieves a sufficient decrease. 
+%                               A 3-dimentional vector such that 
 %                               reduction_factor(1) <= reduction_factor(2) <= reduction_factor(3),
 %                               reduction_factor(1) >= 0, and reduction_factor(2) > 0.
-%                               reduction_factor(0) is used for deciding whether to update the %                               base point; 
-%                               reduction_factor(1) is used for deciding whether to shrink the %                               step size; 
-%                               reduction_factor(2) is used for deciding whether to expand the %                               step size.
+%                               reduction_factor(0) is used for deciding whether to update 
+%                               the base point; 
+%                               reduction_factor(1) is used for deciding whether to shrink 
+%                               the step size; 
+%                               reduction_factor(2) is used for deciding whether to expand 
+%                               the step size.
 %                               Default: [0, eps, eps]. See also forcing_function.
-%   StepTolerance               Lower bound of the step size. If the step size is smaller than %                               StepTolerance, then the algorithm terminates. A (small) positive %                               number. Default: 1e-10.
-%   ftarget                     Target of the function value. If the function value is smaller %                               than or equal to ftarget, then the algorithm terminates. A real %                               number. Default: -Inf.
+%   StepTolerance               Lower bound of the step size. If the step size is smaller 
+%                               than StepTolerance, then the algorithm terminates. 
+%                               A (small) positive number. Default: 1e-10.
+%   ftarget                     Target of the function value. If the function value is 
+%                               smaller than or equal to ftarget, then the algorithm terminates. 
+%                               A real number. Default: -Inf.
 %   polling_inner               Polling strategy in each block. It can be "complete" or 
 %                               "opportunistic". Default: "opportunistic".
-%   cycling_inner               Cycling strategy employed within each block. It is used only when %                               polling_inner is "opportunistic". It can be 0, 1, 2, 3, 4. %                               See cycling.m for details. Default: 3.
-%   with_cycling_memory         Whether the cycling strategy within each block memorizes the %                               history or not. It is used only when polling_inner is %                               "opportunistic". Default: true.
-%   permuting_period            It is only used in PBDS, which shuffles the blocks every %                               permuting_period 
-%                               iterations. A positive integer. Default: 1.   
-%   replacement_delay           It is only used for RBDS. Suppose that replacement_delay is r. If %                               block i is selected at iteration k, then it will not be selected % %                               at iterations k+1, ..., k+r. An integer between 0 and %                               num_blocks-1. Default: 0.
-%   seed                        The seed for permuting blocks in PBDS or randomly choosing one %                               block in RBDS.
+%   cycling_inner               Cycling strategy employed within each block. It is used only 
+%                               when polling_inner is "opportunistic". It can be 0, 1, 2, 3, 4.
+%                               See cycling.m for details. Default: 3.
+%   with_cycling_memory         Whether the cycling strategy within each block memorizes 
+%                               the history or not. It is used only when polling_inner 
+%                               is "opportunistic". Default: true.
+%   permuting_period            It is only used in PBDS, which shuffles the blocks every
+%                               permuting_period iterations. A positive integer. Default: 1.   
+%   replacement_delay           It is only used for RBDS. Suppose that replacement_delay is r. 
+%                               If block i is selected at iteration k, then it will not be 
+%                               selected at iterations k+1, ..., k+r. An integer between 0 
+%                               and num_blocks-1. Default: 0.
+%   seed                        The seed for permuting blocks in PBDS or randomly choosing 
+%                               one block in RBDS.
 %                               It is only for reproducibility in experiments. A positive integer.
 %   output_xhist                Whether to output the history of points visited. Default: false.
 %   output_alpha_hist           Whether to output the history of step sizes. Default: false.
@@ -270,7 +299,8 @@ if output_alpha_hist
     end
 end
 
-% Set the initial step sizes. If options do not contain the field of alpha_init, then the initial % step size of each block is set to 1.
+% Set the initial step sizes. If options do not contain the field of alpha_init, then the 
+% initial step size of each block is set to 1.
 if isfield(options, "alpha_init")
     if length(options.alpha_init) == 1
         alpha_all = options.alpha_init*ones(num_blocks, 1);
@@ -505,7 +535,7 @@ for iter = 1:maxit
     % fopt == min(fhist)
 
     % For "pads", we will update xbase and fbase only after one iteration of the outer loop.
-    % During the inner loop, every block will use the same xbase and fbase.
+    % During the inner loop, every block will share the same xbase and fbase.
     if strcmpi(options.Algorithm, "pads")
         % Update xbase and fbase. xbase serves as the "base point" for the computation in the 
         % next block, meaning that reduction will be calculated with respect to xbase, as shown above. 

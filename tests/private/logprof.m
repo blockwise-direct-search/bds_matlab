@@ -100,18 +100,32 @@ for ip = 1:np
     end
 end
 
+% For the case where one solver fails to solve a problem, we set the log-ratio for this problem
+% to be the maximum of the absolute values of the log-ratios of the other problems multiplied by
+% 1.1. This is to make the plot more readable.
 unsolved_problems = [];
 for ip = 1:np
     if T(ip, 1, 1) == 10^20 || T(ip, 2, 1) == 10^20
         unsolved_problems = [unsolved_problems, ip];
     end
 end
-
-cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
-
-log_ratio(unsolved_problems, :) = cut;
-
+if isequal(sort(unsolved_problems), sort(1:np))
+    % For each problem, only one solver solves it.
+    cut = 5;
+else
+    cut = max(abs(log_ratio(setdiff(1:numel(log_ratio), unsolved_problems)))) * 1.1;
+    if cut > eps
+        % Notice the symbol of cut, positive or negative!
+        positive_indices = intersect(find(log_ratio > 0), unsolved_problems);
+        negative_indices = intersect(find(log_ratio < 0), unsolved_problems);
+        log_ratio(positive_indices, :) = cut;
+        log_ratio(negative_indices, :) = -cut;
+    else
+        cut = 5;
+    end
+end
 log_ratio = sort(log_ratio);
+
 % Plot the log-profiles.
 hfig = figure("visible", "off");
 for ir = 1:nr

@@ -23,7 +23,9 @@ for i = 1:numel(fields)
             parameters_saved.(field) = "false";
         end
     elseif ischarstr(value)
-        value = strjoin(value, ", ");
+        if iscell(value) || isstring(value)
+            value = strjoin(value, ", ");
+        end
         parameters_saved.(field) = value;
     elseif isa(value, 'function_handle')
         if strcmp(func2str(value), func2str(@(x)x.^2))

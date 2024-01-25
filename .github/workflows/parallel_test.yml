@@ -4,7 +4,7 @@ name: Parallel test
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   pull_request:  # DANGEROUS! MUST be disabled for self-hosted runners!
   # Trigger the workflow by cron. The default time zone of GitHub Actions is UTC.
   schedule:
@@ -124,7 +124,8 @@ jobs:
             end
 
             % Copy the crash dump files to root_dir if exceptions occur.
-            if ~isempty(exception)  
+            if ~isempty(exception)
+              pwd()
               copy_crash_dump_files(root_dir)
               dir(root_dir)
               rethrow(exception);
