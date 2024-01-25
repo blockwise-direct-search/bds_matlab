@@ -18,25 +18,28 @@ function array = cycling(array, index, strategy, with_cycling_memory)
     %   1  The element of the index will be moved to the first element of the array.
     %
     %   EXAMPLE
-    %   When the array is a3 a1 a2 a4 a5, if index = 3, the array will be a2 a3 a1 a4 a5 after cycling 
-    %   when with_cycling_memory is true; if index = 2, sort(index) is a1 a2 a3 a4 a5 
-    %   and array will be a2 a1 a3 a4 a5 after cycling when with_cycling_memory is false.
+    %   When the array is a3 a1 a2 a4 a5, if index = 3, the array will be a2 a3 a1 a4 a5 
+    %   after cycling when with_cycling_memory is true; if index = 2, sort(index) 
+    %   is a1 a2 a3 a4 a5 and array will be a2 a1 a3 a4 a5 after cycling when 
+    %   with_cycling_memory is false.
     %
     %   2  The element of the index and the following ones until the end will be
     %      moved ahead of the array.
     %
     %   EXAMPLE
-    %   When the array is a2 a1 a4 a5 a3, if index = 3, the array will be a4 a5 a3 a2 a1 after cycling 
-    %   when with_cycling_memory is true; if index = 4, sort(index) is a1 a2 a3 a4 a5 
-    %   and array will be a4 a5 a1 a2 a3 after cycling when with_cycling_memory is false. 
+    %   When the array is a2 a1 a4 a5 a3, if index = 3, the array will be a4 a5 a3 a2 a1 
+    %   after cycling when with_cycling_memory is true; if index = 4, 
+    %   sort(index) is a1 a2 a3 a4 a5 and array will be a4 a5 a1 a2 a3 after cycling 
+    %   when with_cycling_memory is false. 
     %
     %   3  The element of the following ones after the index until the end will be
     %      moved ahead of the array.
     %
     %   EXAMPLE
-    %   When the array is a2 a1 a4 a5 a3 and index = 3, the array will be a5 a3 a2 a1 a4 after cycling 
-    %   when with_cycling_memory is true; if index = 4, sort(index) is a1 a2 a3 a4 a5 
-    %   and array will be a5 a1 a2 a3 a4 after cycling when with_cycling_memory is false.
+    %   When the array is a2 a1 a4 a5 a3 and index = 3, the array will be a5 a3 a2 a1 a4 
+    %   after cycling when with_cycling_memory is true; if index = 4, sort(index) is
+    %   a1 a2 a3 a4 a5 and array will be a5 a1 a2 a3 a4 after cycling when 
+    %   with_cycling_memory is false.
     %
     %   4  The element of the following one after the index will be moved ahead of the array.
     %
@@ -94,17 +97,19 @@ function array = cycling(array, index, strategy, with_cycling_memory)
             % If cycling_strategy is 2, the element of the index and the following
             % ones until the end will be moved ahead of the array. For example, if index = 3,
             % array is a1 a2 a3 a4 a5, then the array will be a3 a4 a5 a1 a2 after cycling.
-            % When the array is a2 a1 a4 a5 a3, if index = 3, the array will be a4 a5 a3 a2 a1 after cycling
-            % when with_cycling_memory is true; when with_cycling_memory
-            % is false, the index will be 4 after executing the paragraph above,
-            % sort(index) is a1 a2 a3 a4 a5 and the array will be a4 a5 a1 a2 a3 after cycling.
+            % When the array is a2 a1 a4 a5 a3, if index = 3, the array will 
+            % be a4 a5 a3 a2 a1 after cycling when with_cycling_memory is true; 
+            % when with_cycling_memory is false, the index will be 4 after executing the 
+            % paragraph above, sort(index) is a1 a2 a3 a4 a5 and the array will 
+            % be a4 a5 a1 a2 a3 after cycling.
         case {2}
             array = array([index:end, 1:index-1]);
             % If cycling_strategy is 3, the element of the following ones after the index
             % until the end will be moved ahead of the array. For example, if index = 3, array
             % is a1 a2 a3 a4 a5, then the array will be a4 a5 a1 a2 a3 after cycling.
-            % When the array is a2 a1 a4 a5 a3 and index = 3, the array will be a5 a3 a2 a1 a4 after cycling
-            % when with_cycling_memory is true; when with_cycling_memory is false,
+            % When the array is a2 a1 a4 a5 a3 and index = 3, the array will 
+            % be a5 a3 a2 a1 a4 after cycling when with_cycling_memory is true; 
+            % when with_cycling_memory is false,
             % index will be 4 after executing the paragraph above,
             % sort(index) is a1 a2 a3 a4 a5 and the array will be a5 a1 a2 a3 a4 after cycling.
         case {3}

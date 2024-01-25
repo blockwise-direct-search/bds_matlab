@@ -43,10 +43,11 @@ if mod(n, num_blocks) == 0
     num_directions_block = num_directions_each_block*ones(num_blocks, 1);
 else 
     % The last block may have fewer directions than others.
-    num_directions_block = [(num_directions_each_block+1)*ones(mod(n, num_blocks), 1); num_directions_each_block*ones(num_blocks-mod(n, num_blocks), 1)];
+    num_directions_block = [(num_directions_each_block+1)*ones(mod(n, num_blocks), 1);num_directions_each_block*ones(num_blocks-mod(n, num_blocks), 1)];
 end
 
-% Use cell instead of matrix in MATLAB to avoid the number of directions in each block being different.
+% Use cell instead of matrix in MATLAB to avoid the number of directions in each block 
+% being different.
 index_direction_set = cell(1, num_blocks);
 for i = 1:num_blocks
     block_index_direction_set = sum(num_directions_block(1:i-1))+1:1:sum(num_directions_block(1:i));

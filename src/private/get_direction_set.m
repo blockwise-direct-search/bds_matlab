@@ -63,12 +63,12 @@ else
     % parallel_directions and the other part consists of only zero. Applying `find` to this 
     % matrix, we can get the row and column indices of the 1's in the strict upper triangular
     % part of parallel_directions, the column indices being contained in parallel_direction_indices below. 
-    % An index i appears in parallel_direction_indices if and only if there exists a j < i such that
-    % the i-th and j-th vectors are almost parallel in the direction_set. Hence we will remove the
-    % directions indexed by parallel_direction_indices.
+    % An index i appears in parallel_direction_indices if and only if there exists a j < i 
+    % such that the i-th and j-th vectors are almost parallel in the direction_set. 
+    % Hence we will remove the directions indexed by parallel_direction_indices.
     [~, parallel_direction_indices] = find(triu(parallel_directions, 1));
     % Remove the duplicate indices appearing in the parallel_direction_indices.
-    %parallel_direction_indices = unique(parallel_direction_indices);
+    % parallel_direction_indices = unique(parallel_direction_indices);
     % Directions not indexed by parallel_direction_indices are preserved.
     preserved_indices = ~ismember(1:size(direction_set, 2), parallel_direction_indices);
     direction_set = direction_set(:, preserved_indices);
@@ -87,7 +87,8 @@ else
     % 2. Columns m+1 to n with m being the number of columns in direction_set, provided that m < n.
     [Q, R, ~] = qr(direction_set);
     [~, m] = size(direction_set);
-    % deficient_columns contains the indices of the tiny diagonal elements of R(1:min(m, n), 1:min(m, n)). 
+    % deficient_columns contains the indices of the tiny diagonal elements of 
+    % R(1:min(m, n), 1:min(m, n)). 
     % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
     % comparison will return a matrix due to the implicit expansion.
     deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n)))))' > ...
