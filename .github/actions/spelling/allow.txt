@@ -15,6 +15,7 @@ agrangian
 Agrawal
 Ahlfors
 aiaaj
+Aineq
 aires
 akiva
 Alarie
@@ -111,6 +112,7 @@ Bellavia
 Bengio
 BENNETT
 Benzi
+beq
 Beq
 Berahas
 Bercovier
@@ -151,6 +153,7 @@ bigwedge
 bilevel
 bilin
 Billups
+bineq
 Bineq
 Biogr
 Birgin
@@ -702,6 +705,7 @@ HTTPS
 huangcunxin
 HYDC
 hyperparameter
+hyperparameters
 hyperref
 ICASE
 identifierstyle
@@ -1399,6 +1403,7 @@ renewcommand
 renewenvironment
 Reorthogonalization
 Repiquet
+repmat
 repositoryformatversion
 required
 restoredefaultpath
