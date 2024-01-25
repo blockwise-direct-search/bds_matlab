@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and bfgs, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 12 */7 * *'
@@ -52,6 +52,11 @@ jobs:
 
       - name: Check whether LaTeX is installed
         run: pdflatex --version
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
 
       - name: Cache MATLAB
         id: cache-matlab
