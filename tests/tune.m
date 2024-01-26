@@ -52,6 +52,7 @@ locate_prima();
 % the upper bound as 1.
 lb = [1, eps, 0, eps, eps];
 ub = [10, 1-eps, 1, 1, 1];
+keyboard
 Aineq = [0, 0, 1, -1, 0; 0, 0, 0, 1, -1];
 bineq = [0; 0];
 Aeq = [];
@@ -68,20 +69,23 @@ else
     parameters = rmfield(parameters, "min_precision");
 end
 
-parameters.parallel = true;
+parameters.parallel = false;
 options.output_xhist = true;
 
 output_tuning = cell(length(tau_tuning), 1);
 best_value = NaN(length(tau_tuning), 6);
 best_value(:, 1) = tau_tuning;
+% Preconditions for lincoa.
+initial_value = log(initial_value);
+keyboard
 % Here we should use lincoa since the constraint for the hyperparameters
 % is linear, including the expanding factor, shrinking factor, and the reduction
 % factors.
 for i = 1:length(tau_tuning)
     tau = tau_tuning(i);
     [xopt, ~, ~, output] = ...
-        lincoa(@(x)perfprof_handle(x, parameters, tau), initial_value, Aineq, bineq, Aeq, beq, lb, ub, options);
-    best_value(i, 2:6) = xopt';
+        lincoa(@(x)perfprof_handle(exp(x), parameters, tau), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+    best_value(i, 2:6) = exp(xopt');
     output_tuning{i} = output;
 end
 
