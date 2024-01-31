@@ -13,7 +13,8 @@ else
     parameters.tau = tau;
     parameters.solvers_options{1}.expand = value(1);
     parameters.solvers_options{1}.shrink = value(2);
-    parameters.solvers_options{1}.reduction_factors = value(3:5);
+    parameters.solvers_options{1}.reduction_factor = value(3:5);
+    keyboard
     performance = perfprof_calculated(parameters);
 end
 

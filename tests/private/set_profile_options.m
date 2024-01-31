@@ -44,9 +44,9 @@ if ~isfield(parameters, "problem_maxdim")
 end
 
 % Set tau for performance profile.
-if ~isfield(parameters, "min_precision")
+if ~isfield(parameters, "min_precision") || ~isfield(parameters, "tau")
     parameters.tau = 10.^(-1:-1:get_default_profile_options("min_precision"));
-else
+elseif isfield(parameters, "min_precision") 
     parameters.tau = 10.^(-1:-1:(-parameters.min_precision));
 end
 

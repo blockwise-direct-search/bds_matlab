@@ -5,6 +5,7 @@ function [best_value] = tune(initial_value, parameters, options)
 % Set options to an empty structure if it is not provided.
 if nargin < 2
     parameters = struct();
+    options = struct();
 end
 
 % Record the current path.
@@ -52,7 +53,6 @@ locate_prima();
 % the upper bound as 1.
 lb = [1, eps, 0, eps, eps];
 ub = [10, 1-eps, 1, 1, 1];
-keyboard
 Aineq = [0, 0, 1, -1, 0; 0, 0, 0, 1, -1];
 bineq = [0; 0];
 Aeq = [];
@@ -69,7 +69,9 @@ else
     parameters = rmfield(parameters, "min_precision");
 end
 
-parameters.parallel = false;
+if ~isfield(parameters, "parallel")
+    parameters.parallel = false;
+end
 options.output_xhist = true;
 
 output_tuning = cell(length(tau_tuning), 1);
@@ -77,7 +79,7 @@ best_value = NaN(length(tau_tuning), 6);
 best_value(:, 1) = tau_tuning;
 % Preconditions for lincoa.
 initial_value = log(initial_value);
-keyboard
+
 % Here we should use lincoa since the constraint for the hyperparameters
 % is linear, including the expanding factor, shrinking factor, and the reduction
 % factors.
@@ -86,6 +88,8 @@ for i = 1:length(tau_tuning)
     [xopt, ~, ~, output] = ...
         lincoa(@(x)perfprof_handle(exp(x), parameters, tau), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
     best_value(i, 2:6) = exp(xopt');
+    % Scale xhist as the real value.
+    output.xhist = exp(output.xhist);
     output_tuning{i} = output;
 end
 
@@ -211,6 +215,26 @@ for i = 1:numel(file_list)
     source_file = fullfile(source_folder, file_list(i).name);
     destination_file = fullfile(destination_folder, file_list(i).name);
     copyfile(source_file, destination_file);
+end
+
+parameters_perfprof.solvers_name = ["cbds", "cbds"];
+parameters_perfprof.parallel = true;
+for i = 1:length(tau)
+    parameters_perfprof.tau = tau_tuning(i);
+    if ~isfield(parameters, "problem_mindim")
+        parameters_perfprof.problem_mindim = 1;
+    else
+        parameters_perfprof.problem_mindim = parameters.problem_mindim;
+    end
+    if ~isfield(parameters, "problem_maxdim")
+        parameters_perfprof.problem_maxdim = 5;
+    else
+        parameters_perfprof.problem_maxdim = parameters.problem_maxdim;
+    end
+    parameters_perfprof.solvers_options{1}.expand = best_value(i, 2);
+    parameters_perfprof.solvers_options{1}.shrink = best_value(i, 3);
+    parameters_perfprof.solvers_options{1}.reduction_factor = best_value(i, 4:6);
+    plot_profile(parameters_perfprof);
 end
 
 % Restore the path to oldpath.

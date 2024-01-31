@@ -180,7 +180,6 @@ for is = 1 : ns
     % a field of "output".
     perf_prof{is} = [x{is}; y{is}];
 end
-
 % Plot the performance profiles.
 clf;
 hfig=figure("visible", false);  % Plot the figure without displaying it.
