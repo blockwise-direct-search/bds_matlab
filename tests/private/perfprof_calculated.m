@@ -1,4 +1,4 @@
-function [frec, fmin, options_perf] = perfprof_calculated(parameters)
+function [frec, fmin, options_perfprof] = perfprof_calculated(parameters)
 
 for i = 1:length(parameters.solvers_name)
     parameters.solvers_options{i}.solver = parameters.solvers_name(i);
@@ -58,6 +58,7 @@ try
             {'HIMMELBH'}, {'HAIRY'}];
     end
 
+    %if s.mindim >= 6
     s.blacklist = [s.blacklist, { 'ARGTRIGLS', 'BROWNAL', ...
         'COATING', 'DIAMON2DLS', 'DIAMON3DLS', 'DMN15102LS', ...
         'DMN15103LS', 'DMN15332LS', 'DMN15333LS', 'DMN37142LS', ...
@@ -65,6 +66,7 @@ try
         'LRCOVTYPE', 'LUKSAN12LS', 'LUKSAN14LS', 'LUKSAN17LS', 'LUKSAN21LS', ...
         'LUKSAN22LS', 'MANCINO', 'PENALTY2', 'PENALTY3', 'VARDIM',
         }];
+    %end
 
     if isfield(parameters, "problem_names")
         problem_names = parameters.problem_names;
@@ -73,6 +75,10 @@ try
     end
 
     fprintf("We will load %d problems\n\n", length(problem_names))
+
+    % Some fixed (relatively) options
+    % Read two papers: What Every Computer Scientist Should Know About
+    % Floating-Point Arithmetic; stability and accuracy numerical(written by Higham).
 
     % Initialize the number of solvers.
     num_solvers = length(parameters.solvers_options);
@@ -305,41 +311,11 @@ try
         fmin_total = [fmin, fmin_real];
         fmin = min(fmin_total, [], 2);
     end
-    
-    options_perf.natural_stop = false;
-    options_perf.tau = 1e-1;
-    performance_calculated(frec, fmin, options_perf)
-    keyboard
 
-    % Draw performance profiles.
-    % Set tolerance of convergence test in the performance profile.
-    tau = parameters.tau;
-    tau_length = length(tau);
-
-    options_perf.pdfname = parameters.pdfname;
-    options_perf.solvers = parameters.solvers_legend;
-    options_perf.natural_stop = false;
-
-    % Draw log-profiles if necessary.
-    if isfield(parameters, "log_profile") && parameters.log_profile
-        options_perf.outdir = path_testdata_log_perf;
-        for l = 1:tau_length
-            options_perf.tau = tau(l);
-            logprof(frec, fmin, parameters.solvers_name, length(problem_names), options_perf);
-        end
-        outputfile = char(strcat("merged", "_", log_profile, ".pdf"));
-        merge_pdf(options_perf.outdir, outputfile, compdf_location);
-        movefile(fullfile(options_perf.outdir, outputfile), ...
-            fullfile(path_testdata_perf, outputfile));
-    end
-
-    options_perf.outdir = fullfile(path_testdata_perf, parameters.pdfname);
-    if isfield(options_perf, "tau")
-        options_perf = rmfield(options_perf, "tau");
-    end
-
-    % Draw profiles.
-    perfdata(tau, frec, fmin, options_perf);
+    options_perfprof.tau = 1e-1;
+    options_perfprof.natural_stop = false;
+    % keyboard
+    % performance = performance_calculated(frec, fmin, options_perfprof);
 
 catch exception
 

@@ -1,4 +1,4 @@
-function [performance] = performance_calculated(frec, fmin, options)
+function [performance_diff] = performance_calculated(frec, fmin, options)
 % This function calculates the performance of the solver being tested.
 % frec: trajectory of function values; frec(ip, is, ir, k) is the function value of the ip-th
 % problem obtained by the is-th solver at the ir-th random run at the k-th iteration.
@@ -100,7 +100,7 @@ for ir = 1 : nr
     % log2(r) for better scaling. Why not using semilogx instead? Because semilogx only supports log10!
     r = zeros(np, ns);
     for ip = 1 : np
-      r(ip, :) = T(ip, :, ir)/Tmin(ip);
+        r(ip, :) = T(ip, :, ir)/Tmin(ip);
     end
     r = log2(r);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,25 +169,23 @@ for is = 1 : ns
 end
 
 performance = zeros(ns, 1);
-num_points = size((perf_prof{1}), 2);
 % Here, we set the first solver as the one that being tested and the
 % second solver is the default one. Then we calculate the relative
 % performance for the first solver. Since the stair function is right continuous,
 % when we calculate the performance, we need to multiply the height of the
 % left point by the length of the stair.
 for is = 1 : ns
-    for i = 2 : num_points
-        if perf_prof{is}(1,i) < cut_ratio
-            performance(is) = performance(is) + (perf_prof{is}(1, i) - perf_prof{is}(1, i-1))...
-                *perf_prof{is}(2, i-1);
-        end
+    num_valid_points = sum(perf_prof{is}(1, :) <= cut_ratio);
+    perf_prof{is}(1, num_valid_points + 1) = cut_ratio;
+    for i = 2 : num_valid_points + 1
+        performance(is) = performance(is) + (perf_prof{is}(1, i) - perf_prof{is}(1, i-1))...
+            *perf_prof{is}(2, i-1);
     end
-    performance(is) = performance(is) + (cut_ratio - perf_prof{is}(1, num_points)) * perf_prof{is}(2, num_points); 
 end
 % Scale the performance. Here we scale the performance by dividing the the value
 % of the default solver at the last point. Since the solver that we use is
 % to minimize, here we use performance(2) - performance(1).
-performance = (performance(2) - performance(1))/cut_ratio;
+performance_diff = (performance(2) - performance(1))/cut_ratio;
 
 end
 

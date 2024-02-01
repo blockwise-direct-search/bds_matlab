@@ -1,12 +1,25 @@
 function [best_value] = tune(initial_value, parameters, options)
 % This file is to tune the hyperparameters of BDS, including expanding
-% factor, shrinking factor and reduction factors.
-
-% Set options to an empty structure if it is not provided.
-if nargin < 2
-    parameters = struct();
-    options = struct();
-end
+% factor, shrinking factor, reduction factors, shuffling_period and the
+% replacement_delay.
+% Input:
+% Parameters should include the following fields:
+% solvers_name: the algorithm of the BDS, including "cbds", "pbds", "rbds".
+% problem_mindim: the minimum dimension of the problem. The default value
+%                 is 1.
+% problem_maxdim: the maximum dimension of the problem. The default value
+%                 is 5.
+% tau: the tolerance for performance profile.
+% min_precision: the minimum precision for performance profile.
+% parallel: whether to use parallel computing. The default value is false.
+% Options should include the following fields:
+% maxfun: the maximum number of function evaluations.
+% initial_value: the initial value of the hyperparameters. If the algorithm
+%                is cbds, the initial value should be a vector of length 5.
+%                If the algorithm is pbds or rbds, the initial value should
+%                be a vector of length 6 (including the shuffling_period
+%                or replacement_delay).
+%
 
 % Record the current path.
 oldpath = path();
@@ -68,29 +81,36 @@ else
     tau_tuning = 10.^(-1:-1:(-parameters.min_precision));
     parameters = rmfield(parameters, "min_precision");
 end
-
 if ~isfield(parameters, "parallel")
     parameters.parallel = false;
 end
+
 options.output_xhist = true;
 
-output_tuning = cell(length(tau_tuning), 1);
-best_value = NaN(length(tau_tuning), 6);
-best_value(:, 1) = tau_tuning;
-% Preconditions for lincoa.
-initial_value = log(initial_value);
 
-% Here we should use lincoa since the constraint for the hyperparameters
-% is linear, including the expanding factor, shrinking factor, and the reduction
-% factors.
+output_tuning = cell(length(tau_tuning), 1);
+if strcmpi(parameters.solvers_name(1), "cbds")
+    best_value = NaN(length(tau_tuning), 7);
+    % Preconditions for lincoa.
+    initial_value = log(initial_value);
+end
+best_value(:, 1) = tau_tuning;
+
 for i = 1:length(tau_tuning)
     tau = tau_tuning(i);
-    [xopt, ~, ~, output] = ...
-        lincoa(@(x)perfprof_handle(exp(x), parameters, tau), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
-    best_value(i, 2:6) = exp(xopt');
-    % Scale xhist as the real value.
-    output.xhist = exp(output.xhist);
-    output_tuning{i} = output;
+    if strcmpi(parameters.solvers_name(1), "cbds")
+        % Here we should use lincoa since the constraint for the hyperparameters
+        % is linear, including the expanding factor, shrinking factor, and the reduction
+        % factors.
+        [xopt, fopt, ~, output] = ...
+            lincoa(@(x)perfprof_handle(exp(x), parameters, tau), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+        best_value(i, 2) = fopt;
+        best_value(i, 3:7) = exp(xopt');
+        % Scale xhist as the real value.
+        output.xhist = exp(output.xhist);
+        output_tuning{i} = output;
+    end
+
 end
 
 path_testdata = fullfile(path_tests, "testdata");
@@ -119,7 +139,25 @@ for i_tau = 1:length(tau_tuning)
     separator = ", ";
     best_value_record = strjoin(strsplit(best_value_record), separator);
     fprintf(fileID, '%s: %s\n',"tau", best_value_record);
+    % Get the field names of the output structure under the specific tau.
     output_tuning_saved = output_tuning{i_tau};
+    % Normally, output_tuning_saved should be a structure, which contains
+    % the following fields:
+    % xhist: the history of the hyperparameters.
+    % fhist: the history of the objective function values, which are the
+    %        value of the performance profile.
+    % funcCount: the number of function evaluations.
+    % algorithm: the algorithm used.
+    % message: the message returned by the algorithm.
+    % After trimming, the fields of output_tuning_saved should be still
+    % the same. However, the values of the fields may be different.
+    % xhist will be unchanged since it is always the matrix (here it implies
+    % that the number of rows are not 1).
+    % fhist will become a string. We will write it to the txt file
+    % directly.
+    % funcCount will also become a string. We will write it to the txt file
+    % directly, too.
+    % The same work for algorithm and message.
     output_tuning_saved = trim_struct(output_tuning_saved);
     % Get the field names of a structure.
     output_tuning_saved_fields = fieldnames(output_tuning_saved);
@@ -136,6 +174,8 @@ for i_tau = 1:length(tau_tuning)
                         fprintf(fileID, '%s: %s\n', field, value_saved);
                     end
                 end
+            % This extreme case is just for xhist, since it is still a matrix 
+            % after trimming.
             elseif ismatrix(value) && size(value, 1) == length(initial_value)
                 fprintf(fileID, '%s:\n', field);
                 % Define the width of each column and the spacing between columns.
@@ -217,24 +257,27 @@ for i = 1:numel(file_list)
     copyfile(source_file, destination_file);
 end
 
-parameters_perfprof.solvers_name = ["cbds", "cbds"];
+% Plot the performance profile with the specific tau.
+parameters_perfprof.solvers_name = parameters.solvers_name;
 parameters_perfprof.parallel = true;
+if ~isfield(parameters, "problem_mindim")
+    parameters_perfprof.problem_mindim = 1;
+else
+    parameters_perfprof.problem_mindim = parameters.problem_mindim;
+end
+if ~isfield(parameters, "problem_maxdim")
+    parameters_perfprof.problem_maxdim = 5;
+else
+    parameters_perfprof.problem_maxdim = parameters.problem_maxdim;
+end
 for i = 1:length(tau)
     parameters_perfprof.tau = tau_tuning(i);
-    if ~isfield(parameters, "problem_mindim")
-        parameters_perfprof.problem_mindim = 1;
-    else
-        parameters_perfprof.problem_mindim = parameters.problem_mindim;
+    if stcmpi(parameters_perfprof.solvers_name(1), "cbds")
+        parameters_perfprof.solvers_options{1}.expand = best_value(i, 3);
+        parameters_perfprof.solvers_options{1}.shrink = best_value(i, 4);
+        parameters_perfprof.solvers_options{1}.reduction_factor = best_value(i, 5:7);
+        plot_profile(parameters_perfprof);
     end
-    if ~isfield(parameters, "problem_maxdim")
-        parameters_perfprof.problem_maxdim = 5;
-    else
-        parameters_perfprof.problem_maxdim = parameters.problem_maxdim;
-    end
-    parameters_perfprof.solvers_options{1}.expand = best_value(i, 2);
-    parameters_perfprof.solvers_options{1}.shrink = best_value(i, 3);
-    parameters_perfprof.solvers_options{1}.reduction_factor = best_value(i, 4:6);
-    plot_profile(parameters_perfprof);
 end
 
 % Restore the path to oldpath.
