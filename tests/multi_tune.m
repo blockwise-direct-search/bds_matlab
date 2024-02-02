@@ -1,7 +1,8 @@
-function [best_value] = tune(initial_value, parameters, options)
+function [best_value] = multi_tune(initial_value, parameters, options)
 % This file is to tune the hyperparameters of BDS, including expanding
 % factor, shrinking factor, reduction factors, shuffling_period and the
 % replacement_delay.
+%
 % Input:
 % Parameters should include the following fields:
 % solvers_name: the algorithm of the BDS, including "cbds", "pbds", "rbds".
@@ -12,6 +13,7 @@ function [best_value] = tune(initial_value, parameters, options)
 % tau: the tolerance for performance profile.
 % min_precision: the minimum precision for performance profile.
 % parallel: whether to use parallel computing. The default value is false.
+%
 % Options should include the following fields:
 % maxfun: the maximum number of function evaluations.
 % initial_value: the initial value of the hyperparameters. If the algorithm
@@ -86,30 +88,23 @@ end
 
 options.output_xhist = true;
 
-
-output_tuning = cell(length(tau_tuning), 1);
 if strcmpi(parameters.solvers_name(1), "cbds")
-    best_value = NaN(length(tau_tuning), 7);
+    best_value = NaN(1, 7);
     % Preconditions for lincoa.
     initial_value = log(initial_value);
 end
-best_value(:, 1) = tau_tuning;
+best_value(1) = length(parameters.tau);
 
-for i = 1:length(tau_tuning)
-    tau = tau_tuning(i);
-    if strcmpi(parameters.solvers_name(1), "cbds")
-        % Here we should use lincoa since the constraint for the hyperparameters
-        % is linear, including the expanding factor, shrinking factor, and the reduction
-        % factors.
-        [xopt, fopt, ~, output] = ...
-            lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
-        best_value(i, 2) = fopt;
-        best_value(i, 3:7) = exp(xopt');
-        % Scale xhist as the real value.
-        output.xhist = exp(output.xhist);
-        output_tuning{i} = output;
-    end
-
+if strcmpi(parameters.solvers_name(1), "cbds")
+    % Here we should use lincoa since the constraint for the hyperparameters
+    % is linear, including the expanding factor, shrinking factor, and the reduction
+    % factors.
+    [xopt, fopt, ~, output_tuning] = ...
+        lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+    best_value(2) = fopt;
+    best_value(3:7) = exp(xopt');
+    % Scale xhist as the real value.
+    output_tuning.xhist = exp(output_tuning.xhist);
 end
 
 path_testdata = fullfile(path_tests, "testdata");
@@ -133,75 +128,74 @@ mkdir(path_testdata_private);
 filePath = strcat(path_testdata_tuning_data, "/tune_results.txt");
 fileID = fopen(filePath, 'w');
 % Write field names and their corresponding values into a file line by line.
-for i_tau = 1:length(tau_tuning)
-    best_value_record = num2str(best_value(i_tau, :));
-    separator = ", ";
-    best_value_record = strjoin(strsplit(best_value_record), separator);
-    fprintf(fileID, '%s: %s\n',"tau", best_value_record);
-    % Get the field names of the output structure under the specific tau.
-    output_tuning_saved = output_tuning{i_tau};
-    % Normally, output_tuning_saved should be a structure, which contains
-    % the following fields:
-    % xhist: the history of the hyperparameters.
-    % fhist: the history of the objective function values, which are the
-    %        value of the performance profile.
-    % funcCount: the number of function evaluations.
-    % algorithm: the algorithm used.
-    % message: the message returned by the algorithm.
-    % After trimming, the fields of output_tuning_saved should be still
-    % the same. However, the values of the fields may be different.
-    % xhist will be unchanged since it is always the matrix (here it implies
-    % that the number of rows are not 1).
-    % fhist will become a string. We will write it to the txt file
-    % directly.
-    % funcCount will also become a string. We will write it to the txt file
-    % directly, too.
-    % The same work for algorithm and message.
-    output_tuning_saved = trim_struct(output_tuning_saved);
-    % Get the field names of a structure.
-    output_tuning_saved_fields = fieldnames(output_tuning_saved);
-    for i = 1:numel(output_tuning_saved_fields)
-        field = output_tuning_saved_fields{i};
-        value = output_tuning_saved.(field);
-        if ~iscell(value)
-            if isnumvec(value)
-                if size(value{1}, 1) == 1
-                    value_saved = num2str(value);
-                    separator = ", ";
-                    if length(value_saved) ~= 1
-                        value_saved = strjoin(strsplit(value_saved), separator);
-                        fprintf(fileID, '%s: %s\n', field, value_saved);
-                    end
+
+best_value_record = num2str(best_value(i_tau, :));
+separator = ", ";
+best_value_record = strjoin(strsplit(best_value_record), separator);
+fprintf(fileID, '%s: %s\n',"tau_length", best_value_record);
+% Get the field names of the output structure under the specific tau.
+output_tuning_saved = output_tuning{i_tau};
+% Normally, output_tuning_saved should be a structure, which contains
+% the following fields:
+% xhist: the history of the hyperparameters.
+% fhist: the history of the objective function values, which are the
+%        value of the performance profile.
+% funcCount: the number of function evaluations.
+% algorithm: the algorithm used.
+% message: the message returned by the algorithm.
+% After trimming, the fields of output_tuning_saved should be still
+% the same. However, the values of the fields may be different.
+% xhist will be unchanged since it is always the matrix (here it implies
+% that the number of rows are not 1).
+% fhist will become a string. We will write it to the txt file
+% directly.
+% funcCount will also become a string. We will write it to the txt file
+% directly, too.
+% The same work for algorithm and message.
+output_tuning_saved = trim_struct(output_tuning_saved);
+% Get the field names of a structure.
+output_tuning_saved_fields = fieldnames(output_tuning_saved);
+for i = 1:numel(output_tuning_saved_fields)
+    field = output_tuning_saved_fields{i};
+    value = output_tuning_saved.(field);
+    if ~iscell(value)
+        if isnumvec(value)
+            if size(value{1}, 1) == 1
+                value_saved = num2str(value);
+                separator = ", ";
+                if length(value_saved) ~= 1
+                    value_saved = strjoin(strsplit(value_saved), separator);
+                    fprintf(fileID, '%s: %s\n', field, value_saved);
                 end
-            % This extreme case is just for xhist, since it is still a matrix 
+            end
+            % This extreme case is just for xhist, since it is still a matrix
             % after trimming.
-            elseif ismatrix(value) && size(value, 1) == length(initial_value)
-                fprintf(fileID, '%s:\n', field);
-                % Define the width of each column and the spacing between columns.
-                column_width = 10;
-                column_spacing = 5;
-                [rows, cols] = size(value);
-                for row = 1:rows
-                    for col = 1:cols
-                        % Use a formatting string to set left alignment and
-                        % spacing for columns.
-                        format = sprintf('%%-%ds', column_width);
-                        fprintf(fileID, format, num2str(value(row, col)));
-                        % Add spacing between columns.
-                        if col < cols
-                            fprintf(fileID, repmat(' ', 1, column_spacing));
-                        end
-                    end
-                    fprintf(fileID, '\n');
-                end
-            elseif ischarstr(value)
-                fprintf(fileID, '%s: %s\n', field, value);
-            end
-        else
+        elseif ismatrix(value) && size(value, 1) == length(initial_value)
             fprintf(fileID, '%s:\n', field);
-            for j = 1:length(value)
-                fprintf(fileID, '%s\n', value{j});
+            % Define the width of each column and the spacing between columns.
+            column_width = 10;
+            column_spacing = 5;
+            [rows, cols] = size(value);
+            for row = 1:rows
+                for col = 1:cols
+                    % Use a formatting string to set left alignment and
+                    % spacing for columns.
+                    format = sprintf('%%-%ds', column_width);
+                    fprintf(fileID, format, num2str(value(row, col)));
+                    % Add spacing between columns.
+                    if col < cols
+                        fprintf(fileID, repmat(' ', 1, column_spacing));
+                    end
+                end
+                fprintf(fileID, '\n');
             end
+        elseif ischarstr(value)
+            fprintf(fileID, '%s: %s\n', field, value);
+        end
+    else
+        fprintf(fileID, '%s:\n', field);
+        for j = 1:length(value)
+            fprintf(fileID, '%s\n', value{j});
         end
     end
 end

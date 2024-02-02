@@ -1,4 +1,4 @@
-function [frec, fmin, options_perfprof] = perfprof_calculated(parameters)
+function [frec, fmin] = perfprof_calculated(parameters)
 
 for i = 1:length(parameters.solvers_name)
     parameters.solvers_options{i}.solver = parameters.solvers_name(i);
@@ -311,11 +311,6 @@ try
         fmin_total = [fmin, fmin_real];
         fmin = min(fmin_total, [], 2);
     end
-
-    options_perfprof.tau = parameters.tau;
-    options_perfprof.natural_stop = false;
-    % keyboard
-    % performance = performance_calculated(frec, fmin, options_perfprof);
 
 catch exception
 
