@@ -312,7 +312,7 @@ try
         fmin = min(fmin_total, [], 2);
     end
 
-    options_perfprof.tau = 1e-1;
+    options_perfprof.tau = parameters.tau;
     options_perfprof.natural_stop = false;
     % keyboard
     % performance = performance_calculated(frec, fmin, options_perfprof);

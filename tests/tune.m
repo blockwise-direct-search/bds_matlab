@@ -75,11 +75,12 @@ beq = [];
 cd(old_dir);
 
 % Set tau for performance profile.
-if ~isfield(parameters, "min_precision")
-    tau_tuning = 10.^(-1:-1:get_default_profile_options("min_precision"));
-else
+if isfield(parameters, "min_precision")
     tau_tuning = 10.^(-1:-1:(-parameters.min_precision));
     parameters = rmfield(parameters, "min_precision");
+elseif isfield(parameters, "tau")
+    tau_tuning = parameters.tau;
+    parameters = rmfield(parameters, "tau");
 end
 if ~isfield(parameters, "parallel")
     parameters.parallel = false;
@@ -272,7 +273,7 @@ else
 end
 for i = 1:length(tau)
     parameters_perfprof.tau = tau_tuning(i);
-    if stcmpi(parameters_perfprof.solvers_name(1), "cbds")
+    if strcmpi(parameters_perfprof.solvers_name(1), "cbds")
         parameters_perfprof.solvers_options{1}.expand = best_value(i, 3);
         parameters_perfprof.solvers_options{1}.shrink = best_value(i, 4);
         parameters_perfprof.solvers_options{1}.reduction_factor = best_value(i, 5:7);

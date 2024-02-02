@@ -1,7 +1,7 @@
 function performance = perfprof_handle(value, parameters, tau)
 % perfprof_handle - Function handle for calculating the value of the
 % performance profile
-keyboard
+
 if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};
 end
