@@ -48,13 +48,6 @@ if ~exist(path_testdata, "dir")
     mkdir(path_testdata);
 end
 
-% We put time_str and tst here for the sake of plot_fhist.
-% Use time to distinguish.
-time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
-% Trim time string.
-time_str = trim_time(time_str);
-tst = strcat(time_str, "_", "hyperparameters_tuning");
-
 % Setup prima.
 locate_prima_position = fullfile(path_competitors, "private");
 cd(locate_prima_position)
@@ -66,12 +59,27 @@ locate_prima();
 % The values corresponding to indices 3 to 5 point to reduction_factors.
 % We already know that reduction factors should not be large, so we set
 % the upper bound as 1.
-lb = [1, eps, 0, eps, eps];
-ub = [10, 1-eps, 1, 1, 1];
-Aineq = [0, 0, 1, -1, 0; 0, 0, 0, 1, -1];
-bineq = [0; 0];
 Aeq = [];
 beq = [];
+switch lower(parameters.solvers_name(1))
+    case "cbds"
+        lb = [1, eps, 0, eps, eps];
+        ub = [10, 1-eps, 1, 1, 1];
+        Aineq = [0, 0, 1, -1, 0; 0, 0, 0, 1, -1];
+        bineq = [0; 0];
+    case "pbds"
+        lb = [1, eps, 0, eps, eps, 1];
+        ub = [100, 1-eps, 1, 1, 1, 100];
+        Aineq = [0, 0, 1, -1, 0, 0; 0, 0, 0, 1, -1, 0];
+        bineq = [0; 0];
+    case "rbds"
+        lb = [1, eps, 0, eps, eps, 0];
+        ub = [100, 1-eps, 1, 1, 1, 100];
+        Aineq = [0, 0, 1, -1, 0, 0; 0, 0, 0, 1, -1, 0];
+        bineq = [0; 0];
+    otherwise
+        error("Unknown algorithm %s", parameters.solvers_name(1));
+end
 
 % Go back to the original path.
 cd(old_dir);
@@ -79,6 +87,7 @@ cd(old_dir);
 % Set tau for performance profile.
 if isfield(parameters, "min_precision")
     parameters.tau = 10.^(-1:-1:(-parameters.min_precision));
+    parameters = rmfield(parameters, "min_precision");
 elseif ~isfield(parameters, "min_precision") && ~isfield(parameters, "tau")
     parameters.tau = 10.^(-1:-1:get_default_profile_options("min_precision"));
 end
@@ -88,24 +97,56 @@ end
 
 options.output_xhist = true;
 
-if strcmpi(parameters.solvers_name(1), "cbds")
-    best_value = NaN(1, 7);
-    % Preconditions for lincoa.
-    initial_value = log(initial_value);
+switch lower(parameters.solvers_name(1))
+    case "cbds"
+        best_value = NaN(1, length(parameters.tau) + 6);
+    case "pbds"
+        best_value = NaN(1, length(parameters.tau) + 7);
+    case "rbds"
+        best_value = NaN(1, length(parameters.tau) + 7);
+    otherwise
+        error("Unknown algorithm %s", parameters.solvers_name(1));
 end
-best_value(1) = length(parameters.tau);
 
-if strcmpi(parameters.solvers_name(1), "cbds")
-    % Here we should use lincoa since the constraint for the hyperparameters
-    % is linear, including the expanding factor, shrinking factor, and the reduction
-    % factors.
-    [xopt, fopt, ~, output_tuning] = ...
-        lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
-    best_value(2) = fopt;
-    best_value(3:7) = exp(xopt');
-    % Scale xhist as the real value.
-    output_tuning.xhist = exp(output_tuning.xhist);
+% Preconditions for lincoa.
+initial_value = log(initial_value);
+best_value(1:length(parameters.tau)) = parameters.tau;
+
+
+% Here we should use lincoa since the constraint for the hyperparameters
+% is linear, including the expanding factor, shrinking factor, and the reduction
+% factors.
+[xopt, fopt, ~, output_tuning] = ...
+    lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+% Scale xhist as the real value.
+output_tuning.xhist = exp(output_tuning.xhist);
+
+switch lower(parameters.solvers_name(1))
+    case "cbds"
+        best_value(end-5) = fopt;
+        best_value(end-4:end) = exp(xopt');
+    case "pbds"
+        best_value(end-6) = fopt;
+        best_value(end-5:end) = exp(xopt');
+    case "rbds"
+        best_value(end-6) = fopt;
+        best_value(end-5:end) = exp(xopt');
+    otherwise
+        error("Unknown algorithm %s", parameters.solvers_name(1));
 end
+
+% Use time to distinguish.
+tst = strcat("hyperparameters_tuning", "_", parameters.solvers_name(1));
+if length(parameters.tau) == 1
+    tst = strcat(tst, "_", "single", "_", int2str(int32(-log10(parameters.tau))));
+else
+    tst = strcat(tst, "_", "multi", "_", int2str(int32(-log10(max(parameters.tau)))), ...
+        "_", int2str(int32(-log10(min(parameters.tau)))));
+end
+% Trim time string.
+time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
+time_str = trim_time(time_str);
+tst = strcat(tst, "_", time_str);
 
 path_testdata = fullfile(path_tests, "testdata");
 path_testdata_outdir = fullfile(path_tests, "testdata", tst);
@@ -128,13 +169,12 @@ mkdir(path_testdata_private);
 filePath = strcat(path_testdata_tuning_data, "/tune_results.txt");
 fileID = fopen(filePath, 'w');
 % Write field names and their corresponding values into a file line by line.
-
-best_value_record = num2str(best_value(i_tau, :));
+best_value_record = num2str(best_value);
 separator = ", ";
 best_value_record = strjoin(strsplit(best_value_record), separator);
 fprintf(fileID, '%s: %s\n',"tau_length", best_value_record);
 % Get the field names of the output structure under the specific tau.
-output_tuning_saved = output_tuning{i_tau};
+output_tuning_saved = output_tuning;
 % Normally, output_tuning_saved should be a structure, which contains
 % the following fields:
 % xhist: the history of the hyperparameters.
@@ -263,14 +303,41 @@ if ~isfield(parameters, "problem_maxdim")
 else
     parameters_perfprof.problem_maxdim = parameters.problem_maxdim;
 end
-for i = 1:length(tau)
-    parameters_perfprof.tau = tau_tuning(i);
-    if strcmpi(parameters_perfprof.solvers_name(1), "cbds")
-        parameters_perfprof.solvers_options{1}.expand = best_value(i, 3);
-        parameters_perfprof.solvers_options{1}.shrink = best_value(i, 4);
-        parameters_perfprof.solvers_options{1}.reduction_factor = best_value(i, 5:7);
+
+switch lower(parameters.solvers_name(1))
+    case "cbds"
+        parameters_perfprof.solvers_options{1}.expand = best_value(end-4);
+        parameters_perfprof.solvers_options{1}.shrink = best_value(end-3);
+        parameters_perfprof.solvers_options{1}.reduction_factor = best_value(end-2:end);
         plot_profile(parameters_perfprof);
-    end
+    case "pbds"
+        parameters_perfprof.solvers_options{1}.expand = best_value(end-5);
+        parameters_perfprof.solvers_options{1}.shrink = best_value(end-4);
+        parameters_perfprof.solvers_options{1}.reduction_factor = best_value(end-3:end-1);
+        if isinteger(best_value(end))
+            parameters_perfprof.solvers_options{1}.permuting_period = best_value(end);
+            plot_profile(parameters_perfprof);
+        else
+            for i = 1:2
+                parameters_perfprof.solvers_options{1}.permuting_period = ceil(best_value(end)-1)+i;
+                plot_profile(parameters_perfprof);
+            end
+        end        
+    case "rbds"
+        parameters_perfprof.solvers_options{1}.expand = best_value(end-5);
+        parameters_perfprof.solvers_options{1}.shrink = best_value(end-4);
+        parameters_perfprof.solvers_options{1}.reduction_factor = best_value(end-3:end-1);
+        if isinteger(best_value(end))
+            parameters_perfprof.solvers_options{1}.replacement_delay = best_value(end);
+            plot_profile(parameters_perfprof);
+        else
+            for i = 1:2
+                parameters_perfprof.solvers_options{1}.replacement_delay = ceil(best_value(end)-1)+i;
+                plot_profile(parameters_perfprof);
+            end
+        end
+    otherwise
+        error("Unknown algorithm %s", parameters.solvers_name(1));
 end
 
 % Restore the path to oldpath.
