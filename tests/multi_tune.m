@@ -319,7 +319,7 @@ switch lower(parameters.solvers_name(1))
             plot_profile(parameters_perfprof);
         else
             for i = 1:2
-                parameters_perfprof.solvers_options{1}.permuting_period = ceil(best_value(end)-1)+i;
+                parameters_perfprof.solvers_options{1}.permuting_period = floor(best_value(end)-1)+i;
                 plot_profile(parameters_perfprof);
             end
         end        
@@ -332,7 +332,7 @@ switch lower(parameters.solvers_name(1))
             plot_profile(parameters_perfprof);
         else
             for i = 1:2
-                parameters_perfprof.solvers_options{1}.replacement_delay = ceil(best_value(end)-1)+i;
+                parameters_perfprof.solvers_options{1}.replacement_delay = floor(best_value(end)-1)+i;
                 plot_profile(parameters_perfprof);
             end
         end
