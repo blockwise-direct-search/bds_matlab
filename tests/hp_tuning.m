@@ -122,10 +122,10 @@ best_value(1:length(parameters.tau)) = parameters.tau;
 switch parameters.tuning_solver
     case "lincoa"
         [xopt, fopt, ~, output_tuning] = ...
-            lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+            lincoa(@(x)hp_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
     case "cobyla"
         [xopt, fopt, ~, output_tuning] = ...
-            lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+            lincoa(@(x)hp_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
 end
 % Scale xhist as the real value.
 output_tuning.xhist = exp(output_tuning.xhist);

@@ -15,7 +15,7 @@ if strcmpi(parameters.solvers_name(1), "cbds")
             || (value(4) <= 0 || value(4) > value(5)) || value(5) <= 0
         performance = NaN;
     else
-        [frec, fmin] = perfprof_calculated(parameters);
+        [frec, fmin] = hp_calculated(parameters);
         options_perf.natural_stop = false;
         if length(parameters.tau) > 1
             num_tau = length(parameters.tau);
@@ -42,7 +42,7 @@ if strcmpi(parameters.solvers_name(1), "pbds")
         options_perf.natural_stop = false;
         if isinteger(value(6))
             parameters.solvers_options{1}.permuting_period = value(6);
-            [frec, fmin] = perfprof_calculated(parameters);
+            [frec, fmin] = hp_calculated(parameters);
             if length(parameters.tau) > 1
                 num_tau = length(parameters.tau);
                 multi_performance = NaN(num_tau, 1);
@@ -59,7 +59,7 @@ if strcmpi(parameters.solvers_name(1), "pbds")
             truncated_performance = NaN(2, 1);
             for i = 1 : 2
                 parameters.solvers_options{1}.permuting_period = floor(value(6) - 1) + i;
-                [frec, fmin] = perfprof_calculated(parameters);
+                [frec, fmin] = hp_calculated(parameters);
                 if length(parameters.tau) > 1
                     num_tau = length(parameters.tau);
                     multi_performance = NaN(num_tau, 1);
@@ -89,7 +89,7 @@ if strcmpi(parameters.solvers_name(1), "rbds")
         options_perf.natural_stop = false;
         if isinteger(value(6))
             parameters.solvers_options{1}.replacement_delay = value(6);
-            [frec, fmin] = perfprof_calculated(parameters);
+            [frec, fmin] = hp_calculated(parameters);
             if length(parameters.tau) > 1
                 num_tau = length(parameters.tau);
                 multi_performance = NaN(num_tau, 1);
@@ -106,7 +106,7 @@ if strcmpi(parameters.solvers_name(1), "rbds")
             truncated_performance = NaN(2, 1);
             for i = 1 : 2
                 parameters.solvers_options{1}.replacement_delay = floor(value(6) - 1) + i;
-                [frec, fmin] = perfprof_calculated(parameters);
+                [frec, fmin] = hp_calculated(parameters);
                 if length(parameters.tau) > 1
                     num_tau = length(parameters.tau);
                     multi_performance = NaN(num_tau, 1);
