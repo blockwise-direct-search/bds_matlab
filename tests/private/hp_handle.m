@@ -1,4 +1,4 @@
-function performance = perfprof_handle(value, parameters)
+function performance = hp_handle(value, parameters)
 % perfprof_handle - Function handle for calculating the value of the
 % performance profile
 if ~isfield(parameters, "solvers_options")
@@ -56,7 +56,7 @@ if strcmpi(parameters.solvers_name(1), "pbds")
                 performance = performance_calculated(frec, fmin, options_perf);
             end
         else
-            trucated_performance = NaN(2, 1);
+            truncated_performance = NaN(2, 1);
             for i = 1 : 2
                 parameters.solvers_options{1}.permuting_period = floor(value(6) - 1) + i;
                 [frec, fmin] = perfprof_calculated(parameters);
@@ -67,14 +67,14 @@ if strcmpi(parameters.solvers_name(1), "pbds")
                         options_perf.tau = parameters.tau(i);
                         multi_performance(j) = performance_calculated(frec, fmin, options_perf);
                     end
-                    trucated_performance(i) = max(multi_performance);
+                    truncated_performance(i) = max(multi_performance);
                 else
                     options_perf.tau = parameters.tau;
-                    trucated_performance(i) = performance_calculated(frec, fmin, options_perf);
+                    truncated_performance(i) = performance_calculated(frec, fmin, options_perf);
                 end
             end
-            performance = (trucated_performance(2) - trucated_performance(1))...
-                * (value(6) - floor(value(6))) + trucated_performance(1);
+            performance = (truncated_performance(2) - truncated_performance(1))...
+                * (value(6) - floor(value(6))) + truncated_performance(1);
         end
     end
 end
@@ -103,7 +103,7 @@ if strcmpi(parameters.solvers_name(1), "rbds")
                 performance = performance_calculated(frec, fmin, options_perf);
             end
         else
-            trucated_performance = NaN(2, 1);
+            truncated_performance = NaN(2, 1);
             for i = 1 : 2
                 parameters.solvers_options{1}.replacement_delay = floor(value(6) - 1) + i;
                 [frec, fmin] = perfprof_calculated(parameters);
@@ -114,14 +114,14 @@ if strcmpi(parameters.solvers_name(1), "rbds")
                         options_perf.tau = parameters.tau(i);
                         multi_performance(j) = performance_calculated(frec, fmin, options_perf);
                     end
-                    trucated_performance(i) = max(multi_performance);
+                    truncated_performance(i) = max(multi_performance);
                 else
                     options_perf.tau = parameters.tau;
-                    trucated_performance(i) = performance_calculated(frec, fmin, options_perf);
+                    truncated_performance(i) = performance_calculated(frec, fmin, options_perf);
                 end
             end
-            performance = (trucated_performance(2) - trucated_performance(1))...
-                * (value(6) - floor(value(6))) + trucated_performance(1);
+            performance = (truncated_performance(2) - truncated_performance(1))...
+                * (value(6) - floor(value(6))) + truncated_performance(1);
         end
     end
 end

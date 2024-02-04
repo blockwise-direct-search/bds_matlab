@@ -1,4 +1,4 @@
-function [best_value] = multi_tune(initial_value, parameters, options)
+function [best_value] = hp_tuning(initial_value, parameters, options)
 % This file is to tune the hyperparameters of BDS, including expanding
 % factor, shrinking factor, reduction factors, shuffling_period and the
 % replacement_delay.
@@ -13,6 +13,7 @@ function [best_value] = multi_tune(initial_value, parameters, options)
 % tau: the tolerance for performance profile.
 % min_precision: the minimum precision for performance profile.
 % parallel: whether to use parallel computing. The default value is false.
+% tuning_solver: lincoa or cobyla. The default value is lincoa.
 %
 % Options should include the following fields:
 % maxfun: the maximum number of function evaluations.
@@ -94,6 +95,9 @@ end
 if ~isfield(parameters, "parallel")
     parameters.parallel = false;
 end
+if ~isfield(parameters, "tuning_solver")
+    parameters.tuning_solver = "lincoa";
+end
 
 options.output_xhist = true;
 
@@ -112,12 +116,17 @@ end
 initial_value = log(initial_value);
 best_value(1:length(parameters.tau)) = parameters.tau;
 
-
 % Here we should use lincoa since the constraint for the hyperparameters
 % is linear, including the expanding factor, shrinking factor, and the reduction
 % factors.
-[xopt, fopt, ~, output_tuning] = ...
-    lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+switch parameters.tuning_solver
+    case "lincoa"
+        [xopt, fopt, ~, output_tuning] = ...
+            lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+    case "cobyla"
+        [xopt, fopt, ~, output_tuning] = ...
+            lincoa(@(x)perfprof_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+end
 % Scale xhist as the real value.
 output_tuning.xhist = exp(output_tuning.xhist);
 
@@ -138,9 +147,11 @@ end
 % Use time to distinguish.
 tst = strcat("hyperparameters_tuning", "_", parameters.solvers_name(1));
 if length(parameters.tau) == 1
-    tst = strcat(tst, "_", "single", "_", int2str(int32(-log10(parameters.tau))));
+    tst = strcat(tst, "_", "single", "_", parameters.tuning_solver, "_", ...
+        int2str(int32(-log10(parameters.tau))));
 else
-    tst = strcat(tst, "_", "multi", "_", int2str(int32(-log10(max(parameters.tau)))), ...
+    tst = strcat(tst, "_", "multi", "_", parameters.tuning_solver, "_", ...
+        int2str(int32(-log10(max(parameters.tau)))), ...
         "_", int2str(int32(-log10(min(parameters.tau)))));
 end
 % Trim time string.
@@ -322,7 +333,7 @@ switch lower(parameters.solvers_name(1))
                 parameters_perfprof.solvers_options{1}.permuting_period = floor(best_value(end)-1)+i;
                 plot_profile(parameters_perfprof);
             end
-        end        
+        end
     case "rbds"
         parameters_perfprof.solvers_options{1}.expand = best_value(end-5);
         parameters_perfprof.solvers_options{1}.shrink = best_value(end-4);

@@ -1,4 +1,4 @@
-function [frec, fmin] = perfprof_calculated(parameters)
+function [frec, fmin] = hp_calculated(parameters)
 
 for i = 1:length(parameters.solvers_name)
     parameters.solvers_options{i}.solver = parameters.solvers_name(i);
