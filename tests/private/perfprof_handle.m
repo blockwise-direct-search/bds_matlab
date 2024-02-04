@@ -1,7 +1,6 @@
 function performance = perfprof_handle(value, parameters)
 % perfprof_handle - Function handle for calculating the value of the
 % performance profile
-
 if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};
 end
@@ -74,7 +73,8 @@ if strcmpi(parameters.solvers_name(1), "pbds")
                     trucated_performance(i) = performance_calculated(frec, fmin, options_perf);
                 end
             end
-            performance = mean(trucated_performance);
+            performance = (trucated_performance(2) - trucated_performance(1))...
+                * (value(6) - floor(value(6))) + trucated_performance(1);
         end
     end
 end
@@ -120,7 +120,8 @@ if strcmpi(parameters.solvers_name(1), "rbds")
                     trucated_performance(i) = performance_calculated(frec, fmin, options_perf);
                 end
             end
-            performance = mean(trucated_performance);
+            performance = (trucated_performance(2) - trucated_performance(1))...
+                * (value(6) - floor(value(6))) + trucated_performance(1);
         end
     end
 end
