@@ -73,8 +73,9 @@ if strcmpi(parameters.solvers_name(1), "pbds")
                     truncated_performance(i) = performance_calculated(frec, fmin, options_perf);
                 end
             end
-            performance = (truncated_performance(2) - truncated_performance(1))...
-                * (value(6) - floor(value(6))) + truncated_performance(1);
+            performance = max(truncated_performance);
+            % performance = (truncated_performance(2) - truncated_performance(1))...
+            %     * (value(6) - floor(value(6))) + truncated_performance(1);
         end
     end
 end
@@ -120,8 +121,9 @@ if strcmpi(parameters.solvers_name(1), "rbds")
                     truncated_performance(i) = performance_calculated(frec, fmin, options_perf);
                 end
             end
-            performance = (truncated_performance(2) - truncated_performance(1))...
-                * (value(6) - floor(value(6))) + truncated_performance(1);
+            performance = max(truncated_performance);
+            % performance = (truncated_performance(2) - truncated_performance(1))...
+            %     * (value(6) - floor(value(6))) + truncated_performance(1);
         end
     end
 end
