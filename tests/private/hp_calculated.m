@@ -58,7 +58,7 @@ try
             {'HIMMELBH'}, {'HAIRY'}];
     end
 
-    %if s.mindim >= 6
+    if parameters.blacklist
     s.blacklist = [s.blacklist, { 'ARGTRIGLS', 'BROWNAL', ...
         'COATING', 'DIAMON2DLS', 'DIAMON3DLS', 'DMN15102LS', ...
         'DMN15103LS', 'DMN15332LS', 'DMN15333LS', 'DMN37142LS', ...
@@ -66,7 +66,7 @@ try
         'LRCOVTYPE', 'LUKSAN12LS', 'LUKSAN14LS', 'LUKSAN17LS', 'LUKSAN21LS', ...
         'LUKSAN22LS', 'MANCINO', 'PENALTY2', 'PENALTY3', 'VARDIM',
         }];
-    %end
+    end
 
     if isfield(parameters, "problem_names")
         problem_names = parameters.problem_names;
@@ -75,7 +75,7 @@ try
     end
 
     fprintf("We will load %d problems\n\n", length(problem_names))
-
+    
     % Some fixed (relatively) options
     % Read two papers: What Every Computer Scientist Should Know About
     % Floating-Point Arithmetic; stability and accuracy numerical(written by Higham).

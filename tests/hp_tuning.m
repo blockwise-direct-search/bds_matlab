@@ -98,6 +98,9 @@ end
 if ~isfield(parameters, "tuning_solver")
     parameters.tuning_solver = "lincoa";
 end
+if ~isfield(parameters, "blacklist")
+    parameters.blacklist = false;
+end
 
 options.output_xhist = true;
 
@@ -153,6 +156,11 @@ else
     tst = strcat(tst, "_", "multi", "_", parameters.tuning_solver, "_", ...
         int2str(int32(-log10(max(parameters.tau)))), ...
         "_", int2str(int32(-log10(min(parameters.tau)))));
+end
+if parameters.blacklist
+    tst = strcat(tst, "_", "blacklist");
+else
+    tst = strcat(tst, "_", "non_blacklist");
 end
 % Trim time string.
 time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
