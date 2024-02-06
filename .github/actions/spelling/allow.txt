@@ -767,6 +767,7 @@ isequiv
 Iserles
 isfield
 isinf
+isinteger
 isintegerscalar
 islogical
 islogicalscalar
