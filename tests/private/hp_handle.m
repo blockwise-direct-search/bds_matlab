@@ -11,8 +11,8 @@ parameters.solvers_options{1}.reduction_factor = value(3:5);
 
 if strcmpi(parameters.solvers_name(1), "cbds")
     if value(1) < 1 || (value(2) <= 0 && value(2) >= 1) ...
-            || (value(3) < 0 || value(3) > value(4) || value(3) > value(5))...
-            || (value(4) <= 0 || value(4) > value(5)) || value(5) <= 0
+            || value(3) < 0 || value(3) > value(4) ...
+            || value(4) <= 0 || value(4) > value(5) || value(5) <= 0
         performance = NaN;
     else
         [frec, fmin] = hp_calculated(parameters);

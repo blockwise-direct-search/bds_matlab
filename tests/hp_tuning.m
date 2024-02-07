@@ -65,18 +65,27 @@ beq = [];
 switch lower(parameters.solvers_name(1))
     case "cbds"
         lb = [1, eps, 0, eps, eps];
-        ub = [10, 1-eps, 1, 1, 1];
-        Aineq = [0, 0, 1, -1, 0; 0, 0, 0, 1, -1];
+        ub = [Inf, 1-eps, Inf, Inf, Inf];
+        Aineq = [
+            0, 0, 1, -1, 0; 
+            0, 0, 0, 1, -1
+            ];
         bineq = [0; 0];
     case "pbds"
         lb = [1, eps, 0, eps, eps, 1];
-        ub = [100, 1-eps, 1, 1, 1, 100];
-        Aineq = [0, 0, 1, -1, 0, 0; 0, 0, 0, 1, -1, 0];
+        ub = [Inf, 1-eps, 1, 1, 1, Inf];
+        Aineq = [
+            0, 0, 1, -1, 0, 0; 
+            0, 0, 0, 1, -1, 0
+            ];
         bineq = [0; 0];
     case "rbds"
         lb = [1, eps, 0, eps, eps, 0];
-        ub = [100, 1-eps, 1, 1, 1, 100];
-        Aineq = [0, 0, 1, -1, 0, 0; 0, 0, 0, 1, -1, 0];
+        ub = [Inf, 1-eps, 1, 1, 1, Inf];
+        Aineq = [
+            0, 0, 1, -1, 0, 0;
+            0, 0, 0, 1, -1, 0
+            ];
         bineq = [0; 0];
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
@@ -116,7 +125,7 @@ switch lower(parameters.solvers_name(1))
 end
 
 % Preconditions for lincoa.
-initial_value = log(initial_value);
+initial_value = log(eps+initial_value);
 best_value(1:length(parameters.tau)) = parameters.tau;
 
 % Here we should use lincoa since the constraint for the hyperparameters
@@ -125,13 +134,13 @@ best_value(1:length(parameters.tau)) = parameters.tau;
 switch parameters.tuning_solver
     case "lincoa"
         [xopt, fopt, ~, output_tuning] = ...
-            lincoa(@(x)hp_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+            lincoa(@(x)hp_handle(exp(x)-eps, parameters), initial_value, Aineq, bineq, Aeq, beq, log(eps+lb), log(eps+ub), options);
     case "cobyla"
         [xopt, fopt, ~, output_tuning] = ...
-            lincoa(@(x)hp_handle(exp(x), parameters), initial_value, Aineq, bineq, Aeq, beq, log(lb), log(ub), options);
+            cobyla(@(x)hp_handle(exp(x)-eps, parameters), initial_value, Aineq, bineq, Aeq, beq, log(eps+lb), log(eps+ub), options);
 end
 % Scale xhist as the real value.
-output_tuning.xhist = exp(output_tuning.xhist);
+output_tuning.xhist = exp(output_tuning.xhist-eps);
 
 switch lower(parameters.solvers_name(1))
     case "cbds"

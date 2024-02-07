@@ -315,8 +315,11 @@ elseif (num_blocks == n && size(D, 2) == 2*n && isfield(options, "alpha_init_sca
     % D(:, 1 : 2 : 2*n-1), where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
     x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
     x0_scales = abs(x0_coordinates());
-    alpha_all = 0.5 * max(1, abs(x0_scales));
-    %alpha_all = 0.1 * max(1e-3, abs(x0_coordinates));
+    if isfield(options, "alpha_init_scaling_factor")
+        alpha_all = options.alpha_init_scaling_factor * x0_scales;
+    else
+        alpha_all = 0.5 * max(1, abs(x0_scales));
+    end
 else
     alpha_all = ones(num_blocks, 1);
 end
