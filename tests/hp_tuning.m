@@ -62,31 +62,18 @@ locate_prima();
 % the upper bound as 1.
 Aeq = [];
 beq = [];
+Aineq = [];
+bineq = [];
 switch lower(parameters.solvers_name(1))
     case "cbds"
         lb = [1, eps, 0, eps, eps];
-        ub = [Inf, 1-eps, Inf, Inf, Inf];
-        Aineq = [
-            0, 0, 1, -1, 0; 
-            0, 0, 0, 1, -1
-            ];
-        bineq = [0; 0];
+        ub = [10, 1-eps, 1, 1, 1];
     case "pbds"
         lb = [1, eps, 0, eps, eps, 1];
         ub = [Inf, 1-eps, 1, 1, 1, Inf];
-        Aineq = [
-            0, 0, 1, -1, 0, 0; 
-            0, 0, 0, 1, -1, 0
-            ];
-        bineq = [0; 0];
     case "rbds"
         lb = [1, eps, 0, eps, eps, 0];
         ub = [Inf, 1-eps, 1, 1, 1, Inf];
-        Aineq = [
-            0, 0, 1, -1, 0, 0;
-            0, 0, 0, 1, -1, 0
-            ];
-        bineq = [0; 0];
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
@@ -128,9 +115,8 @@ end
 initial_value = log(eps+initial_value);
 best_value(1:length(parameters.tau)) = parameters.tau;
 
-% Here we should use lincoa since the constraint for the hyperparameters
-% is linear, including the expanding factor, shrinking factor, and the reduction
-% factors.
+% Here we can use any algorithm that can deal with the bounded constraints to tune 
+% the hyperparameters, including lincoa, cobyla and bobyqa.
 switch parameters.tuning_solver
     case "lincoa"
         [xopt, fopt, ~, output_tuning] = ...
@@ -138,6 +124,9 @@ switch parameters.tuning_solver
     case "cobyla"
         [xopt, fopt, ~, output_tuning] = ...
             cobyla(@(x)hp_handle(exp(x)-eps, parameters), initial_value, Aineq, bineq, Aeq, beq, log(eps+lb), log(eps+ub), options);
+    case "bobyqa"
+        [xopt, fopt, ~, output_tuning] = ...
+            bobyqa(@(x)hp_handle(exp(x)-eps, parameters), initial_value, log(eps+lb), log(eps+ub), options);
 end
 % Scale xhist as the real value.
 output_tuning.xhist = exp(output_tuning.xhist-eps);
@@ -196,6 +185,11 @@ mkdir(path_testdata_private);
 % different tau.
 filePath = strcat(path_testdata_tuning_data, "/tune_results.txt");
 fileID = fopen(filePath, 'w');
+% Write initial_value into the file in one line.
+initial_value_record = num2str(initial_value);
+separator = ", ";
+initial_value_record = strjoin(strsplit(initial_value_record), separator);
+fprintf(fileID, '%s: %s\n',"initial_value", initial_value_record);
 % Write field names and their corresponding values into a file line by line.
 best_value_record = num2str(best_value);
 separator = ", ";

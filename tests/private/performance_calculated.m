@@ -184,8 +184,9 @@ for is = 1 : ns
 end
 % Scale the performance. Here we scale the performance by dividing the the value
 % of the default solver at the last point. Since the solver that we use is
-% to minimize, here we use performance(2) - performance(1).
-performance_diff = (performance(2) - performance(1))/cut_ratio;
+% to minimize, here we use performance(2) - performance(1). Since the
+% performance_diff is in the range of [-1, 1], we use the following formula.
+performance_diff = max(-1, min(1, (performance(2) - performance(1)) / cut_ratio));
 
 end
 

@@ -9,11 +9,25 @@ parameters.solvers_options{1}.expand = value(1);
 parameters.solvers_options{1}.shrink = value(2);
 parameters.solvers_options{1}.reduction_factor = value(3:5);
 
+penalty = 1e-3;
+dist = 0;
+if value(3) > value(4) && value(4) > value(5)
+    dist = max(abs(value(3) - value(4)), abs(value(4) - value(5)));
+    value(3) = value(4);
+    value(4) = value(5);
+elseif value(3) > value(4) && value(4) <= value(5)
+    dist = abs(value(3) - value(4));
+    value(3) = value(4);
+elseif value(3) <= value(4) && value(4) > value(5)
+    dist = abs(value(4) - value(5));
+    value(5) = value(4);
+end
+
 if strcmpi(parameters.solvers_name(1), "cbds")
     if value(1) < 1 || (value(2) <= 0 && value(2) >= 1) ...
-            || value(3) < 0 || value(3) > value(4) ...
-            || value(4) <= 0 || value(4) > value(5) || value(5) <= 0
-        performance = NaN;
+            || value(3) < 0 || value(4) <= 0 || value(5) <= 0
+        % Replace min f(x) subject to x in Omega with min f(Prof_Omega(x)) + c * dist(x, Omega)^2
+        performance = 1;
     else
         [frec, fmin] = hp_calculated(parameters);
         options_perf.natural_stop = false;
@@ -29,14 +43,13 @@ if strcmpi(parameters.solvers_name(1), "cbds")
             options_perf.tau = parameters.tau;
             performance = performance_calculated(frec, fmin, options_perf);
         end
+        performance = performance + penalty * dist;
     end
 end
 
 if strcmpi(parameters.solvers_name(1), "pbds")
     if value(1) < 1 || (value(2) <= 0 && value(2) >= 1) ...
-            || (value(3) < 0 || value(3) > value(4) || value(3) > value(5))...
-            || (value(4) <= 0 || value(4) > value(5)) || value(5) <= 0 ...
-            || value(6) < 1
+        || value(3) < 0 || value(4) <= 0 || value(5) <= 0 || value(6) < 1
         performance = NaN;
     else
         options_perf.natural_stop = false;
@@ -82,9 +95,7 @@ end
 
 if strcmpi(parameters.solvers_name(1), "rbds")
     if value(1) < 1 || (value(2) <= 0 && value(2) >= 1) ...
-            || (value(3) < 0 || value(3) > value(4) || value(3) > value(5))...
-            || (value(4) <= 0 || value(4) > value(5)) || value(5) <= 0 ...
-            || value(6) < 0
+        || value(3) < 0 || value(4) <= 0 || value(5) <= 0 || value(6) < 0
         performance = NaN;
     else
         options_perf.natural_stop = false;
