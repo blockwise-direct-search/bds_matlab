@@ -226,7 +226,7 @@ for i = 1:numel(output_tuning_saved_fields)
     if ~iscell(value)
         if isnumvec(value)
             if size(value{1}, 1) == 1
-                value_saved = num2str(value);
+                value_saved = num2str(value');
                 separator = ", ";
                 if length(value_saved) ~= 1
                     value_saved = strjoin(strsplit(value_saved), separator);
@@ -236,6 +236,7 @@ for i = 1:numel(output_tuning_saved_fields)
             % This extreme case is just for xhist, since it is still a matrix
             % after trimming.
         elseif ismatrix(value) && size(value, 1) == length(initial_value)
+            value = value';
             fprintf(fileID, '%s:\n', field);
             % Define the width of each column and the spacing between columns.
             column_width = 10;
