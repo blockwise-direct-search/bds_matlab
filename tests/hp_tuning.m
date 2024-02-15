@@ -112,6 +112,7 @@ switch lower(parameters.solvers_name(1))
 end
 
 % Preconditions for lincoa.
+initial_value_saved = initial_value;
 initial_value = log(eps+initial_value);
 best_value(1:length(parameters.tau)) = parameters.tau;
 
@@ -185,8 +186,10 @@ mkdir(path_testdata_private);
 % different tau.
 filePath = strcat(path_testdata_tuning_data, "/tune_results.txt");
 fileID = fopen(filePath, 'w');
-% Write initial_value into the file in one line.
-initial_value_record = num2str(initial_value);
+% Write initial_value into the file in one line. Notice that when we try
+% to record it, make sure the form of the initial_value should be column
+% vector.
+initial_value_record = num2str(reshape(initial_value_saved, 1, []));
 separator = ", ";
 initial_value_record = strjoin(strsplit(initial_value_record), separator);
 fprintf(fileID, '%s: %s\n',"initial_value", initial_value_record);
