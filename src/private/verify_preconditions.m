@@ -36,7 +36,7 @@ if isfield(options, "Algorithm")
 end
 
 if isfield(options, "expand")
-    if ~(isrealscalar(options.expand) && options.expand > 1)
+    if ~(isrealscalar(options.expand) && options.expand >= 1)
         error("options.expand should be a real number greater than or equal to 1.");
     end
 end
@@ -55,7 +55,7 @@ if isfield(options, "reduction_factor")
     if ~(options.reduction_factor(1) <= options.reduction_factor(2) && ...
             options.reduction_factor(2) <= options.reduction_factor(3) && ...
         options.reduction_factor(1) >= 0 && options.reduction_factor(2) > 0)
-        error("options.reduction_factor should satisfy the conditions where 0 <= reduction_factor(1) < reduction_factor(2) < reduction_factor(3) and reduction_factor(2) > 0.")
+        error("options.reduction_factor should satisfy the conditions where 0 <= reduction_factor(1) <= reduction_factor(2) <= reduction_factor(3) and reduction_factor(2) > 0.")
     end
 end
 

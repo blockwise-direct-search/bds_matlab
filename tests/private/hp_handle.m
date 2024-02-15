@@ -7,9 +7,8 @@ end
 
 parameters.solvers_options{1}.expand = value(1);
 parameters.solvers_options{1}.shrink = value(2);
-parameters.solvers_options{1}.reduction_factor = value(3:5);
 
-penalty = 1e5;
+penalty = 1e4;
 dist = 0;
 if value(3) > value(4) && value(4) > value(5)
     dist = max(abs(value(3) - value(4)), abs(value(4) - value(5)));
@@ -22,9 +21,10 @@ elseif value(3) <= value(4) && value(4) > value(5)
     dist = abs(value(4) - value(5));
     value(5) = value(4);
 end
+parameters.solvers_options{1}.reduction_factor = value(3:5);
 
 if strcmpi(parameters.solvers_name(1), "cbds")
-    if value(1) < 1 || (value(2) <= 0 && value(2) >= 1) ...
+    if value(1) < 1 || (value(2) <= 0 || value(2) >= 1) ...
             || value(3) < 0 || value(4) <= 0 || value(5) <= 0
         % Replace min f(x) subject to x in Omega with min f(Prof_Omega(x)) + c * dist(x, Omega)^2
         performance = 1;

@@ -111,31 +111,39 @@ switch lower(parameters.solvers_name(1))
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
 
-% Preconditions for lincoa.
+% Preconditions for intial_value and constrains.
 initial_value_saved = initial_value;
-initial_value = log(eps+initial_value);
+initial_value(3:5) = log(eps+initial_value(3:5))/10;
+lb(3:5) = log(eps+lb(3:5))/10;
+ub(3:5) = log(eps+ub(3:5))/10;
 best_value(1:length(parameters.tau)) = parameters.tau;
 
-% Here we can use any algorithm that can deal with the bounded constraints to tune 
+% Here we can use any algorithm that can deal with the bounded constraints to tune
 % the hyperparameters, including lincoa, cobyla and bobyqa.
 switch parameters.tuning_solver
     case "lincoa"
         [xopt, fopt, ~, output_tuning] = ...
-            lincoa(@(x)hp_handle(exp(x)-eps, parameters), initial_value, Aineq, bineq, Aeq, beq, log(eps+lb), log(eps+ub), options);
+            lincoa(@(x)hp_handle([x(1:2); exp(10*x(3:end))-eps], parameters), ...
+            initial_value, Aineq, bineq, Aeq, beq, lb, ub, options);
     case "cobyla"
         [xopt, fopt, ~, output_tuning] = ...
-            cobyla(@(x)hp_handle(exp(x)-eps, parameters), initial_value, Aineq, bineq, Aeq, beq, log(eps+lb), log(eps+ub), options);
+            cobyla(@(x)hp_handle([x(1:2); exp(10*x(3:end))-eps], parameters), ...
+            initial_value, Aineq, bineq, Aeq, beq, lb, ub, options);
     case "bobyqa"
         [xopt, fopt, ~, output_tuning] = ...
-            bobyqa(@(x)hp_handle(exp(x)-eps, parameters), initial_value, log(eps+lb), log(eps+ub), options);
+            bobyqa(@(x)hp_handle([x(1:2); exp(10*x(3:end))-eps], parameters), ...
+            initial_value, lb, ub, options);
 end
-% Scale xhist as the real value.
-output_tuning.xhist = exp(output_tuning.xhist-eps);
 
+% Scale xhist as the real value.
+output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(10*output_tuning.xhist(3:end, :))-eps];
+%output_tuning.xhist = exp(output_tuning.xhist-eps);
+
+% Scale xopt and transpose xopt for record the best_value in the txt file.
 switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value(end-5) = fopt;
-        best_value(end-4:end) = exp(xopt');
+        best_value(end-4:end) = [xopt(1:2); exp(10*xopt(3:end))-eps]';
     case "pbds"
         best_value(end-6) = fopt;
         best_value(end-5:end) = exp(xopt');
