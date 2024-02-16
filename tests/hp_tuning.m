@@ -111,7 +111,7 @@ switch lower(parameters.solvers_name(1))
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
 
-% Preconditions for intial_value and constrains.
+% Preconditions for initial_value and constrains.
 initial_value_saved = initial_value;
 initial_value(3:5) = log(eps+initial_value(3:5))/10;
 lb(3:5) = log(eps+lb(3:5))/10;
