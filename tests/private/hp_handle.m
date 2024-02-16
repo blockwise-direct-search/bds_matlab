@@ -8,7 +8,7 @@ end
 parameters.solvers_options{1}.expand = value(1);
 parameters.solvers_options{1}.shrink = value(2);
 
-penalty = 1e4;
+penalty = 1e16;
 dist = 0;
 if value(3) > value(4) && value(4) > value(5)
     dist = max(abs(value(3) - value(4)), abs(value(4) - value(5)));

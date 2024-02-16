@@ -343,6 +343,19 @@ switch lower(parameters.solvers_name(1))
     case "cbds"
         parameters_perfprof.solvers_options{1}.expand = best_value(end-4);
         parameters_perfprof.solvers_options{1}.shrink = best_value(end-3);
+        % Why need to add the following code?
+        % Because the reduction factors may not be in the right order. When we
+        % plot the performance profile, the reduction factors we use are modified
+        % in the hp_handle function. So we need to use the modified reduction
+        % factors to plot the performance profile.
+        if best_value(end-2) > best_value(end-1) && best_value(end-1) > best_value(end)
+            best_value(end-2) = best_value(end-1);
+            best_value(end) = best_value(end-1);
+        elseif best_value(end-2) > best_value(end-1) && best_value(end-1) <= best_value(end)
+            best_value(end-2) = best_value(end-1);
+        elseif best_value(end-2) <= best_value(end-1) && best_value(end-1) > best_value(end)
+            best_value(end) = best_value(end-1);
+        end
         parameters_perfprof.solvers_options{1}.reduction_factor = best_value(end-2:end);
         plot_profile(parameters_perfprof);
     case "pbds"
