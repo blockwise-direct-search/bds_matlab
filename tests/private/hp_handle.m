@@ -13,7 +13,7 @@ dist = 0;
 if value(3) > value(4) && value(4) > value(5)
     dist = max(abs(value(3) - value(4)), abs(value(4) - value(5)));
     value(3) = value(4);
-    value(4) = value(5);
+    value(5) = value(4);
 elseif value(3) > value(4) && value(4) <= value(5)
     dist = abs(value(3) - value(4));
     value(3) = value(4);
@@ -21,6 +21,7 @@ elseif value(3) <= value(4) && value(4) > value(5)
     dist = abs(value(4) - value(5));
     value(5) = value(4);
 end
+
 parameters.solvers_options{1}.reduction_factor = value(3:5);
 
 if strcmpi(parameters.solvers_name(1), "cbds")
