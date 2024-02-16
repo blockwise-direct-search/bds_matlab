@@ -144,7 +144,6 @@ switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value(end-5) = fopt;
         best_value(end-4:end) = [xopt(1:2); exp(10*xopt(3:end))-eps]';
-        keyboard
     case "pbds"
         best_value(end-6) = fopt;
         best_value(end-5:end) = exp(xopt');
