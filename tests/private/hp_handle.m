@@ -5,139 +5,30 @@ if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};
 end
 
-parameters.solvers_options{1}.expand = value(1);
-parameters.solvers_options{1}.shrink = value(2);
+penalty = 1e4;
+dist = hp_regularization(value);
+x_projected = hp_projection(value);
 
-penalty = 1e16;
-dist = 0;
-if value(3) > value(4) && value(4) > value(5)
-    dist = max(abs(value(3) - value(4)), abs(value(4) - value(5)));
-    value(3) = value(4);
-    value(5) = value(4);
-elseif value(3) > value(4) && value(4) <= value(5)
-    dist = abs(value(3) - value(4));
-    value(3) = value(4);
-elseif value(3) <= value(4) && value(4) > value(5)
-    dist = abs(value(4) - value(5));
-    value(5) = value(4);
-end
-
-parameters.solvers_options{1}.reduction_factor = value(3:5);
+parameters.solvers_options{1}.expand = x_projected(1);
+parameters.solvers_options{1}.shrink = x_projected(2);
+parameters.solvers_options{1}.reduction_factor = x_projected(3:5);
 
 if strcmpi(parameters.solvers_name(1), "cbds")
-    if value(1) < 1 || (value(2) <= 0 || value(2) >= 1) ...
-            || value(3) < 0 || value(4) <= 0 || value(5) <= 0
-        % Replace min f(x) subject to x in Omega with min f(Prof_Omega(x)) + c * dist(x, Omega)^2
-        performance = 1;
-    else
-        [frec, fmin] = hp_calculated(parameters);
-        options_perf.natural_stop = false;
-        if length(parameters.tau) > 1
-            num_tau = length(parameters.tau);
-            multi_performance = NaN(num_tau, 1);
-            for i = 1 : num_tau
-                options_perf.tau = parameters.tau(i);
-                multi_performance(i) = performance_calculated(frec, fmin, options_perf);
-            end
-            performance = max(multi_performance);
-        else
-            options_perf.tau = parameters.tau;
-            performance = performance_calculated(frec, fmin, options_perf);
+    [frec, fmin] = hp_calculated(parameters);
+    options_perf.natural_stop = false;
+    if length(parameters.tau) > 1
+        num_tau = length(parameters.tau);
+        multi_performance = NaN(num_tau, 1);
+        for i = 1 : num_tau
+            options_perf.tau = parameters.tau(i);
+            multi_performance(i) = performance_calculated(frec, fmin, options_perf);
         end
-        performance = performance + penalty * dist;
-    end
-end
-
-if strcmpi(parameters.solvers_name(1), "pbds")
-    if value(1) < 1 || (value(2) <= 0 && value(2) >= 1) ...
-        || value(3) < 0 || value(4) <= 0 || value(5) <= 0 || value(6) < 1
-        performance = NaN;
+        performance = max(multi_performance);
     else
-        options_perf.natural_stop = false;
-        if isinteger(value(6))
-            parameters.solvers_options{1}.permuting_period = value(6);
-            [frec, fmin] = hp_calculated(parameters);
-            if length(parameters.tau) > 1
-                num_tau = length(parameters.tau);
-                multi_performance = NaN(num_tau, 1);
-                for i = 1 : num_tau
-                    options_perf.tau = parameters.tau(i);
-                    multi_performance(i) = performance_calculated(frec, fmin, options_perf);
-                end
-                performance = max(multi_performance);
-            else
-                options_perf.tau = parameters.tau;
-                performance = performance_calculated(frec, fmin, options_perf);
-            end
-        else
-            truncated_performance = NaN(2, 1);
-            for i = 1 : 2
-                parameters.solvers_options{1}.permuting_period = floor(value(6) - 1) + i;
-                [frec, fmin] = hp_calculated(parameters);
-                if length(parameters.tau) > 1
-                    num_tau = length(parameters.tau);
-                    multi_performance = NaN(num_tau, 1);
-                    for j = 1 : num_tau
-                        options_perf.tau = parameters.tau(i);
-                        multi_performance(j) = performance_calculated(frec, fmin, options_perf);
-                    end
-                    truncated_performance(i) = max(multi_performance);
-                else
-                    options_perf.tau = parameters.tau;
-                    truncated_performance(i) = performance_calculated(frec, fmin, options_perf);
-                end
-            end
-            performance = max(truncated_performance);
-            % performance = (truncated_performance(2) - truncated_performance(1))...
-            %     * (value(6) - floor(value(6))) + truncated_performance(1);
-        end
+        options_perf.tau = parameters.tau;
+        performance = performance_calculated(frec, fmin, options_perf);
     end
-end
-
-if strcmpi(parameters.solvers_name(1), "rbds")
-    if value(1) < 1 || (value(2) <= 0 && value(2) >= 1) ...
-        || value(3) < 0 || value(4) <= 0 || value(5) <= 0 || value(6) < 0
-        performance = NaN;
-    else
-        options_perf.natural_stop = false;
-        if isinteger(value(6))
-            parameters.solvers_options{1}.replacement_delay = value(6);
-            [frec, fmin] = hp_calculated(parameters);
-            if length(parameters.tau) > 1
-                num_tau = length(parameters.tau);
-                multi_performance = NaN(num_tau, 1);
-                for i = 1 : num_tau
-                    options_perf.tau = parameters.tau(i);
-                    multi_performance(i) = performance_calculated(frec, fmin, options_perf);
-                end
-                performance = max(multi_performance);
-            else
-                options_perf.tau = parameters.tau;
-                performance = performance_calculated(frec, fmin, options_perf);
-            end
-        else
-            truncated_performance = NaN(2, 1);
-            for i = 1 : 2
-                parameters.solvers_options{1}.replacement_delay = floor(value(6) - 1) + i;
-                [frec, fmin] = hp_calculated(parameters);
-                if length(parameters.tau) > 1
-                    num_tau = length(parameters.tau);
-                    multi_performance = NaN(num_tau, 1);
-                    for j = 1 : num_tau
-                        options_perf.tau = parameters.tau(i);
-                        multi_performance(j) = performance_calculated(frec, fmin, options_perf);
-                    end
-                    truncated_performance(i) = max(multi_performance);
-                else
-                    options_perf.tau = parameters.tau;
-                    truncated_performance(i) = performance_calculated(frec, fmin, options_perf);
-                end
-            end
-            performance = max(truncated_performance);
-            % performance = (truncated_performance(2) - truncated_performance(1))...
-            %     * (value(6) - floor(value(6))) + truncated_performance(1);
-        end
-    end
+    performance = performance + penalty * dist;
 end
 
 end

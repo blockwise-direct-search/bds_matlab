@@ -54,30 +54,6 @@ locate_prima_position = fullfile(path_competitors, "private");
 cd(locate_prima_position)
 locate_prima();
 
-% Setup the constraints.
-% The first index in lb and ub corresponds to the expanding factor.
-% The second index in lb and ub corresponds to the shrinking factor.
-% The values corresponding to indices 3 to 5 point to reduction_factors.
-% We already know that reduction factors should not be large, so we set
-% the upper bound as 1.
-Aeq = [];
-beq = [];
-Aineq = [];
-bineq = [];
-switch lower(parameters.solvers_name(1))
-    case "cbds"
-        lb = [1, eps, 0, eps, eps];
-        ub = [10, 1-eps, 1, 1, 1];
-    case "pbds"
-        lb = [1, eps, 0, eps, eps, 1];
-        ub = [Inf, 1-eps, 1, 1, 1, Inf];
-    case "rbds"
-        lb = [1, eps, 0, eps, eps, 0];
-        ub = [Inf, 1-eps, 1, 1, 1, Inf];
-    otherwise
-        error("Unknown algorithm %s", parameters.solvers_name(1));
-end
-
 % Go back to the original path.
 cd(old_dir);
 
@@ -92,7 +68,7 @@ if ~isfield(parameters, "parallel")
     parameters.parallel = false;
 end
 if ~isfield(parameters, "tuning_solver")
-    parameters.tuning_solver = "lincoa";
+    parameters.tuning_solver = "newuoa";
 end
 if ~isfield(parameters, "blacklist")
     parameters.blacklist = false;
@@ -103,53 +79,34 @@ options.output_xhist = true;
 switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value = NaN(1, length(parameters.tau) + 6);
-    case "pbds"
-        best_value = NaN(1, length(parameters.tau) + 7);
-    case "rbds"
-        best_value = NaN(1, length(parameters.tau) + 7);
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
 
 % Preconditions for initial_value and constrains.
 initial_value_saved = initial_value;
-initial_value(3:5) = log(eps+initial_value(3:5))/10;
-lb(3:5) = log(eps+lb(3:5))/10;
-ub(3:5) = log(eps+ub(3:5))/10;
+initial_value = log(eps+initial_value);
 best_value(1:length(parameters.tau)) = parameters.tau;
 
 % Here we can use any algorithm that can deal with the bounded constraints to tune
 % the hyperparameters, including lincoa, cobyla and bobyqa.
 switch parameters.tuning_solver
-    case "lincoa"
+    case "newuoa"
         [xopt, fopt, ~, output_tuning] = ...
-            lincoa(@(x)hp_handle([x(1:2); exp(10*x(3:end))-eps], parameters), ...
-            initial_value, Aineq, bineq, Aeq, beq, lb, ub, options);
-    case "cobyla"
+            newuoa(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
+    case "bds"
         [xopt, fopt, ~, output_tuning] = ...
-            cobyla(@(x)hp_handle([x(1:2); exp(10*x(3:end))-eps], parameters), ...
-            initial_value, Aineq, bineq, Aeq, beq, lb, ub, options);
-    case "bobyqa"
-        [xopt, fopt, ~, output_tuning] = ...
-            bobyqa(@(x)hp_handle([x(1:2); exp(10*x(3:end))-eps], parameters), ...
-            initial_value, lb, ub, options);
+            bds(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
 end
 
 % Scale xhist as the real value.
-output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(10*output_tuning.xhist(3:end, :))-eps];
-%output_tuning.xhist = exp(output_tuning.xhist-eps);
+output_tuning.xhist = exp(output_tuning.xhist) - eps;
 
 % Scale xopt and transpose xopt for record the best_value in the txt file.
 switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value(end-5) = fopt;
-        best_value(end-4:end) = [xopt(1:2); exp(10*xopt(3:end))-eps]';
-    case "pbds"
-        best_value(end-6) = fopt;
-        best_value(end-5:end) = exp(xopt');
-    case "rbds"
-        best_value(end-6) = fopt;
-        best_value(end-5:end) = exp(xopt');
+        best_value(end-4:end) = hp_projection(exp(xopt') - eps);
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
@@ -342,47 +299,8 @@ switch lower(parameters.solvers_name(1))
     case "cbds"
         parameters_perfprof.solvers_options{1}.expand = best_value(end-4);
         parameters_perfprof.solvers_options{1}.shrink = best_value(end-3);
-        % Why need to add the following code?
-        % Because the reduction factors may not be in the right order. When we
-        % plot the performance profile, the reduction factors we use are modified
-        % in the hp_handle function. So we need to use the modified reduction
-        % factors to plot the performance profile.
-        if best_value(end-2) > best_value(end-1) && best_value(end-1) > best_value(end)
-            best_value(end-2) = best_value(end-1);
-            best_value(end) = best_value(end-1);
-        elseif best_value(end-2) > best_value(end-1) && best_value(end-1) <= best_value(end)
-            best_value(end-2) = best_value(end-1);
-        elseif best_value(end-2) <= best_value(end-1) && best_value(end-1) > best_value(end)
-            best_value(end) = best_value(end-1);
-        end
         parameters_perfprof.solvers_options{1}.reduction_factor = best_value(end-2:end);
         plot_profile(parameters_perfprof);
-    case "pbds"
-        parameters_perfprof.solvers_options{1}.expand = best_value(end-5);
-        parameters_perfprof.solvers_options{1}.shrink = best_value(end-4);
-        parameters_perfprof.solvers_options{1}.reduction_factor = best_value(end-3:end-1);
-        if isinteger(best_value(end))
-            parameters_perfprof.solvers_options{1}.permuting_period = best_value(end);
-            plot_profile(parameters_perfprof);
-        else
-            for i = 1:2
-                parameters_perfprof.solvers_options{1}.permuting_period = floor(best_value(end)-1)+i;
-                plot_profile(parameters_perfprof);
-            end
-        end
-    case "rbds"
-        parameters_perfprof.solvers_options{1}.expand = best_value(end-5);
-        parameters_perfprof.solvers_options{1}.shrink = best_value(end-4);
-        parameters_perfprof.solvers_options{1}.reduction_factor = best_value(end-3:end-1);
-        if isinteger(best_value(end))
-            parameters_perfprof.solvers_options{1}.replacement_delay = best_value(end);
-            plot_profile(parameters_perfprof);
-        else
-            for i = 1:2
-                parameters_perfprof.solvers_options{1}.replacement_delay = floor(best_value(end)-1)+i;
-                plot_profile(parameters_perfprof);
-            end
-        end
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
