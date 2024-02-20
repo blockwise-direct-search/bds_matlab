@@ -378,6 +378,12 @@ exitflag = get_exitflag("MAXIT_REACHED");
 % value at xbase.
 xbase = x0; 
 fbase = eval_fun(fun, xbase);
+if iprint == 1
+    fprintf("Function number %d, F = %f\n", 1, fbase);
+    fprintf("The corresponding X is:\n");
+    fprintf("%f  ", xbase(:)');
+    fprintf("\n");
+end
 % Initialize xopt and fopt. xopt is the best point encountered so far, and fopt is the
 % corresponding function value. 
 xopt = xbase;
@@ -390,9 +396,6 @@ if output_xhist
     xhist(:, nf) = xbase;
 end
 fhist(nf) = fbase;
-if iprint == 1
-    fprintf("Function number %d, F = %f\n", nf, fbase);
-end
 
 terminate = false;
 % Check whether FTARGET is reached by fopt. If it is true, then terminate.

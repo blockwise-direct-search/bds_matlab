@@ -64,6 +64,9 @@ for j = 1 : num_directions
     xhist(:, nf) = xnew;
     if iprint > 0
         fprintf("Function number %d, F = %f\n", FunctionEvaluations_exhausted + nf, fnew);
+        fprintf("The corresponding X is:\n");
+        fprintf("%f  ", xnew(:)');
+        fprintf("\n");
     end
 
     % Update the best point and the best function value.
