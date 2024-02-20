@@ -33,6 +33,12 @@ forcing_function = options.forcing_function;
 % The number of function evaluations allocated to this function.
 MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 
+% The number of function evaluations having used in this function.
+FunctionEvaluations_exhausted = options.FunctionEvaluations_exhausted;
+
+% The value of iprint.
+iprint = options.iprint;
+
 % Explain why NaN is good. It is possible that this function returns
 % with exitflag=NaN and this is NOT a bug. This is because other situations
 % correspond to other normal values. Easy to see whether there is some bug 
@@ -56,6 +62,9 @@ for j = 1 : num_directions
     nf = nf+1;
     fhist(nf) = fnew;
     xhist(:, nf) = xnew;
+    if iprint > 0
+        fprintf("Function number %d, F = %f\n", FunctionEvaluations_exhausted + nf, fnew);
+    end
 
     % Update the best point and the best function value.
     if fnew < fopt

@@ -97,10 +97,16 @@ switch parameters.tuning_solver
     case "bds"
         [xopt, fopt, ~, output_tuning] = ...
             bds(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
+    case "fminunc"
+        options = optimoptions("fminunc", "Algorithm", "quasi-newton");
+        [xopt, fopt, ~, output_tuning] = ...
+            fminunc(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
 end
 
 % Scale xhist as the real value.
-output_tuning.xhist = exp(output_tuning.xhist) - eps;
+if isfield(output_tuning, "xhist")
+    output_tuning.xhist = exp(output_tuning.xhist) - eps;
+end
 
 % Scale xopt and transpose xopt for record the best_value in the txt file.
 switch lower(parameters.solvers_name(1))

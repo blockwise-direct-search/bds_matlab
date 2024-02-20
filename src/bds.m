@@ -74,6 +74,10 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %   output_xhist                Whether to output the history of points visited. Default: false.
 %   output_alpha_hist           Whether to output the history of step sizes. Default: false.
 %   output_block_hist           Whether to output the history of blocks visited. Default: false.
+%   iprint                      a flag deciding whether to print during the computation.
+%                               Default: 0, which means no printing. If iprint is 1, then
+%                               the function values, the corresponding point, and the step
+%                               size will be printed in each function evaluation.
 %
 %   [XOPT, FOPT] = BDS(...) returns an approximate minimizer XOPT and its function value FOPT.
 %
@@ -355,6 +359,13 @@ else
     output_block_hist = get_default_constant("output_block_hist");
 end
 
+% Decide whether to print during the computation.
+if isfield(options, "iprint")
+    iprint = options.iprint;
+else
+    iprint = get_default_constant("iprint");
+end
+
 % Initialize the history of blocks visited.
 block_hist = NaN(1, MaxFunctionEvaluations);
 
@@ -379,6 +390,9 @@ if output_xhist
     xhist(:, nf) = xbase;
 end
 fhist(nf) = fbase;
+if iprint == 1
+    fprintf("Function number %d, F = %f\n", nf, fbase);
+end
 
 terminate = false;
 % Check whether FTARGET is reached by fopt. If it is true, then terminate.
@@ -446,6 +460,7 @@ for iter = 1:maxit
         direction_indices = direction_set_indices{i_real}; 
         
         % Set the options for the direct search within the i_real-th block. 
+        suboptions.FunctionEvaluations_exhausted = nf;
         suboptions.MaxFunctionEvaluations = MaxFunctionEvaluations - nf;
         suboptions.cycling_inner = cycling_inner;
         suboptions.with_cycling_memory = with_cycling_memory;
@@ -453,6 +468,7 @@ for iter = 1:maxit
         suboptions.forcing_function = forcing_function;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
+        suboptions.iprint = iprint;
         
         % Perform the direct search within the i_real-th block.
         [sub_xopt, sub_fopt, sub_exitflag, sub_output] = inner_direct_search(fun, xbase,...

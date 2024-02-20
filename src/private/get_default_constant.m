@@ -41,6 +41,8 @@ switch constant_name
         constant_value = false;
     case {"output_xhist_failed"}
         constant_value = false;
+    case {"iprint"}
+        constant_value = 0;
     otherwise
         error("Unknown constant name")
 end

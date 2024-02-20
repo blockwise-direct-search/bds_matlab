@@ -5,7 +5,7 @@ if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};
 end
 
-penalty = 1e4;
+penalty = 1000;
 dist = hp_regularization(value);
 x_projected = hp_projection(value);
 
