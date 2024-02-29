@@ -277,9 +277,13 @@ try
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
+                fhist_tmp = cell(2, 1);
                 for i_solver = 1:num_solvers
                     [fhist, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                         i_run, solvers_options, test_options);
+                    % if any(isnan(fhist_perfprof))
+                    %     keyboard
+                    % end
                     if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                         fhist_plot{i_solver} = fhist;
                     end
@@ -289,6 +293,9 @@ try
                         fval_tmp(i_solver) = min(fhist);
                     end
                     frec(i_problem,i_solver,i_run,:) = fhist_perfprof;
+                end
+                if ~isequal(fhist_tmp{1}, fhist_tmp{2})
+                    keyboard
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist

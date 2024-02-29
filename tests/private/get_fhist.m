@@ -19,15 +19,18 @@ test_options.with_gradient = strcmpi(name_solver, "fminunc_wrapper") && test_opt
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
 
-try 
-    solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
-catch ME
-    warning(ME.identifier, '%s', ME.message);
-    warning('!!!Solver %s RAISE AN ERROR on problem %s with r = %d!!!', name_solver, p.name, r);
-end
-%solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+% try 
+%     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+% catch ME
+%     warning(ME.identifier, '%s', ME.message);
+%     warning('!!!Solver %s RAISE AN ERROR on problem %s with r = %d!!!', name_solver, p.name, r);
+% end
+solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 
 fhist = obj.valHist;
+% if any(isnan(fhist))
+%     fhist(isnan(fhist)) = min([inf, 2^100, sqrt(realmax())]);
+% end
 % Get length of fhist.
 fhist_length = length(obj.valHist);
 fhist_perfprof(1:fhist_length) = fhist;

@@ -14,6 +14,9 @@ penalty = 100;
 % We plot the performance profiles only for the log performance ratio in [0, cut*max_ratio].
 cut = 1.05;
 
+% Why frec may contain NaN? Because we use objective in get_fhist.m to record the 
+% history of the objective function. In this case, the value that we record is the 
+% real value of the objective function. It definitely may contain NaN.
 [np, ns, nr, MaxFunctionEvaluations] = size(frec);
 
 % nf_return(ip, is, ir) is the number of function evaluations that the is-th solver uses when it
@@ -87,7 +90,6 @@ for ip = 1:np
     end
 end
 
-
 % pp{is, ir} is the performance profile of the is-th solver during the ir-th run.
 pp = cell(ns, nr);
 cut_ratio = 0;
@@ -111,7 +113,6 @@ for ir = 1 : nr
     cut_ratio = max(cut_ratio, cut*max_ratio);
     r(isnan(r)) = penalty_ratio;
     r = sort(r);
-
     for is = 1:ns
         [xx, yy] = stairs(r(:, is), (1:np)/np);
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -187,6 +188,5 @@ end
 % to minimize, here we use performance(2) - performance(1). Since the
 % performance_diff is in the range of [-1, 1], we use the following formula.
 performance_diff = max(-1, min(1, (performance(2) - performance(1)) / cut_ratio));
-
 end
 

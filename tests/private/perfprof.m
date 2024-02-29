@@ -27,6 +27,9 @@ colors  = {bleu, 'k', 'b', 'r', vert, bleu, 'k', 'b', 'r', vert};
 lines   = {'-', '-.', '--', ':', '-', '-.', '--', ':', '-', '-.'};
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Why frec may contain NaN? Because we use objective in get_fhist.m to record the 
+% history of the objective function. In this case, the value that we record is the 
+% real value of the objective function. It definitely may contain NaN.
 [np, ns, nr, MaxFunctionEvaluations] = size(frec);
 
 % nf_return(ip, is, ir) is the number of function evaluations that the is-th solver uses when it
@@ -124,7 +127,6 @@ for ir = 1 : nr
     cut_ratio = max(cut_ratio, cut*max_ratio);
     r(isnan(r)) = penalty_ratio;
     r = sort(r);
-
     for is = 1:ns
         [xx, yy] = stairs(r(:, is), (1:np)/np);
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

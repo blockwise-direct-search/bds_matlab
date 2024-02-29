@@ -4,11 +4,13 @@ function performance = hp_handle(value, parameters)
 if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};
 end
-
+keyboard
 penalty = 1000;
 dist = hp_regularization(value);
 x_projected = hp_projection(value);
 
+% Notice that the value of the parameters may not be the same as the ones used 
+% in the tuning_solver. For example, log(exp(eps)) ~= eps numerically.
 parameters.solvers_options{1}.expand = x_projected(1);
 parameters.solvers_options{1}.shrink = x_projected(2);
 parameters.solvers_options{1}.reduction_factor = x_projected(3:5);
@@ -30,7 +32,7 @@ if strcmpi(parameters.solvers_name(1), "cbds")
     end
     performance = performance + penalty * dist;
 end
-
+keyboard
 end
 
 

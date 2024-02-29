@@ -1,5 +1,5 @@
 function x_projected = hp_projection(x)
-    % TODO: IS THIS A PROJECTION?
+    % IS THIS A PROJECTION? Yes, verified by the definition of the projection: P^2 = P.
     x_projected = x(:);
     x_projected(1) = max(x_projected(1), 1);
     x_projected(2) = max(min(x_projected(2), 1 - eps), eps);

@@ -1,4 +1,4 @@
-function d = hp_regularization(x)
+    function d = hp_regularization(x)
 % HP_REGULARIZATION Regularization function for calculating the residual value
 % of the point x concerning the constraints.
     y = log(x + eps);
