@@ -85,7 +85,8 @@ end
 
 % Preconditions for initial_value and constrains.
 initial_value_saved = initial_value;
-initial_value = [initial_value(1:2); initial_value(3:end) + 0.5];
+initial_value = log(initial_value + eps);
+%initial_value = [initial_value(1:2); initial_value(3:end) + 0.5];
 best_value(1:length(parameters.tau)) = parameters.tau;
 
 % Here we can use any algorithm that can deal with the bounded constraints to tune
@@ -95,8 +96,10 @@ switch parameters.tuning_solver
         [xopt, fopt, ~, output_tuning] = ...
             newuoa(@(x)hp_handle([x(1:2); (x(3:end) - 0.5)], parameters), initial_value, options);
     case "bds"
+        %[xopt, fopt, ~, output_tuning] = ...
+        %    bds(@(x)hp_handle([x(1:2); (x(3:end) - 0.5)], parameters), initial_value, options);
         [xopt, fopt, ~, output_tuning] = ...
-            bds(@(x)hp_handle([x(1:2); (x(3:end) - 0.5)], parameters), initial_value, options);
+            bds(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
     case "fminunc"
         options = optimoptions("fminunc", "Algorithm", "quasi-newton");
         [xopt, fopt, ~, output_tuning] = ...
@@ -105,15 +108,16 @@ end
 
 % Scale xhist as the real value.
 if isfield(output_tuning, "xhist")
-    output_tuning.xhist = [output_tuning.xhist(1:2, :); output_tuning.xhist(3:end, :) - 0.5];
-    %output_tuning.xhist = exp(output_tuning.xhist) - 1;
+    %output_tuning.xhist = [output_tuning.xhist(1:2, :); output_tuning.xhist(3:end, :) - 0.5];
+    output_tuning.xhist = exp(output_tuning.xhist) - eps;
 end
 
 % Scale xopt and transpose xopt for record the best_value in the txt file.
 switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value(end-5) = fopt;
-        best_value(end-4:end) = hp_projection([xopt(1:2)' (xopt(3:end)' - 0.5)]);
+        best_value(end-4:end) = hp_projection(exp(xopt') - eps);
+        %best_value(end-4:end) = hp_projection([xopt(1:2)' (xopt(3:end)' - 0.5)]);
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
@@ -128,10 +132,21 @@ else
         int2str(int32(-log10(max(parameters.tau)))), ...
         "_", int2str(int32(-log10(min(parameters.tau)))));
 end
+if isfield(parameters, "feature")
+    tst = strcat(tst, "_", parameters.feature);
+else
+    tst = strcat(tst, "_", "plain");
+end
 if parameters.blacklist
     tst = strcat(tst, "_", "blacklist");
 else
     tst = strcat(tst, "_", "non_blacklist");
+end
+if isfield(options, "maxfun")
+    tst = strcat(tst, "_", string(num2str(options.maxfun)));
+end
+if isfield(options, "MaxFunctionEvaluations")
+    tst = strcat(tst, "_", string(num2str(options.MaxFunctionEvaluations)));
 end
 % Trim time string.
 time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));
@@ -300,6 +315,9 @@ if ~isfield(parameters, "problem_maxdim")
     parameters_perfprof.problem_maxdim = 5;
 else
     parameters_perfprof.problem_maxdim = parameters.problem_maxdim;
+end
+if isfield(parameters, "feature")
+    parameters_perfprof.feature = parameters.feature;
 end
 
 switch lower(parameters.solvers_name(1))

@@ -4,7 +4,7 @@ function performance = hp_handle(value, parameters)
 if ~isfield(parameters, "solvers_options")
     parameters.solvers_options = {};
 end
-keyboard
+
 penalty = 1000;
 dist = hp_regularization(value);
 x_projected = hp_projection(value);
@@ -32,7 +32,7 @@ if strcmpi(parameters.solvers_name(1), "cbds")
     end
     performance = performance + penalty * dist;
 end
-keyboard
+
 end
 
 
