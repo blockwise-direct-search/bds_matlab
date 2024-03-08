@@ -118,11 +118,11 @@ x0_is_row = isrow(x0);
 x0 = double(x0(:));
 
 % Set the default value of debug_flag. If options do not contain debug_flag, then
-% debug_flag is set to true.
+% debug_flag is set to false.
 if isfield(options, "debug_flag")
     debug_flag = options.debug_flag;
 else
-    debug_flag = true;
+    debug_flag = false;
 end
 
 % Check the inputs of the user when debug_flag is true.
