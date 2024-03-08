@@ -319,6 +319,9 @@ end
 if isfield(parameters, "feature")
     parameters_perfprof.feature = parameters.feature;
 end
+if isfield(parameters, "num_random")
+    parameters_perfprof.num_random = parameters.num_random;
+end
 
 switch lower(parameters.solvers_name(1))
     case "cbds"

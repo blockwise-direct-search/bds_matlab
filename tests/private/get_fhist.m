@@ -14,11 +14,9 @@ fhist_perfprof = NaN(MaxFunctionEvaluations_frec, 1);
 % with_gradient to be true is when the solver is fminunc_wrapper and the
 % problem is noisy. 
 test_options.with_gradient = strcmpi(name_solver, "fminunc_wrapper") && test_options.is_noisy;
-
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
-
 % try 
 %     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 % catch ME

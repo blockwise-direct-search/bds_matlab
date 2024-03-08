@@ -56,12 +56,6 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", strrep(parameters.solvers_options{i}.direction_set_type, '_', '-'));
         end
 
-    case {"bds_norma"}
-        solver_legend = "bds-norma";
-
-    case {"bds_previous"}
-        solver_legend = "bds-previous";
-
     case {"dspd"}
         solver_legend = "DSPD";
         if isfield(parameters.solvers_options{i}, "num_random_vectors")
