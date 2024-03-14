@@ -10,34 +10,35 @@ function [xopt, fopt, exitflag, output] = dspd(fun, x0, options)
 %   XOPT = BDS(FUN, X0, OPTIONS) performs the computations with the options in OPTIONS. It should be a
 %   structure, with the following fields:
 %
-%   num_blocks                          Number of blocks.
-%   MaxFunctionEvaluations                      Maximum of function evaluations.
-%   MaxFunctionEvaluations_factor               Factor to define the maximum number of function evaluations as a multiplier
-%                               of the dimension of the problem.
-%   expand                      Expanding factor of step size.
-%   shrink                      Shrinking factor of step size.
-%   reduction_factor            Factor of reduction.
-%   StepTolerance               The tolerance for testing whether the step size is small enough.
-%   ftarget                     Target of the function value. If the function value is below target,
-%                               then the algorithm terminates.
-%   polling_inner               Polling strategy of each block.
-%   direction_set               direction set of directions.
-%   with_cycling_memory         In the opportunistic case (polling_inner == "opportunistic"),
-%                               with_memory decides whether the cycling strategy memorizes
-%                               the history or not.
-%   cycling_inner               Cycling strategy employed in the opportunistic case.
-%   accept_simple_decrease      Whether the algorithm accepts simple decrease or not.
-%   Algorithm                   Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
-%                               Use Algorithm not algorithm to have the same name as MATLAB.
-%   shuffling_period            A positive integer. This is only used for PBDS, which shuffles the blocks
-%                               every shuffling_period iterations.
-%   replacement_delay           An integer between 0 and num_blocks-1. This is only used for RBDS. Suppose that
-%                               replacement_delay is r. If block i is selected at iteration k, then it will
-%                               not be selected at iterations k+1, ..., k+r.
-%   seed                        Only used by randomized strategy for reproducibility.
-%   output_xhist                Whether the history of points visited is returned or not.
-%   output_alpha_hist           Whether the history of step sizes is returned or not.
-%   output_block_hist           Whether the history of blocks visited is returned or not.
+%   num_blocks                      Number of blocks.
+%   MaxFunctionEvaluations          Maximum of function evaluations.
+%   MaxFunctionEvaluations_factor   Factor to define the maximum number of 
+%                                   function evaluations as a multiplier
+%                                   of the dimension of the problem.
+%   expand                          Expanding factor of step size.
+%   shrink                          Shrinking factor of step size.
+%   reduction_factor                Factor of reduction.
+%   StepTolerance                   The tolerance for testing whether the step size is small enough.
+%   ftarget                         Target of the function value. If the function value is below target,
+%                                   then the algorithm terminates.
+%   polling_inner                   Polling strategy of each block.
+%   direction_set                   direction set of directions.
+%   with_cycling_memory             In the opportunistic case (polling_inner == "opportunistic"),
+%                                   with_memory decides whether the cycling strategy memorizes
+%                                   the history or not.
+%   cycling_inner                   Cycling strategy employed in the opportunistic case.
+%   accept_simple_decrease          Whether the algorithm accepts simple decrease or not.
+%   Algorithm                       Algorithm of BDS. It can be "cbds", "pbds", "rbds", "ds".
+%                                   Use Algorithm not algorithm to have the same name as MATLAB.
+%   shuffling_period                A positive integer. This is only used for PBDS, which shuffles the blocks
+%                                   every shuffling_period iterations.
+%   replacement_delay               An integer between 0 and num_blocks-1. This is only used for RBDS. Suppose that
+%                                   replacement_delay is r. If block i is selected at iteration k, then it will
+%                                   not be selected at iterations k+1, ..., k+r.
+%   seed                            Only used by randomized strategy for reproducibility.
+%   output_xhist                    Whether the history of points visited is returned or not.
+%   output_alpha_hist               Whether the history of step sizes is returned or not.
+%   output_block_hist               Whether the history of blocks visited is returned or not.
 %
 %   [XOPT, FOPT] = BDS(...) also returns the value of the objective function FUN at the
 %   solution XOPT.
@@ -69,8 +70,16 @@ if nargin < 3
     options = struct();
 end
 
+
+% Set the default value of debug_flag. If options do not contain debug_flag, then
+% debug_flag is set to false.
+if isfield(options, "debug_flag")
+    debug_flag = options.debug_flag;
+else
+    debug_flag = false;
+end
+
 % Check the inputs of the user when debug_flag is true.
-debug_flag = is_debugging();
 if debug_flag
     verify_preconditions(fun, x0, options);
 end
@@ -223,6 +232,13 @@ if output_xhist
     end
 end
 
+% Decide whether to print during the computation.
+if isfield(options, "iprint")
+    iprint = options.iprint;
+else
+    iprint = get_default_constant("iprint");
+end
+
 % To avoid that the users bring some randomized strings.
 if ~isfield(options, "seed")
     random_stream = RandStream("mt19937ar", "Seed", "shuffle");
@@ -233,13 +249,13 @@ end
 % Initialize the exitflag where the maximum number of iterations is reached.
 exitflag = get_exitflag("MAXIT_REACHED");
 xbase = x0;
-fbase = eval_fun(fun, xbase);
+[fbase, fbase_real] = eval_fun(fun, xbase);
 % Set the number of function evaluations.
 nf = 1;
 if output_xhist
     xhist(:, nf) = xbase;
 end
-fhist(nf) = fbase;
+fhist(nf) = fbase_real;
 xopt = xbase;
 fopt = fbase;
 
@@ -274,6 +290,7 @@ for iter = 1:maxit
         D = D ./ vecnorm(D);
     end
 
+    suboptions.FunctionEvaluations_exhausted = nf;
     suboptions.MaxFunctionEvaluations = MaxFunctionEvaluations - nf;
     suboptions.cycling_inner = cycling_inner;
     suboptions.with_cycling_memory = with_cycling_memory;
@@ -281,6 +298,7 @@ for iter = 1:maxit
     suboptions.forcing_function = forcing_function;
     suboptions.ftarget = ftarget;
     suboptions.polling_inner = options.polling_inner;
+    suboptions.iprint = iprint;
 
     [sub_xopt, sub_fopt, sub_exitflag, sub_output] = inner_direct_search(fun, xbase,...
         fbase, D, 1:size(D, 2), alpha, suboptions);
