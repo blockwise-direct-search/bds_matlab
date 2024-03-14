@@ -58,9 +58,11 @@ for j = 1 : num_directions
     
     % Evaluate the objective function for the current polling direction.
     xnew = xbase+alpha*D(:, j);
-    fnew = eval_fun(fun, xnew);
+    [fnew, fnew_real] = eval_fun(fun, xnew);
     nf = nf+1;
-    fhist(nf) = fnew;
+    % When we record the function value, we use the real function value.
+    % Here, we should use fnew_real instead of fnew.
+    fhist(nf) = fnew_real;
     xhist(:, nf) = xnew;
     if iprint > 0
         fprintf("Function number %d, F = %f\n", FunctionEvaluations_exhausted + nf, fnew);

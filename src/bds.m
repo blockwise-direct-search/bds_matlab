@@ -385,7 +385,9 @@ exitflag = get_exitflag("MAXIT_REACHED");
 % block, meaning that reduction will be calculated with respect to xbase. fbase is the function 
 % value at xbase.
 xbase = x0; 
-fbase = eval_fun(fun, xbase);
+% fbase_real is the real function value at xbase, which is the value returned by fun 
+% (not eval_fun).
+[fbase, fbase_real] = eval_fun(fun, xbase);
 if iprint == 1
     fprintf("Function number %d, F = %f\n", 1, fbase);
     fprintf("The corresponding X is:\n");
@@ -403,7 +405,8 @@ nf = 1;
 if output_xhist
     xhist(:, nf) = xbase;
 end
-fhist(nf) = fbase;
+% When we record fhist, we should use the real function value at xbase, which is fbase_real.
+fhist(nf) = fbase_real;
 
 terminate = false;
 % Check whether FTARGET is reached by fopt. If it is true, then terminate.
@@ -562,7 +565,7 @@ for iter = 1:maxit
     end
     
     % Test whether fopt is always the minimum of fhist after the moment we update fopt.
-    % fopt == min(fhist)
+    % fopt == min(fhist);
 
     % For "pads", we will update xbase and fbase only after one iteration of the outer loop.
     % During the inner loop, every block will share the same xbase and fbase.
