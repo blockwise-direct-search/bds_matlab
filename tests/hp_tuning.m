@@ -73,6 +73,9 @@ end
 if ~isfield(parameters, "blacklist")
     parameters.blacklist = false;
 end
+if ~isfield(parameters, "reduction_error")
+    parameters.reduction_error = false;
+end
 
 options.output_xhist = true;
 
@@ -85,8 +88,8 @@ end
 
 % Preconditions for initial_value and constrains.
 initial_value_saved = initial_value;
-initial_value = log(initial_value + eps);
-%initial_value = [initial_value(1:2); initial_value(3:end) + 0.5];
+%initial_value = log(initial_value + eps);
+initial_value = [initial_value(1:2); log(initial_value(3:end)+eps)];
 best_value(1:length(parameters.tau)) = parameters.tau;
 
 % Here we can use any algorithm that can deal with the bounded constraints to tune
@@ -94,12 +97,14 @@ best_value(1:length(parameters.tau)) = parameters.tau;
 switch parameters.tuning_solver
     case "newuoa"
         [xopt, fopt, ~, output_tuning] = ...
-            newuoa(@(x)hp_handle([x(1:2); (x(3:end) - 0.5)], parameters), initial_value, options);
-    case "bds"
+            newuoa(@(x)hp_handle([x(1:2); exp(x(3:end)) - eps], parameters), initial_value, options);
         %[xopt, fopt, ~, output_tuning] = ...
-        %    bds(@(x)hp_handle([x(1:2); (x(3:end) - 0.5)], parameters), initial_value, options);
+        %    newuoa(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
+    case "bds"
         [xopt, fopt, ~, output_tuning] = ...
-            bds(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
+            bds(@(x)hp_handle([x(1:2); exp(x(3:end)) - eps], parameters), initial_value, options);
+        %[xopt, fopt, ~, output_tuning] = ...
+        %    bds(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
     case "fminunc"
         options = optimoptions("fminunc", "Algorithm", "quasi-newton");
         [xopt, fopt, ~, output_tuning] = ...
@@ -108,16 +113,16 @@ end
 
 % Scale xhist as the real value.
 if isfield(output_tuning, "xhist")
-    %output_tuning.xhist = [output_tuning.xhist(1:2, :); output_tuning.xhist(3:end, :) - 0.5];
-    output_tuning.xhist = exp(output_tuning.xhist) - eps;
+    output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(output_tuning.xhist(3:end, :)) - eps];
+    %output_tuning.xhist = exp(output_tuning.xhist) - eps;
 end
 
 % Scale xopt and transpose xopt for record the best_value in the txt file.
 switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value(end-5) = fopt;
-        best_value(end-4:end) = hp_projection(exp(xopt') - eps);
-        %best_value(end-4:end) = hp_projection([xopt(1:2)' (xopt(3:end)' - 0.5)]);
+        %best_value(end-4:end) = hp_projection(exp(xopt') - eps);
+        best_value(end-4:end) = hp_projection([xopt(1:2)' exp(xopt(3:end)') - eps]);
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end

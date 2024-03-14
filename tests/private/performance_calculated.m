@@ -188,6 +188,6 @@ end
 % to minimize, here we use performance(2) - performance(1). Since the
 % performance_diff is in the range of [-1, 1], we use the following formula.
 performance_diff = max(-1, min(1, (performance(2) - performance(1)) / cut_ratio));
-keyboard
+
 end
 
