@@ -8,9 +8,9 @@ switch constant_name
     case {"Algorithm"}
         constant_value = "cbds";
     case {"expand"}
-        constant_value = 2;
+        constant_value = 1.5;
     case {"shrink"}
-        constant_value = 0.5;
+        constant_value = 0.4;
     case {"reduction_factor"}
         constant_value = [0, eps, eps];
     case {"forcing_function"}
