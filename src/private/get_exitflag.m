@@ -1,4 +1,4 @@
-function [exitflag] = get_exitflag(information)
+function [exitflag] = get_exitflag(information, debug_flag)
 %GET_EXITFLAG gets the EXITFLAG of BDS.
 %   SMALL_ALPHA     Step size is below StepTolerance. In the case of variable step sizes, 
 %                   SMALL_ALPHA indicates the largest component of step sizes is 
@@ -9,7 +9,7 @@ function [exitflag] = get_exitflag(information)
 %
 
 % Check whether INFORMATION is a string or not.
-if is_debugging
+if debug_flag
     if ~isstring(information)
         error("Information is not a string.");
     end
@@ -35,7 +35,7 @@ if isempty(exitflag)
 end
 
 % Check whether EXITFLAG is an integer or not.
-if is_debugging
+if debug_flag
     if ~isintegerscalar(exitflag)
         error("Exitflag is not an integer.");
     end
