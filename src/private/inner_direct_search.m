@@ -36,8 +36,8 @@ MaxFunctionEvaluations = options.MaxFunctionEvaluations;
 % The number of function evaluations having used in this function.
 FunctionEvaluations_exhausted = options.FunctionEvaluations_exhausted;
 
-% The value of iprint.
-iprint = options.iprint;
+% The value of verbose.
+verbose = options.verbose;
 
 % The value of debug_flag.
 debug_flag = options.debug_flag;
@@ -67,7 +67,7 @@ for j = 1 : num_directions
     % Here, we should use fnew_real instead of fnew.
     fhist(nf) = fnew_real;
     xhist(:, nf) = xnew;
-    if iprint > 0
+    if verbose
         fprintf("Function number %d, F = %f\n", FunctionEvaluations_exhausted + nf, fnew);
         fprintf("The corresponding X is:\n");
         fprintf("%f  ", xnew(:)');
