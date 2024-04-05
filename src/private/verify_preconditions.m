@@ -26,6 +26,9 @@ if isfield(options, "num_blocks")
     if ~(isintegerscalar(options.num_blocks) && options.num_blocks > 0)
         error("options.num_blocks should be a positive integer.");
     end
+    num_blocks = options.num_blocks;
+else
+    num_blocks = get_default_constant("num_blocks");
 end
 
 BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
@@ -66,10 +69,13 @@ if isfield(options, "forcing_function_type")
 end
 
 if isfield(options, "alpha_init")
-    if ~(isrealscalar(options.alpha_init) && options.alpha_init > 0)
-        error("options.alpha_init should be a positive real number.");
+    if ~((isrealscalar(options.alpha_init) && options.alpha_init > 0) || ...
+        (isnumvec(options.alpha_init) && length(options.alpha_init) == num_blocks && all(options.alpha_init > 0)) || ...
+        (ischarstr(options.alpha_init) && strcmpi(options.alpha_init, "auto")))
+        error("options.alpha_init should be a positive scalar or a positive real vector with length equal to num_blocks or a string 'auto'.");
     end
 end
+
 
 if isfield(options, "alpha_all")
     if ~(isrealscalar(options.alpha_all) && options.alpha_all > 0)

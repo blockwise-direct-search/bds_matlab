@@ -309,31 +309,6 @@ if output_alpha_hist
     end
 end
 
-% % Set the initial step sizes. If options do not contain the field of alpha_init, then the 
-% % initial step size of each block is set to 1.
-% if isfield(options, "alpha_init")
-%     if length(options.alpha_init) == 1
-%         alpha_all = options.alpha_init*ones(num_blocks, 1);
-%     elseif length(options.alpha_init) == num_blocks
-%         alpha_all = options.alpha_init;
-%     else
-%         error("The length of alpha_init should be equal to num_blocks or equal to 1.");
-%     end
-% elseif (num_blocks == n && size(D, 2) == 2*n && isfield(options, "alpha_init_scaling")) ...
-%      && options.alpha_init_scaling
-%     % x0_coordinates is the coordinates of x0 with respect to the directions in 
-%     % D(:, 1 : 2 : 2*n-1), where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
-%     x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
-%     x0_scales = abs(x0_coordinates());
-%     if isfield(options, "alpha_init_scaling_factor")
-%         alpha_all = options.alpha_init_scaling_factor * x0_scales;
-%     else
-%         alpha_all = 0.5 * max(1, abs(x0_scales));
-%     end
-% else
-%     alpha_all = ones(num_blocks, 1);
-% end
-
 % Set the initial step sizes. If options do not contain the field of alpha_init, then the 
 % initial step size of each block is set to 1. If alpha_init is a positive scalar, then the initial step
 % size of each block is set to alpha_init. If alpha_init is a vector, then the initial step size
@@ -386,10 +361,10 @@ else
 end
 
 % Decide whether to print during the computation.
-if isfield(options, "iprint")
-    iprint = options.iprint;
+if isfield(options, "verbose")
+    verbose = options.verbose;
 else
-    iprint = get_default_constant("iprint");
+    verbose = get_default_constant("verbose");
 end
 
 % Initialize the history of blocks visited.
@@ -500,7 +475,7 @@ for iter = 1:maxit
         suboptions.forcing_function = forcing_function;
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
-        suboptions.iprint = iprint;
+        suboptions.verbose = verbose;
         suboptions.debug_flag = debug_flag;
         
         % Perform the direct search within the i_real-th block.
