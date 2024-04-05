@@ -21,13 +21,12 @@ end
 if ~isfield(options, "direction_set")
 
     % Set the default direction set.
-    D = NaN(n, 2*n);
-    D(:,1:2:2*n-1) = eye(n);
-    D(:,2:2:2*n) = -eye(n);
+    direction_set = eye(n);
 
 else
 
     direction_set = options.direction_set;
+
     % Determine whether the direction set contains NaN or Inf values and replace those
     % elements with 0.
     if any(isnan(direction_set) | isinf(direction_set), "all")
@@ -35,9 +34,9 @@ else
         direction_set(isnan(direction_set) | isinf(direction_set)) = 0;
     end
 
-    % Check whether the direction set is linearly independent by checking whether the rank of
-    % the direction set is equal to the number of columns of the direction set.
-    if abs(rank(direction_set) - size(direction_set, 2)) >= 1.0e-10
+    % Check whether the direction set is linearly independent by checking whether the smallest
+    % eigenvalue of the direction set is larger than 1.0e-10.
+    if eigs(direction_set, 1, 'smallestabs') < 1.0e-10
         error('The direction set is not linearly independent.');
     end
 
@@ -82,9 +81,21 @@ else
 
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 
+
+    % First, we need to subtract a maximum linearly independent set from direction_set.
+    [~, R, P] = qr(direction_set);
+    [row, col] = find(triu(P) == 1);
+    permuted_indices = [row, col];
+    % Find the first element in the diagonal of R that is smaller than 1e-10.
+    R_truncate_index = find(diag(R) < 1e-10, 1); 
+    if ~isempty(R_truncate_index) && R_truncate_index > 1
+        [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_indices(:, 2));
+        direction_set = direction_set(:, sort(AP_indices));
+    end
+
     % The following columns of Q will be added to direction_set.
     % 1. The corresponding diagonal elements of R are tiny.
-    % 2. Columns m+1 to n with m being the number of columns in direction_set, provided that m < n.
+    % 2. Columns m+1 to n with m being the number of columns in direction_set provided that m < n.
     [Q, R, ~] = qr(direction_set);
     [~, m] = size(direction_set);
     % deficient_columns contains the indices of the tiny diagonal elements of 
@@ -95,12 +106,30 @@ else
         10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n)));
     direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
 
-    % Finally, set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th vector in direction_set.
+
+    % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
+    % We use QR factorization with permutation to find such columns. 
+    % The following columns of Q will be added to direction_set.
+    % 1. The corresponding diagonal elements of R are tiny.
+    % 2. Columns m+1 to n with m being the number of columns in direction_set provided that m < n.
+    [Q, R, ~] = qr(direction_set);
     [~, m] = size(direction_set);
-    D = NaN(n, 2*m);
-    D(:, 1:2:2*m-1) = direction_set;
-    D(:, 2:2:2*m) = -direction_set;
+    % deficient_columns contains the indices of the tiny diagonal elements of 
+    % R(1:min(m, n), 1:min(m, n)). 
+    % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
+    % comparison will return a matrix due to the implicit expansion.
+    deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n)))))' > ...
+        1e-10*vecnorm(R(1:min(m,n), 1:min(m,n)));
+    direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
+end
+
+% Finally, set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th vector in direction_set.
+[~, m] = size(direction_set);
+D = NaN(n, 2*m);
+D(:, 1:2:2*m-1) = direction_set;
+D(:, 2:2:2*m) = -direction_set;
 
 end
 
-end
+
+
