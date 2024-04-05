@@ -72,8 +72,8 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %   output_xhist                Whether to output the history of points visited. Default: false.
 %   output_alpha_hist           Whether to output the history of step sizes. Default: false.
 %   output_block_hist           Whether to output the history of blocks visited. Default: false.
-%   iprint                      a flag deciding whether to print during the computation.
-%                               Default: 0, which means no printing. If iprint is 1, then
+%   verbose                     a flag deciding whether to print during the computation.
+%                               Default: false, which means no printing. If verbose is true, then
 %                               the function values, the corresponding point, and the step
 %                               size will be printed in each function evaluation.
 %
@@ -309,26 +309,46 @@ if output_alpha_hist
     end
 end
 
+% % Set the initial step sizes. If options do not contain the field of alpha_init, then the 
+% % initial step size of each block is set to 1.
+% if isfield(options, "alpha_init")
+%     if length(options.alpha_init) == 1
+%         alpha_all = options.alpha_init*ones(num_blocks, 1);
+%     elseif length(options.alpha_init) == num_blocks
+%         alpha_all = options.alpha_init;
+%     else
+%         error("The length of alpha_init should be equal to num_blocks or equal to 1.");
+%     end
+% elseif (num_blocks == n && size(D, 2) == 2*n && isfield(options, "alpha_init_scaling")) ...
+%      && options.alpha_init_scaling
+%     % x0_coordinates is the coordinates of x0 with respect to the directions in 
+%     % D(:, 1 : 2 : 2*n-1), where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
+%     x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
+%     x0_scales = abs(x0_coordinates());
+%     if isfield(options, "alpha_init_scaling_factor")
+%         alpha_all = options.alpha_init_scaling_factor * x0_scales;
+%     else
+%         alpha_all = 0.5 * max(1, abs(x0_scales));
+%     end
+% else
+%     alpha_all = ones(num_blocks, 1);
+% end
+
 % Set the initial step sizes. If options do not contain the field of alpha_init, then the 
-% initial step size of each block is set to 1.
+% initial step size of each block is set to 1. If alpha_init is a positive scalar, then the initial step
+% size of each block is set to alpha_init. If alpha_init is a vector, then the initial step size
+% of the i-th block is set to alpha_init(i). If alpha_init is "auto", then the initial step size is
+% set according to the coordinates of x0 with respect to the directions in D(:, 1 : 2 : 2*n-1).
 if isfield(options, "alpha_init")
     if length(options.alpha_init) == 1
         alpha_all = options.alpha_init*ones(num_blocks, 1);
     elseif length(options.alpha_init) == num_blocks
         alpha_all = options.alpha_init;
-    else
-        error("The length of alpha_init should be equal to num_blocks or equal to 1.");
-    end
-elseif (num_blocks == n && size(D, 2) == 2*n && isfield(options, "alpha_init_scaling")) ...
-     && options.alpha_init_scaling
-    % x0_coordinates is the coordinates of x0 with respect to the directions in 
-    % D(:, 1 : 2 : 2*n-1), where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
-    x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
-    x0_scales = abs(x0_coordinates());
-    if isfield(options, "alpha_init_scaling_factor")
-        alpha_all = options.alpha_init_scaling_factor * x0_scales;
-    else
-        alpha_all = 0.5 * max(1, abs(x0_scales));
+    elseif strcmpi(options.alpha_init,"auto")
+        % x0_coordinates is the coordinates of x0 with respect to the directions in 
+        % D(:, 1 : 2 : 2*n-1), where D(:, 1 : 2 : 2*n-1) is a basis of R^n.
+        x0_coordinates = D(:, 1 : 2 : 2*n-1) \ x0;
+        alpha_all = 0.5 * max(1, abs(x0_coordinates));
     end
 else
     alpha_all = ones(num_blocks, 1);
@@ -386,7 +406,7 @@ xbase = x0;
 % fbase_real is the real function value at xbase, which is the value returned by fun 
 % (not eval_fun).
 [fbase, fbase_real] = eval_fun(fun, xbase);
-if iprint == 1
+if verbose
     fprintf("Function number %d, F = %f\n", 1, fbase);
     fprintf("The corresponding X is:\n");
     fprintf("%f  ", xbase(:)');

@@ -1,6 +1,8 @@
 function [f, f_real] = eval_fun(fun, x)
-%EVAL_FUN evaluates function FUN at point X. If FUN is not well defined at X, return NaN. 
-%
+%EVAL_FUN Evaluate the function at the given point and it returns the real function value f and
+%   the moderate function value f_real. f is used to record the history of the function values.
+%   f_real is used for the optimization algorithm to make decisions, which deals with NaN, huge values, 
+%   and evaluation failures.
 
 try
     f_real = fun(x);    
