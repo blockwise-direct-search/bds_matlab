@@ -382,7 +382,7 @@ xbase = x0;
 % (not eval_fun).
 [fbase, fbase_real] = eval_fun(fun, xbase);
 if verbose
-    fprintf("Function number %d, F = %f\n", 1, fbase);
+    fprintf("Function number %d, F = %f\n", 1, fbase_real);
     fprintf("The corresponding X is:\n");
     fprintf("%f  ", xbase(:)');
     fprintf("\n");

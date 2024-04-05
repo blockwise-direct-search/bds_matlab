@@ -233,10 +233,10 @@ if output_xhist
 end
 
 % Decide whether to print during the computation.
-if isfield(options, "iprint")
-    iprint = options.iprint;
+if isfield(options, "verbose")
+    verbose = options.verbose;
 else
-    iprint = get_default_constant("iprint");
+    verbose = get_default_constant("verbose");
 end
 
 % To avoid that the users bring some randomized strings.
@@ -250,6 +250,12 @@ end
 exitflag = get_exitflag("MAXIT_REACHED");
 xbase = x0;
 [fbase, fbase_real] = eval_fun(fun, xbase);
+if verbose
+    fprintf("Function number %d, F = %f\n", 1, fbase_real);
+    fprintf("The corresponding X is:\n");
+    fprintf("%f  ", xbase(:)');
+    fprintf("\n");
+end
 % Set the number of function evaluations.
 nf = 1;
 if output_xhist
@@ -298,7 +304,7 @@ for iter = 1:maxit
     suboptions.forcing_function = forcing_function;
     suboptions.ftarget = ftarget;
     suboptions.polling_inner = options.polling_inner;
-    suboptions.iprint = iprint;
+    suboptions.verbose = verbose;
 
     [sub_xopt, sub_fopt, sub_exitflag, sub_output] = inner_direct_search(fun, xbase,...
         fbase, D, 1:size(D, 2), alpha, suboptions);
