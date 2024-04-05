@@ -18,20 +18,19 @@ if ischarstr(fun)
     fun = str2func(fun);
 end
 
+% Transpose x0 if it is a row.
+x0 = double(x0(:));
+% Get the dimension of the problem.
+n = length(x0);
+num_blocks = n;
+
 % We set the initial flag to NaN. This value will be modified by procedures.
 % If EXITFLAG is set to NaN on exit, it means that there is a bug.
 exitflag = NaN;
 
-% Transpose x0 if it is a row.
-x0 = double(x0(:));
-
-% Get the dimension of the problem.
-n = length(x0);
-
 % Get the direction set, the number of directions and blocks respectively.
 %options.direction = "canonical";
 D = get_direction_set(n, options);
-num_blocks = n;
 % Decide which polling direction belongs to which block.
 direction_set_indices = divide_direction_set(n, num_blocks);
 

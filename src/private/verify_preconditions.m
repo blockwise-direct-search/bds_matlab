@@ -27,8 +27,6 @@ if isfield(options, "num_blocks")
         error("options.num_blocks should be a positive integer.");
     end
     num_blocks = options.num_blocks;
-else
-    num_blocks = get_default_constant("num_blocks");
 end
 
 BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];

@@ -115,6 +115,9 @@ end
 x0_is_row = isrow(x0);
 x0 = double(x0(:));
 
+% Get the dimension of the problem.
+n = length(x0);
+
 % Set the default value of debug_flag. If options do not contain debug_flag, then
 % debug_flag is set to false.
 if isfield(options, "debug_flag")
@@ -122,6 +125,27 @@ if isfield(options, "debug_flag")
 else
     debug_flag = false;
 end
+
+% Get the direction set.
+D = get_direction_set(n, options);
+
+% Get the number of blocks.
+num_directions = size(D, 2);
+if strcmpi(options.Algorithm, "ds")
+    % For ds, num_blocks can only be 1.
+    num_blocks = 1;
+elseif isfield(options, "block")
+    % num_blocks cannot exceed num_directions.
+    num_blocks = min(num_directions, options.block);
+elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") ...
+    || strcmpi(options.Algorithm, "rbds") || strcmpi(options.Algorithm, "pads") ...
+    || strcmpi(options.Algorithm, "scbds")
+    % For these algorithms, the default value of num_blocks is num_directions/2. 
+    num_blocks = ceil(num_directions/2);
+end
+
+% Determine the indices of directions in each block.
+direction_set_indices = divide_direction_set(n, num_blocks);
 
 % Check the inputs of the user when debug_flag is true.
 if debug_flag
@@ -144,8 +168,6 @@ if ~isfield(options, "seed")
 end
 random_stream = RandStream("mt19937ar", "Seed", options.seed);
 
-% Get the dimension of the problem.
-n = length(x0);
 % Set the default Algorithm of BDS, which is "cbds".
 if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
@@ -161,26 +183,6 @@ if isfield(options, "direction_set_type")
         options.direction_set = random_stream.randn(n); 
     end
 end
-% Get the direction set.
-D = get_direction_set(n, options);
-
-% Get the number of blocks.
-num_directions = size(D, 2);
-if strcmpi(options.Algorithm, "ds")
-    % For ds, num_blocks can only be 1.
-    num_blocks = 1;
-elseif isfield(options, "block")
-    % num_blocks cannot exceed num_directions.
-    num_blocks = min(num_directions, options.block);
-elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") ...
-    || strcmpi(options.Algorithm, "rbds") || strcmpi(options.Algorithm, "pads") ...
-    || strcmpi(options.Algorithm, "scbds")
-    % For these algorithms, the default value of num_blocks is num_directions/2. 
-    num_blocks = ceil(num_directions/2);
-end
-
-% Determine the indices of directions in each block.
-direction_set_indices = divide_direction_set(n, num_blocks);
 
 % Set the factor for expanding the step sizes.
 if isfield(options, "expand")
