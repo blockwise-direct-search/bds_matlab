@@ -39,9 +39,6 @@ FunctionEvaluations_exhausted = options.FunctionEvaluations_exhausted;
 % The value of verbose.
 verbose = options.verbose;
 
-% The value of debug_flag.
-debug_flag = options.debug_flag;
-
 % Explain why NaN is good. It is possible that this function returns
 % with exitflag=NaN and this is NOT a bug. This is because other situations
 % correspond to other normal values. Easy to see whether there is some bug 
@@ -105,9 +102,9 @@ end
 % We need to check whether the algorithm terminates by the first two cases.
 terminate = (nf >= MaxFunctionEvaluations || fnew <= ftarget);
 if fnew <= ftarget
-    exitflag = get_exitflag( "FTARGET_REACHED", debug_flag);
+    exitflag = get_exitflag( "FTARGET_REACHED");
 elseif nf >= MaxFunctionEvaluations
-    exitflag = get_exitflag("MAXFUN_REACHED", debug_flag);
+    exitflag = get_exitflag("MAXFUN_REACHED");
 end
 
 % Truncate FHIST and XHIST into a vector of length nf.

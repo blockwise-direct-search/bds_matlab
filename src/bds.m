@@ -372,7 +372,7 @@ block_hist = NaN(1, MaxFunctionEvaluations);
 
 % Initialize exitflag. If exitflag is not set elsewhere, then the maximum number of iterations
 % is reached, and hence we initialize exitflag to the corresponding value. 
-exitflag = get_exitflag("MAXIT_REACHED", debug_flag);
+exitflag = get_exitflag("MAXIT_REACHED");
 
 % Initialize xbase and fbase. xbase serves as the "base point" for the computation in the next 
 % block, meaning that reduction will be calculated with respect to xbase. fbase is the function 
@@ -405,7 +405,7 @@ terminate = false;
 % Check whether FTARGET is reached by fopt. If it is true, then terminate.
 if fopt <= ftarget
     information = "FTARGET_REACHED";
-    exitflag = get_exitflag(information, debug_flag);
+    exitflag = get_exitflag(information);
     
     % FTARGET has been reached at the very first function evaluation. 
     % In this case, no further computation should be entertained, and hence, 
@@ -476,7 +476,6 @@ for iter = 1:maxit
         suboptions.ftarget = ftarget;
         suboptions.polling_inner = options.polling_inner;
         suboptions.verbose = verbose;
-        suboptions.debug_flag = debug_flag;
         
         % Perform the direct search within the i_real-th block.
         [sub_xopt, sub_fopt, sub_exitflag, sub_output] = inner_direct_search(fun, xbase,...
@@ -543,7 +542,7 @@ for iter = 1:maxit
         % Terminate the computations if the largest step size is below StepTolerance.
         if max(alpha_all) < alpha_tol
             terminate = true;
-            exitflag = get_exitflag("SMALL_ALPHA", debug_flag);
+            exitflag = get_exitflag("SMALL_ALPHA");
             break;
         end 
     end
@@ -598,13 +597,13 @@ output.fhist = fhist(1:nf);
 
 % Set the message according to exitflag.
 switch exitflag
-    case {get_exitflag("SMALL_ALPHA", debug_flag)}
+    case {get_exitflag("SMALL_ALPHA")}
         output.message = "The StepTolerance of the step size is reached.";
-    case {get_exitflag("MAXFUN_REACHED", debug_flag)}
+    case {get_exitflag("MAXFUN_REACHED")}
         output.message = "The maximum number of function evaluations is reached.";
-    case {get_exitflag("FTARGET_REACHED", debug_flag)}
+    case {get_exitflag("FTARGET_REACHED")}
         output.message = "The target of the objective function is reached.";
-    case {get_exitflag("MAXIT_REACHED", debug_flag)}
+    case {get_exitflag("MAXIT_REACHED")}
         output.message = "The maximum number of iterations is reached.";
     otherwise
         output.message = "Unknown exitflag";
