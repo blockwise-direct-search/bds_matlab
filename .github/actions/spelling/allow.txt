@@ -436,6 +436,7 @@ eference
 Efstathiou
 Ehlert
 eigen
+eigs
 Eijkhout
 eine
 einen
@@ -1553,6 +1554,7 @@ sistc
 sjctrl
 sjmds
 slshape
+smallestabs
 smallfrown
 smallsetminus
 smallsmile
