@@ -21,14 +21,12 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %   direction_set               A matrix whose columns will be used to define the polling
 %                               directions. If options does not contain direction_set, then 
 %                               the polling directions will be {e_1, -e_1, ..., e_n, -e_n}. 
-%                               Otherwise, direction_set should be a matrix of n rows, and 
-%                               the polling directions will be {d_1, -d_1, ..., d_m, -d_m}, 
-%                               where d_i is the i-th column of direction_set, and m is the
-%                               number of columns of direction_set. If necessary, we will 
-%                               first extend direction_set by adding some columns to make 
-%                               sure that rank(direction_set) = n, so that the polling 
-%                               directions make a positive spanning set. 
-%                               See get_direction_set.m for details.
+%                               Otherwise, it should be a nonsingular n-by-n matrix.
+%                               Then the polling directions will be {d_1, -d_1, ..., d_n, -d_n},
+%                               where d_i is the i-th column of direction_set.
+%                               If direction_set is not singular, then we will revise the direction_set
+%                               to make it linear independent. See get_direction_set.m for details.
+%                               Default: eye(n).
 %   expand                      Expanding factor of step size. A real number no less than 1.
 %                               Default: 2.
 %   shrink                      Shrinking factor of step size. A positive number less than 1.
