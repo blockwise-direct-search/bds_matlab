@@ -22,12 +22,11 @@ if isfield(options, "MaxFunctionEvaluations_factor")
     end
 end
 
-if isfield(options, "num_blocks")
-    if ~(isintegerscalar(options.num_blocks) && options.num_blocks > 0)
-        error("options.num_blocks should be a positive integer.");
-    end
-    num_blocks = options.num_blocks;
+num_blocks = options.num_blocks;
+if ~(isintegerscalar(num_blocks) && num_blocks > 0)
+    error("num_blocks should be a positive integer.");
 end
+
 
 BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
 if isfield(options, "Algorithm")

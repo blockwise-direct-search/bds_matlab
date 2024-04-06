@@ -82,15 +82,23 @@ else
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 
 
-    % First, we need to subtract a maximum linearly independent set from direction_set.
+    % First, we need to subtract a maximum linearly independent set from direction_set by QR factorization.
     [~, R, P] = qr(direction_set);
     [row, col] = find(triu(P) == 1);
-    permuted_indices = [row, col];
-    % Find the first element in the diagonal of R that is smaller than 1e-10.
-    R_truncate_index = find(diag(R) < 1e-10, 1); 
-    if ~isempty(R_truncate_index) && R_truncate_index > 1
-        [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_indices(:, 2));
+    % permuted_sigma records the permutation of the columns of direction_set. It maps the indices of
+    % the columns of direction_set, which is the first column of permuted_sigma, to the indices of the
+    % columns of the permuted direction_set, which is the second column of permuted_sigma.
+    permuted_sigma = [row, col];
+    % The linear independence of the columns of direction_set is equivalent to the upper triangular matrix
+    % R. Since the diagonal elements of R are in decreasing order, we can know the length of the maximal 
+    % linear independent system of direction_set by finding the first element in the diagonal
+    % of R that is smaller than 1e-10. Then, by the permutation matrix P, we can know the original indices
+    % of the columns of direction_set that are linearly independent.
+    if ~isempty(1 : find(diag(R) < 1e-10, 1)) && length(1 : find(diag(R) < 1e-10, 1)) == 1
+        [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_sigma(:, 2));
         direction_set = direction_set(:, sort(AP_indices));
+    else
+        direction_set = eye(n);
     end
 
     % The following columns of Q will be added to direction_set.
@@ -105,7 +113,6 @@ else
     deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n)))))' > ...
         10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n)));
     direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
-
 
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 

@@ -147,6 +147,7 @@ end
 % Determine the indices of directions in each block.
 direction_set_indices = divide_direction_set(n, num_blocks);
 
+num_blocks = options.num_blocks;
 % Check the inputs of the user when debug_flag is true.
 if debug_flag
     verify_preconditions(fun, x0, options);
