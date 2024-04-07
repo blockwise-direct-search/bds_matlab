@@ -65,3 +65,7 @@ tests/competitors/private/imfil.m
 
 # .idea
 .idea/
+
+# some workflow files not to be tracked
+.github/workflows/test_dspd_num_random_vectors_big.yml
+.github/workflows/test_dspd_num_random_vectors_small.yml
