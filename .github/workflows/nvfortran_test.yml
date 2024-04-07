@@ -30,7 +30,7 @@ jobs:
         matlab: [R2023a, latest]
         os: [ubuntu-latest]
         Algorithm: [cbds, rbds, pbds, pads, scbds]
-        testdim: [3, 30]
+        dim: [3, 30]
 
     steps:
       - name: Clone Repository (Latest)
@@ -75,7 +75,7 @@ jobs:
             setup  
             cd(fullfile(root_dir, 'examples'));
             options.Algorithm = '${{ matrix.Algorithm }}';
-            x0 = zeros(${{ matrix.testdim }}, 1);
+            x0 = zeros(${{ matrix.dim }}, 1);
             rosenbrock_example(options, x0);
 
   # The following job check whether the tests were successful or cancelled due to timeout.

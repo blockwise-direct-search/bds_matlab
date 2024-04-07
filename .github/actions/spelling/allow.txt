@@ -1206,6 +1206,7 @@ Numer
 nummath
 numvec
 nv
+nvfortran
 nwald
 nwarrow
 nyi
