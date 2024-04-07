@@ -1,4 +1,4 @@
-function rosenbrock_example(options)
+function rosenbrock_example(options, x0)
 %This file is cited from https://github.com/libprima/prima/blob/main/matlab/examples/rosenbrock_example.m, which is
 %written by Zaikun Zhang.
 %ROSENBROCK_EXAMPLE illustrates how to use bds.
@@ -20,7 +20,9 @@ if nargin < 1
     options = struct();
 end
 
-x0 = [0; 0; 0];  % starting point
+if nargin < 2
+    x0 = [0; 0; 0];  % starting point
+end
 
 %options.MaxFunctionEvaluations = 1e4;
 %options.StepTolerance = eps;
