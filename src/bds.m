@@ -129,6 +129,11 @@ end
 % Get the direction set.
 D = get_direction_set(n, options);
 
+% Set the default Algorithm of BDS, which is "cbds".
+if ~isfield(options, "Algorithm")
+    options.Algorithm = get_default_constant("Algorithm");
+end
+
 % Get the number of blocks.
 num_directions = size(D, 2);
 if strcmpi(options.Algorithm, "ds")
@@ -147,7 +152,7 @@ end
 % Determine the indices of directions in each block.
 direction_set_indices = divide_direction_set(n, num_blocks);
 
-num_blocks = options.num_blocks;
+options.num_blocks = num_blocks;
 % Check the inputs of the user when debug_flag is true.
 if debug_flag
     verify_preconditions(fun, x0, options);
@@ -168,11 +173,6 @@ if ~isfield(options, "seed")
     options.seed = get_default_constant("seed");
 end
 random_stream = RandStream("mt19937ar", "Seed", options.seed);
-
-% Set the default Algorithm of BDS, which is "cbds".
-if ~isfield(options, "Algorithm")
-    options.Algorithm = get_default_constant("Algorithm");
-end
 
 % If there exists the field "direction_set_type" of options, then we will generate the direction
 % set according to the value of "direction_set_type".

@@ -62,3 +62,6 @@ tests/competitors/private/imfil.m
 # testbds.m
 # parallel_test_matlab.yml
 # recursive_test_matlab.yml
+
+# .idea
+.idea/
