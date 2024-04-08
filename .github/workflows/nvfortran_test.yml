@@ -2,7 +2,7 @@ name: Test nvfortran
 
 on:
   # Trigger the workflow on push or pull request
-  #push:
+  push:
   pull_request:  # DANGEROUS! MUST be disabled for self-hosted runners!
   # Trigger the workflow by cron. The default time zone of GitHub Actions is UTC.
   schedule:
@@ -70,6 +70,8 @@ jobs:
         with:
           command: |
             ver;
+            fullfile(matlabroot,'toolbox', 'local')
+            userpath
             root_dir = pwd();
             cd(root_dir);
             setup  
