@@ -12,9 +12,10 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %
 %   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct
 %                               search) "pbds" (randomly permuted blockwise direct search), 
-%                               "rbds" (randomized blockwise direct search), "ds" (the classical 
-%                               direct search), "pads" (parallel blockwise direct search). 
-%                               "scbds" (symmetric blockwise direct search). Default: "cbds".
+%                               "rbds" (randomized blockwise direct search), "ds" %  %%
+%                               (the classical direct search), "pads" (parallel blockwise
+%                               direct search). "scbds" (symmetric blockwise direct 
+%                               search). Default: "cbds".
 %   num_blocks                  Number of blocks. A positive integer. Default: n if Algorithm 
 %                               is "cbds", "pbds", or "rbds", 1 if Algorithm is "ds".
 %   MaxFunctionEvaluations      Maximum of function evaluations. A positive integer.

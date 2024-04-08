@@ -3,13 +3,14 @@ function D = get_direction_set(n, options)
 %
 %   If the user does not input OPTIONS or the OPTIONS does not contain the field of direction_set,
 %   D will be [e_1, -e_1, ..., e_n, -e_n], where e_i is the i-th coordinate vector.
-%   Otherwise, options.direction_set should be a matrix of n rows, whose columns are
-%   linear independent. Set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th
-%   vector in options.direction_set and m is the number of columns of options.direction_set.
-%   Before doing so, we revise direction_set in the following way.
-%   1. Remove the directions whose norms are too small. 
+%   Otherwise, options.direction_set should be a n-by-n nonsingular matrix, and D will be
+%   set to [d_1, -d_1, ..., d_n, -d_n], where d_i is the i-th column in options.direction_set.
+%   If the columns of options.direction_set are amlost linearly dependent, then we will revise direction_set 
+%   in the following way.
+%   1. Remove the directions whose norms are too small.
 %   2. Find directions that are almost parallel. Then preserve the first one and remove the others.
-%   3. Make the direction set linearly span the full space by adding new columns if necessary.
+%   3. Find a maximal linearly independent subset of the directions, and supplement this subset with
+%      new directions to make a basis of the full space. The final direction set will be this basis. 
 %      This is done by QR factorization.
 %
 
@@ -100,6 +101,9 @@ else
     else
         direction_set = eye(n);
     end
+    % Note: Actually, the above code may influence the order of the columns of direction_set. However,
+    % the order of the columns of direction_set does not matter since each block will be visited once in one iteration.
+    % Thus, we can ignore the order of the columns of direction_set.
 
     % The following columns of Q will be added to direction_set.
     % 1. The corresponding diagonal elements of R are tiny.
@@ -125,8 +129,7 @@ else
     % R(1:min(m, n), 1:min(m, n)). 
     % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
     % comparison will return a matrix due to the implicit expansion.
-    deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n)))))' > ...
-        1e-10*vecnorm(R(1:min(m,n), 1:min(m,n)));
+    deficient_columns = ~(abs(diag(R(1:m, 1:m)))) > 1.0e-10*vecnorm(R(1:m, 1:m))';
     direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
 end
 
