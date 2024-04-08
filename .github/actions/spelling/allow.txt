@@ -385,6 +385,7 @@ dimentional
 dimrange
 Dinh
 dio
+dirname
 discretized
 distsq
 divideontimes
