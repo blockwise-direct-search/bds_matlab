@@ -698,6 +698,7 @@ homedir
 hookleftarrow
 hookrightarrow
 Horvath
+hostedtoolcache
 howpublished
 hskip
 hslash

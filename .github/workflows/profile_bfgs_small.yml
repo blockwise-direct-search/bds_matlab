@@ -73,8 +73,7 @@ jobs:
           products: Optimization_Toolbox
 
       - name: Symbolic link the startup.m file
-        # run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $MATLABROOT/toolbox/local/startup.m
-        run: cd '/opt/hostedtoolcache/MATLAB/2023.2.999/x64/toolbox/local' | ls -la
+        run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $'/opt/hostedtoolcache/MATLAB/2023.2.999/x64/toolbox/local/startup.m'
 
       - name: Set up MATLAB with diary
         uses: matlab-actions/run-command@v1.2.3
