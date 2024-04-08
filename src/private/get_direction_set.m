@@ -5,7 +5,7 @@ function D = get_direction_set(n, options)
 %   D will be [e_1, -e_1, ..., e_n, -e_n], where e_i is the i-th coordinate vector.
 %   Otherwise, options.direction_set should be a n-by-n nonsingular matrix, and D will be
 %   set to [d_1, -d_1, ..., d_n, -d_n], where d_i is the i-th column in options.direction_set.
-%   If the columns of options.direction_set are amlost linearly dependent, then we will revise direction_set 
+%   If the columns of options.direction_set are almost linearly dependent, then we will revise direction_set 
 %   in the following way.
 %   1. Remove the directions whose norms are too small.
 %   2. Find directions that are almost parallel. Then preserve the first one and remove the others.
