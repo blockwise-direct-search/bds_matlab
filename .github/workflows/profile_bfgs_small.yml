@@ -74,8 +74,7 @@ jobs:
 
       - name: Symbolic link the startup.m file
         # run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $MATLABROOT/toolbox/local/startup.m
-        run: cd "$(dirname "$(dirname "$(which matlab)")")" | ls
-
+        run: cd "$(dirname "$(which matlab)")" | ls
 
       - name: Set up MATLAB with diary
         uses: matlab-actions/run-command@v1.2.3
