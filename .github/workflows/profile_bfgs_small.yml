@@ -72,25 +72,25 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
-      - name: Symbolic link the startup.m file
-        run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $'/opt/hostedtoolcache/MATLAB/2023.2.999/x64/toolbox/local/startup.m'
-
       - name: Set up MATLAB with diary
         uses: matlab-actions/run-command@v1.2.3
         with:
-          command: |
-            fullfile(matlabroot,'toolbox', 'local')
-            userpath
-            if isempty(userpath)
-                userpath(fullfile(matlabroot,'toolbox', 'local'))
-                rehash toolboxcache
-            end
+            command: |
+              fullfile(matlabroot,'toolbox', 'local')
+              userpath
+              if isempty(userpath)
+                  userpath(fullfile(matlabroot,'toolbox', 'local'))
+                  rehash toolboxcache
+              end
+  
+              userpath
+  
+              matlabroot
+  
+              exit
 
-            userpath
-
-            matlabroot
-
-            exit
+      - name: Symbolic link the startup.m file
+        run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $'/opt/hostedtoolcache/MATLAB/2023.2.999/x64/toolbox/local/startup.m'
 
       - name: Run test
         uses: matlab-actions/run-command@v1.2.3
