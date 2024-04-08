@@ -92,6 +92,17 @@ jobs:
       - name: Symbolic link the startup.m file
         run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $'/opt/hostedtoolcache/MATLAB/2023.2.999/x64/toolbox/local/startup.m'
 
+      - name: See whether the diary is set up
+        uses: matlab-actions/run-command@v1.2.3
+        with:
+          command: |
+
+            homedir = getenv('HOME');
+            cd(homedir);
+            ls
+
+            exit
+
       - name: Run test
         uses: matlab-actions/run-command@v1.2.3
         with:
