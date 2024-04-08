@@ -73,7 +73,8 @@ jobs:
           products: Optimization_Toolbox
 
       - name: Symbolic link the startup.m file
-        run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $MATLABROOT/toolbox/local/startup.m
+        # run: ln -s $../tests/private/MATLABROOT%toolbox%local%startup.m $MATLABROOT/toolbox/local/startup.m
+        run: which matlab
 
       - name: Set up MATLAB with diary
         uses: matlab-actions/run-command@v1.2.3
@@ -87,6 +88,8 @@ jobs:
             end
 
             userpath
+
+            matlabroot
 
             exit
 
