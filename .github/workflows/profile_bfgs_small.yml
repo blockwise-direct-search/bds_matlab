@@ -72,14 +72,25 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
+      - name: Set up MATLAB with diary
+        uses: matlab-actions/run-command@v1.2.3
+        with:
+          command: |
+            fullfile(matlabroot,'toolbox', 'local')
+            userpath
+            if isempty(userpath)
+                userpath(fullfile(matlabroot,'toolbox', 'local'))
+                rehash toolboxcache
+            end
+
+            userpath
+
+            exit
+
       - name: Run test
         uses: matlab-actions/run-command@v1.2.3
         with:
           command: |
-            userpath(fullfile(matlabroot,'toolbox', 'local')); 
-            rehash toolboxcache
-            fullfile(matlabroot,'toolbox', 'local')
-            userpath
             root_dir = pwd()
 
             % Install MatCUTEst
