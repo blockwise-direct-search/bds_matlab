@@ -97,6 +97,7 @@ jobs:
         with:
           command: |
 
+            userpath
             homedir = getenv('HOME');
             cd(homedir);
             ls
