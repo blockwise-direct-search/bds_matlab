@@ -32,7 +32,6 @@ The tests are **automated** by
 - [![Stress test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/stress_test.yml)
 - [![Parallel test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/parallel_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/parallel_test.yml)
 - [![Recursive test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/recursive_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/recursive_test.yml)
-- [![nvfortran test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/nvfortran_test.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/nvfortran_test.yml)
 - [![Test default, small](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_small.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_small.yml)
 - [![Test default, big](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_big.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/test_default_big.yml)
 - [![Verify norma](https://github.com/blockwise-direct-search/bds/actions/workflows/verify_norma.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/verify_norma.yml)

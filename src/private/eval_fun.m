@@ -1,8 +1,9 @@
 function [f, f_real] = eval_fun(fun, x)
-%EVAL_FUN Evaluate the function at the given point and it returns the real function value f and
-%   the moderate function value f_real. f is used to record the history of the function values.
-%   f_real is used for the optimization algorithm to make decisions, which deals with NaN, huge values, 
-%   and evaluation failures.
+%EVAL_FUN evaluates function FUN at point X, returning f and f_real.
+%   f_real is the real function value, while f is a moderated version of f_real.
+%   The moderation is to handle NaN, huge values, and evaluation failures. The 
+%   algorithm will operate on f, while f_real is used for recording the history.
+
 
 try
     f_real = fun(x);    
@@ -17,7 +18,7 @@ end
 if isnan(f_real)
     f_real = inf;
 end
-f = min([f_real, 2^100, sqrt(realmax())]);
+f = min([f_real, 10^30, sqrt(realmax())]);
 
 end
 
