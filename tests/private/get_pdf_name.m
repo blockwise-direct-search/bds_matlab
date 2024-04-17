@@ -5,6 +5,11 @@ function pdfname = get_pdf_name(parameters, i)
 switch parameters.solvers_options{i}.solver
     case "bds"
         pdfname = upper(parameters.solvers_options{i}.Algorithm);
+
+        if isfield(parameters.solvers_options{i}, "default")
+            pdfname = strcat(pdfname, "_", "default");
+        end
+
         if isfield(parameters.solvers_options{i}, "reduction_factor")
             for j = 1:length(parameters.solvers_options{i}.reduction_factor)
                 if (-log10(parameters.solvers_options{i}.reduction_factor(j))) < 10
@@ -122,6 +127,10 @@ switch parameters.solvers_options{i}.solver
     case "fminsearch_wrapper"
         pdfname = strcat("fminsearch", "_", "simplex");
 
+        if isfield(parameters.solvers_options{i}, "default")
+            pdfname = strcat(pdfname, "_", "default");
+        end
+
     case "lam"
         pdfname = "lam";
         if isfield(parameters.solvers_options{i}, "linesearch_type")
@@ -131,6 +140,10 @@ switch parameters.solvers_options{i}.solver
 
     case "fminunc_wrapper"
         pdfname = strcat("fminunc", "_", parameters.solvers_options{i}.fminunc_type);
+
+        if isfield(parameters.solvers_options{i}, "default")
+            pdfname = strcat(pdfname, "_", "default");
+        end
 
     case "imfil_wrapper"
         pdfname = "imfil";

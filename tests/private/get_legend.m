@@ -5,6 +5,11 @@ function solver_legend = get_legend(parameters, i)
 switch parameters.solvers_options{i}.solver
     case {"bds"}
         solver_legend = upper(parameters.solvers_options{i}.Algorithm);
+
+        if isfield(parameters.solvers_options{i}, "default")
+            solver_legend = strcat(solver_legend, "-", "default");
+        end
+
         if isfield(parameters.solvers_options{i}, "reduction_factor")
             for j = 1:length(parameters.solvers_options{i}.reduction_factor)
                 if parameters.solvers_options{i}.reduction_factor(j) == 0
@@ -68,8 +73,16 @@ switch parameters.solvers_options{i}.solver
     case {"fminsearch_wrapper"}
         solver_legend = "fminsearch";
 
+        if isfield(parameters.solvers_options{i}, "default")
+            solver_legend = strcat(solver_legend, "-", "default");
+        end
+
     case {"fminunc_wrapper"}
         solver_legend = "fminunc";
+
+        if isfield(parameters.solvers_options{i}, "default")
+            solver_legend = strcat(solver_legend, "-", "default");
+        end
         %solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
 
     case {"wm_newuoa"}
