@@ -339,6 +339,7 @@ dashv
 Datamodel
 dataprof
 datenum
+datestr
 datetime
 Davidon
 dbstack
@@ -373,6 +374,8 @@ diagdown
 diagup
 DIAMON
 diamondsuit
+diaryfile
+diaryname
 Diedonne
 Dieudonn
 diffa
@@ -495,6 +498,7 @@ exp
 extbf
 extnormal
 extrm
+EXTROSNB
 Eyert
 Facchinei
 Fallat
@@ -523,7 +527,9 @@ fileparts
 fileread
 fillbetween
 Financ
+FINISHSAV
 finv
+FLETCHCR
 Floudas
 fmin
 fmincon
@@ -588,6 +594,7 @@ gcc
 gcd
 gcf
 gcp
+GENROSE
 geq
 geqq
 geqslant
@@ -680,6 +687,7 @@ Henrici
 heoretical
 Hestenes
 hfig
+HHMMSS
 Higham
 hilb
 HIMMELBH
@@ -726,8 +734,8 @@ im
 IMA
 imana
 imath
-imima
 imfil
+imima
 IMSV
 inbook
 incollection
@@ -743,6 +751,7 @@ integer
 Integralgleichungen
 Integralgleichungssysteme
 Intell
+INTEQNELS
 intercal
 invp
 ip
@@ -869,6 +878,7 @@ Krishnaiah
 Krylov
 ksav
 ksave
+KSSLS
 ktemp
 Kuerti
 Kugler
@@ -961,6 +971,7 @@ lneqq
 lnsim
 localfunctions
 logallrefupdates
+logdir
 logperf
 logprof
 logx
@@ -1027,6 +1038,7 @@ mathematischen
 mathlcal
 mathpzc
 mathscr
+mathworks
 mathz
 matique
 matlab
@@ -1239,6 +1251,7 @@ optimoptions
 optimset
 optl
 orie
+OSCIPATH
 oslash
 otimes
 outdir
@@ -1333,6 +1346,7 @@ preconditioner
 preconditioners
 precsim
 Precup
+Prefs
 Prieto
 printchaptername
 printchapternum
@@ -1516,6 +1530,7 @@ setbeforesecskip
 setbeforesubsecskip
 setbeforesubsubsecskip
 setdiff
+setenv
 sethangfrom
 setheaderspaces
 setheadfoot
@@ -1554,6 +1569,7 @@ siopt
 sirev
 sisc
 sistc
+sizeofscreen
 sjctrl
 sjmds
 slshape
@@ -1594,6 +1610,7 @@ ssh
 sss
 sstemp
 Stabilit
+STARTUPSAV
 stc
 Steenrod
 steepdesc
@@ -1746,18 +1763,6 @@ Tonelli
 toolboxcache
 toplas
 Toraldo
-datestr
-diaryfile
-diaryname
-FINISHSAV
-HHMMSS
-logdir
-mathworks
-Prefs
-setenv
-sizeofscreen
-STARTUPSAV
-yymmdd
 Torczon
 Toselli
 Traasdahl
@@ -1913,6 +1918,7 @@ yshift
 yticklabels
 yticks
 Yudin
+yymmdd
 Zaglia
 zaikun
 Zaikun
