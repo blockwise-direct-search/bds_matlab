@@ -56,7 +56,6 @@ else
         fminunc_type, "MaxFunctionEvaluations", MaxFunctionEvaluations, "MaxIterations", 10^20, ...
         "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", eps, ...
         'SpecifyObjectiveGradient', with_gradient);
-    
     %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)
     fminunc(FUN, x0, options);
 

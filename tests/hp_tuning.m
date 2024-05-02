@@ -89,7 +89,7 @@ end
 % Preconditions for initial_value and constrains.
 initial_value_saved = initial_value;
 %initial_value = log(initial_value + eps);
-initial_value = [initial_value(1:2); log(initial_value(3:end)+eps)];
+%initial_value = [initial_value(1:2); log(initial_value(3:end)+eps)];
 best_value(1:length(parameters.tau)) = parameters.tau;
 
 % Here we can use any algorithm that can deal with the bounded constraints to tune
@@ -101,10 +101,12 @@ switch parameters.tuning_solver
         %[xopt, fopt, ~, output_tuning] = ...
         %    newuoa(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
     case "bds"
-        [xopt, fopt, ~, output_tuning] = ...
-            bds(@(x)hp_handle([x(1:2); exp(x(3:end)) - eps], parameters), initial_value, options);
+        %[xopt, fopt, ~, output_tuning] = ...
+        %    bds(@(x)hp_handle([x(1:2); exp(x(3:end)) - eps], parameters), initial_value, options);
         %[xopt, fopt, ~, output_tuning] = ...
         %    bds(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
+        [xopt, fopt, ~, output_tuning] = ...
+            bds(@(x)hp_handle(x, parameters), initial_value, options);
     case "fminunc"
         options = optimoptions("fminunc", "Algorithm", "quasi-newton");
         [xopt, fopt, ~, output_tuning] = ...
@@ -113,7 +115,7 @@ end
 
 % Scale xhist as the real value.
 if isfield(output_tuning, "xhist")
-    output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(output_tuning.xhist(3:end, :)) - eps];
+    %output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(output_tuning.xhist(3:end, :)) - eps];
     %output_tuning.xhist = exp(output_tuning.xhist) - eps;
 end
 
@@ -122,7 +124,8 @@ switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value(end-5) = fopt;
         %best_value(end-4:end) = hp_projection(exp(xopt') - eps);
-        best_value(end-4:end) = hp_projection([xopt(1:2)' exp(xopt(3:end)') - eps]);
+        %best_value(end-4:end) = hp_projection([xopt(1:2)' exp(xopt(3:end)') - eps]);
+        best_value(end-4:end) = hp_projection(xopt');
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end

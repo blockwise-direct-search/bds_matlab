@@ -239,9 +239,9 @@ try
                 % if ~isequal(fhist_tmp{1}, fhist_tmp{2})
                 %    keyboard
                 % end
-                if min(fhist_tmp{1}) ~= min(fhist_tmp{2})
-                    keyboard
-                end
+                % if min(fhist_tmp{1}) ~= min(fhist_tmp{2})
+                %     keyboard
+                % end
                 fmin(i_problem, i_run) = min(fval_tmp);
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     plot_fhist(dim, fhist_plot, p.name, i_run, parameters);

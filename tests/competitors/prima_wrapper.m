@@ -49,7 +49,6 @@ else
     else
         Algorithm = "newuoa";
     end
-    
     solver = str2func(Algorithm);
     solver(fun, x0, options);
 

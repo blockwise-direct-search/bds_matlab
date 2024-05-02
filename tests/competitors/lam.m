@@ -6,6 +6,12 @@ function [xval, fval, exitflag, output] = lam(fun, x0, options)
 if nargin < 3
     options = struct();
 end
+% Transpose x0 if it is a row.
+x0 = double(x0(:));
+% Get the dimension of the problem.
+n = length(x0);
+num_blocks = n;
+options.num_blocks = n;
 
 % Check the inputs of the user when debug_flag is true.
 debug_flag = is_debugging();
@@ -17,12 +23,6 @@ end
 if ischarstr(fun)
     fun = str2func(fun);
 end
-
-% Transpose x0 if it is a row.
-x0 = double(x0(:));
-% Get the dimension of the problem.
-n = length(x0);
-num_blocks = n;
 
 % We set the initial flag to NaN. This value will be modified by procedures.
 % If EXITFLAG is set to NaN on exit, it means that there is a bug.

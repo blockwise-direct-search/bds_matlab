@@ -62,6 +62,9 @@ switch parameters.solvers_options{i}.solver
         end
 
         %solver_legend = "our-method";
+        % if strcmpi(parameters.solvers_options{i}.Algorithm, "cbds")
+        %     solver_legend = "new-method";
+        % end
 
     case {"dspd"}
         solver_legend = "DSPD";
@@ -86,6 +89,7 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", "default");
         end
         %solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
+        solver_legend = "FD-BFGS";
 
     case {"wm_newuoa"}
         solver_legend = "wm-newuoa";
