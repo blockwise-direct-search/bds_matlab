@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and bfgs, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 12 */7 * *'
@@ -63,7 +63,7 @@ jobs:
 
       - name: Set up MATLAB with optimization toolbox
         if: ${{ matrix.with_optim_toolbox == 'yes' }}
-        uses: matlab-actions/setup-matlab@v2-beta
+        uses: matlab-actions/setup-matlab@v2.0.0
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
