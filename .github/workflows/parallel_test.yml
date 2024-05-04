@@ -89,13 +89,13 @@ jobs:
           key: ${{ matrix.os }}-${{ matrix.matlab }}-yes
 
       - name: Set up MATLAB with optimization toolbox
-        uses: matlab-actions/setup-matlab@v2-beta
+        uses: matlab-actions/setup-matlab@v2
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
       - name: Conduct the test
-        uses: matlab-actions/run-command@v1.2.2
+        uses: matlab-actions/run-command@v2
         with:
           command: |
             ver;
