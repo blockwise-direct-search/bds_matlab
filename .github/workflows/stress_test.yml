@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-13]
         matlab: [R2021a, R2022a, R2023a]#, latest]
         with_optim_toolbox: [no]
         solver: [CBDS, PBDS, RBDS, DS]
