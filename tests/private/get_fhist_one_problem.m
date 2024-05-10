@@ -5,7 +5,7 @@ function get_fhist_one_problem(p)
 hfig=figure("visible", true);
 MaxFunctionEvaluations_frec = 500*length(p.x0);
 
-test_options.is_noisy = true;
+test_options.is_noisy = false;
 test_options.noise_level = 1e-3;
 test_options.is_abs_noise = false;
 test_options.noise_type = "gaussian";
@@ -16,7 +16,8 @@ solvers_options{1}.Algorithm = "cbds";
 
 solvers_options{2}.solver = "fminunc_wrapper";
 solvers_options{2}.fminunc_type = "bfgs";
-solvers_options{2}.with_gradient = true;
+solvers_options{2}.with_gradient = test_options.is_noisy;
+
 
 [fhist_bds, ~] = get_fhist(p, MaxFunctionEvaluations_frec, 1, 1, solvers_options, test_options);
 [fhist_bfgs, ~] = get_fhist(p, MaxFunctionEvaluations_frec, 2, 1, solvers_options, test_options);
