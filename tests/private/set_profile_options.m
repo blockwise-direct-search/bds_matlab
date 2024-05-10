@@ -17,7 +17,7 @@ if isfield(parameters, "problem_dim")
         parameters.problem_maxdim = 5;
     elseif strcmpi(parameters.problem_dim, "big")
         parameters.problem_mindim = 6;
-        parameters.problem_maxdim = 200;
+        parameters.problem_maxdim = 100;
     end
 end
 
