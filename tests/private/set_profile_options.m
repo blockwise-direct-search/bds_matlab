@@ -142,9 +142,9 @@ if ~isfield(parameters, "num_random")
             parameters.num_random = 10;
         elseif parameters.is_noisy && strcmpi(parameters.problem_dim, "big")
             parameters.num_random = 5;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && ~parameters.random_initial_point && strcmpi(parameters.feature, "rotation")
+        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && ~parameters.random_initial_point && (isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation"))
             parameters.num_random = 10;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "big") && ~parameters.random_initial_point && strcmpi(parameters.feature, "rotation")
+        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "big") && ~parameters.random_initial_point && (isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation"))
             parameters.num_random = 5;
         elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && parameters.random_initial_point
             parameters.num_random = 10;
