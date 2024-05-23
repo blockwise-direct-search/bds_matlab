@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and simplex, big
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 22 */10 * *'
@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [simplex]
-        feature: [plain, badly_scaled, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10, randomx0_100]
+        feature: [plain, badly_scaled, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10, randomx0_100, rotation]
 
     steps:
 

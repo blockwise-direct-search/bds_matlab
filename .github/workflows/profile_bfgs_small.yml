@@ -2,7 +2,7 @@ name: Plot performance profiles for bds and bfgs, small
 
 on:
   # Trigger the workflow on push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   schedule:
     - cron: '0 12 */7 * *'
@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [bfgs]
-        feature: [plain, badly_scaled, low, medium, high]
+        feature: [plain, badly_scaled, low, medium, high, rotation]
 
     steps:
 
