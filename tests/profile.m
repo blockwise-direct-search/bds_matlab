@@ -215,18 +215,20 @@ try
                 % scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
-                p.x0 = inv(scale_matrix) * p.x0;
-            end
-            if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
-                % Rotation is a flag to indicate whether the problem is rotated.
-                dim = length(p.x0);
-                A = rand(dim, dim);
-                [rotated_matrix, ~] = qr(A);
-                h = @(x) rotated_matrix * x;
-                p.objective = @(x) p.objective(h(x));
-                p.x0 = inv(rotated_matrix) * p.x0;
+                [scale_matrix_Q, scale_matrix_R] = qr(scale_matrix);
+                p.x0 = (scale_matrix_R \ scale_matrix_Q') * p.x0;
             end
             for i_run = 1:num_random
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
+                    % Rotation is a flag to indicate whether the problem is rotated.
+                    dim = length(p.x0);
+                    A = rand(dim, dim);
+                    [rotated_matrix, ~] = qr(A);
+                    h = @(x) rotated_matrix * x;
+                    p.objective = @(x) p.objective(h(x));
+                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
+                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
+                end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
                 end
@@ -272,7 +274,8 @@ try
                 %scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
-                p.x0 = inv(scale_matrix) * p.x0;
+                [scale_matrix_Q, scale_matrix_R] = qr(scale_matrix);
+                p.x0 = (scale_matrix_R \ scale_matrix_Q') * p.x0;
             end
             for i_run = 1:num_random
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
@@ -282,7 +285,8 @@ try
                     [rotated_matrix, ~] = qr(A);
                     h = @(x) rotated_matrix * x;
                     p.objective = @(x) p.objective(h(x));
-                    p.x0 = inv(rotated_matrix) * p.x0;
+                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
+                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
@@ -294,7 +298,7 @@ try
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
-                fhist_tmp = cell(2, 1);
+                %fhist_tmp = cell(2, 1);
                 for i_solver = 1:num_solvers
                     [fhist, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                         i_run, solvers_options, test_options);
@@ -311,9 +315,9 @@ try
                     end
                     frec(i_problem,i_solver,i_run,:) = fhist_perfprof;
                 end
-                if ~isequal(fhist_tmp{1}, fhist_tmp{2})
-                    keyboard
-                end
+                % if ~isequal(fhist_tmp{1}, fhist_tmp{2})
+                %     keyboard
+                % end
                 fmin(i_problem, i_run) = min(fval_tmp);
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     plot_fhist(dim, fhist_plot, p.name, i_run, parameters);
@@ -344,11 +348,12 @@ try
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
-                    A = rand(dim, dim);
+                    A = rand(dim);
                     [rotated_matrix, ~] = qr(A);
                     h = @(x) rotated_matrix * x;
                     p.objective = @(x) p.objective(h(x));
-                    p.x0 = inv(rotated_matrix) * p.x0;
+                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
+                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point
@@ -378,11 +383,12 @@ try
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
-                    A = rand(dim, dim);
+                    A = rand(dim);
                     [rotated_matrix, ~] = qr(A);
                     h = @(x) rotated_matrix * x;
                     p.objective = @(x) p.objective(h(x));
-                    p.x0 = inv(rotated_matrix) * p.x0;
+                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
+                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point
