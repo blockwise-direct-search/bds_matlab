@@ -52,7 +52,6 @@ try
 
     % Get the parameters that the test needs.
     parameters = set_profile_options(parameters);
-
     % Tell MATLAB where to find MatCUTEst.
     locate_matcutest();
 
@@ -218,6 +217,15 @@ try
                 p.objective = @(x) p.objective(h(x));
                 p.x0 = inv(scale_matrix) * p.x0;
             end
+            if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
+                % Rotation is a flag to indicate whether the problem is rotated.
+                dim = length(p.x0);
+                A = rand(dim, dim);
+                [rotated_matrix, ~] = qr(A);
+                h = @(x) rotated_matrix * x;
+                p.objective = @(x) p.objective(h(x));
+                p.x0 = inv(rotated_matrix) * p.x0;
+            end
             for i_run = 1:num_random
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
@@ -267,6 +275,15 @@ try
                 p.x0 = inv(scale_matrix) * p.x0;
             end
             for i_run = 1:num_random
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
+                    % Rotation is a flag to indicate whether the problem is rotated.
+                    dim = length(p.x0);
+                    A = rand(dim);
+                    [rotated_matrix, ~] = qr(A);
+                    h = @(x) rotated_matrix * x;
+                    p.objective = @(x) p.objective(h(x));
+                    p.x0 = inv(rotated_matrix) * p.x0;
+                end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
                 end
@@ -324,6 +341,15 @@ try
                     h = @(x) scale_matrix * x;
                     p.objective = @(x) p.objective(h(x));
                 end
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
+                    % Rotation is a flag to indicate whether the problem is rotated.
+                    dim = length(p.x0);
+                    A = rand(dim, dim);
+                    [rotated_matrix, ~] = qr(A);
+                    h = @(x) rotated_matrix * x;
+                    p.objective = @(x) p.objective(h(x));
+                    p.x0 = inv(rotated_matrix) * p.x0;
+                end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point
                     rr = randn(size(x0));
@@ -348,6 +374,15 @@ try
                     %scale_matrix = hilb(dim);
                     h = @(x) scale_matrix * x;
                     p.objective = @(x) p.objective(h(x));
+                end
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
+                    % Rotation is a flag to indicate whether the problem is rotated.
+                    dim = length(p.x0);
+                    A = rand(dim, dim);
+                    [rotated_matrix, ~] = qr(A);
+                    h = @(x) rotated_matrix * x;
+                    p.objective = @(x) p.objective(h(x));
+                    p.x0 = inv(rotated_matrix) * p.x0;
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point

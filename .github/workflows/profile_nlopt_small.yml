@@ -24,7 +24,7 @@ jobs:
         with_optim_toolbox: [yes]
         solver: [CBDS]
         competitor: [nlopt_newuoa]
-        feature: [plain, badly_scaled, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10]
+        feature: [plain, badly_scaled, low, medium, high, randomx0_1e-3, randomx0_1, randomx0_10, randomx0_100]
 
     steps:
       - name: Check out repository

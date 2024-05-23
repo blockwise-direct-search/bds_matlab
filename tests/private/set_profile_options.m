@@ -73,6 +73,9 @@ if isfield(parameters, "feature")
         parameters.noise_level = str2double(level_str{2});
         parameters.feature = strcat(parameters.noise_type, "_", ...
             num2str(log10(parameters.noise_level)), "_noise");
+    elseif startsWith(lower(parameters.feature), "rotation")
+        parameters.is_noisy = false;
+        parameters.random_initial_point = false;
     else
         switch lower(parameters.feature)
             case "plain"
@@ -131,11 +134,17 @@ if parameters.random_initial_point
     end
 end
 
+% Set number of experiments according to the problem setting. If problem_dim is not set, 
+% the number of experiments is set to the default value, which is 1.
 if ~isfield(parameters, "num_random")
     if isfield(parameters, "problem_dim")
         if parameters.is_noisy && strcmpi(parameters.problem_dim, "small")
             parameters.num_random = 10;
         elseif parameters.is_noisy && strcmpi(parameters.problem_dim, "big")
+            parameters.num_random = 5;
+        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && ~parameters.random_initial_point && strcmpi(parameters.feature, "rotation")
+            parameters.num_random = 10;
+        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "big") && ~parameters.random_initial_point && strcmpi(parameters.feature, "rotation")
             parameters.num_random = 5;
         elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && parameters.random_initial_point
             parameters.num_random = 10;
@@ -206,7 +215,10 @@ if isfield(parameters, "feature")
         if parameters.random_initial_point
             pdfname = strcat(pdfname, "_", "randomx0", "_", num2str(log10(parameters.x0_perturbation_level)));
         end
-
+    elseif strcmpi(parameters.feature, "rotation")
+            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+                num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
+                "_", num2str(parameters.num_random));
     else
         pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
             num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
