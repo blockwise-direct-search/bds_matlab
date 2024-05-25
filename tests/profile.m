@@ -222,12 +222,15 @@ try
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
-                    A = rand(dim, dim);
-                    [rotated_matrix, ~] = qr(A);
+                    [Q,R] = qr(randn(dim));
+                    rotated_matrix = Q*diag(sign(diag(R)));
+                    % A = rand(dim, dim);
+                    % [rotated_matrix, ~] = qr(A);
+                    % rotated_matrix = orth(randn(dim, dim));
                     h = @(x) rotated_matrix * x;
                     p.objective = @(x) p.objective(h(x));
-                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
-                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
+                    %[rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
+                    %p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
