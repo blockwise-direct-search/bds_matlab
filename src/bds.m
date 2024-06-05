@@ -175,17 +175,6 @@ if ~isfield(options, "seed")
 end
 random_stream = RandStream("mt19937ar", "Seed", options.seed);
 
-% If there exists the field "direction_set_type" of options, then we will generate the direction
-% set according to the value of "direction_set_type".
-if isfield(options, "direction_set_type") 
-    if strcmpi(options.direction_set_type, "randomized_orthogonal")
-        random_matrix = random_stream.randn(n); 
-        [options.direction_set, ~] = qr(random_matrix); 
-    elseif strcmpi(options.direction_set_type, "randomized")
-        options.direction_set = random_stream.randn(n); 
-    end
-end
-
 % Set the factor for expanding the step sizes.
 if isfield(options, "expand")
     expand = options.expand;
@@ -212,15 +201,6 @@ if isfield(options, "forcing_function")
     forcing_function = options.forcing_function;
 else
     forcing_function = get_default_constant("forcing_function");
-end
-% If the forcing function is a string, then convert it to a function handle.
-if isfield(options, "forcing_function_type")
-    switch options.forcing_function_type
-        case "quadratic"
-            forcing_function = @(x)x.^2;
-        case "cubic"
-            forcing_function = @(x)x.^3;
-    end
 end
 
 % Set polling_inner, which is the polling strategy employed within one block.
@@ -417,13 +397,6 @@ if fopt <= ftarget
     maxit = 0;
 end
 
-% If there exists the field "block_indices_permuted_init" of options, and its value is true,
-% then we will permute the block_indices at the very beginning.
-if isfield(options, "block_indices_permuted_init") && options.block_indices_permuted_init
-    all_block_indices = random_stream.randperm(num_blocks);
-else
-    all_block_indices = (1:num_blocks);
-end
 % Initialize the number of blocks visited.
 num_visited_blocks = 0;
 

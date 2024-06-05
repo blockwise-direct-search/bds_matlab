@@ -212,25 +212,20 @@ try
                 else
                     scale_matrix = diag(2.^(dim*randn(dim, 1)));
                 end
-                % scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
-                [scale_matrix_Q, scale_matrix_R] = qr(scale_matrix);
-                p.x0 = (scale_matrix_R \ scale_matrix_Q') * p.x0;
+                p.x0 = p.x0 ./ diag(scale_matrix);
             end
             for i_run = 1:num_random
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
-                    rotated_matrix = Q*diag(sign(diag(R)));
-                    % A = rand(dim, dim);
-                    % [rotated_matrix, ~] = qr(A);
-                    % rotated_matrix = orth(randn(dim, dim));
-                    h = @(x) rotated_matrix * x;
-                    p.objective = @(x) p.objective(h(x));
-                    %[rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
-                    %p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
+                    rotation_matrix = Q*diag(sign(diag(R)));
+                    %h = @(x) rotation_matrix * x;
+                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
+                    %p.objective = @(x) p.objective(h(x));
+                    p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
@@ -269,27 +264,26 @@ try
             % Set scaling matrix.
             if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                 % Badly_scaled is a flag to indicate whether the problem is badly scaled.
+                dim = length(p.x0);
                 if isfield(parameters, "badly_scaled_sigma")
                     scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
                 else
                     scale_matrix = diag(2.^(dim*randn(dim, 1)));
                 end
-                %scale_matrix = hilb(dim);
                 h = @(x) scale_matrix * x;
                 p.objective = @(x) p.objective(h(x));
-                [scale_matrix_Q, scale_matrix_R] = qr(scale_matrix);
-                p.x0 = (scale_matrix_R \ scale_matrix_Q') * p.x0;
+                p.x0 = p.x0 ./ diag(scale_matrix);
             end
             for i_run = 1:num_random
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
-                    A = rand(dim);
-                    [rotated_matrix, ~] = qr(A);
-                    h = @(x) rotated_matrix * x;
-                    p.objective = @(x) p.objective(h(x));
-                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
-                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
+                    [Q,R] = qr(randn(dim));
+                    rotation_matrix = Q*diag(sign(diag(R)));
+                    %h = @(x) rotation_matrix * x;
+                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
+                    %p.objective = @(x) p.objective(h(x));
+                    p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
@@ -343,20 +337,24 @@ try
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                     % Badly_scaled is a flag to indicate whether the problem is badly scaled.
                     dim = length(p.x0);
-                    scale_matrix = diag(2.^(1:dim).');
-                    % scale_matrix = hilb(dim);
+                    if isfield(parameters, "badly_scaled_sigma")
+                        scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
+                    else
+                        scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                    end
                     h = @(x) scale_matrix * x;
                     p.objective = @(x) p.objective(h(x));
+                    p.x0 = p.x0 ./ diag(scale_matrix);
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
-                    A = rand(dim);
-                    [rotated_matrix, ~] = qr(A);
-                    h = @(x) rotated_matrix * x;
-                    p.objective = @(x) p.objective(h(x));
-                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
-                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
+                    [Q,R] = qr(randn(dim));
+                    rotation_matrix = Q*diag(sign(diag(R)));
+                    %h = @(x) rotation_matrix * x;
+                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
+                    %p.objective = @(x) p.objective(h(x));
+                    p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point
@@ -378,20 +376,24 @@ try
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                     % Badly_scaled is a flag to indicate whether the problem is badly scaled.
                     dim = length(p.x0);
-                    scale_matrix = diag(2.^(1:dim).');
-                    %scale_matrix = hilb(dim);
+                    if isfield(parameters, "badly_scaled_sigma")
+                        scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
+                    else
+                        scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                    end
                     h = @(x) scale_matrix * x;
                     p.objective = @(x) p.objective(h(x));
+                    p.x0 = p.x0 ./ diag(scale_matrix);
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
-                    A = rand(dim);
-                    [rotated_matrix, ~] = qr(A);
-                    h = @(x) rotated_matrix * x;
-                    p.objective = @(x) p.objective(h(x));
-                    [rotated_matrix_Q, rotated_matrix_R] = qr(rotated_matrix);
-                    p.x0 = (rotated_matrix_R \ rotated_matrix_Q') * p.x0;
+                    [Q,R] = qr(randn(dim));
+                    rotation_matrix = Q*diag(sign(diag(R)));
+                    %h = @(x) rotation_matrix * x;
+                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
+                    %p.objective = @(x) p.objective(h(x));
+                    p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point

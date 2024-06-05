@@ -57,10 +57,6 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", "block-permuted-init");
         end
 
-        if isfield(parameters.solvers_options{i}, "direction_set_type")
-            solver_legend = strcat(solver_legend, "-", strrep(parameters.solvers_options{i}.direction_set_type, '_', '-'));
-        end
-
         %solver_legend = "our-method";
         % if strcmpi(parameters.solvers_options{i}.Algorithm, "cbds")
         %     solver_legend = "new-method";
@@ -83,13 +79,14 @@ switch parameters.solvers_options{i}.solver
         end
 
     case {"fminunc_wrapper"}
-        solver_legend = "fminunc";
+        
+        %solver_legend = "fminunc";
+        %solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
+        solver_legend = "FD-BFGS";
 
         if isfield(parameters.solvers_options{i}, "default")
             solver_legend = strcat(solver_legend, "-", "default");
         end
-        %solver_legend = upper(parameters.solvers_options{i}.fminunc_type);
-        solver_legend = "FD-BFGS";
 
     case {"wm_newuoa"}
         solver_legend = "wm-newuoa";

@@ -126,16 +126,6 @@ function [xopt, fopt, exitflag, output] = bds_powell(fun, x0, options)
         options.Algorithm = get_default_constant("Algorithm");
     end
     
-    if isfield(options, "direction_set_type") 
-        if strcmpi(options.direction_set_type, "randomized_orthogonal")
-            A = random_stream.randn(n); 
-            [Q, ~] = qr(A); 
-            options.direction_set = Q;
-        elseif strcmpi(options.direction_set_type, "randomized")
-            A = random_stream.randn(n); 
-            options.direction_set = A;
-        end
-    end
     % Get the direction set.
     D = get_direction_set(n, options);
     % Get the number of directions.

@@ -84,10 +84,6 @@ switch parameters.solvers_options{i}.solver
             pdfname = strcat(pdfname, "_", "block_permuted_init");
         end
 
-        if isfield(parameters.solvers_options{i}, "direction_set_type")
-            pdfname = strcat(pdfname, "_", parameters.solvers_options{i}.direction_set_type);
-        end
-
     case "bds_norma"
         pdfname = "bds_norma";
 
