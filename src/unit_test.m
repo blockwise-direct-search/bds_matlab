@@ -155,7 +155,7 @@ function tests = unit_test
     end
     
     function direction_set_test(testCase)
-    %direction_set_TEST tests the file private/direction_set.m.
+    %direction_set_TEST tests the file private/get_direction_set.m.
     n = 5;
     D = [zeros(n) zeros(n)];
     for i = 1:n
@@ -174,10 +174,10 @@ function tests = unit_test
     options.direction_set = Q;
     D = get_direction_set(n, options);
     if D(:, 1:2:5) ~= -D(:, 2:2:6)
-        error('D is not symmetric');
+        error('The directions in one block are not opposite.');
     end    
     if rank(D(:, 1:2:5)) ~= 3
-        error('The basis of D is not a basis.');
+        error('The odd columns of D is not a basis.');
     end
 
     n = 3;
@@ -187,10 +187,10 @@ function tests = unit_test
     options.direction_set = Q;
     D = get_direction_set(n, options);
     if D(:, 1:2:5) ~= -D(:, 2:2:6)
-        error('D is not symmetric');
+        error('The directions in one block are not opposite.');
     end    
     if rank(D(:, 1:2:5)) ~= 3
-        error('The basis of D is not a basis.');
+        error('The odd columns of D is not a basis.');
     end
 
     n = 3;
@@ -204,10 +204,25 @@ function tests = unit_test
     options.direction_set = A;
     D = get_direction_set(n, options);
     if D(:, 1:2:5) ~= -D(:, 2:2:6)
-        error('D is not symmetric');
+        error('The directions in one block are not opposite.');
     end    
     if rank(D(:, 1:2:5)) ~= 3
-        error('The basis of D is not a basis.');
+        error('The odd columns of D is not a basis.');
+    end
+
+    n = 5;
+    %n = randi([1, 200]);
+    [Q, ~] = qr(randn(n));
+    options.direction_set = Q;
+    D = get_direction_set(n, options);
+    if D(:, 1:2:2*n-1) ~= -D(:, 2:2:2*n)
+        error('The directions in one block are not opposite.');
+    end    
+    if rank(D(:, 1:2:2*n-1)) ~= n
+        error('The odd columns of D is not a basis.');
+    end
+    if ~all(abs(Q - D(:, 1:2:2*n-1)) < 1e-10, 'all')
+        error('D is not corresponding to the input, where is an orthogonal matrix');
     end
   
     end

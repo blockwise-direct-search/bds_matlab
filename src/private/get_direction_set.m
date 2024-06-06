@@ -81,7 +81,7 @@ else
     if isempty(direction_set)
         direction_set = eye(n);
     end
-
+    
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 
 
@@ -97,16 +97,18 @@ else
     % linear independent system of direction_set by finding the first element in the diagonal
     % of R that is smaller than 1e-10. Then, by the permutation matrix P, we can know the original indices
     % of the columns of direction_set that are linearly independent.
-    if ~isempty(1 : find(diag(R) < 1e-10, 1)) && length(1 : find(diag(R) < 1e-10, 1)) == 1
+    if ~isempty(1 : find(abs(diag(R)) < 1e-10, 1)) && length(1 : find(diag(R) < 1e-10, 1)) == 1
+        R_truncate_index = find(diag(R) < 1e-10, 1);
         [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_sigma(:, 2));
         direction_set = direction_set(:, sort(AP_indices));
-    else
-        direction_set = eye(n);
+    % else
+    %     direction_set = eye(n);
     end
+    
     % Note: Actually, the above code may influence the order of the columns of direction_set. However,
     % the order of the columns of direction_set does not matter since each block will be visited once in one iteration.
     % Thus, we can ignore the order of the columns of direction_set.
-
+    
     % The following columns of Q will be added to direction_set.
     % 1. The corresponding diagonal elements of R are tiny.
     % 2. Columns m+1 to n with m being the number of columns in direction_set provided that m < n.
