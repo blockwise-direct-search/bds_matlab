@@ -4,7 +4,6 @@ function [f, f_real] = eval_fun(fun, x)
 %   The moderation is to handle NaN, huge values, and evaluation failures. The 
 %   algorithm will operate on f, while f_real is used for recording the history.
 
-
 try
     f_real = fun(x);    
 catch

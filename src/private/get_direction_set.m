@@ -143,5 +143,3 @@ D(:, 2:2:2*m) = -direction_set;
 
 end
 
-
-

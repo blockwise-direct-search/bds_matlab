@@ -536,8 +536,10 @@ for iter = 1:maxit
         xopt = xopt_all(:, index);
     end
     
-    % Test whether fopt is always the minimum of fhist after the moment we update fopt.
-    assert(fopt == min(fhist));
+    % Actually, fopt is not always the minimum of fhist after the moment we update fopt
+    % since the value we used to iterate is not always equal to the value returned by the function.
+    % See eval_fun.m for details.
+    % assert(fopt == min(fhist));
 
     % For "pads", we will update xbase and fbase only after one iteration of the outer loop.
     % During the inner loop, every block will share the same xbase and fbase.

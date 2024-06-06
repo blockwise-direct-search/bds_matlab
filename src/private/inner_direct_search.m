@@ -57,6 +57,8 @@ for j = 1 : num_directions
     
     % Evaluate the objective function for the current polling direction.
     xnew = xbase+alpha*D(:, j);
+    % fnew_real is the real function value at xnew, which is the value returned by fun 
+    % (not fnew).
     [fnew, fnew_real] = eval_fun(fun, xnew);
     nf = nf+1;
     % When we record the function value, we use the real function value.
@@ -114,8 +116,4 @@ output.direction_indices = direction_indices;
 output.terminate = terminate;
 
 end
-
-
-
-
 

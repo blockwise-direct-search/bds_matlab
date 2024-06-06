@@ -27,7 +27,6 @@ if ~(isintegerscalar(num_blocks) && num_blocks > 0)
     error("num_blocks should be a positive integer.");
 end
 
-
 BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
 if isfield(options, "Algorithm")
     if ~(ischarstr(options.Algorithm) && any(ismember(lower(options.Algorithm), lower(BDS_list))))
@@ -72,7 +71,6 @@ if isfield(options, "alpha_init")
         error("options.alpha_init should be a positive scalar or a positive real vector with length equal to num_blocks or a string 'auto'.");
     end
 end
-
 
 if isfield(options, "alpha_all")
     if ~(isrealscalar(options.alpha_all) && options.alpha_all > 0)
