@@ -39,10 +39,9 @@ FunctionEvaluations_exhausted = options.FunctionEvaluations_exhausted;
 % The value of verbose.
 verbose = options.verbose;
 
-% Explain why NaN is good. It is possible that this function returns
-% with exitflag=NaN and this is NOT a bug. This is because other situations
-% correspond to other normal values. Easy to see whether there is some bug 
-% related to exitflag.
+% If terminate is true and the exitflag is NaN, it means that the algorithm terminates
+% not because of the maximum number of function evaluations or the target function value,
+% which will be a bug.
 exitflag = NaN;
 
 % Initialize some parameters before entering the loop.

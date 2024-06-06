@@ -397,7 +397,9 @@ if fopt <= ftarget
     maxit = 0;
 end
 
-% Initialize the number of blocks visited.
+% Initialize the block_indices, which is a vector containing the indices of blocks that we
+% are going to visit iterately. Intialize the number of blocks visited also.
+all_block_indices = (1:num_blocks);
 num_visited_blocks = 0;
 
 for iter = 1:maxit
@@ -535,7 +537,7 @@ for iter = 1:maxit
     end
     
     % Test whether fopt is always the minimum of fhist after the moment we update fopt.
-    % fopt == min(fhist);
+    assert(fopt == min(fhist));
 
     % For "pads", we will update xbase and fbase only after one iteration of the outer loop.
     % During the inner loop, every block will share the same xbase and fbase.
