@@ -36,8 +36,10 @@ else
     end
 
     % Check whether the direction set is linearly independent by checking whether the smallest
-    % eigenvalue of the direction set is larger than 1.0e-10.
-    if eigs(direction_set, 1, 'smallestabs') < 1.0e-10
+    % eigenvalue of the direction set is larger than 1.0e-10. There may exists some cases
+    % where some of the eigenvalues of the direction set are complex numbers. In this case, we compare
+    % the norm of the smallest eigenvalue with 1.0e-10.
+    if norm(eigs(direction_set, 1, 'smallestabs')) < 1.0e-10
         error('The direction set is not linearly independent.');
     end
 

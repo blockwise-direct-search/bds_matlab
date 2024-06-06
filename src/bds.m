@@ -398,7 +398,7 @@ if fopt <= ftarget
 end
 
 % Initialize the block_indices, which is a vector containing the indices of blocks that we
-% are going to visit iterately. Intialize the number of blocks visited also.
+% are going to visit iterately. Initialize the number of blocks visited also.
 all_block_indices = (1:num_blocks);
 num_visited_blocks = 0;
 
