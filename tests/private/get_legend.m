@@ -57,6 +57,11 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", "block-permuted-init");
         end
 
+        if isfield(parameters.solvers_options{i}, "direction_set_type") ...
+            && strcmpi(parameters.solvers_options{i}.direction_set_type, "randomized_orthogonal_matrix")
+            solver_legend = strcat(solver_legend, "-", "randomized-orthogonal-matrix");
+        end
+
         %solver_legend = "our-method";
         % if strcmpi(parameters.solvers_options{i}.Algorithm, "cbds")
         %     solver_legend = "new-method";

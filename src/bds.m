@@ -128,6 +128,12 @@ else
 end
 
 % Get the direction set.
+% TODO: why orthogonal matrix?
+if isfield(options, "direction_set_type") && ...
+    strcmpi(options.direction_set_type, "randomized_orthogonal_matrix")
+    [Q,R] = qr(randn(n));
+    options.direction_set = Q*diag(sign(diag(R)));
+end
 D = get_direction_set(n, options);
 
 % Set the default Algorithm of BDS, which is "cbds".

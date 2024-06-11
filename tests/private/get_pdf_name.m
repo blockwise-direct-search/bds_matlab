@@ -84,6 +84,11 @@ switch parameters.solvers_options{i}.solver
             pdfname = strcat(pdfname, "_", "block_permuted_init");
         end
 
+        if isfield(parameters.solvers_options{i}, "direction_set_type") ...
+            && strcmpi(parameters.solvers_options{i}.direction_set_type, "randomized_orthogonal_matrix")
+            pdfname = strcat(pdfname, "_", "randomized_orthogonal_matrix");
+        end
+
     case "bds_norma"
         pdfname = "bds_norma";
 

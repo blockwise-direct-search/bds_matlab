@@ -222,9 +222,8 @@ try
                     dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
-                    %h = @(x) rotation_matrix * x;
-                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
-                    %p.objective = @(x) p.objective(h(x));
+                    h = @(x) rotation_matrix * x;
+                    p.objective = @(x) p.objective(h(x));
                     p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
@@ -280,9 +279,9 @@ try
                     dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
-                    %h = @(x) rotation_matrix * x;
-                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
-                    %p.objective = @(x) p.objective(h(x));
+                    h = @(x) rotation_matrix * x;
+                    %p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
+                    p.objective = @(x) p.objective(h(x));
                     p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
