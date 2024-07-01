@@ -106,6 +106,15 @@ if isfield(parameters, "feature")
                 parameters.is_noisy = true;
                 parameters.noise_level = 2.0e-1;
                 parameters.feature = strcat(parameters.noise_type, "_", "2", "-1", "_noise");
+            case "structured"
+                parameters.is_noisy = false;
+                parameters.feature = "structured";
+                if ~isfield(parameters, "structured_norm")
+                    parameters.structured_norm = 1;
+                end
+                if ~isfield(parameters, "structured_factor")
+                    parameters.structured_factor = 1;
+                end
             otherwise
                 error("Unknown feature %s", parameters.feature);
         end

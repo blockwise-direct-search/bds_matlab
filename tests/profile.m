@@ -192,7 +192,7 @@ try
             end
         end
     end
-
+    
     % If parameters.noise_initial_point is true, then the initial point will be
     % selected for each problem num_random times.
     % The default value of parameters.fmin_type is set to be "randomized", then there is
@@ -225,6 +225,11 @@ try
                     h = @(x) rotation_matrix * x;
                     p.objective = @(x) p.objective(h(x));
                     p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
+                end
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
+                    % Structured is a flag to indicate whether the problem is added with l-p regularization term.
+                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    p.objective = @(x) p.objective(x) + h(x);
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
@@ -283,6 +288,11 @@ try
                     %p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
                     p.objective = @(x) p.objective(h(x));
                     p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
+                end
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
+                    % Structured is a flag to indicate whether the problem is added with l-p regularization term.
+                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    p.objective = @(x) p.objective(x) + h(x);
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
                     fhist_plot = cell(1, num_solvers);
@@ -355,6 +365,11 @@ try
                     %p.objective = @(x) p.objective(h(x));
                     p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
                 end
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
+                    % Structured is a flag to indicate whether the problem is added with l-p regularization term.
+                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    p.objective = @(x) p.objective(x) + h(x);
+                end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point
                     rr = randn(size(x0));
@@ -393,6 +408,11 @@ try
                     p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
                     %p.objective = @(x) p.objective(h(x));
                     p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
+                end
+                if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
+                    % Structured is a flag to indicate whether the problem is added with l-p regularization term.
+                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    p.objective = @(x) p.objective(x) + h(x);
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 if parameters.random_initial_point
