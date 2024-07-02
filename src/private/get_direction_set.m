@@ -25,7 +25,6 @@ if ~isfield(options, "direction_set")
     direction_set = eye(n);
 
 else
-
     direction_set = options.direction_set;
 
     % Determine whether the direction set contains NaN or Inf values and replace those

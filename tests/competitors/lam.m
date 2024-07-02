@@ -59,8 +59,10 @@ end
 % a new way. First, let reduction_factor(1) = 0 accept simple decrease. Then let 
 % reduction_factor(2) = reduction_factor(3) match the framework proposed by 
 % <<Worst case complexity bounds for linesearch-type derivative-free algorithms>>.
+% We set reduction_factor(2) = 1e-6, under the paper A derivative-free algorithm for bound constrained optimization,
+% G. Liuzzi, and S. Lucidi, Computational Optimization and Applications, 2002. (corresponding to the parameter gamma)
 reduction_factor(1) = 0;
-reduction_factor(2) = reduction_factor(3);
+reduction_factor(2) = 1e-6;
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
 % the StepTolerance.
@@ -70,14 +72,16 @@ else
     alpha_tol = get_default_constant("StepTolerance");
 end
 
-% Set the value of expand factor.
+% Set the value of expand factor. Since the expand factor in the paper A derivative-free algorithm for bound constrained optimization,
+% G. Liuzzi, and S. Lucidi, Computational Optimization and Applications, 2002 is set to 2, we set the default value of expand to 2.
 if isfield(options, "expand")
     expand = options.expand;
 else
     expand = get_default_constant("expand");
 end
 
-% Set the value of shrink factor.
+% Set the value of shrink factor. Since the shrink factor in the paper A derivative-free algorithm for bound constrained optimization,
+% G. Liuzzi, and S. Lucidi, Computational Optimization and Applications, 2002 is set to 0.5, we set the default value of shrink to 0.5.
 if isfield(options, "shrink")
     shrink = options.shrink;
 else
@@ -91,11 +95,12 @@ else
     with_cycling_memory = get_default_constant("with_cycling_memory");
 end
 
-% Set the value of stepsize_factor.
+% Set the value of stepsize_factor. We adopt the step selection rule in A. Brilli, M. Kimiaei, G. Liuzzi, and S. Lucidi, Worst case
+% complexity bounds for linesearch-type derivative-free algorithms, 2023. (corresponding to the parameter c)
 if isfield(options, "stepsize_factor")
     stepsize_factor = options.stepsize_factor;
 else
-    stepsize_factor = 1e-9;
+    stepsize_factor = 1e-8;
 end
 
 % Set the type of linesearch.
@@ -112,11 +117,12 @@ else
     ftarget = get_default_constant("ftarget");
 end
 
-% Initialize the step sizes.
+% Initialize the step sizes. We adopt the step selection rule in G. Liuzzi, and S. Lucidi, A derivative-free
+% algorithm for bound constrained optimization, Computational Optimization and Applications, 2002.
 if isfield(options, "alpha_init")
     alpha_all = options.alpha_init*ones(num_blocks, 1);
 else
-    alpha_all = ones(num_blocks, 1);
+    alpha_all = 0.5*ones(num_blocks, 1);
 end
 
 % Initialize the history of function values.
