@@ -277,6 +277,7 @@ COBYQA
 coce
 CODEOWNERS
 colombiana
+colorbar
 colorlet
 colorlinks
 Combettes
@@ -294,6 +295,7 @@ config
 cong
 conjugu
 contmath
+contourf
 coprod
 copyfile
 cpc
@@ -860,6 +862,7 @@ Keskinocak
 Keutzer
 Kharoufeh
 Kheriji
+Kimiaei
 KKT
 Klawonn
 kleinsten
@@ -1058,6 +1061,8 @@ Maxhist
 maximality
 maxit
 maxiter
+maxl
+maxq
 maxtime
 mbgen
 mbox
@@ -1069,6 +1074,7 @@ mdseries
 measuredangle
 Menickelly
 mes
+meshgrid
 Methode
 Methodol
 Methven
@@ -1079,6 +1085,7 @@ mfilename
 mfm
 Microw
 midsloppy
+mifflin
 Mikaitis
 mindim
 minfhist
@@ -1251,6 +1258,7 @@ optimoptions
 optimset
 optl
 orie
+osborne
 OSCIPATH
 oslash
 otimes
@@ -1325,6 +1333,7 @@ pmtools
 pname
 pnas
 png
+polak
 Polyak
 Polymathematics
 polyu
@@ -1381,6 +1390,7 @@ qlist
 qmin
 qnew
 qor
+qradratic
 qred
 qsav
 QSGD
@@ -1616,6 +1626,7 @@ Steenrod
 steepdesc
 Steffensen
 Steihaug
+steiner
 stepsize
 Sterck
 stevengj
