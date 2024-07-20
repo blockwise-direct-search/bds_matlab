@@ -326,7 +326,9 @@ try
                     [direction_set_base, ~] = qr(randn(dim));
                 end
                 for i_solver = 1:num_solvers
-                    if ismember(lower(parameters.solvers_name{i_solver}), lower(BDS_list))
+                    if ismember(lower(parameters.solvers_name{i_solver}), lower(BDS_list)) ...
+                            && isfield(solvers_options{i_solver}, "direction_set_type") && ...
+                            strcmpi(solvers_options{i_solver}.direction_set_type, "randomized_orthogonal_matrix")
                         solvers_options{i_solver}.direction_set = direction_set_base;
                     end
                     [fhist, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
