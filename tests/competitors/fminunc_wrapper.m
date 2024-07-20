@@ -39,12 +39,12 @@ else
         ftarget = get_default_constant("ftarget");
     end
 
-    % Set the Algorithm of fminunc.
-    if isfield(options, "fminunc_type")
-        fminunc_type = options.fminunc_type;
-    else
-        fminunc_type = "bfgs";
-    end
+    % % Set the Algorithm of fminunc.
+    % if isfield(options, "fminunc_type")
+    %     fminunc_type = options.fminunc_type;
+    % else
+    %     fminunc_type = "bfgs";
+    % end
 
     % If and only if fminunc is invoked and the problem is noisy, with_gradient should be true, which
     % means that the gradient is provided by the user.
@@ -52,8 +52,9 @@ else
     
     % Set the options of fminunc. If and only if SpecifyObjectiveGradient is true,
     % fminunc will accept the gradient provided by the user. 
+    % Valid value for OPTIONS parameter HessUpdate should be 'bfgs',  'lbfgs',  'dfp',  or 'steepdesc'.
     options = optimoptions("fminunc", "Algorithm", "quasi-newton", "HessUpdate", ...
-        fminunc_type, "MaxFunctionEvaluations", MaxFunctionEvaluations, "MaxIterations", 10^20, ...
+        "bfgs", "MaxFunctionEvaluations", MaxFunctionEvaluations, "MaxIterations", 10^20, ...
         "ObjectiveLimit", ftarget, "StepTolerance", tol, "OptimalityTolerance", eps, ...
         'SpecifyObjectiveGradient', with_gradient);
     %[X,FVAL,EXITFLAG,OUTPUT] = fminunc(FUN, x0, options)

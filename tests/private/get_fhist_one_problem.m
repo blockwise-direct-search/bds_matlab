@@ -14,27 +14,27 @@ test_options.num_random = 1;
 solvers_options{1}.solver = "bds";
 solvers_options{1}.Algorithm = "cbds";
 
-solvers_options{2}.solver = "fminunc_wrapper";
-solvers_options{2}.fminunc_type = "bfgs";
-solvers_options{2}.with_gradient = test_options.is_noisy;
+solvers_options{2}.solver = "prima_wrapper";
+%solvers_options{2}.fminunc_type = "bfgs";
+%solvers_options{2}.with_gradient = test_options.is_noisy;
 
 
 [fhist_bds, ~] = get_fhist(p, MaxFunctionEvaluations_frec, 1, 1, solvers_options, test_options);
-[fhist_bfgs, ~] = get_fhist(p, MaxFunctionEvaluations_frec, 2, 1, solvers_options, test_options);
+[fhist_newuoa, ~] = get_fhist(p, MaxFunctionEvaluations_frec, 2, 1, solvers_options, test_options);
 
 % Get fval.
-fval = min(min(fhist_bfgs), min(fhist_bds));
+fval = min(min(fhist_newuoa), min(fhist_bds));
 
 % Deal fhist.
 fhist_bds_plot = cummin(fhist_bds);
-fhist_bfgs_plot = cummin(fhist_bfgs);
+fhist_newuoa_plot = cummin(fhist_newuoa);
 
 fhist_bds_plot = abs(fhist_bds_plot - fval + eps)/max(abs(fhist_bds(1)), eps);
-fhist_bfgs_plot = abs(fhist_bfgs_plot - fval + eps)/max(abs(fhist_bfgs(1)), eps);
+fhist_newuoa_plot = abs(fhist_newuoa_plot - fval + eps)/max(abs(fhist_newuoa(1)), eps);
 
 semilogy(fhist_bds_plot, 'red');
 hold on
-semilogy(fhist_bfgs_plot, 'blue');
+semilogy(fhist_newuoa_plot, 'blue');
 keyboard
 
 end

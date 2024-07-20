@@ -50,6 +50,9 @@ else
         Algorithm = "newuoa";
     end
     solver = str2func(Algorithm);
+    if isfield(options, "solver")
+        options = rmfield(options, "solver");
+    end
     solver(fun, x0, options);
 
 end

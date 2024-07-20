@@ -192,7 +192,7 @@ try
             end
         end
     end
-    
+
     % If parameters.noise_initial_point is true, then the initial point will be
     % selected for each problem num_random times.
     % The default value of parameters.fmin_type is set to be "randomized", then there is
@@ -206,7 +206,6 @@ try
             % Set scaling matrix.
             if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                 % Badly_scaled is a flag to indicate whether the problem is badly scaled.
-                dim = length(p.x0);
                 if isfield(parameters, "badly_scaled_sigma")
                     scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
                 else
@@ -216,8 +215,21 @@ try
                 p.objective = @(x) p.objective(h(x));
                 p.x0 = p.x0 ./ diag(scale_matrix);
             end
+            if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")
+                % Rotation is a flag to indicate whether the problem is rotated.
+                [Q,R] = qr(randn(dim));
+                rotation_matrix = Q*diag(sign(diag(R)));
+                h = @(x) rotation_matrix * x;
+                p.objective = @(x) p.objective(h(x));
+                p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
+                scale_matrix = diag(2.^(dim*randn(dim, 1)));
+                h = @(x) scale_matrix * x;
+                p.objective = @(x) p.objective(h(x));
+                p.x0 = p.x0 ./ diag(scale_matrix);
+            end
             for i_run = 1:num_random
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
+                if isfield(parameters, "feature") && (strcmpi(parameters.feature, "rotation") || ...
+                        strcmpi(parameters.feature, "rotation_noisy"))
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
@@ -279,7 +291,8 @@ try
                 p.x0 = p.x0 ./ diag(scale_matrix);
             end
             for i_run = 1:num_random
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
+                if isfield(parameters, "feature") && (strcmpi(parameters.feature, "rotation") || ...
+                        strcmpi(parameters.feature, "rotation_noisy"))
                     % Rotation is a flag to indicate whether the problem is rotated.
                     dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
@@ -305,7 +318,17 @@ try
                 end
                 fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 %fhist_tmp = cell(2, 1);
+                BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
+                if ~isempty(intersect(parameters.solvers_name, lower(BDS_list)))
+                    % If there is a solver that we invoke existing in BDS_List, set the direction_set of input to be the same
+                    % random orthogonal matrix.
+                    dim = length(p.x0);
+                    [direction_set_base, ~] = qr(randn(dim));
+                end
                 for i_solver = 1:num_solvers
+                    if ismember(lower(parameters.solvers_name{i_solver}), lower(BDS_list))
+                        solvers_options{i_solver}.direction_set = direction_set_base;
+                    end
                     [fhist, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                         i_run, solvers_options, test_options);
                     % if any(isnan(fhist_perfprof))
@@ -332,98 +355,34 @@ try
         end
     end
 
-    % If parameters.fmin_type = "real-randomized", then test without noise
+    % If parameters.fmin_type = "real-randomized", then test with the plain feature
     % should be conducted and fmin might be smaller, which makes curves
     %  of performance profile more lower.
-    if test_options.is_noisy && strcmpi(parameters.fmin_type, "real-randomized")
+    if strcmpi(parameters.fmin_type, "real-randomized")
         fmin_real = NaN(num_problems, 1);
         test_options.is_noisy = false;
         i_run = 1;
         if parameters.parallel == true
             parfor i_problem = 1:num_problems
                 p = macup(problem_names(1, i_problem));
-                % Set scaling matrix.
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
-                    % Badly_scaled is a flag to indicate whether the problem is badly scaled.
-                    dim = length(p.x0);
-                    if isfield(parameters, "badly_scaled_sigma")
-                        scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
-                    else
-                        scale_matrix = diag(2.^(dim*randn(dim, 1)));
-                    end
-                    h = @(x) scale_matrix * x;
-                    p.objective = @(x) p.objective(h(x));
-                    p.x0 = p.x0 ./ diag(scale_matrix);
-                end
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
-                    % Rotation is a flag to indicate whether the problem is rotated.
-                    dim = length(p.x0);
-                    [Q,R] = qr(randn(dim));
-                    rotation_matrix = Q*diag(sign(diag(R)));
-                    %h = @(x) rotation_matrix * x;
-                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
-                    %p.objective = @(x) p.objective(h(x));
-                    p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
-                end
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
-                    % Structured is a flag to indicate whether the problem is added with l-p regularization term.
-                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
-                    p.objective = @(x) p.objective(x) + h(x);
-                end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
-                if parameters.random_initial_point
-                    rr = randn(size(x0));
-                    rr = rr / norm(rr);
-                    p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
-                end
                 fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
-                    frec_local(i_solver,:) = get_fhist(p, MaxFunctionEvaluations_frec,...
-                        i_solver, i_run, solvers_options, test_options);
+                    [~, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
+                        i_run, solvers_options, test_options);
+                    frec_local(i_solver,:) = fhist_perfprof;
                 end
                 fmin_real(i_problem) = min(frec_local(:, :),[],"all");
             end
         else
             for i_problem = 1:num_problems
                 p = macup(problem_names(1, i_problem));
-                % Set scaling matrix.
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
-                    % Badly_scaled is a flag to indicate whether the problem is badly scaled.
-                    dim = length(p.x0);
-                    if isfield(parameters, "badly_scaled_sigma")
-                        scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
-                    else
-                        scale_matrix = diag(2.^(dim*randn(dim, 1)));
-                    end
-                    h = @(x) scale_matrix * x;
-                    p.objective = @(x) p.objective(h(x));
-                    p.x0 = p.x0 ./ diag(scale_matrix);
-                end
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation")
-                    % Rotation is a flag to indicate whether the problem is rotated.
-                    dim = length(p.x0);
-                    [Q,R] = qr(randn(dim));
-                    rotation_matrix = Q*diag(sign(diag(R)));
-                    %h = @(x) rotation_matrix * x;
-                    p.objective = @(x) p.objective(@(x) rotation_matrix * x(x));
-                    %p.objective = @(x) p.objective(h(x));
-                    p.x0 = (qr(rotation_matrix) \ eye(dim)) * p.x0;
-                end
-                if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
-                    % Structured is a flag to indicate whether the problem is added with l-p regularization term.
-                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
-                    p.objective = @(x) p.objective(x) + h(x);
-                end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
-                if parameters.random_initial_point
-                    rr = randn(size(x0));
-                    rr = rr / norm(rr);
-                    p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
-                end
                 fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
-                    frec_local(i_solver,:) = get_fhist(p, MaxFunctionEvaluations_frec,...
-                        i_solver, i_run, solvers_options, test_options);
+                    [~, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
+                        i_run, solvers_options, test_options);
+                    frec_local(i_solver,:) = fhist_perfprof;
                 end
                 fmin_real(i_problem) = min(frec_local(:, :),[],"all");
             end
@@ -455,6 +414,7 @@ try
 
     % Make a new folder to save numerical results and source code.
     mkdir(path_testdata, tst);
+    fprintf("The path of the testdata is:\n%s\n", path_testdata_outdir);
     mkdir(path_testdata_outdir, "perf");
     path_testdata_perf = fullfile(path_testdata_outdir, "perf");
     mkdir(path_testdata_perf, parameters.pdfname);
@@ -512,6 +472,35 @@ try
         end
     end
     fclose(fileID);
+
+    % % Make a Txt file to store the parameters that are input.
+    % filePath = strcat(path_testdata_perf, "/parameters_input.txt");
+    % fileID = fopen(filePath, 'w');
+    % parameters_saved = parameters;
+    % parameters_saved = trim_struct(parameters_saved);
+    % % Get the field names of a structure.
+    % parameters_saved_fields = fieldnames(parameters_saved);
+    % % Write field names and their corresponding values into a file line by line.
+    % for i = 1:numel(parameters_saved_fields)
+    %     field = parameters_saved_fields{i};
+    %     value = parameters_saved.(field);
+    %     if ~iscell(value)
+    %         fprintf(fileID, '%s: %s\n', field, value);
+    %     else
+    %         for j = 1:length(value)
+    %             solvers_options_saved = trim_struct(value{j});
+    %             solvers_options_saved_fields = fieldnames(solvers_options_saved);
+    %             for k = 1:numel(solvers_options_saved_fields)
+    %                 solvers_options_saved_field = solvers_options_saved_fields{k};
+    %                 solvers_options_saved_value = solvers_options_saved.(solvers_options_saved_field);
+    %                 fprintf(fileID, '%s: %s ', solvers_options_saved_field, ...
+    %                     solvers_options_saved_value);
+    %             end
+    %             fprintf(fileID, '\n');
+    %         end
+    %     end
+    % end
+    % fclose(fileID);
 
     % Copy the source code and test code to path_outdir.
     copyfile(fullfile(path_src, "*"), path_testdata_src);

@@ -55,7 +55,6 @@ if ~isfield(parameters, "parallel")
 end
 
 % Set parameters for testing.
-
 if ~isfield(parameters, "noise_type")
     parameters.noise_type = get_default_profile_options("noise_type");
 end
@@ -119,6 +118,16 @@ if isfield(parameters, "feature")
                 error("Unknown feature %s", parameters.feature);
         end
     end
+end
+
+if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_noisy")
+    parameters.is_noisy = true;
+    parameters.noise_level = 1.0e-3;
+end
+
+if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")
+    parameters.is_noisy = false;
+    parameters.noise_level = 0;
 end
 
 if ~isfield(parameters, "is_noisy")
@@ -224,7 +233,8 @@ if isfield(parameters, "feature")
         if parameters.random_initial_point
             pdfname = strcat(pdfname, "_", "randomx0", "_", num2str(log10(parameters.x0_perturbation_level)));
         end
-    elseif strcmpi(parameters.feature, "rotation")
+    elseif (strcmpi(parameters.feature, "rotation") || strcmpi(parameters.feature, "rotation_noisy") || ...
+            strcmpi(parameters.feature, "rotation_badly_scaled"))
             pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
                 num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
                 "_", num2str(parameters.num_random));

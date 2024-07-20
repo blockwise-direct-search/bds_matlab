@@ -15,6 +15,21 @@ fhist_perfprof = NaN(MaxFunctionEvaluations_frec, 1);
 if ~isfield(solvers_options, "with_gradient")
     test_options.with_gradient = strcmpi(name_solver, "fminunc_wrapper") && test_options.is_noisy;
 end
+
+if ~isfield(solvers_options, "fminunc_type") && strcmpi(name_solver, "fminunc_wrapper")
+    options.fminunc_type = "quasi-newton";
+end
+
+% Set direction_set for the solver. If the solver is bds and the direction_set_type is
+% randomized_orthogonal_matrix, then we will set the direction_set of input to be a random orthogonal matrix.
+if isfield(options, "direction_set_type") && ...
+    strcmpi(options.direction_set_type, "randomized_orthogonal_matrix") && ...
+    ~isfield(options, "direction_set")
+    n = length(p.x0);
+    [Q,R] = qr(randn(n));
+    options.direction_set = Q*diag(sign(diag(R)));
+end
+
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);
