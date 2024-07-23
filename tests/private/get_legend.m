@@ -62,7 +62,7 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", "randomized-orthogonal-matrix");
         end
 
-        %solver_legend = "our method";
+        solver_legend = "our method";
         % if strcmpi(parameters.solvers_options{i}.Algorithm, "cbds")
         %     solver_legend = "new-method";
         % end

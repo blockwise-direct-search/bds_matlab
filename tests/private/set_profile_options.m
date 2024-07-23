@@ -114,6 +114,15 @@ if isfield(parameters, "feature")
                 if ~isfield(parameters, "structured_factor")
                     parameters.structured_factor = 1;
                 end
+            case "rotation_structured"
+                parameters.is_noisy = false;
+                parameters.feature = "rotation_structured";
+                if ~isfield(parameters, "structured_norm")
+                    parameters.structured_norm = 1;
+                end
+                if ~isfield(parameters, "structured_factor")
+                    parameters.structured_factor = 1;
+                end
             otherwise
                 error("Unknown feature %s", parameters.feature);
         end
