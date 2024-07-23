@@ -240,7 +240,12 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
                     % Structured is a flag to indicate whether the problem is added with l-p regularization term.
-                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    if isfield(parameters, "structured_factor")
+                        h = @(x) parameters.structured_factor *  sum(abs(x).^ 1);
+                    else
+                        h = @(x) sum(abs(x).^ 1);
+                    end
+                    %h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
                     p.objective = @(x) p.objective(x) + h(x);
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_structured")
@@ -327,7 +332,12 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "structured")
                     % Structured is a flag to indicate whether the problem is added with l-p regularization term.
-                    h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    if isfield(parameters, "structured_factor")
+                        h = @(x) parameters.structured_factor *  sum(abs(x).^ 1);
+                    else
+                        h = @(x) sum(abs(x).^ 1);
+                    end
+                    %h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
                     p.objective = @(x) p.objective(x) + h(x);
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_structured")
@@ -338,7 +348,11 @@ try
                     h = @(x) rotation_matrix * x;
                     p.objective = @(x) p.objective(h(x));
                     parameters.structured_norm = 1;
-                    h = @(x) sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    if isfield(parameters, "structured_factor")
+                        h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    else
+                        h = @(x) sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                    end
                     p.objective = @(x) p.objective(x) + h(x);
                 end
                 if isfield(parameters, "rotated_badly_scaled")
