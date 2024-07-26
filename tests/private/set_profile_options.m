@@ -131,7 +131,9 @@ end
 
 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_noisy")
     parameters.is_noisy = true;
-    parameters.noise_level = 1.0e-3;
+    if ~isfield(parameters, "noise_level")
+        parameters.noise_level = 1.0e-3;
+    end
 end
 
 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")
@@ -161,7 +163,7 @@ if parameters.random_initial_point
     end
 end
 
-% Set number of experiments according to the problem setting. If problem_dim is not set, 
+% Set number of experiments according to the problem setting. If problem_dim is not set,
 % the number of experiments is set to the default value, which is 1.
 if ~isfield(parameters, "num_random")
     if isfield(parameters, "problem_dim")
@@ -242,11 +244,14 @@ if isfield(parameters, "feature")
         if parameters.random_initial_point
             pdfname = strcat(pdfname, "_", "randomx0", "_", num2str(log10(parameters.x0_perturbation_level)));
         end
-    elseif (strcmpi(parameters.feature, "rotation") || strcmpi(parameters.feature, "rotation_noisy") || ...
-            strcmpi(parameters.feature, "rotation_badly_scaled"))
-            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
-                num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
-                "_", num2str(parameters.num_random));
+    elseif (strcmpi(parameters.feature, "rotation") || strcmpi(parameters.feature, "rotation_badly_scaled"))
+        pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+            num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
+            "_", num2str(parameters.num_random));
+    elseif strcmpi(parameters.feature, "rotation_noisy")
+        pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+            num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
+            "_", parameters.noise_type, "_", num2str(log10(parameters.noise_level)), "_", num2str(parameters.num_random));
     elseif strcmpi(parameters.feature, "structured")
         if isfield(parameters, "structured_factor")
             pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
