@@ -270,6 +270,7 @@ try
             else
                 problem_orig = str2func(char(problem_names(i_problem)));
                 problem_info = problem_orig('setup');
+                dim = length(problem_info.x0);
                 p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
             end
             for i_run = 1:num_random

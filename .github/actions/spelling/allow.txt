@@ -717,6 +717,7 @@ html
 HTTPS
 huangcunxin
 HYDC
+HYDCAR
 hyperparameter
 hyperparameters
 hyperref
@@ -1075,6 +1076,8 @@ measuredangle
 Menickelly
 mes
 meshgrid
+METHANB
+METHANL
 Methode
 Methodol
 Methven
@@ -1107,6 +1110,7 @@ movefile
 mp
 mpcpc
 mpcps
+mpj
 mplementation
 mprog
 mprogb
@@ -1363,6 +1367,7 @@ printchaptertitle
 printf
 Probab
 Probabiliste
+probinfo
 PROCORE
 propto
 proy
@@ -1482,6 +1487,7 @@ Roosta
 Rosasco
 rosenb
 rosenbrock
+ROSSIMP
 Rothe
 Royer
 rref
@@ -1603,6 +1609,8 @@ Sousedik
 sovmd
 spadesuit
 sphericalangle
+SPINLS
+SPLS
 sprintf
 sqcap
 sqcup
@@ -1862,6 +1870,9 @@ Verfahren
 Vershynin
 Versuchsanstalt
 vertcat
+VESUVIALS
+VESUVIOLS
+VESUVIOULS
 Vetterling
 Vicent
 Vierteljahrsschrift
@@ -1920,6 +1931,7 @@ Xuan
 xval
 xyz
 Yamazaki
+YATP
 Yie
 ylabel
 ylim
