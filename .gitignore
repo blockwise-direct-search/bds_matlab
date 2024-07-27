@@ -69,3 +69,8 @@ tests/competitors/private/imfil.m
 # some workflow files not to be tracked
 .github/workflows/test_dspd_num_random_vectors_big.yml
 .github/workflows/test_dspd_num_random_vectors_small.yml
+
+# some temporary files for local test
+tests/probinfo.mat
+tests/matlab_problems
+tests/s2mpjlib.m

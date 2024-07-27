@@ -300,6 +300,12 @@ if isfield(parameters, "MaxFunctionEvaluations_dim_factor")
     pdfname = strcat(pdfname, "_", "MaxFunctionEvaluations_dim_factor", "_", num2str(parameters.MaxFunctionEvaluations_dim_factor));
 end
 
+if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "s2mpj")
+    pdfname = strcat(pdfname, "_", "s2mpj");
+else
+    parameters.test_type = "matcutest";
+end
+
 parameters.pdfname = pdfname;
 
 end

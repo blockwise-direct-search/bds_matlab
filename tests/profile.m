@@ -22,7 +22,6 @@ try
         else
             disp('path_nlopt does not exist on the local machine.');
         end
-
     else
         disp('Path_nlopt already exists in MATLAB path.');
     end
@@ -56,42 +55,106 @@ try
     locate_matcutest();
 
     % Get list of problems
-    s.type = parameters.problem_type; % Unconstrained: 'u'
-    s.mindim = parameters.problem_mindim; % Minimum of dimension
-    s.maxdim = parameters.problem_maxdim; % Maximum of dimension
-    s.blacklist = [];
-    %s.blacklist = [s.blacklist, {}];
-    % Problems that take too long to solve.
-    % {'FBRAIN3LS'} and {'STRATEC'} take too long for fminunc.
-    if ismember("matlab_fminunc", parameters.solvers_name)
-        s.blacklist = [s.blacklist, {'FBRAIN3LS'}, {'STRATEC'}];
-    end
-    % {"MUONSINELS"} takes nlopt_newuoa so long to run (even making MATLAB crash).
-    % {"LRCOVTYPE"}, {'HIMMELBH'} and {'HAIRY'} take nlopt_cobyla so long
-    % to run (even making MATLAB crash).
-    % {"MUONSINELS"} takes nlopt_bobyqa so long to run (even making MATLAB crash).
-    if ismember("nlopt", parameters.solvers_name)
-        s.blacklist = [s.blacklist, {'MUONSINELS'}, {'BENNETT5LS'},...
-            {'HIMMELBH'}, {'HAIRY'}];
-    end
+    if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
 
-    %if s.mindim >= 6
-    s.blacklist = [s.blacklist, { 'ARGTRIGLS', 'BROWNAL', ...
-        'COATING', 'DIAMON2DLS', 'DIAMON3DLS', 'DMN15102LS', ...
-        'DMN15103LS', 'DMN15332LS', 'DMN15333LS', 'DMN37142LS', ...
-        'DMN37143LS', 'ERRINRSM', 'HYDC20LS', 'LRA9A', ...
-        'LRCOVTYPE', 'LUKSAN12LS', 'LUKSAN14LS', 'LUKSAN17LS', 'LUKSAN21LS', ...
-        'LUKSAN22LS', 'MANCINO', 'PENALTY2', 'PENALTY3', 'VARDIM',
-        }];
-    %end
+        s.type = parameters.problem_type; % Unconstrained: 'u'
+        s.mindim = parameters.problem_mindim; % Minimum of dimension
+        s.maxdim = parameters.problem_maxdim; % Maximum of dimension
+        s.blacklist = [];
+        %s.blacklist = [s.blacklist, {}];
+        % Problems that take too long to solve.
+        % {'FBRAIN3LS'} and {'STRATEC'} take too long for fminunc.
+        if ismember("matlab_fminunc", parameters.solvers_name)
+            s.blacklist = [s.blacklist, {'FBRAIN3LS'}, {'STRATEC'}];
+        end
+        % {"MUONSINELS"} takes nlopt_newuoa so long to run (even making MATLAB crash).
+        % {"LRCOVTYPE"}, {'HIMMELBH'} and {'HAIRY'} take nlopt_cobyla so long
+        % to run (even making MATLAB crash).
+        % {"MUONSINELS"} takes nlopt_bobyqa so long to run (even making MATLAB crash).
+        if ismember("nlopt", parameters.solvers_name)
+            s.blacklist = [s.blacklist, {'MUONSINELS'}, {'BENNETT5LS'},...
+                {'HIMMELBH'}, {'HAIRY'}];
+        end
 
-    if isfield(parameters, "problem_names")
-        problem_names = parameters.problem_names;
+        %if s.mindim >= 6
+        s.blacklist = [s.blacklist, { 'ARGTRIGLS', 'BROWNAL', ...
+            'COATING', 'DIAMON2DLS', 'DIAMON3DLS', 'DMN15102LS', ...
+            'DMN15103LS', 'DMN15332LS', 'DMN15333LS', 'DMN37142LS', ...
+            'DMN37143LS', 'ERRINRSM', 'HYDC20LS', 'LRA9A', ...
+            'LRCOVTYPE', 'LUKSAN12LS', 'LUKSAN14LS', 'LUKSAN17LS', 'LUKSAN21LS', ...
+            'LUKSAN22LS', 'MANCINO', 'PENALTY2', 'PENALTY3', 'VARDIM',
+            }];
+        %end
+
+        if isfield(parameters, "problem_names")
+            problem_names = parameters.problem_names;
+        else
+            problem_names = secup(s);
+        end
     else
-        problem_names = secup(s);
+        s = load('probinfo.mat');
+        blacklist = ["DIAMON2DLS",...
+            "DIAMON2D",...
+            "DIAMON3DLS",...
+            "DIAMON3D",...
+            "DMN15102LS",...
+            "DMN15102",...
+            "DMN15103LS",...
+            "DMN15103",...
+            "DMN15332LS",...
+            "DMN15332",...
+            "DMN15333LS",...
+            "DMN15333",...
+            "DMN37142LS",...
+            "DMN37142",...
+            "DMN37143LS",...
+            "DMN37143",...
+            "ROSSIMP3_mp"];
+        blacklist_time_consuming = ["BAmL1SPLS",...
+            "FBRAIN3LS",...
+            "GAUSS1LS",...
+            "GAUSS2LS",...
+            "GAUSS3LS",...
+            "HYDC20LS",...
+            "HYDCAR6LS",...
+            "LUKSAN11LS",...
+            "LUKSAN12LS",...
+            "LUKSAN13LS",...
+            "LUKSAN14LS",...
+            "LUKSAN17LS",...
+            "LUKSAN21LS",...
+            "LUKSAN22LS",...
+            "METHANB8LS",...
+            "METHANL8LS",...
+            "SPINLS",...
+            "VESUVIALS",...
+            "VESUVIOLS",...
+            "VESUVIOULS",...
+            "YATP1CLS"];
+        problem_names = [];
+        for i = 2:length(s.problem_data)
+            if strcmpi( s.problem_data(i, 2), parameters.problem_type) && ...
+                    cell2mat(s.problem_data(i, 3)) >= parameters.problem_mindim && ...
+                    cell2mat(s.problem_data(i, 3)) <= parameters.problem_maxdim && ...
+                    ~ismember(s.problem_data(i, 1), blacklist) && ...
+                    ~ismember(s.problem_data(i, 1), blacklist_time_consuming)
+                problem_names = [problem_names, s.problem_data(i, 1)];
+            end
+        end
+        path_S2MPJ_matlab_problems = strcat(fileparts(mfilename('fullpath')), "/matlab_problems/");
+        if ~contains(path, path_S2MPJ_matlab_problems, 'IgnoreCase', true)
+            if exist(path_S2MPJ_matlab_problems, 'dir') == 7
+                addpath(path_S2MPJ_matlab_problems);
+                disp('Add path_S2MPJ_matlab_problems to MATLAB path.');
+            else
+                disp('path_S2MPJ_matlab_problems does not exist on the local machine.');
+            end
+        else
+            disp('Path_S2MPJ_matlab_problems already exists in MATLAB path.');
+        end
     end
 
-    fprintf("We will load %d problems\n\n", length(problem_names))
+    fprintf("We will load %d problems\n\n", length(problem_names));
 
     % Some fixed (relatively) options
     % Read two papers: What Every Computer Scientist Should Know About
@@ -201,8 +264,14 @@ try
     % otherwise, use for to calculate (sequential computation).
     if parameters.parallel == true
         parfor i_problem = 1:num_problems
-            p = macup(problem_names(1, i_problem));
-            dim = length(p.x0);
+            if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+                p = macup(problem_names(1, i_problem));
+                dim = length(p.x0);
+            else
+                problem_orig = str2func(char(problem_names(i_problem)));
+                problem_info = problem_orig('setup');
+                p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+            end
             for i_run = 1:num_random
                 % Set scaling matrix.
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
@@ -290,8 +359,14 @@ try
         end
     else
         for i_problem = 1:num_problems
-            p = macup(problem_names(1, i_problem));
-            dim = length(p.x0);
+            if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+                p = macup(problem_names(1, i_problem));
+                dim = length(p.x0);
+            else
+                problem_orig = str2func(char(problem_names(i_problem)));
+                problem_info = problem_orig('setup');
+                p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+            end
             for i_run = 1:num_random
                 % Set scaling matrix.
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
@@ -426,7 +501,13 @@ try
         i_run = 1;
         if parameters.parallel == true
             parfor i_problem = 1:num_problems
-                p = macup(problem_names(1, i_problem));
+                if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+                    p = macup(problem_names(1, i_problem));
+                else
+                    problem_orig = str2func(char(problem_names(i_problem)));
+                    problem_info = problem_orig('setup');
+                    p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+                end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
@@ -438,7 +519,13 @@ try
             end
         else
             for i_problem = 1:num_problems
-                p = macup(problem_names(1, i_problem));
+                if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+                    p = macup(problem_names(1, i_problem));
+                else
+                    problem_orig = str2func(char(problem_names(i_problem)));
+                    problem_info = problem_orig('setup');
+                    p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+                end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
