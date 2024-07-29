@@ -266,13 +266,12 @@ try
         parfor i_problem = 1:num_problems
             if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
                 p = macup(problem_names(1, i_problem));
-                dim = length(p.x0);
             else
                 problem_orig = str2func(char(problem_names(i_problem)));
                 problem_info = problem_orig('setup');
-                dim = length(problem_info.x0);
                 p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
             end
+            dim = length(p.x0);
             for i_run = 1:num_random
                 % Set scaling matrix.
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
@@ -288,7 +287,6 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")
                     % Rotation_badly_scaled is a flag to indicate whether the problem is rotated and badly scaled.
-                    dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
                     h = @(x) rotation_matrix * x;
@@ -320,12 +318,15 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_structured")
                     % Rotation_structure is a flag to indicate whether the problem is rotated and added with l-p regularization term.
-                    dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
                     h = @(x) rotation_matrix * x;
                     p.objective = @(x) p.objective(h(x));
-                    h = @(x) sum(abs(x).^ 1);
+                    if isfield(parameters, "structured_factor")
+                        h = @(x) parameters.structured_factor *  sum(abs(x).^ 1);
+                    else
+                        h = @(x) sum(abs(x).^ 1);
+                    end
                     p.objective = @(x) p.objective(x) + h(x);
                 end
                 if isfield(parameters, "plot_fhist") && parameters.plot_fhist
@@ -362,17 +363,16 @@ try
         for i_problem = 1:num_problems
             if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
                 p = macup(problem_names(1, i_problem));
-                dim = length(p.x0);
             else
                 problem_orig = str2func(char(problem_names(i_problem)));
                 problem_info = problem_orig('setup');
                 p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
             end
+            dim = length(p.x0);
             for i_run = 1:num_random
                 % Set scaling matrix.
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                     % Badly_scaled is a flag to indicate whether the problem is badly scaled.
-                    dim = length(p.x0);
                     if isfield(parameters, "badly_scaled_sigma")
                         scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
                     else
@@ -384,7 +384,6 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")
                     % Rotation_badly_scaled is a flag to indicate whether the problem is rotated and badly scaled.
-                    dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
                     h = @(x) rotation_matrix * x;
@@ -398,7 +397,6 @@ try
                 if isfield(parameters, "feature") && (strcmpi(parameters.feature, "rotation") || ...
                         strcmpi(parameters.feature, "rotation_noisy"))
                     % Rotation is a flag to indicate whether the problem is rotated.
-                    dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
                     h = @(x) rotation_matrix * x;
@@ -418,22 +416,20 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_structured")
                     % Rotated_structure is a flag to indicate whether the problem is rotated and added with l-p regularization term.
-                    dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
                     h = @(x) rotation_matrix * x;
                     p.objective = @(x) p.objective(h(x));
-                    parameters.structured_norm = 1;
                     if isfield(parameters, "structured_factor")
-                        h = @(x) parameters.structured_factor *  sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                        h = @(x) parameters.structured_factor *  sum(abs(x).^ 1);
                     else
-                        h = @(x) sum(abs(x).^ parameters.structured_norm)^(1/parameters.structured_norm);
+                        h = @(x) sum(abs(x).^ 1);
                     end
                     p.objective = @(x) p.objective(x) + h(x);
+                    parameters.structured_norm = 1;
                 end
                 if isfield(parameters, "rotated_badly_scaled")
                     % Rotated_badly_scaled is a flag to indicate whether the problem is rotated and badly scaled.
-                    dim = length(p.x0);
                     [Q,R] = qr(randn(dim));
                     rotation_matrix = Q*diag(sign(diag(R)));
                     h = @(x) rotation_matrix * x;
