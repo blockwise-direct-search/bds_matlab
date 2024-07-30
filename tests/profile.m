@@ -426,7 +426,6 @@ try
                         h = @(x) sum(abs(x).^ 1);
                     end
                     p.objective = @(x) p.objective(x) + h(x);
-                    parameters.structured_norm = 1;
                 end
                 if isfield(parameters, "rotated_badly_scaled")
                     % Rotated_badly_scaled is a flag to indicate whether the problem is rotated and badly scaled.
@@ -618,35 +617,6 @@ try
         end
     end
     fclose(fileID);
-
-    % % Make a Txt file to store the parameters that are input.
-    % filePath = strcat(path_testdata_perf, "/parameters_input.txt");
-    % fileID = fopen(filePath, 'w');
-    % parameters_saved = parameters;
-    % parameters_saved = trim_struct(parameters_saved);
-    % % Get the field names of a structure.
-    % parameters_saved_fields = fieldnames(parameters_saved);
-    % % Write field names and their corresponding values into a file line by line.
-    % for i = 1:numel(parameters_saved_fields)
-    %     field = parameters_saved_fields{i};
-    %     value = parameters_saved.(field);
-    %     if ~iscell(value)
-    %         fprintf(fileID, '%s: %s\n', field, value);
-    %     else
-    %         for j = 1:length(value)
-    %             solvers_options_saved = trim_struct(value{j});
-    %             solvers_options_saved_fields = fieldnames(solvers_options_saved);
-    %             for k = 1:numel(solvers_options_saved_fields)
-    %                 solvers_options_saved_field = solvers_options_saved_fields{k};
-    %                 solvers_options_saved_value = solvers_options_saved.(solvers_options_saved_field);
-    %                 fprintf(fileID, '%s: %s ', solvers_options_saved_field, ...
-    %                     solvers_options_saved_value);
-    %             end
-    %             fprintf(fileID, '\n');
-    %         end
-    %     end
-    % end
-    % fclose(fileID);
 
     % Copy the source code and test code to path_outdir.
     copyfile(fullfile(path_src, "*"), path_testdata_src);
