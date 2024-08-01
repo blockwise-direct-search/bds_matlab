@@ -595,8 +595,8 @@ try
     end
     fclose(fileID);
 
-    % Make a bar chart to show the distribution of the dimenstions of the problems that are tested.
-    % Count the frequency of occurrence of the dimension of the problems.
+    % Make a bar chart to show the distribution of the dimensions of the problems that are tested.
+    % Count the frequency of occurrence of the dimensions of the problems.
     [unique_values, ~, ~] = unique(data_dim);
     frequencies = zeros(size(unique_values));
     for i = 1:length(unique_values)
