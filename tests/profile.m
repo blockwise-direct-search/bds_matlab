@@ -577,17 +577,40 @@ try
     path_testdata_private = fullfile(path_testdata_tests, "private");
     mkdir(path_testdata_private);
 
-    % Make a Txt file to store the problems that are tested.
-    problem_names_str = strings(1, length(problem_names));
-    for i = 1:length(problem_names)
-        problem_names_str(i) = problem_names{i};
-    end
+    % Make a Txt file to store the problems that are tested and also record the dimensions of the problems that are tested.
+    data_dim = zeros(1, length(problem_names));
     filePath = strcat(path_testdata_perf, "/problem_names.txt");
     fileID = fopen(filePath, 'w');
-    for i = 1:length(problem_names)
-        fprintf(fileID, '%s\n', problem_names_str{i});
+    for i_problem = 1:length(problem_names)
+        if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+            p = macup(problem_names{i_problem});
+            data_dim(i_problem) = length(p.x0);
+            fprintf(fileID, '%-14s %2d\n', problem_names{i_problem}, length(p.x0));
+        else
+            problem_orig = str2func(char(problem_names(i_problem)));
+            problem_info = problem_orig('setup');
+            data_dim(i_problem) = length(problem_info.x0);
+            fprintf(fileID, '%-14s %2d\n', problem_names{i_problem}, length(problem_info.x0));
+        end
     end
     fclose(fileID);
+
+    % Make a bar chart to show the distribution of the dimenstions of the problems that are tested.
+    % Count the frequency of occurrence of the dimension of the problems.
+    [unique_values, ~, ~] = unique(data_dim);
+    frequencies = zeros(size(unique_values));
+    for i = 1:length(unique_values)
+        frequencies(i) = sum(data_dim == unique_values(i));
+    end
+    % Draw the bar chart.
+    figure;
+    bar(unique_values, frequencies);
+    xlabel('Dimensions');
+    ylabel('Frequency');
+    title('Bar Chart of Frequencies');
+    % Save the image to the specified path.
+    save_path = strcat(path_testdata_perf, "/bar_chart_dimensions.png");
+    saveas(gcf, save_path);
 
     % Make a Txt file to store the parameters that are used.
     filePath = strcat(path_testdata_perf, "/parameters.txt");
