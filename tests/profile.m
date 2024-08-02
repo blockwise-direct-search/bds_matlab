@@ -581,16 +581,21 @@ try
     data_dim = zeros(1, length(problem_names));
     filePath = strcat(path_testdata_perf, "/problem_names.txt");
     fileID = fopen(filePath, 'w');
+    if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+        fprintf(fileID, '%-15s %-15s\n', 'Problem_name', 'Matcutest_dim');
+    else
+        fprintf(fileID, '%-15s %-15s\n', 'Problem_name', 'S2MPJ_dim');
+    end
     for i_problem = 1:length(problem_names)
         if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
             p = macup(problem_names{i_problem});
             data_dim(i_problem) = length(p.x0);
-            fprintf(fileID, '%-14s %2d\n', problem_names{i_problem}, length(p.x0));
+            fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(p.x0)));
         else
             problem_orig = str2func(char(problem_names(i_problem)));
             problem_info = problem_orig('setup');
             data_dim(i_problem) = length(problem_info.x0);
-            fprintf(fileID, '%-14s %2d\n', problem_names{i_problem}, length(problem_info.x0));
+            fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(problem_info.x0)));
         end
     end
     fclose(fileID);
