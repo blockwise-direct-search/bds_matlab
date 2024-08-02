@@ -102,13 +102,14 @@ file_path = strcat(path_testdata, "/common_problem_dim_", num2str(parameters.pro
 
 % Open the file and write line by line.
 fid = fopen(file_path, 'w');
+fprintf(fid, '%-15s %-15s %-15s\n', 'Problem_name', 'Matcutest_dim', 'S2MPJ_dim');
 for i_problem = 1:length(common_problem_names)
     p_matcutest = macup(common_problem_names(1, i_problem));
     problem_orig = str2func(char(common_problem_names(i_problem)));
     problem_info = problem_orig('setup');
     p_s2mpj = s2mpj_wrapper(problem_info, common_problem_names(1, i_problem));
     if length(p_matcutest.x0) ~= length(p_s2mpj.x0)
-        fprintf(fid, '%s        %s:%s        %s:%s\n', common_problem_names{i_problem}, "matcutest_dim", num2str(length(p_matcutest.x0)), "s2mpj_dim", num2str(length(p_s2mpj.x0)));
+        fprintf(fid, '%-15s %-15s %-15s\n', common_problem_names{i_problem}, num2str(length(p_matcutest.x0)), num2str(length(p_s2mpj.x0)));
     else
         fprintf(fid, '%s\n', common_problem_names{i_problem});
     end
