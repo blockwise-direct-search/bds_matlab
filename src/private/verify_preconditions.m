@@ -10,6 +10,12 @@ if ~isrealvector(x0)
     error("x0 should be a real vector.");
 end
 
+if isfield(options, "direction_set")
+    if ~(ismatrix(options.direction_set) && size(options.direction_set, 1) == length(x0) && size(options.direction_set, 2) == length(x0))
+        error("options.direction_set should be a square matrix with the order being the length of x0.");
+    end
+end
+
 if isfield(options, "MaxFunctionEvaluations")
     if ~(isintegerscalar(options.MaxFunctionEvaluations) && options.MaxFunctionEvaluations > 0)
         error("options.MaxFunctionEvaluations should be a positive integer.");

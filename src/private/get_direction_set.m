@@ -34,17 +34,6 @@ else
         direction_set(isnan(direction_set) | isinf(direction_set)) = 0;
     end
 
-    % Check whether the direction set is linearly independent by checking whether the smallest
-    % eigenvalue of the direction set is larger than 1.0e-10. There may exists some cases
-    % where some of the eigenvalues of the direction set are complex numbers. In this case, we compare
-    % the norm of the smallest eigenvalue with 1.0e-10. Using eigs to calculate the smallest eigenvalue
-    % may encounter some convergence issues. The warning message may be displayed like this:
-    % "0 of the 1 requested eigenvalues converged. Eigenvalues that did not converge are NaN."
-    % We set the maximum number of iterations to 1000 and the tolerance to eps to avoid these issues.
-    if norm(eigs(direction_set, 1, 'smallestabs', 'MaxIter', 1000, 'Tolerance', eps)) < 1.0e-10
-        error('The direction set is not linearly independent.');
-    end
-
     % Remove the directions whose norms are too small.
     % We include the factor sqrt(n) in the following threshold to reflect the dimension of the
     % problem.
@@ -85,11 +74,11 @@ else
     end
     
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
-    % We use QR factorization with permutation to find such columns. 
+    % We use QR factorization with permutation to find such columns.
 
-    % First, we need to subtract a maximum linearly independent set from direction_set by QR factorization.
+    % First, we need to extract a maximum linearly independent set from direction_set by QR factorization.
     [~, R, P] = qr(direction_set);
-    [row, col] = find(triu(P) == 1);
+    [row, col] = find(P == 1);
     % permuted_sigma records the permutation of the columns of direction_set. It maps the indices of
     % the columns of direction_set, which is the first column of permuted_sigma, to the indices of the
     % columns of the permuted direction_set, which is the second column of permuted_sigma.
@@ -99,30 +88,17 @@ else
     % linear independent system of direction_set by finding the first element in the diagonal
     % of R that is smaller than 1e-10. Then, by the permutation matrix P, we can know the original indices
     % of the columns of direction_set that are linearly independent.
-    if ~isempty(1 : find(abs(diag(R)) < 1e-10, 1)) && length(1 : find(diag(R) < 1e-10, 1)) == 1
-        R_truncate_index = find(diag(R) < 1e-10, 1);
+    R_truncate_index = find(abs(diag(R)) < 1e-10, 1);
+    if isempty(R_truncate_index)
+        AP_indices = 1:size(direction_set, 2);
+    else
         [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_sigma(:, 2));
-        direction_set = direction_set(:, sort(AP_indices));
-    % else
-    %     direction_set = eye(n);
     end
-    
+    direction_set = direction_set(:, sort(AP_indices));
+
     % Note: Actually, the above code may influence the order of the columns of direction_set. However,
     % the order of the columns of direction_set does not matter since each block will be visited once in one iteration.
     % Thus, we can ignore the order of the columns of direction_set.
-    
-    % The following columns of Q will be added to direction_set.
-    % 1. The corresponding diagonal elements of R are tiny.
-    % 2. Columns m+1 to n with m being the number of columns in direction_set provided that m < n.
-    [Q, R, ~] = qr(direction_set);
-    [~, m] = size(direction_set);
-    % deficient_columns contains the indices of the tiny diagonal elements of 
-    % R(1:min(m, n), 1:min(m, n)). 
-    % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
-    % comparison will return a matrix due to the implicit expansion.
-    deficient_columns = ~(abs(diag(R(1:min(m, n), 1:min(m, n)))))' > ...
-        10*eps*max(m,n)*vecnorm(R(1:min(m,n), 1:min(m,n)));
-    direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
 
     % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
     % We use QR factorization with permutation to find such columns. 
