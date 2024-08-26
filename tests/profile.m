@@ -694,7 +694,11 @@ try
     end
 
     % Draw profiles.
-    options_perf.feature = parameters.feature;
+    if parameters.is_noisy
+        options_perf.feature = strcat(parameters.feature, "-", num2str(sprintf('%.1e', parameters.noise_level)));
+    else
+        options_perf.feature = parameters.feature;
+    end
     perfdata(tau, frec, fmin, options_perf);
 
 catch exception

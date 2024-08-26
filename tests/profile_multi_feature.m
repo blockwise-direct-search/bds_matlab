@@ -2,7 +2,8 @@ function profile_multi_feature(parameters)
 % In profile_multi_feature, the required field of parameters are:
 %  solver_name: an array of strings, the names of the solvers to be profiled, like ["cbds", "newuoa"].
 %  multi_feature: an array of strings, the names of the features to be profiled, like ["plain", "rotation"].
-%  If it is "all", all features will be profiled.
+%  If it is "all", all features will be profiled and the features going to be profiled are the following:
+%  ["plain", "rotation", "randomx0_10", "rotation_noisy_1e-1", "rotation_noisy_1e-2", "rotation_noisy_1e-3", "rotation_noisy_1e-4", "rotation_noisy_1e-5"].
 %  problem_dim: a string, the dimension of the problems to be profiled, like "small" or "big".
 %
 
