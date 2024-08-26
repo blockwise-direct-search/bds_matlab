@@ -1,4 +1,4 @@
-function profile(parameters)
+function path_testdata_perf = profile(parameters)
 % Draw performance profiles.
 %
 
@@ -694,6 +694,7 @@ try
     end
 
     % Draw profiles.
+    options_perf.feature = parameters.feature;
     perfdata(tau, frec, fmin, options_perf);
 
 catch exception

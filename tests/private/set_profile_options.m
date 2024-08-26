@@ -129,11 +129,12 @@ if isfield(parameters, "feature")
     end
 end
 
-if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_noisy")
+if isfield(parameters, "feature") && startsWith(lower(parameters.feature), "rotation_noisy")
     parameters.is_noisy = true;
-    if ~isfield(parameters, "noise_level")
-        parameters.noise_level = 1.0e-3;
-    end
+    parameters.random_initial_point = false;
+    level_str = split(lower(parameters.feature), "_");
+    parameters.noise_level = str2double(level_str{3});
+    parameters.feature = "rotation_noisy";
 end
 
 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")

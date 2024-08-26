@@ -31,6 +31,9 @@ for iprec = 1 : nprec
             lines{is}, "Color", colors{is},  "Linewidth", lw);
         hold on;
     end
+    if iprec == ceil(nprec/2)
+        title(strrep(options_perf.feature, '_', '-'), 'FontSize', 14, 'FontWeight', 'bold');
+    end
     xlabel(sprintf("%d", iprec));
     axis([0 prof_output{iprec}.cut_ratio 0 1]);
     grid on;
