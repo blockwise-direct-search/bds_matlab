@@ -312,6 +312,7 @@ cstr
 ctam
 cth
 Cucker
+cumsum
 cunxin
 Cunxin
 cunxinhuang
