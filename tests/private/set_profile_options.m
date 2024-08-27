@@ -270,9 +270,16 @@ if isfield(parameters, "feature")
                 "_", num2str(parameters.num_random));
         end
     else
-        pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
-            num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
-            "_", num2str(parameters.num_random));
+        if strcmpi(parameters.feature, "no_noise")
+            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+                num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", "plain",...
+                "_", num2str(parameters.num_random));
+        else
+            pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
+                num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
+                "_", num2str(log10(parameters.noise_level)), "_", num2str(parameters.num_random));
+
+        end
     end
 else
     if ~parameters.is_noisy

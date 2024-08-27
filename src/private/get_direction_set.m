@@ -77,24 +77,30 @@ else
     % We use QR factorization with permutation to find such columns.
 
     % First, we need to extract a maximum linearly independent set from direction_set by QR factorization.
-    [~, R, P] = qr(direction_set);
-    [row, col] = find(P == 1);
-    % permuted_sigma records the permutation of the columns of direction_set. It maps the indices of
-    % the columns of direction_set, which is the first column of permuted_sigma, to the indices of the
-    % columns of the permuted direction_set, which is the second column of permuted_sigma.
-    permuted_sigma = [row, col];
-    % The linear independence of the columns of direction_set is equivalent to the upper triangular matrix
-    % R. Since the diagonal elements of R are in decreasing order, we can know the length of the maximal 
-    % linear independent system of direction_set by finding the first element in the diagonal
-    % of R that is smaller than 1e-10. Then, by the permutation matrix P, we can know the original indices
-    % of the columns of direction_set that are linearly independent.
-    R_truncate_index = find(abs(diag(R)) < 1e-10, 1);
-    if isempty(R_truncate_index)
-        AP_indices = 1:size(direction_set, 2);
-    else
-        [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_sigma(:, 2));
-    end
-    direction_set = direction_set(:, sort(AP_indices));
+    % [~, R, P] = qr(direction_set);
+    % [row, col] = find(P == 1);
+    % % permuted_sigma records the permutation of the columns of direction_set. It maps the indices of
+    % % the columns of direction_set, which is the first column of permuted_sigma, to the indices of the
+    % % columns of the permuted direction_set, which is the second column of permuted_sigma.
+    % permuted_sigma = [row, col];
+    % % The linear independence of the columns of direction_set is equivalent to the upper triangular matrix
+    % % R. Since the diagonal elements of R are in decreasing order, we can know the length of the maximal 
+    % % linear independent system of direction_set by finding the first element in the diagonal
+    % % of R that is smaller than 1e-10. Then, by the permutation matrix P, we can know the original indices
+    % % of the columns of direction_set that are linearly independent.
+    % % R_truncate_index = find(abs(diag(R)) < 1e-10, 1);
+    % % if isempty(R_truncate_index)
+    % %     AP_indices = 1:size(direction_set, 2);
+    % % else
+    % %     [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_sigma(:, 2));
+    % % end
+
+
+    % First, we need to extract a maximum linearly independent set from direction_set by QR factorization,
+    % where p is the permutation vector and direction_set(:, p) = Q*R.
+    [Q, R, p] = qr(direction_set, "vector");
+    R_valid_index = (abs(diag(R)) >= 1e-10);
+    direction_set = [direction_set(:, p(R_valid_index)) Q(:, p(~R_valid_index))];
 
     % Note: Actually, the above code may influence the order of the columns of direction_set. However,
     % the order of the columns of direction_set does not matter since each block will be visited once in one iteration.
