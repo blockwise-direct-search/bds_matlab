@@ -74,4 +74,4 @@ tests/competitors/private/imfil.m
 tests/probinfo.mat
 tests/matlab_problems
 tests/s2mpjlib.m
-tests/test_script.m
+tests/profile_script.m
