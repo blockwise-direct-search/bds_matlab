@@ -68,10 +68,13 @@ if isfield(parameters, "feature")
     elseif startsWith(lower(parameters.feature), "noise")
         parameters.is_noisy = true;
         parameters.random_initial_point = false;
-        level_str = split(lower(parameters.feature), "_");
-        parameters.noise_level = str2double(level_str{2});
+        if count(parameters.feature, '_') > 1
+            level_str = split(lower(parameters.feature), "_");
+            parameters.noise_level = 10^(str2double(level_str{3}(find(level_str{3} == 'e', 1, 'last')+1:end)));
+        end
         parameters.feature = strcat(parameters.noise_type, "_", ...
             num2str(log10(parameters.noise_level)), "_noise");
+        keyboard
     elseif startsWith(lower(parameters.feature), "rotation")
         parameters.is_noisy = false;
         parameters.random_initial_point = false;
