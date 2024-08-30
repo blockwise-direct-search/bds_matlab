@@ -81,9 +81,9 @@ else
     % d_i = (q_1^T d_1) q_1 + (q_2^T d_2) q_2 + ... + (q_i^T d_i) q_i
     %     = R_{1i} q_1 + R_{2i} q_2 + ... + R_{ii} q_i.
     % where q_i is the i-th column of Q and R is an upper triangular matrix.
-    % In the above equation, (R_{1i}, R_{2i}, ..., R_{ii}) can be regarded as the coordinates of d_i in the basis
-    % [q_1, q_2, ..., q_i]. The permutation matrix P is to make sure the norm of q_i is monotonically decreasing.
-    % Thus, we have R_{ii} > \sum_{j = 1}^{i + 1} R_{j (i+1)} for i = 1, 2, ..., n.
+    % So how to to make the diagonal elements of R decrease monotonically? We will reorder the direction set according to the l-2 norms.
+    % In the above equation, (R_{1i}, R_{2i}, ..., R_{ii}, 0, ..., 0) can be regarded as the coordinates of d_i in the basis
+    % [q_1, q_2, ..., q_n]. Thus, we have R_{ii} > \sum_{j = 1}^{i + 1} R_{j (i+1)} for i = 1, 2, ..., n.
     % If R_{ii} is tiny, then R_{jk} should be tiny for j = i + 1, i + 2, ..., n and k = 1, 2, ..., n.
     % Therefore, the rank of direction_set is the number of non-tiny diagonal elements of R and the maximum
     % linearly independent subset of direction_set is [d_1, d_2, ..., d_r] where r is the last index of the
