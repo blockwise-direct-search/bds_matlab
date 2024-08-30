@@ -40,13 +40,14 @@ else
     shortest_direction_norm = 10*sqrt(n)*eps;
     direction_norms = vecnorm(direction_set);
     short_directions = (direction_norms < shortest_direction_norm);
-    if any(short_directions)
+    % If the direction set is empty, the direction set should be set to an identity matrix. 
+    if any(short_directions) && ~isempty(direction_set)
         warning("The direction set contains directions shorter than %g. They are removed.", ...
             shortest_direction_norm);
         direction_set = direction_set(:, ~short_directions);
         direction_norms = direction_norms(~short_directions);
     end
-    
+
     % Find those directions that are almost parallel. Preserve the first one appearing in the
     % direction set and remove the others.
     parallel_directions = (abs(direction_set'*direction_set) > (1 - 1.0e-10) * (direction_norms' * direction_norms));
@@ -72,53 +73,30 @@ else
     if isempty(direction_set)
         direction_set = eye(n);
     end
-    
-    % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
-    % We use QR factorization with permutation to find such columns.
 
-    % First, we need to extract a maximum linearly independent set from direction_set by QR factorization.
-    % [~, R, P] = qr(direction_set);
-    % [row, col] = find(P == 1);
-    % % permuted_sigma records the permutation of the columns of direction_set. It maps the indices of
-    % % the columns of direction_set, which is the first column of permuted_sigma, to the indices of the
-    % % columns of the permuted direction_set, which is the second column of permuted_sigma.
-    % permuted_sigma = [row, col];
-    % % The linear independence of the columns of direction_set is equivalent to the upper triangular matrix
-    % % R. Since the diagonal elements of R are in decreasing order, we can know the length of the maximal 
-    % % linear independent system of direction_set by finding the first element in the diagonal
-    % % of R that is smaller than 1e-10. Then, by the permutation matrix P, we can know the original indices
-    % % of the columns of direction_set that are linearly independent.
-    % % R_truncate_index = find(abs(diag(R)) < 1e-10, 1);
-    % % if isempty(R_truncate_index)
-    % %     AP_indices = 1:size(direction_set, 2);
-    % % else
-    % %     [~, AP_indices] = ismember(1:(R_truncate_index - 1), permuted_sigma(:, 2));
-    % % end
-
-
-    % First, we need to extract a maximum linearly independent set from direction_set by QR factorization,
-    % where p is the permutation vector and direction_set(:, p) = Q*R.
+    % we use QR factorization with permutation to make the rank of direction_set become n.
+    % How does QR factorization with permutation work? It works under Gram-Schmidt orthogonalization.
+    % Denote the columns of direction_set as [d_1, d_2, ..., d_m] where m is the number of columns of direction_set.
+    % By Gram-Schmidt orthogonalization, we have 
+    % d_i = (q_1^T d_1) q_1 + (q_2^T d_2) q_2 + ... + (q_i^T d_i) q_i
+    %     = R_{1i} q_1 + R_{2i} q_2 + ... + R_{ii} q_i.
+    % where q_i is the i-th column of Q and R is an upper triangular matrix.
+    % In the above equation, (R_{1i}, R_{2i}, ..., R_{ii}) can be regarded as the coordinates of d_i in the basis
+    % [q_1, q_2, ..., q_i]. The permutation matrix P is to make sure the norm of q_i is monotonically decreasing.
+    % Thus, we have R_{ii} > \sum_{j = 1}^{i + 1} R_{j (i+1)} for i = 1, 2, ..., n.
+    % If R_{ii} is tiny, then R_{jk} should be tiny for j = i + 1, i + 2, ..., n and k = 1, 2, ..., n.
+    % Therefore, the rank of direction_set is the number of non-tiny diagonal elements of R and the maximum
+    % linearly independent subset of direction_set is [d_1, d_2, ..., d_r] where r is the last index of the
+    % diagonal elements of R that are not tiny. In addition, [d_1, d_2, ..., d_r] can be spanned into
+    % [d_1, d_2, ..., d_r, q_{r+1}, q_{r+2}, ..., q_n], which is a basis of the full space.
+    % We need to use permutated vector p to reorder [d_1, ..., d_r] under the original order of direction_set.
+    % We need to point out direction_set is not empty since we have set it to be the identity matrix if it is empty.
+    % Thus, there exists at least one nonzero diagonal element in R to QR factorize direction_set.
     [Q, R, p] = qr(direction_set, "vector");
-    R_valid_index = (abs(diag(R)) >= 1e-10);
-    direction_set = [direction_set(:, p(R_valid_index)) Q(:, p(~R_valid_index))];
+    is_independent = false(n, 1);
+    is_independent(1:size(direction_set, 2)) = (abs(diag(R)) >= 1e-10);
+    direction_set = [direction_set(:, p(is_independent)) Q(:, p(~is_independent))];
 
-    % Note: Actually, the above code may influence the order of the columns of direction_set. However,
-    % the order of the columns of direction_set does not matter since each block will be visited once in one iteration.
-    % Thus, we can ignore the order of the columns of direction_set.
-
-    % If rank(direction_set) < n, we add new columns to direction_set to make the rank become n.
-    % We use QR factorization with permutation to find such columns. 
-    % The following columns of Q will be added to direction_set.
-    % 1. The corresponding diagonal elements of R are tiny.
-    % 2. Columns m+1 to n with m being the number of columns in direction_set provided that m < n.
-    [Q, R, ~] = qr(direction_set);
-    [~, m] = size(direction_set);
-    % deficient_columns contains the indices of the tiny diagonal elements of 
-    % R(1:min(m, n), 1:min(m, n)). 
-    % We must transpose diag(R) since vecnorm will return a row vector. Otherwise, the following
-    % comparison will return a matrix due to the implicit expansion.
-    deficient_columns = ~(abs(diag(R(1:m, 1:m)))) > 1.0e-10*vecnorm(R(1:m, 1:m))';
-    direction_set = [direction_set, Q(:, deficient_columns), Q(:, m+1:end)];
 end
 
 % Finally, set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th vector in direction_set.
