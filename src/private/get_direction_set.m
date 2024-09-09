@@ -74,7 +74,8 @@ else
         direction_set = eye(n);
     end
 
-    % Todo: if the rank of direction set is already n, how does the qr factorization work?
+    % If the rank of direction_set is already n, then is_independent is a vector of all true values.
+    % In this case, direction_set is not changed after the following QR factorization.
     % we use QR factorization with permutation to make the rank of direction_set become n.
     % How does QR factorization with permutation work? It works under Gram-Schmidt orthogonalization.
     % Denote the columns of direction_set as [d_1, d_2, ..., d_m] where m is the number of columns of direction_set.

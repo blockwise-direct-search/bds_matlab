@@ -94,6 +94,12 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
+      - name: Set up MATLAB with Parallel Computing Toolbox
+        uses: matlab-actions/setup-matlab@v2.1.2
+        with:
+          release: ${{ matrix.matlab }}
+          products: Parallel_Computing_Toolbox
+
       - name: Conduct the test
         uses: matlab-actions/run-command@v2.1.1
         with:
