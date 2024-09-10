@@ -15,7 +15,10 @@ suite = testsuite(pwd, 'IncludeSubfolders', true);
 runner = TestRunner.withTextOutput('OutputDetail',Verbosity.Detailed); 
 
 % Create a CodeCoveragePlugin instance and add it to the test runner
-sourceFolder = 'src';
+current_path = mfilename("fullpath");
+path_tests = fileparts(current_path);
+path_root = fileparts(path_tests);
+source_folder = fullfile(path_root, "src");
 reportFile = 'coverage.xml';
 reportFormat = CoberturaFormat(reportFile);
 p = CodeCoveragePlugin.forFolder(sourceFolder,'IncludingSubfolders', true,'Producing',reportFormat);
