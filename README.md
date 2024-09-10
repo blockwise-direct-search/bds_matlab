@@ -26,8 +26,7 @@ https://github.com/blockwise-direct-search/bds/issues.
 
 ===============================================
 
-.. image:: https://img.shields.io/codecov/c/github/blockwise-direct-search/bds?style=for-the-badge&logo=codecov
-   :target: https://app.codecov.io/github/blockwise-direct-search/bds
+[![Codecov](https://img.shields.io/codecov/c/github/blockwise-direct-search/bds?style=for-the-badge&logo=codecov)](https://app.codecov.io/github/blockwise-direct-search/bds)
 
 ## Test of BDS.
 The tests are **automated** by
