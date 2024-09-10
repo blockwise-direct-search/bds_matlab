@@ -27,6 +27,9 @@ codegen/
 # Simulink cache files
 *.slxc
 
+# Stores data in plain text format.
+*.xml
+
 # Octave session info
 octave-workspace
 

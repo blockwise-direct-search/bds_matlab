@@ -1,5 +1,7 @@
 name: Unit test and coverage
+
 on: push
+
 jobs:
   run:
     name: Generate coverage report for MATLAB ${{ matrix.matlab-version }} on ${{ matrix.os }}

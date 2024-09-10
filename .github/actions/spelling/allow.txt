@@ -1637,6 +1637,7 @@ ssh
 sss
 sstemp
 Stabilit
+standalone
 STARTUPSAV
 stc
 Steenrod
@@ -1849,6 +1850,7 @@ urlcolor
 usepackage
 userpath
 usr
+UTF
 utm
 utx
 VALHIST
@@ -1929,6 +1931,7 @@ xipt
 xjpt
 xlabel
 xlabh
+xml
 xnew
 xopt
 xoptd
