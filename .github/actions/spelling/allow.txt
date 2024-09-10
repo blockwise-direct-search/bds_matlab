@@ -1337,6 +1337,7 @@ Plemmons
 plist
 Ploskas
 plugin
+plugins
 pm
 PMLR
 pmpaths
