@@ -272,9 +272,12 @@ cmake
 cmpaths
 cmtools
 coap
+Cobertura
 cobyla
 COBYQA
 coce
+codecov
+codecoverage
 CODEOWNERS
 colombiana
 colorbar
@@ -597,6 +600,7 @@ gcc
 gcd
 gcf
 gcp
+genpath
 GENROSE
 geq
 geqq
@@ -1171,6 +1175,7 @@ newuoas
 nexists
 Neyman
 nez
+nfailed
 nfeval
 nfm 
 nfmm
@@ -1194,6 +1199,7 @@ nless
 nlopt
 nmath
 nmid
+nnz
 nobottomtitles
 Nocedal
 Noda
@@ -1330,6 +1336,7 @@ Planiden
 Plemmons
 plist
 Ploskas
+plugin
 pm
 PMLR
 pmpaths
@@ -1723,6 +1730,7 @@ Terlaky
 testbds
 testcu
 testdata
+testsuite
 Tetruashvili
 Teukolsky
 texlive
@@ -1819,6 +1827,7 @@ und
 underdetermined
 uninstall
 uninstalls
+unittest
 Universitext
 unlhd
 unrhd

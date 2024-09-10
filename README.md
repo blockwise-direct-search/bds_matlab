@@ -63,3 +63,4 @@ The tests are **automated** by
 - [![Performance profiles of NLOPT, small](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_nlopt_small.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_nlopt_small.yml)
 - [![Performance profiles of BFO, big](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_bfo_big.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_bfo_big.yml)
 - [![Performance profiles of BFO, small](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_bfo_small.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/profile_bfo_small.yml)
+- [![Coverage test of BDS](https://github.com/blockwise-direct-search/bds/actions/workflows/unit_test_coverage.yml/badge.svg)](https://github.com/blockwise-direct-search/bds/actions/workflows/unit_test_coverage.yml)
