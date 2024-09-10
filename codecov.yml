@@ -1,0 +1,16 @@
+# Codecov
+
+coverage:
+  status:
+    project:
+      default:
+        target: 1
+    patch:
+      default:
+        target: 0
+
+github_checks:
+  annotations: false
+
+ignore:
+  - '**/tests/**'
