@@ -90,20 +90,28 @@ end
 function output = eval_fun_tmp(x)
 if length(x) <= 100
     output = NaN;
-else
+elseif length(x) <= 200
     output = inf;
+else
+    error('The length of x is too large.');
 end
 end
 
 function eval_fun_test(testCase)
 %EVAL_fun_TEST tests the file private/eval_fun.m.
-n = randi([1, 200]);
+n = randi([1, 100]);
 x = randn(n, 1);
 f_return = 1e30;
 
 verifyEqual(testCase, eval_fun(@eval_fun_tmp, x), f_return)
 
-n = max(101, randi([1, 200]));
+n = randi([101, 200]);
+x = randn(n, 1);
+f_return = 1e30;
+
+verifyEqual(testCase, eval_fun(@eval_fun_tmp, x), f_return)
+
+n = randi([201, 300]);
 x = randn(n, 1);
 f_return = 1e30;
 
@@ -280,8 +288,46 @@ end
 if rank(D(:, 1:2:2*n-1)) ~= n
     error('The odd columns of D is not a basis.');
 end
-% if ~all(abs(Q - D(:, 1:2:2*n-1)) < 1e-10, 'all')
-%     error('D is not corresponding to the input, where is an orthogonal matrix');
-% end
+end
+
+%The following example is based on https://github.com/libprima/prima/blob/main/matlab/tests/testprima.m, which is written
+%by Zaikun Zhang.
+function [f, g, H]=chrosen(x)
+    %CHROSEN calculates the function value, gradient, and Hessian of the
+    %   Chained Rosenbrock function.
+    %   See
+    %   [1] Toint (1978), 'Some numerical results using a sparse matrix
+    %   updating formula in unconstrained optimization'
+    %   [2] Powell (2006), 'The NEWUOA software for unconstrained
+    %   optimization without derivatives'
+    
+    n=length(x);
+    
+    alpha = 4;
+    
+    f=0; % Function value
+    g=zeros(n,1); % Gradient
+    H=zeros(n,n); % Hessian
+    
+    for i=1:n-1
+        f = f + (x(i)-1)^2+alpha*(x(i)^2-x(i+1))^2;
+    
+        g(i)   = g(i) + 2*(x(i)-1)+alpha*2*(x(i)^2-x(i+1))*2*x(i);
+        g(i+1) = g(i+1) - alpha*2*(x(i)^2-x(i+1));
+    
+        H(i,i)    =  H(i,i)+2+alpha*2*2*(3*x(i)^2-x(i+1));
+        H(i,i+1)  =  H(i,i+1)-alpha*2*2*x(i);
+        H(i+1,i)  =  H(i+1,i) -alpha*2*2*x(i);
+        H(i+1,i+1)=  H(i+1,i+1)+alpha*2;
+    end
+end
+
+function bds_test(testCase)
+%BDS_TEST tests the file ./bds.m.
+x0 = zeros(3,1);
+[~, fopt, ~, ~] = bds(@chrosen, x0);
+verifyEqual(testCase, fopt, 0)
 
 end
+
+
