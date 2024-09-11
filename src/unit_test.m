@@ -355,7 +355,8 @@ end
 function bds_test(testCase)
 %BDS_TEST tests the file ./bds.m.
 x0 = zeros(3,1);
-[~, fopt, ~, ~] = bds(@chrosen, x0);
+options.verbose = true;
+[~, fopt, ~, ~] = bds(@chrosen, x0, options);
 verifyEqual(testCase, fopt, 0)
 
 end
