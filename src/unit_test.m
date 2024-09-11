@@ -288,6 +288,36 @@ end
 if rank(D(:, 1:2:2*n-1)) ~= n
     error('The odd columns of D is not a basis.');
 end
+
+n = 5;
+options.direction_set = NaN(n, n);
+D = [zeros(n) zeros(n)];
+for i = 1:n
+    D(i, 2*i-1) = 1;
+    D(i, 2*i) = -1;
+end
+verifyEqual(testCase, get_direction_set(n, options), D)
+
+n = 5;
+options.direction_set = inf(n, n);
+D = [zeros(n) zeros(n)];
+for i = 1:n
+    D(i, 2*i-1) = 1;
+    D(i, 2*i) = -1;
+end
+verifyEqual(testCase, get_direction_set(n, options), D)
+
+n = 5;
+D = [zeros(n) zeros(n)];
+direction_set = eye(n);
+for i = 1:n
+    D(i, 2*i-1) = 1;
+    D(i, 2*i) = -1;
+end
+direction_set(randi(n), randi(n)) = NaN;
+options.direction_set = direction_set;
+verifyEqual(testCase, get_direction_set(n, options), D)
+
 end
 
 %The following example is based on https://github.com/libprima/prima/blob/main/matlab/tests/testprima.m, which is written
