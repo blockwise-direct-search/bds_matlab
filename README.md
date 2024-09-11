@@ -4,7 +4,7 @@ BDS is a package for solving nonlinear optimization problems without using deriv
 
 ## What is BDS?
 
-BDS is a derivative-free package using blockwise direct-search methods. The current version is implemented in MATLAB and it will be implemented in other programming languages in the future.
+BDS is a derivative-free package using blockwise direct-search methods. The current version is implemented in MATLAB, and it will be implemented in other programming languages in the future.
 
 See [Haitian LI's presentation](https://lht97.github.io/documents/DFOS2024.pdf) on BDS for more information.
 
@@ -24,7 +24,7 @@ If the above succeeds, then the package `bds` is installed and ready to use. Try
 We do not support MATLAB R2017a or earlier. If there exists any problems, please open an issue by
 https://github.com/blockwise-direct-search/bds/issues.
 
-===============================================
+## The coverage of unit test (offered by [Codecov](https://about.codecov.io/))
 
 [![Codecov](https://img.shields.io/codecov/c/github/blockwise-direct-search/bds?style=for-the-badge&logo=codecov)](https://app.codecov.io/github/blockwise-direct-search/bds)
 
