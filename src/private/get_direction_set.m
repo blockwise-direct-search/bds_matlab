@@ -97,6 +97,8 @@ else
     % We need to point out direction_set is not empty since we have set it to be the identity matrix if it is empty.
     % Thus, there exists at least one nonzero diagonal element in R to QR factorize direction_set.
     [Q, R, p] = qr(direction_set, "vector");
+    % The following code is used to encounter the case where the number of columns of direction_set is less than n.
+    p = [p, length(p) + (1:(n - length(p)))];
     is_independent = false(n, 1);
     is_independent(1:size(direction_set, 2)) = (abs(diag(R)) >= 1e-10);
     direction_set = [direction_set(:, p(is_independent)) Q(:, p(~is_independent))];

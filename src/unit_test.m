@@ -310,11 +310,32 @@ verifyEqual(testCase, get_direction_set(n, options), D)
 n = 5;
 D = [zeros(n) zeros(n)];
 direction_set = eye(n);
+direction_set(1, 1) = NaN;
 for i = 1:n
-    D(i, 2*i-1) = 1;
-    D(i, 2*i) = -1;
+    if i ~= n
+        D(i+1, 2*i-1) = 1;
+        D(i+1, 2*i) = -1;
+    else
+        D(1, 2*i-1) = 1;
+        D(1, 2*i) = -1;
+    end
 end
-direction_set(randi(n), randi(n)) = NaN;
+options.direction_set = direction_set;
+verifyEqual(testCase, get_direction_set(n, options), D)
+
+n = 5;
+D = [zeros(n) zeros(n)];
+direction_set = eye(n);
+direction_set(1, 1) = inf;
+for i = 1:n
+    if i ~= n
+        D(i+1, 2*i-1) = 1;
+        D(i+1, 2*i) = -1;
+    else
+        D(1, 2*i-1) = 1;
+        D(1, 2*i) = -1;
+    end
+end
 options.direction_set = direction_set;
 verifyEqual(testCase, get_direction_set(n, options), D)
 
@@ -323,41 +344,47 @@ end
 %The following example is based on https://github.com/libprima/prima/blob/main/matlab/tests/testprima.m, which is written
 %by Zaikun Zhang.
 function [f, g, H]=chrosen(x)
-    %CHROSEN calculates the function value, gradient, and Hessian of the
-    %   Chained Rosenbrock function.
-    %   See
-    %   [1] Toint (1978), 'Some numerical results using a sparse matrix
-    %   updating formula in unconstrained optimization'
-    %   [2] Powell (2006), 'The NEWUOA software for unconstrained
-    %   optimization without derivatives'
-    
-    n=length(x);
-    
-    alpha = 4;
-    
-    f=0; % Function value
-    g=zeros(n,1); % Gradient
-    H=zeros(n,n); % Hessian
-    
-    for i=1:n-1
-        f = f + (x(i)-1)^2+alpha*(x(i)^2-x(i+1))^2;
-    
-        g(i)   = g(i) + 2*(x(i)-1)+alpha*2*(x(i)^2-x(i+1))*2*x(i);
-        g(i+1) = g(i+1) - alpha*2*(x(i)^2-x(i+1));
-    
-        H(i,i)    =  H(i,i)+2+alpha*2*2*(3*x(i)^2-x(i+1));
-        H(i,i+1)  =  H(i,i+1)-alpha*2*2*x(i);
-        H(i+1,i)  =  H(i+1,i) -alpha*2*2*x(i);
-        H(i+1,i+1)=  H(i+1,i+1)+alpha*2;
-    end
+%CHROSEN calculates the function value, gradient, and Hessian of the
+%   Chained Rosenbrock function.
+%   See
+%   [1] Toint (1978), 'Some numerical results using a sparse matrix
+%   updating formula in unconstrained optimization'
+%   [2] Powell (2006), 'The NEWUOA software for unconstrained
+%   optimization without derivatives'
+
+n=length(x);
+
+alpha = 4;
+
+f=0; % Function value
+g=zeros(n,1); % Gradient
+H=zeros(n,n); % Hessian
+
+for i=1:n-1
+    f = f + (x(i)-1)^2+alpha*(x(i)^2-x(i+1))^2;
+
+    g(i)   = g(i) + 2*(x(i)-1)+alpha*2*(x(i)^2-x(i+1))*2*x(i);
+    g(i+1) = g(i+1) - alpha*2*(x(i)^2-x(i+1));
+
+    H(i,i)    =  H(i,i)+2+alpha*2*2*(3*x(i)^2-x(i+1));
+    H(i,i+1)  =  H(i,i+1)-alpha*2*2*x(i);
+    H(i+1,i)  =  H(i+1,i) -alpha*2*2*x(i);
+    H(i+1,i+1)=  H(i+1,i+1)+alpha*2;
+end
 end
 
 function bds_test(testCase)
 %BDS_TEST tests the file ./bds.m.
+options = struct();
 x0 = zeros(3,1);
-options.verbose = true;
+options.verbose = false;
 [~, fopt, ~, ~] = bds(@chrosen, x0, options);
 verifyEqual(testCase, fopt, 0)
+options.Algorithm = "pbds";
+[~, fopt, ~, ~] = bds(@chrosen, x0, options);
+if abs(fopt) > 1e-10
+    error('The function value is not close to 0.');
+end
 
 end
 
