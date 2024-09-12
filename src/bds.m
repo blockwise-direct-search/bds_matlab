@@ -128,7 +128,6 @@ else
 end
 
 % Get the direction set.
-% TODO: why orthogonal matrix?
 D = get_direction_set(n, options);
 
 % Set the default Algorithm of BDS, which is "cbds".

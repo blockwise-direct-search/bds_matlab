@@ -380,6 +380,8 @@ x0 = zeros(3,1);
 options.verbose = true;
 options.MaxFunctionEvaluations_dim_factor = 5000;
 options.ftarget = -inf;
+options.output_alpha_hist = true;
+options.output_xhist = true;
 [~, fopt, ~, ~] = bds(@chrosen, x0, options);
 verifyEqual(testCase, fopt, 0)
 options.Algorithm = "pbds";
