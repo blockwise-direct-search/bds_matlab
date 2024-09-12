@@ -377,7 +377,7 @@ function bds_test(testCase)
 %BDS_TEST tests the file ./bds.m.
 options = struct();
 x0 = zeros(3,1);
-options.verbose = false;
+options.verbose = true;
 options.MaxFunctionEvaluations_dim_factor = 5000;
 [~, fopt, ~, ~] = bds(@chrosen, x0, options);
 verifyEqual(testCase, fopt, 0)

@@ -98,6 +98,7 @@ else
     % Thus, there exists at least one nonzero diagonal element in R to QR factorize direction_set.
     [Q, R, p] = qr(direction_set, "vector");
     % The following code is used to encounter the case where the number of columns of direction_set is less than n.
+    % In this case, we need to supplement p with the indices of the columns of Q that are not in p.
     p = [p, length(p) + (1:(n - length(p)))];
     is_independent = false(n, 1);
     is_independent(1:size(direction_set, 2)) = (abs(diag(R)) >= 1e-10);
