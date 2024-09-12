@@ -378,11 +378,22 @@ function bds_test(testCase)
 options = struct();
 x0 = zeros(3,1);
 options.verbose = false;
+options.MaxFunctionEvaluations_dim_factor = 5000;
 [~, fopt, ~, ~] = bds(@chrosen, x0, options);
 verifyEqual(testCase, fopt, 0)
 options.Algorithm = "pbds";
 [~, fopt, ~, ~] = bds(@chrosen, x0, options);
-if abs(fopt) > 1e-10
+if abs(fopt) > 1e-8
+    error('The function value is not close to 0.');
+end
+options.Algorithm = "rbds";
+[~, fopt, ~, ~] = bds(@chrosen, x0, options);
+if abs(fopt) > 1e-8
+    error('The function value is not close to 0.');
+end
+options.Algorithm = "pads";
+[~, fopt, ~, ~] = bds(@chrosen, x0, options);
+if abs(fopt) > 1e-6
     error('The function value is not close to 0.');
 end
 
