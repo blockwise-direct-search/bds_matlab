@@ -98,7 +98,7 @@ jobs:
         uses: matlab-actions/setup-matlab@v2.1.2
         with:
           products: >
-            Parallel_Computing_Toolbox
+            Parallel Computing Toolbox
 
       - name: Conduct the test
         uses: matlab-actions/run-command@v2.1.1
