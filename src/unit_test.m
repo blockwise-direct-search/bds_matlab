@@ -402,6 +402,16 @@ options.Algorithm = "pads";
 if abs(fopt) > 1e-6
     error('The function value is not close to 0.');
 end
+options.Algorithm = "scbds";
+[~, fopt, ~, ~] = bds(@chrosen, x0, options);
+if abs(fopt) > 1e-10
+    error('The function value is not close to 0.');
+end
+options.Algorithm = "ds";
+[~, fopt, ~, ~] = bds(@chrosen, x0, options);
+if abs(fopt) > 1e-6
+    error('The function value is not close to 0.');
+end
 
 end
 
