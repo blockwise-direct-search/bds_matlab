@@ -4,7 +4,7 @@ name: Parallel test
 
 on:
   # Trigger the workflow on push or pull request
-  push:
+  # push:
   pull_request:  # DANGEROUS! MUST be disabled for self-hosted runners!
   # Trigger the workflow by cron. The default time zone of GitHub Actions is UTC.
   schedule:
@@ -42,7 +42,7 @@ jobs:
         # Only the following combinations of OS and MATLAB support parfor
         os: [ubuntu-latest, windows-latest, macos-13]
         matlab: [R2023b, R2024a, latest]
-        Algorithm: [cbds]
+        Algorithm: [cbds, pbds, rbds, scbds, pads, ds]
 
         # Exclude some versions of OS and MATLAB.
         exclude:
