@@ -382,6 +382,7 @@ options.MaxFunctionEvaluations_dim_factor = 5000;
 options.ftarget = -inf;
 options.output_alpha_hist = true;
 options.output_xhist = true;
+options.debug_flag = true;
 [~, fopt, ~, ~] = bds(@chrosen, x0, options);
 verifyEqual(testCase, fopt, 0)
 options.Algorithm = "pbds";

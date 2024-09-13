@@ -5,10 +5,10 @@ function [f, f_real] = eval_fun(fun, x)
 %   algorithm will operate on f, while f_real is used for recording the history.
 
 try
-    f_real = fun(x);    
+    f_real = fun(x);
 catch
     warning('The function evaluation failed.');
-    f_real = NaN; 
+    f_real = NaN;
 end
 
 % Apply the moderate extreme barrier to handle NaN, huge values, and evaluation failures.

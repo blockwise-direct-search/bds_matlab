@@ -14,8 +14,9 @@ end
 
 % Verify whether fun(xopt) == fopt. Why we need to force xopt to be a column vector?
 % For CUTest problem, function handle only accept column vector (if a row vector is input,
-% the value is not correct). 
-if ~(eval_fun(xopt) == fopt)
+% the value is not correct). Remember that eval_fun needs to accept both function handle
+% and point as input. eval_fun(xopt) is definitely wrong!
+if ~(eval_fun(fun, xopt) == fopt) 
     error("fun(xopt) is not equal to fopt.");
 end
 
@@ -73,7 +74,6 @@ if isfield(output, "xhist")
     end
     % In case of fhist_eval(i) = NaN or fhist(i) = NaN.
     assert(all( (isnan(fhist) & isnan(fhist_eval)) | fhist==fhist_eval ));
-    
 end
 
 end
