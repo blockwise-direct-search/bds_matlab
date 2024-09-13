@@ -375,8 +375,10 @@ end
 
 function bds_test(testCase)
 %BDS_TEST tests the file ./bds.m.
-options = struct();
 x0 = zeros(3,1);
+[~, fopt, ~, ~] = bds(@chrosen, x0);
+verifyEqual(testCase, fopt, 0)
+options = struct();
 options.verbose = true;
 options.MaxFunctionEvaluations_dim_factor = 5000;
 options.ftarget = -inf;
