@@ -41,7 +41,7 @@ jobs:
       matrix:
         # Only the following combinations of OS and MATLAB support parfor
         os: [ubuntu-latest, windows-latest, macos-13]
-        matlab: [R2023a, latest]
+        matlab: [R2023b, R2024a, latest]
         Algorithm: [cbds]
 
         # Exclude some versions of OS and MATLAB.
@@ -52,6 +52,8 @@ jobs:
           - os: macos-13
             matlab: latest
           - os: macos-latest
+            matlab: latest
+          - os: ubuntu-latest
             matlab: latest
 
     steps:
@@ -94,7 +96,7 @@ jobs:
       #     release: ${{ matrix.matlab }}
       #     products: Optimization_Toolbox
 
-      - name: Set up MATLAB with optimization toolbox
+      - name: Set up MATLAB with optimization toolbox and parallel computing toolbox
         uses: matlab-actions/setup-matlab@v2.2.0
         with:
           release: ${{ matrix.matlab }}
