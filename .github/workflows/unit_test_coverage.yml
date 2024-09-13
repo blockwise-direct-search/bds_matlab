@@ -1,10 +1,10 @@
-name: Unit test and coverage
+name: Coverage of unit test
 
 on: push
 
 jobs:
   run:
-    name: Generate coverage report for MATLAB ${{ matrix.matlab-version }} on ${{ matrix.os }}
+    name: Generate coverage report for MATLAB ${{ matrix.matlab }} on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
 
     strategy:

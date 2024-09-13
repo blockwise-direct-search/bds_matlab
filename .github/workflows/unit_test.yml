@@ -16,7 +16,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13]
-        matlab: [R2021a, R2022a, R2023a]#, latest]
+        matlab: [R2023b, R2024a, R2024b]#, latest]
         with_optim_toolbox: [no]
         exclude:
           - os: windows-latest
