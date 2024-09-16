@@ -44,6 +44,7 @@ num_directions_block = num_directions_block*2;
 % Get the indices of directions in each block.
 % The number of directions in each block might be different. Thus we use cell rather than matrix.
 index_direction_set = cell(1, num_blocks);
+% TODO: explain.
 initial_index_each_block = cumsum([1; num_directions_block(1:end-1)]);
 for i = 1:num_blocks
     index_direction_set(:, i) = {initial_index_each_block(i) : 1 : initial_index_each_block(i) + num_directions_block(i) - 1};

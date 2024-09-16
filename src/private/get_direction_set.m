@@ -72,45 +72,31 @@ else
     % keep it here to make the code more robust. 
     if isempty(direction_set)
         direction_set = eye(n);
+    else
+        % Find a maximal linearly independent subset of the direction_set, and supplement this subset with
+        % new directions to make a basis of the full space. The final direction_set will be this basis.
+        % First, we use QR factorization with permutation to find a maximal linearly independent subset of the direction_set.
+        % Then, we supplement this subset with some directions in Q to make a basis of the full space.
+        % For details about how to implement QR factorization with permutation, see the following explanation.
+        % Actually, QR factorization with permutation is implemented using Gram-Schmidt orthogonalization.
+        % First, we select the longest vector in the direction_set as the first vector in the new direction set.
+        % Then, we normalize this vector to be the first column of the Q matrix, denoted as q_1.
+        % The second column of Q, denoted as q_2, is the unit vector along the longest vector in the remaining 
+        % vectors {d_2, ..., d_m} after removing the projection of q_1 from them. Repeat this process to get
+        % the Q matrix and the R matrix. According to the above process, we have the following properties in the R matrix:
+        % 1. The diagonal elements of R are monotonically decreasing.
+        % 2. {R_ii}^2 >= sum_{j = i}^{n} {R_kj}^2, where k = i+1, ..., m.
+        [Q, R, p] = qr(direction_set, "vector");
+        num_directions = size(direction_set, 2);
+        is_independent = (abs(diag(R)) >= 1e-10);
+        direction_set = [direction_set(:, p(is_independent)) Q(:, p(~is_independent)) Q(:, num_directions+1 : n)]; 
     end
-
-    % If the rank of direction_set is already n, then is_independent is a vector of all true values.
-    % In this case, direction_set is not changed after the following QR factorization.
-    % we use QR factorization with permutation to make the rank of direction_set become n.
-    % How does QR factorization with permutation work? It works under Gram-Schmidt orthogonalization.
-    % Denote the columns of direction_set as [d_1, d_2, ..., d_m] where m is the number of columns of direction_set.
-    % By Gram-Schmidt orthogonalization, we have 
-    % d_i = (q_1^T d_1) q_1 + (q_2^T d_2) q_2 + ... + (q_i^T d_i) q_i
-    %     = R_{1i} q_1 + R_{2i} q_2 + ... + R_{ii} q_i.
-    % where q_i is the i-th column of Q and R is an upper triangular matrix.
-    % So how to to make the diagonal elements of R decrease monotonically? First, we select the longest vector
-    % as the first vector in Q, which is q_1. Then we select the longest vector after removing the projection
-    % of q_1 from the original vectors as the second vector in Q, which is q_2. We continue this process until
-    % we get the last vector q_m, which is the last column of Q. In this way, we can make the diagonal elements
-    % of R decrease monotonically. Thus, we have R_{ii} > \sum_{j = i + 1}^{k} R_{j k} for i = 1, 2, ..., n, where k = i + 1, i + 2, ..., n.
-    % If R_{ii} is tiny, then R_{jk} should be tiny for j = i + 1, i + 2, ..., n and k = i, i + 1, ..., n.
-    % Therefore, the rank of direction_set is the number of non-tiny diagonal elements of R and the maximum
-    % linearly independent subset of direction_set is [d_1, d_2, ..., d_r] where r is the last index of the
-    % diagonal elements of R that are not tiny. In addition, [d_1, d_2, ..., d_r] can be spanned into
-    % [d_1, d_2, ..., d_r, q_{r+1}, q_{r+2}, ..., q_n], which is a basis of the full space.
-    % We need to use permutated vector p to reorder [d_1, ..., d_r] under the original order of direction_set.
-    % We need to point out direction_set is not empty since we have set it to be the identity matrix if it is empty.
-    % Thus, there exists at least one nonzero diagonal element in R to QR factorize direction_set.
-    [Q, R, p] = qr(direction_set, "vector");
-    % The following code is used to encounter the case where the number of columns of direction_set is less than n.
-    % In this case, we need to supplement p with the indices of the columns of Q that are not in p.
-    p = [p, length(p) + (1:(n - length(p)))];
-    is_independent = false(n, 1);
-    is_independent(1:size(direction_set, 2)) = (abs(diag(R)) >= 1e-10);
-    direction_set = [direction_set(:, p(is_independent)) Q(:, p(~is_independent))];
-
 end
 
-% Finally, set D to [d_1, -d_1, ..., d_m, -d_m], where d_i is the i-th vector in direction_set.
-[~, m] = size(direction_set);
-D = NaN(n, 2*m);
-D(:, 1:2:2*m-1) = direction_set;
-D(:, 2:2:2*m) = -direction_set;
+% Finally, set D to [d_1, -d_1, ..., d_n, -d_n], where d_i is the i-th vector in direction_set.
+D = NaN(n, 2*n);
+D(:, 1:2:2*n-1) = direction_set;
+D(:, 2:2:2*n) = -direction_set;
 
 end
 
