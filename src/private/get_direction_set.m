@@ -12,7 +12,10 @@ function D = get_direction_set(n, options)
 %   3. Find a maximal linearly independent subset of the directions, and supplement this subset with
 %      new directions to make a basis of the full space. The final direction set will be this basis. 
 %      This is done by QR factorization.
-%
+%   Another thing to note is that if the direction set is already orthogonal, we may change the order of the
+%   directions in the direction set. This is because the permutation vector p in the QR factorization may change
+%   the order of the directions. However, the directions in the direction set are still the same.
+%   
 
 % Set options to an empty structure if it is not provided.
 if nargin < 2

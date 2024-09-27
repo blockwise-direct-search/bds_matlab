@@ -241,6 +241,10 @@ A = randn(n);
 [Q, ~] = qr(A);
 options.direction_set = Q;
 D = get_direction_set(n, options);
+% Sort by rows, which means sorting each column.
+if sort(D(:, 1:2:5), 2) ~= sort(Q, 2)
+    error('The directions are not the same as the input.');
+end
 if D(:, 1:2:5) ~= -D(:, 2:2:6)
     error('The directions in one block are not opposite.');
 end
@@ -254,6 +258,9 @@ A = randn(n);
 [Q, ~] = qr(A);
 options.direction_set = Q;
 D = get_direction_set(n, options);
+if sort(D(:, 1:2:5), 2) ~= sort(Q, 2)
+    error('The directions are not the same as the input.');
+end
 if D(:, 1:2:5) ~= -D(:, 2:2:6)
     error('The directions in one block are not opposite.');
 end
@@ -271,6 +278,9 @@ while detA == 0
 end
 options.direction_set = A;
 D = get_direction_set(n, options);
+if sort(D(:, 1:2:5), 2) ~= sort(A, 2)
+    error('The directions are not the same as the input.');
+end
 if D(:, 1:2:5) ~= -D(:, 2:2:6)
     error('The directions in one block are not opposite.');
 end
@@ -282,6 +292,9 @@ n = 5;
 [Q, ~] = qr(randn(n));
 options.direction_set = Q;
 D = get_direction_set(n, options);
+if sort(D(:, 1:2:2*n-1), 2) ~= sort(Q, 2)
+    error('The directions are not the same as the input.');
+end
 if D(:, 1:2:2*n-1) ~= -D(:, 2:2:2*n)
     error('The directions in one block are not opposite.');
 end
