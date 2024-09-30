@@ -5,23 +5,39 @@ function [best_value] = hp_tuning(initial_value, parameters, options)
 %
 % Input:
 % Parameters should include the following fields:
-% solvers_name: the algorithm of the BDS, including "cbds", "pbds", "rbds".
-% problem_mindim: the minimum dimension of the problem. The default value
-%                 is 1.
-% problem_maxdim: the maximum dimension of the problem. The default value
-%                 is 5.
-% tau: the tolerance for performance profile.
-% min_precision: the minimum precision for performance profile.
-% parallel: whether to use parallel computing. The default value is false.
-% tuning_solver: lincoa or cobyla. The default value is lincoa.
+% solvers_name:    the algorithm of the BDS, including "cbds", "pbds", "rbds", 
+%                  "ds" and "pads".
+% problem_mindim:  the minimum dimension of the problem. The default value
+%                  is 1.
+% problem_maxdim:  the maximum dimension of the problem. The default value
+%                  is 5.
+% tau:             the tolerance for performance profile.
+% min_precision:   the minimum precision for performance profile.
+% parallel:        whether to use parallel computing. The default value is false.
+% tuning_solver:   The default value is newuoa. To see more details, please refer
+%                  to the matlab version of prima (https://github.com/libprima/prima).
+%                  The user can set any derivative-free optimization solver 
+%                  which can handle the unconstrained problems as the benchmark,
+%                  but please make sure that the path of the solver is already 
+%                  set before you do the tuning.
 %
 % Options should include the following fields:
-% maxfun: the maximum number of function evaluations.
-% initial_value: the initial value of the hyperparameters. If the algorithm
-%                is cbds, the initial value should be a vector of length 5.
-%                If the algorithm is pbds or rbds, the initial value should
-%                be a vector of length 6 (including the shuffling_period
-%                or replacement_delay).
+% maxfun:          the maximum number of function evaluations for the tuning
+%                  solver. If the tuning solver is bds, the name of the field
+%                  should be MaxFunctionEvaluations.
+% initial_value:   the initial value of the hyperparameters. If the algorithm
+%                  is cbds, the initial value should be a vector of length 5.
+%                  If the algorithm is pbds or rbds, the initial value should
+%                  be a vector of length 6 (including the shuffling_period
+%                  or replacement_delay).
+%reduction_error:  whether to use the reduction error. The default value is false.
+%                  If it is true, the algorithm will sample the hyperparameters
+%                  like central difference with the step size of half of the
+%                  hyperparameters (only for reduction factors). This is done
+%                  mainly because the reduction factors are quite small compared
+%                  to the other hyperparameters. Average the sampled values can
+%                  improve the robustness of the algorithm. To see more details,
+%                  please refer to the hp_handle.m.
 %
 
 % Record the current path.
@@ -49,11 +65,6 @@ if ~exist(path_testdata, "dir")
     mkdir(path_testdata);
 end
 
-% Setup prima.
-locate_prima_position = fullfile(path_competitors, "private");
-cd(locate_prima_position)
-locate_prima();
-
 % Go back to the original path.
 cd(old_dir);
 
@@ -67,8 +78,15 @@ end
 if ~isfield(parameters, "parallel")
     parameters.parallel = false;
 end
+PRIMA_list = ["uobyqa", "newuoa", "bobyqa", "lincoa", "cobyla"];
 if ~isfield(parameters, "tuning_solver")
     parameters.tuning_solver = "newuoa";
+end
+if ismember(parameters.tuning_solver, PRIMA_list)
+    % Setup prima since the tuning solver is in the PRIMA list.
+    locate_prima_position = fullfile(path_competitors, "private");
+    cd(locate_prima_position)
+    locate_prima();
 end
 if ~isfield(parameters, "blacklist")
     parameters.blacklist = false;
@@ -81,51 +99,63 @@ options.output_xhist = true;
 
 switch lower(parameters.solvers_name(1))
     case "cbds"
+        % The last six elements of best_value are the optimal value and the
+        % tuned hyperparameters.
         best_value = NaN(1, length(parameters.tau) + 6);
+    case "pads"
+        best_value = NaN(1, length(parameters.tau) + 6);
+    case "scbds"
+        best_value = NaN(1, length(parameters.tau) + 6);
+    case "ds"
+        best_value = NaN(1, length(parameters.tau) + 6);
+        % PBDS has its own hyperparameters, including the shuffling_period.
+    case "pbds"
+        best_value = NaN(1, length(parameters.tau) + 7);
+        % RBDS has its own hyperparameters, including the replacement_delay.
+    case "rbds"
+        best_value = NaN(1, length(parameters.tau) + 7);
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
 
 % Preconditions for initial_value and constrains.
 initial_value_saved = initial_value;
-%initial_value = log(initial_value + eps);
-%initial_value = [initial_value(1:2); log(initial_value(3:end)+eps)];
 best_value(1:length(parameters.tau)) = parameters.tau;
 
-% Here we can use any algorithm that can deal with the bounded constraints to tune
-% the hyperparameters, including lincoa, cobyla and bobyqa.
+% Here we can use any solver that can deal with the unconstrained problem to tune
+% the hyperparameters.
 switch parameters.tuning_solver
     case "newuoa"
         [xopt, fopt, ~, output_tuning] = ...
-            newuoa(@(x)hp_handle([x(1:2); exp(x(3:end)) - eps], parameters), initial_value, options);
-        %[xopt, fopt, ~, output_tuning] = ...
-        %    newuoa(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
+            newuoa(@(x)hp_handle([x(1:2); log(x(3:end)) - eps], parameters), initial_value, options);
     case "bds"
-        %[xopt, fopt, ~, output_tuning] = ...
-        %    bds(@(x)hp_handle([x(1:2); exp(x(3:end)) - eps], parameters), initial_value, options);
-        %[xopt, fopt, ~, output_tuning] = ...
-        %    bds(@(x)hp_handle(exp(x) - eps, parameters), initial_value, options);
         [xopt, fopt, ~, output_tuning] = ...
             bds(@(x)hp_handle(x, parameters), initial_value, options);
-    case "fminunc"
-        options = optimoptions("fminunc", "Algorithm", "quasi-newton");
+    otherwise
+        tuning_solver = str2func(parameters.tuning_solver);
         [xopt, fopt, ~, output_tuning] = ...
-            fminunc(@(x)hp_handle([x(1:2); (x(3:end) - 0.5)], parameters), initial_value, options);
+            tuning_solver(@(x)hp_handle([x(1:2); log(x(3:end)) - eps], parameters), initial_value, options);
 end
 
 % Scale xhist as the real value.
 if isfield(output_tuning, "xhist")
-    %output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(output_tuning.xhist(3:end, :)) - eps];
-    %output_tuning.xhist = exp(output_tuning.xhist) - eps;
+    if ~strcmpi(parameters.tuning_solver, "bds") 
+        if length(best_value) == length(parameters.tau) + 6
+            output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(output_tuning.xhist(3:end, :)) + eps];
+        else
+            output_tuning.xhist = [output_tuning.xhist(1:2, :); exp(output_tuning.xhist(3:end-1, :)); eps output_tuning.xhist(end, :)];
+        end
+    end
 end
 
 % Scale xopt and transpose xopt for record the best_value in the txt file.
 switch lower(parameters.solvers_name(1))
     case "cbds"
         best_value(end-5) = fopt;
-        %best_value(end-4:end) = hp_projection(exp(xopt') - eps);
-        %best_value(end-4:end) = hp_projection([xopt(1:2)' exp(xopt(3:end)') - eps]);
         best_value(end-4:end) = hp_projection(xopt');
+    case "newuoa"
+        best_value(end-5) = fopt;
+        best_value(end-4:end) = hp_projection([xopt(1:2)' exp(xopt(3:end)' + eps)]);
     otherwise
         error("Unknown algorithm %s", parameters.solvers_name(1));
 end
@@ -329,6 +359,9 @@ if isfield(parameters, "feature")
 end
 if isfield(parameters, "num_random")
     parameters_perfprof.num_random = parameters.num_random;
+end
+if isfield(parameters, "test_type")
+    parameters_perfprof.test_type = parameters.test_type;
 end
 
 switch lower(parameters.solvers_name(1))

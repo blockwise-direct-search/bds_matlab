@@ -1,8 +1,13 @@
 function performance_return = hp_handle(value, parameters)
 % perfprof_handle - Function handle for calculating the value of the
 % performance profile
-if ~isfield(parameters, "solvers_options")
-    parameters.solvers_options = {};
+
+if strcmpi(parameters.tuning_solver, "newuoa")
+    if strcmpi(parameters.solvers_name(1), "pbds") || strcmpi(parameters.solvers_name(1), "rbds")
+        value = [value(1:2); exp(value(3:end-1)) + eps; value(end)];
+    else
+        value = [value(1:2); exp(value(3:end)) + eps];
+    end
 end
 
 if isfield(parameters, "reduction_error") && parameters.reduction_error
@@ -11,6 +16,8 @@ else
     performance_list = 1;
 end
 
+% We only do central differences for the hyperparameters that are far smaller
+% than the others, which are reduction_factors.
 coordinate_matrix = eye(5);
 for j = 1:length(performance_list)
     if j == 2 || j == 3
@@ -35,24 +42,34 @@ for j = 1:length(performance_list)
     parameters.solvers_options{1}.expand = x_projected(1);
     parameters.solvers_options{1}.shrink = x_projected(2);
     parameters.solvers_options{1}.reduction_factor = x_projected(3:5);
-
-    if strcmpi(parameters.solvers_name(1), "cbds")
-        [frec, fmin] = hp_calculated(parameters);
-        options_perf.natural_stop = false;
-        if length(parameters.tau) > 1
-            num_tau = length(parameters.tau);
-            multi_performance = NaN(num_tau, 1);
-            for i = 1 : num_tau
-                options_perf.tau = parameters.tau(i);
-                multi_performance(i) = performance_calculated(frec, fmin, options_perf);
-            end
-            performance = max(multi_performance);
-        else
-            options_perf.tau = parameters.tau;
-            performance = performance_calculated(frec, fmin, options_perf);
-        end
-        performance = performance + penalty * dist;
+    
+    if strcmpi(parameters.solvers_name(1), "pbds")
+        parameters.solvers_options{1}.permuting_period = x_projected(end);
     end
+
+    if strcmpi(parameters.solvers_name(1), "rbds")
+        parameters.solvers_options{1}.replacement_delay = x_projected(end);
+    end
+    
+    for i = 1:length(parameters.solvers_name)
+        parameters.solvers_options{i}.solver = parameters.solvers_name(i);
+    end
+
+    [~, frec, fmin] = profile(parameters);
+    options_perf.natural_stop = false;
+    if length(parameters.tau) > 1
+        num_tau = length(parameters.tau);
+        multi_performance = NaN(num_tau, 1);
+        for i = 1 : num_tau
+            options_perf.tau = parameters.tau(i);
+            multi_performance(i) = performance_calculated(frec, fmin, options_perf);
+        end
+        performance = max(multi_performance);
+    else
+        options_perf.tau = parameters.tau;
+        performance = performance_calculated(frec, fmin, options_perf);
+    end
+    performance = performance + penalty * dist;
 
     performance_list(j) = performance;
 

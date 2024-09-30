@@ -13,7 +13,12 @@ for i = 1:numel(fields)
         value = num2str(value);
         separator = ", ";
         if value_length ~= 1
-            value = strjoin(strsplit(value), separator);
+            if size(value, 1) > 1
+               value = strjoin(arrayfun(@(x) sprintf('%.4g', str2double(strtrim(x))),...
+                   value, 'UniformOutput', false), ', ');
+            else
+               value = strjoin(strsplit(char(value)), separator);
+            end
         end
         parameters_saved.(field) = value;
     elseif islogical(value)

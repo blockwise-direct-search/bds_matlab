@@ -1,4 +1,4 @@
-function path_testdata_perf = profile(parameters)
+function [path_testdata_perf, frec, fmin] = profile(parameters)
 % Draw performance profiles.
 %
 
@@ -43,7 +43,7 @@ try
     if ~exist(path_testdata, "dir")
         mkdir(path_testdata);
     end
-
+    
     % In case no solvers are input, then throw an error.
     if ~isfield(parameters, "solvers_options") || length(parameters.solvers_options) < 2
         error("There should be at least two solvers.")
@@ -51,7 +51,7 @@ try
 
     % Get the parameters that the test needs.
     parameters = set_profile_options(parameters);
-    
+
     % Tell MATLAB where to find MatCUTEst.
     locate_matcutest();
 
@@ -540,167 +540,175 @@ try
         fmin = min(fmin_total, [], 2);
     end
 
-    % Plot fhist.
-    compdf_location = char(fullfile(path_tests, "private", "compdf"));
-    if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-        if num_random == 1
-            outputfile = char(strcat("merged", "_", parameters.stamp_fhist, ".pdf"));
-            merge_pdf(parameters.savepath, outputfile, compdf_location);
-        else
-            for i = 1:num_random
-                outputfile = char(strcat("merged", "_", parameters.stamp_fhist, "_", num2str(i), ".pdf"));
-                merge_pdf(parameters.savepath{i}, outputfile, compdf_location);
-            end
-        end
-        parameters = rmfield(parameters, "savepath");
-    end
-
-    path_testdata = fullfile(path_tests, "testdata");
-    path_testdata_outdir = fullfile(path_tests, "testdata", tst);
-
-    % Make a new folder to save numerical results and source code.
-    mkdir(path_testdata, tst);
-    fprintf("The path of the testdata is:\n%s\n", path_testdata_outdir);
-    mkdir(path_testdata_outdir, "perf");
-    path_testdata_perf = fullfile(path_testdata_outdir, "perf");
-    mkdir(path_testdata_perf, parameters.pdfname);
-    if isfield(parameters, "log_profile") && parameters.log_profile
-        log_profile = strcat(parameters.pdfname, "_", "log_perf");
-        path_testdata_log_perf = fullfile(path_testdata_perf, log_profile);
-        mkdir(path_testdata_log_perf);
-    end
-    mkdir(path_testdata_outdir, "src");
-    path_testdata_src = fullfile(path_testdata_outdir, "src");
-    mkdir(path_testdata_outdir, "tests");
-    path_testdata_tests = fullfile(path_testdata_outdir, "tests");
-    path_testdata_competitors = fullfile(path_testdata_tests, "competitors");
-    mkdir(path_testdata_competitors);
-    path_testdata_private = fullfile(path_testdata_tests, "private");
-    mkdir(path_testdata_private);
-
-    % Make a Txt file to store the problems that are tested and also record the dimensions of the problems that are tested.
-    data_dim = zeros(1, length(problem_names));
-    filePath = strcat(path_testdata_perf, "/problem_names.txt");
-    fileID = fopen(filePath, 'w');
-    if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
-        fprintf(fileID, '%-15s %-15s\n', 'Problem_name', 'Matcutest_dim');
-    else
-        fprintf(fileID, '%-15s %-15s\n', 'Problem_name', 'S2MPJ_dim');
-    end
-    for i_problem = 1:length(problem_names)
-        if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
-            p = macup(problem_names{i_problem});
-            data_dim(i_problem) = length(p.x0);
-            fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(p.x0)));
-        else
-            problem_orig = str2func(char(problem_names(i_problem)));
-            problem_info = problem_orig('setup');
-            data_dim(i_problem) = length(problem_info.x0);
-            fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(problem_info.x0)));
-        end
-    end
-    fclose(fileID);
-
-    % Make a bar chart to show the distribution of the dimensions of the problems that are tested.
-    % Count the frequency of occurrence of the dimensions of the problems.
-    [unique_values, ~, ~] = unique(data_dim);
-    frequencies = zeros(size(unique_values));
-    for i = 1:length(unique_values)
-        frequencies(i) = sum(data_dim == unique_values(i));
-    end
-    % Draw the bar chart.
-    figure;
-    bar(unique_values, frequencies);
-    xlabel('Dimensions');
-    ylabel('Frequency');
-    title('Bar Chart of Frequencies');
-    % Save the image to the specified path.
-    save_path = strcat(path_testdata_perf, "/bar_chart_dimensions.png");
-    saveas(gcf, save_path);
-
-    % Make a Txt file to store the parameters that are used.
-    filePath = strcat(path_testdata_perf, "/parameters.txt");
-    fileID = fopen(filePath, 'w');
-    parameters_saved = parameters;
-    parameters_saved = trim_struct(parameters_saved);
-    % Get the field names of a structure.
-    parameters_saved_fields = fieldnames(parameters_saved);
-    % Write field names and their corresponding values into a file line by line.
-    for i = 1:numel(parameters_saved_fields)
-        field = parameters_saved_fields{i};
-        value = parameters_saved.(field);
-        if ~iscell(value)
-            fprintf(fileID, '%s: %s\n', field, value);
-        else
-            for j = 1:length(value)
-                solvers_options_saved = trim_struct(value{j});
-                solvers_options_saved_fields = fieldnames(solvers_options_saved);
-                for k = 1:numel(solvers_options_saved_fields)
-                    solvers_options_saved_field = solvers_options_saved_fields{k};
-                    solvers_options_saved_value = solvers_options_saved.(solvers_options_saved_field);
-                    fprintf(fileID, '%s: %s ', solvers_options_saved_field, ...
-                        solvers_options_saved_value);
+    if ~(isfield(parameters, "tuning") && parameters.tuning)
+        % Plot fhist.
+        compdf_location = char(fullfile(path_tests, "private", "compdf"));
+        if isfield(parameters, "plot_fhist") && parameters.plot_fhist
+            if num_random == 1
+                outputfile = char(strcat("merged", "_", parameters.stamp_fhist, ".pdf"));
+                merge_pdf(parameters.savepath, outputfile, compdf_location);
+            else
+                for i = 1:num_random
+                    outputfile = char(strcat("merged", "_", parameters.stamp_fhist, "_", num2str(i), ".pdf"));
+                    merge_pdf(parameters.savepath{i}, outputfile, compdf_location);
                 end
-                fprintf(fileID, '\n');
+            end
+            parameters = rmfield(parameters, "savepath");
+        end
+
+        path_testdata = fullfile(path_tests, "testdata");
+        path_testdata_outdir = fullfile(path_tests, "testdata", tst);
+
+        % Make a new folder to save numerical results and source code.
+        mkdir(path_testdata, tst);
+        fprintf("The path of the testdata is:\n%s\n", path_testdata_outdir);
+        mkdir(path_testdata_outdir, "perf");
+        path_testdata_perf = fullfile(path_testdata_outdir, "perf");
+        mkdir(path_testdata_perf, parameters.pdfname);
+        if isfield(parameters, "log_profile") && parameters.log_profile
+            log_profile = strcat(parameters.pdfname, "_", "log_perf");
+            path_testdata_log_perf = fullfile(path_testdata_perf, log_profile);
+            mkdir(path_testdata_log_perf);
+        end
+        mkdir(path_testdata_outdir, "src");
+        path_testdata_src = fullfile(path_testdata_outdir, "src");
+        mkdir(path_testdata_outdir, "tests");
+        path_testdata_tests = fullfile(path_testdata_outdir, "tests");
+        path_testdata_competitors = fullfile(path_testdata_tests, "competitors");
+        mkdir(path_testdata_competitors);
+        path_testdata_private = fullfile(path_testdata_tests, "private");
+        mkdir(path_testdata_private);
+
+        % Make a Txt file to store the problems that are tested and also record the dimensions of the problems that are tested.
+        data_dim = zeros(1, length(problem_names));
+        filePath = strcat(path_testdata_perf, "/problem_names.txt");
+        fileID = fopen(filePath, 'w');
+        if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+            fprintf(fileID, '%-15s %-15s\n', 'Problem_name', 'Matcutest_dim');
+        else
+            fprintf(fileID, '%-15s %-15s\n', 'Problem_name', 'S2MPJ_dim');
+        end
+        for i_problem = 1:length(problem_names)
+            if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
+                p = macup(problem_names{i_problem});
+                data_dim(i_problem) = length(p.x0);
+                fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(p.x0)));
+            else
+                problem_orig = str2func(char(problem_names(i_problem)));
+                problem_info = problem_orig('setup');
+                data_dim(i_problem) = length(problem_info.x0);
+                fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(problem_info.x0)));
             end
         end
-    end
-    fclose(fileID);
+        fclose(fileID);
 
-    % Copy the source code and test code to path_outdir.
-    copyfile(fullfile(path_src, "*"), path_testdata_src);
-    copyfile(fullfile(path_competitors, "*"), path_testdata_competitors);
-    copyfile(fullfile(path_tests, "private", "*"), path_testdata_private);
-    copyfile(fullfile(path_root, "setup.m"), path_testdata_outdir);
-
-    source_folder = path_tests;
-    destination_folder = path_testdata_tests;
-
-    % Get all files in the source folder.
-    file_list = dir(fullfile(source_folder, '*.*'));
-    file_list = file_list(~[file_list.isdir]);
-
-    % Copy all files (excluding subfolders) to the destination folder.
-    for i = 1:numel(file_list)
-        source_file = fullfile(source_folder, file_list(i).name);
-        destination_file = fullfile(destination_folder, file_list(i).name);
-        copyfile(source_file, destination_file);
-    end
-
-    % Draw performance profiles.
-    % Set tolerance of convergence test in the performance profile.
-    tau = parameters.tau;
-    tau_length = length(tau);
-
-    options_perf.pdfname = parameters.pdfname;
-    options_perf.solvers = parameters.solvers_legend;
-    options_perf.natural_stop = false;
-
-    % Draw log-profiles if necessary.
-    if isfield(parameters, "log_profile") && parameters.log_profile
-        options_perf.outdir = path_testdata_log_perf;
-        for l = 1:tau_length
-            options_perf.tau = tau(l);
-            logprof(frec, fmin, parameters.solvers_name, length(problem_names), options_perf);
+        % Make a bar chart to show the distribution of the dimensions of the problems that are tested.
+        % Count the frequency of occurrence of the dimensions of the problems.
+        [unique_values, ~, ~] = unique(data_dim);
+        frequencies = zeros(size(unique_values));
+        for i = 1:length(unique_values)
+            frequencies(i) = sum(data_dim == unique_values(i));
         end
-        outputfile = char(strcat("merged", "_", log_profile, ".pdf"));
-        merge_pdf(options_perf.outdir, outputfile, compdf_location);
-        movefile(fullfile(options_perf.outdir, outputfile), ...
-            fullfile(path_testdata_perf, outputfile));
-    end
+        % Draw the bar chart.
+        figure;
+        bar(unique_values, frequencies);
+        xlabel('Dimensions');
+        ylabel('Frequency');
+        title('Bar Chart of Frequencies');
+        % Save the image to the specified path.
+        save_path = strcat(path_testdata_perf, "/bar_chart_dimensions.png");
+        saveas(gcf, save_path);
 
-    options_perf.outdir = fullfile(path_testdata_perf, parameters.pdfname);
-    if isfield(options_perf, "tau")
-        options_perf = rmfield(options_perf, "tau");
-    end
+        % Make a Txt file to store the parameters that are used.
+        filePath = strcat(path_testdata_perf, "/parameters.txt");
+        fileID = fopen(filePath, 'w');
+        parameters_saved = parameters;
+        parameters_saved = trim_struct(parameters_saved);
+        % Get the field names of a structure.
+        parameters_saved_fields = fieldnames(parameters_saved);
+        % Write field names and their corresponding values into a file line by line.
+        for i = 1:numel(parameters_saved_fields)
+            field = parameters_saved_fields{i};
+            value = parameters_saved.(field);
+            if ~iscell(value)
+                fprintf(fileID, '%s: %s\n', field, value);
+            else
+                for j = 1:length(value)
+                    solvers_options_saved = trim_struct(value{j});
+                    solvers_options_saved_fields = fieldnames(solvers_options_saved);
+                    for k = 1:numel(solvers_options_saved_fields)
+                        solvers_options_saved_field = solvers_options_saved_fields{k};
+                        solvers_options_saved_value = solvers_options_saved.(solvers_options_saved_field);
+                        fprintf(fileID, '%s: %s ', solvers_options_saved_field, ...
+                            solvers_options_saved_value);
+                    end
+                    fprintf(fileID, '\n');
+                end
+            end
+        end
+        fclose(fileID);
 
-    % Draw profiles.
-    if parameters.is_noisy
-        options_perf.feature = strcat(parameters.feature, "-", num2str(sprintf('%.1e', parameters.noise_level)));
-    else
-        options_perf.feature = parameters.feature;
+        % Copy the source code and test code to path_outdir.
+        copyfile(fullfile(path_src, "*"), path_testdata_src);
+        copyfile(fullfile(path_competitors, "*"), path_testdata_competitors);
+        copyfile(fullfile(path_tests, "private", "*"), path_testdata_private);
+        copyfile(fullfile(path_root, "setup.m"), path_testdata_outdir);
+
+        source_folder = path_tests;
+        destination_folder = path_testdata_tests;
+
+        % Get all files in the source folder.
+        file_list = dir(fullfile(source_folder, '*.*'));
+        file_list = file_list(~[file_list.isdir]);
+
+        % Copy all files (excluding subfolders) to the destination folder.
+        for i = 1:numel(file_list)
+            source_file = fullfile(source_folder, file_list(i).name);
+            destination_file = fullfile(destination_folder, file_list(i).name);
+            copyfile(source_file, destination_file);
+        end
+
+        % Draw performance profiles.
+        % Set tolerance of convergence test in the performance profile.
+        tau = parameters.tau;
+        tau_length = length(tau);
+
+        options_perf.pdfname = parameters.pdfname;
+        options_perf.solvers = parameters.solvers_legend;
+        options_perf.natural_stop = false;
+
+        % Draw log-profiles if necessary.
+        if isfield(parameters, "log_profile") && parameters.log_profile
+            options_perf.outdir = path_testdata_log_perf;
+            for l = 1:tau_length
+                options_perf.tau = tau(l);
+                logprof(frec, fmin, parameters.solvers_name, length(problem_names), options_perf);
+            end
+            outputfile = char(strcat("merged", "_", log_profile, ".pdf"));
+            merge_pdf(options_perf.outdir, outputfile, compdf_location);
+            movefile(fullfile(options_perf.outdir, outputfile), ...
+                fullfile(path_testdata_perf, outputfile));
+        end
+
+        options_perf.outdir = fullfile(path_testdata_perf, parameters.pdfname);
+        if isfield(options_perf, "tau")
+            options_perf = rmfield(options_perf, "tau");
+        end
+
+        % Draw profiles.
+        if parameters.is_noisy
+            options_perf.feature = strcat(parameters.feature, "-", num2str(sprintf('%.1e', parameters.noise_level)));
+        else
+            options_perf.feature = parameters.feature;
+        end
+        perfdata(tau, frec, fmin, options_perf);
     end
-    perfdata(tau, frec, fmin, options_perf);
+   
+    message = 'During the tuning process, path_testdata_perf is no needed';
+    if ~evalin('base', 'exist(''path_testdata_perf'', ''var'')')
+        disp(message);
+        path_testdata_perf = " ";
+    end
 
 catch exception
 
