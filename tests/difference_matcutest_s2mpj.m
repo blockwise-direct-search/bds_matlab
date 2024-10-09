@@ -1,4 +1,4 @@
-function difference_matcutest_s2mpj(parameters)
+function [common_problem_names, s2mpj_problem_names, matcutest_problem_names] = difference_matcutest_s2mpj(parameters)
 
 % Set the problem type if it is not set.
 if ~isfield(parameters, "problem_type")

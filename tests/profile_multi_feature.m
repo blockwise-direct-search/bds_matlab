@@ -80,7 +80,7 @@ for i = 1:length(multi_feature)
         parameters.solvers_options{j}.solver = parameters.solvers_name(j);
     end
 
-    path_testdata_perf = profile(parameters);
+    [path_testdata_perf, ~, ~] = profile(parameters);
 
     % Search for PDF files starting with 'merge' in the source folder.
     pdf_files = dir(fullfile(path_testdata_perf, 'merge*.pdf'));
@@ -98,10 +98,10 @@ for i = 1:length(multi_feature)
         fprintf('Copied %s to %s\n', pdf_files(k).name, multi_feature_outdir);
     end
 
-    % If no matching PDF files are found, a prompt message is output.
-    if isempty(pdf_files)
-        fprintf('No PDF files starting with "merge" found in %s\n', source_folder);
-    end
+    % % If no matching PDF files are found, a prompt message is output.
+    % if isempty(pdf_files)
+    %     fprintf('No PDF files starting with "merge" found in %s\n', source_folder);
+    % end
 end
 
 compdf_location = char(fullfile(path_tests, "private", "compdf"));

@@ -705,7 +705,7 @@ try
     end
    
     message = 'During the tuning process, path_testdata_perf is no needed';
-    if ~evalin('base', 'exist(''path_testdata_perf'', ''var'')')
+    if ~exist('path_testdata_perf', 'var')
         disp(message);
         path_testdata_perf = " ";
     end

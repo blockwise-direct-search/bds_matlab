@@ -1,9 +1,9 @@
 clear all
 initial_value = [1.5, 0.5, 0, eps, eps];
-parameters.parallel = false;
+parameters.parallel = true;
 parameters.problem_mindim = 6;
 parameters.problem_maxdim = 200;
-parameters.test_type = "s2mpj";
+parameters.test_type = "matcutest";
 parameters.tuning = true;
 options.MaxFunctionEvaluations = 2500;
 options.verbose = true;
