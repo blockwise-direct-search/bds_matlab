@@ -26,6 +26,10 @@ try
         disp('Path_nlopt already exists in MATLAB path.');
     end
 
+    if any(ismember(parameters.solvers_name, "nomad"))
+        addpath '/home/lhtian97/Documents/nomad/build/release/lib'
+    end
+
     % Add the paths that we need to use in the performance profile into the MATLAB
     % search path.
     current_path = mfilename("fullpath");
@@ -43,7 +47,7 @@ try
     if ~exist(path_testdata, "dir")
         mkdir(path_testdata);
     end
-    
+
     % In case no solvers are input, then throw an error.
     if ~isfield(parameters, "solvers_options") || length(parameters.solvers_options) < 2
         error("There should be at least two solvers.")
@@ -703,9 +707,9 @@ try
         end
         perfdata(tau, frec, fmin, options_perf);
     end
-   
+
     message = 'During the tuning process, path_testdata_perf is no needed';
-    if ~exist('path_testdata_perf', 'var')
+    if ~evalin('base', 'exist(''path_testdata_perf'', ''var'')')
         disp(message);
         path_testdata_perf = " ";
     end
