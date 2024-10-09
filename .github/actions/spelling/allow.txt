@@ -66,6 +66,7 @@ argmax
 argmin
 ARGTRIGLS
 Armijo
+arrayfun
 arrowvert
 ASCE
 Asi
@@ -494,6 +495,7 @@ esstix
 etal
 eth
 ethods
+evalin
 Evals
 ewton
 Exascale
