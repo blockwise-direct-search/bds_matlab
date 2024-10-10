@@ -100,6 +100,13 @@ classdef ScalarFunction < handle
                     grad_max = 10^10;
                     g = min(grad_max, max(-grad_max, g)); 
                 end
+                % Why we need to set f to a huge value when it is NaN or Inf?
+                % The reason is that the algorithm may crash if f is NaN or Inf.
+                if isfield(options, "solver") && strcmpi(options.solver, "nomad")
+                    if isnan(f)
+                        f = min([f, 10^30, sqrt(realmax())]);
+                    end
+                end
             end 
         end
 

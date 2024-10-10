@@ -16,6 +16,8 @@ else
     MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
 end
 
+options.solver = "nomad";
+
 params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
 
 nomadOpt(fun, x0, lb, ub, params);

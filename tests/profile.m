@@ -6,6 +6,8 @@ function [path_testdata_perf, frec, fmin] = profile(parameters)
 oldpath = path();
 % Restore the "right out of the box" path of MATLAB.
 restoredefaultpath;
+% Clear the MATLAB search path.
+rehash toolboxcache;
 % Record the current directory.
 old_dir = pwd();
 
