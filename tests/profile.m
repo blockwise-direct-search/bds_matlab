@@ -10,6 +10,7 @@ restoredefaultpath;
 old_dir = pwd();
 
 exception = [];
+path_testdata_perf = " ";
 
 try
 
@@ -709,9 +710,9 @@ try
     end
 
     message = 'During the tuning process, path_testdata_perf is no needed';
-    if ~evalin('base', 'exist(''path_testdata_perf'', ''var'')')
+
+    if strlength(path_testdata_perf) == 0 || all(isspace(path_testdata_perf))
         disp(message);
-        path_testdata_perf = " ";
     end
 
 catch exception
