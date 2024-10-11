@@ -609,23 +609,6 @@ try
         end
         fclose(fileID);
 
-        % Make a bar chart to show the distribution of the dimensions of the problems that are tested.
-        % Count the frequency of occurrence of the dimensions of the problems.
-        [unique_values, ~, ~] = unique(data_dim);
-        frequencies = zeros(size(unique_values));
-        for i = 1:length(unique_values)
-            frequencies(i) = sum(data_dim == unique_values(i));
-        end
-        % Draw the bar chart.
-        figure;
-        bar(unique_values, frequencies);
-        xlabel('Dimensions');
-        ylabel('Frequency');
-        title('Bar Chart of Frequencies');
-        % Save the image to the specified path.
-        save_path = strcat(path_testdata_perf, "/bar_chart_dimensions.png");
-        saveas(gcf, save_path);
-
         % Make a Txt file to store the parameters that are used.
         filePath = strcat(path_testdata_perf, "/parameters.txt");
         fileID = fopen(filePath, 'w');

@@ -49,8 +49,10 @@ classdef ScalarFunction < handle
                 % We set nan values to zero since we only need x to define
                 % the seed and we are not evaluating any function at x.
                 x(isnan(x)) = 0;
-                seed = abs(ceil(1e5*sin(1e9*sum(x)))) + ...
-                       abs(ceil(1e4 * sin(1e7*k_run))) + 5000 * k_run;
+                % We set a upper bound for the seed to avoid overflow. We get
+                % this upper bound by testing nomad (https://github.com/bbopt/nomad).
+                seed = min(abs(ceil(1e5*sin(1e9*sum(x)))) + ...
+                       abs(ceil(1e4 * sin(1e7*k_run))) + 5000 * k_run, 2^32 - 1);
                 rng(seed)
                 if strcmpi(options.noise_type, "uniform")
                     noise = rand(1);
@@ -60,9 +62,9 @@ classdef ScalarFunction < handle
                     error("Unknown noise type")
                 end
                 if options.is_abs_noise
-                    f = f+options.noise_level*noise;
+                    f = f + options.noise_level*noise;
                 else
-                    f = f*(1.0+options.noise_level*noise);
+                    f = f * (1.0 + max(abs(f), 1) * options.noise_level * noise);
                 end
                 % If with_gradient is true, it means that we are calculating the fhist of 
                 % fminunc and the problem is noisy. 
@@ -100,13 +102,13 @@ classdef ScalarFunction < handle
                     grad_max = 10^10;
                     g = min(grad_max, max(-grad_max, g)); 
                 end
-                % Why we need to set f to a huge value when it is NaN or Inf?
-                % The reason is that the algorithm may crash if f is NaN or Inf.
-                if isfield(options, "solver") && strcmpi(options.solver, "nomad")
-                    if isnan(f)
-                        f = min([f, 10^30, sqrt(realmax())]);
-                    end
-                end
+                % % Why we need to set f to a huge value when it is NaN or Inf?
+                % % The reason is that the algorithm may crash if f is NaN or Inf.
+                % if isfield(options, "solver") && strcmpi(options.solver, "nomad")
+                %     if isnan(f)
+                %         f = min([f, 10^30, sqrt(realmax())]);
+                %     end
+                % end
             end 
         end
 
