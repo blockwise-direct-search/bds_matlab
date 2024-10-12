@@ -68,12 +68,11 @@ if isfield(parameters, "feature")
     elseif startsWith(lower(parameters.feature), "noise")
         parameters.is_noisy = true;
         parameters.random_initial_point = false;
-        if count(parameters.feature, '_') > 1
+        if contains(parameters.feature, "_")
             level_str = split(lower(parameters.feature), "_");
-            parameters.noise_level = 10^(str2double(level_str{3}(find(level_str{3} == 'e', 1, 'last')+1:end)));
+            parameters.noise_level = 10^(str2double(level_str{2}(find(level_str{2} == 'e', 1, 'last')+1:end)));
         end
-        parameters.feature = strcat(parameters.noise_type, "_", ...
-            num2str(log10(parameters.noise_level)), "_noise");
+        parameters.feature = parameters.noise_type;
     elseif startsWith(lower(parameters.feature), "rotation")
         parameters.is_noisy = false;
         parameters.random_initial_point = false;
@@ -192,6 +191,12 @@ if ~isfield(parameters, "num_random")
     parameters.num_random = get_default_profile_options("num_random");
 end
 
+% To save time, set the number of experiments to 5 if the problem dimension is 
+% greater than 5.
+if parameters.problem_maxdim > 5
+    parameters.num_random = min(parameters.num_random, 5);
+end
+
 if ~isfield(parameters, "fmin_type")
     parameters.fmin_type = get_default_profile_options("fmin_type");
 end
@@ -276,8 +281,7 @@ if isfield(parameters, "feature")
         else
             pdfname = strcat(pdfname, "_", num2str(parameters.problem_mindim), "_",...
                 num2str(parameters.problem_maxdim), "_", parameters.fmin_type, "_", parameters.feature,...
-                "_", num2str(log10(parameters.noise_level)), "_", num2str(parameters.num_random));
-
+                "_", num2str(log10(parameters.noise_level)), "_", "no_rotation_", num2str(parameters.num_random));
         end
     end
 else

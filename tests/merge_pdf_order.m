@@ -7,7 +7,11 @@ function merge_pdf_order(outdir, outputfile, compdf_location)
 
 sort_order = {'plain', 'rotation_no_noise', 'randomx0_10', 'rotation_noisy_gaussian_-1',...
     'rotation_noisy_gaussian_-2', 'rotation_noisy_gaussian_-3', ...
-    'rotation_noisy_gaussian_-4', 'rotation_noisy_gaussian_-5'};
+    'rotation_noisy_gaussian_-4', 'rotation_noisy_gaussian_-5', ...
+    'rotation_noisy_gaussian_-6', 'rotation_noisy_gaussian_-7', ...
+    'rotation_noisy_gaussian_-8', "-1_no_rotation", "-2_no_rotation", ...
+    "-3_no_rotation", "-4_no_rotation", "-5_no_rotation", ...
+    "-6_no_rotation", "-7_no_rotation", "-8_no_rotation"};
 
 cd(outdir);
 % Initialize string variable.
@@ -36,7 +40,6 @@ end
 % sort the pdfNamesCell.
 [~, real_order_index] = sort(real_order);
 pdfNamesCell = pdfNamesCell(real_order_index);
-
 % Use the strjoin function to concatenate the elements in a cell array into a single string.
 inputfiles = strjoin(pdfNamesCell, ' ');
 

@@ -11,7 +11,10 @@ multi_feature = parameters.multi_feature;
 if strcmpi(parameters.multi_feature, "all")
     multi_feature = ["plain", "rotation", "randomx0_10", "rotation_noisy_1e-1",...
         "rotation_noisy_1e-2", "rotation_noisy_1e-3", "rotation_noisy_1e-4",...
-        "rotation_noisy_1e-5", "rotation_noisy_1e-6"];
+        "rotation_noisy_1e-5", "rotation_noisy_1e-6", "rotation_noisy_1e-7",...
+        "rotation_noisy_1e-8", "noise_1e-1_no_rotation", "noise_1e-2_no_rotation", ...
+        "noise_1e-3_no_rotation", "noise_1e-4_no_rotation", "noise_1e-5_no_rotation", ...
+        "noise_1e-6_no_rotation", "noise_1e-7_no_rotation", "noise_1e-8_no_rotation"];
 end
 if isfield(parameters, "solvers_name") && any(contains(parameters.solvers_name, "bfgs"))
     multi_feature = multi_feature(~contains(multi_feature, "randomx0"));
@@ -21,9 +24,18 @@ parameters = rmfield(parameters, "multi_feature");
 pdfname_feature = "";
 for i = 1:length(multi_feature)
     if i == 1
-        pdfname_feature = multi_feature{i};
+        if startsWith(multi_feature{i}, "rotation_noisy")
+            result = split(multi_feature{i}, "_"); 
+            pdfname_feature = strcat("r_n_", strjoin(result(3:end), "_"));
+        else
+            pdfname_feature = strrep(multi_feature{i}, '''', '"');
+        end
     else
         pdfname_feature_base = strrep(multi_feature{i}, '''', '"');
+        if startsWith(pdfname_feature_base, "rotation_noisy")
+            result = split(pdfname_feature_base, "_"); 
+            pdfname_feature_base = strcat("r_n_", strjoin(result(3:end), "_"));
+        end
         pdfname_feature = strcat(pdfname_feature, "_", pdfname_feature_base);
     end
 end
@@ -107,6 +119,10 @@ end
 compdf_location = char(fullfile(path_tests, "private", "compdf"));
 pdfname = char(pdfname);
 merge_pdf_order(multi_feature_outdir, pdfname, compdf_location);
+
+% Return the path to the merged PDF file.
+currentPath = fileparts(mfilename('fullpath'));
+cd(currentPath);
 
 end
 
