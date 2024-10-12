@@ -31,7 +31,11 @@ for j = 1:numel(pdfNamesCell)
     end
 end
 [real_order, ~] = find(sortedIdx == 1);
-pdfNamesCell = pdfNamesCell(real_order);
+% Since the element in the real_order may be greater than the maximum index of sortedIdx,
+% We need to use the index of the real_order according to the sortedIdx to
+% sort the pdfNamesCell.
+[~, real_order_index] = sort(real_order);
+pdfNamesCell = pdfNamesCell(real_order_index);
 
 % Use the strjoin function to concatenate the elements in a cell array into a single string.
 inputfiles = strjoin(pdfNamesCell, ' ');
