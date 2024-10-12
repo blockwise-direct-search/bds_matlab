@@ -609,6 +609,38 @@ try
         end
         fclose(fileID);
 
+
+        % Save the frequency data to a text file
+        % Obtain unique values and their indices
+        [uniqueValues, ~, idx] = unique(data_dim);
+        % Count the number of occurrences of each unique value 
+        counts = histcounts(idx, 1:max(idx)+1);
+        % Calculate the total count
+        totalCount = sum(counts);
+
+        % Prepare the output data
+        percentage = (counts / totalCount) * 100; % Calculate the percentage
+        output_data = [uniqueValues', counts', percentage']; % Combine the data
+
+        % Only keep the rows with counts greater than 0
+        output_data = output_data(counts > 0, :);
+
+        % Sort the data by the first column
+        output_data = sortrows(output_data, 1); 
+
+        % Convert the percentage to a string and add a percentage sign
+        percentage_str = strcat(string(output_data(:, 3)), '%'); % Convert to string and add a percentage sign
+        output_data = [output_data(:, 1:2), percentage_str]; % Merge the data with the percentage
+
+        % Define the output path
+        output_path = strcat(path_testdata_perf, "/frequency_data.txt");
+
+        % Write the data to a text file
+        writematrix(output_data, output_path, 'Delimiter', '\t', 'WriteMode', 'overwrite');
+
+        % Display the output path
+        fprintf('Frequency data saved to %s\n', output_path);
+
         % Make a Txt file to store the parameters that are used.
         filePath = strcat(path_testdata_perf, "/parameters.txt");
         fileID = fopen(filePath, 'w');

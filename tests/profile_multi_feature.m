@@ -11,8 +11,12 @@ multi_feature = parameters.multi_feature;
 if strcmpi(parameters.multi_feature, "all")
     multi_feature = ["plain", "rotation", "randomx0_10", "rotation_noisy_1e-1",...
         "rotation_noisy_1e-2", "rotation_noisy_1e-3", "rotation_noisy_1e-4",...
-        "rotation_noisy_1e-5"];
+        "rotation_noisy_1e-5", "rotation_noisy_1e-6"];
 end
+if isfield(parameters, "solvers_name") && any(contains(parameters.solvers_name, "bfgs"))
+    multi_feature = multi_feature(~contains(multi_feature, "randomx0"));
+end
+
 parameters = rmfield(parameters, "multi_feature");
 pdfname_feature = "";
 for i = 1:length(multi_feature)

@@ -74,7 +74,6 @@ if isfield(parameters, "feature")
         end
         parameters.feature = strcat(parameters.noise_type, "_", ...
             num2str(log10(parameters.noise_level)), "_noise");
-        keyboard
     elseif startsWith(lower(parameters.feature), "rotation")
         parameters.is_noisy = false;
         parameters.random_initial_point = false;
