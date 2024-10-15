@@ -10,7 +10,7 @@ See [Haitian LI's presentation](https://lht97.github.io/documents/DFOS2024.pdf) 
 
 ## How to install BDS?
 
-1. Clone this repository. You should then get a folder named `bds` containing this README file and the
+1. Clone this repository. You should then get a folder named `bds_matlab` containing this README file and the
 [`setup.m`](https://github.com/blockwise-direct-search/bds/blob/main/setup.m) file.
 
 2. In the command window of MATLAB, change your directory to the above-mentioned folder, and execute

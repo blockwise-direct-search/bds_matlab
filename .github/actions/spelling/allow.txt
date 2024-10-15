@@ -1979,3 +1979,8 @@ Zikrin
 zlabel
 Zmat
 Zur
+histcounts
+isspace
+sortrows
+strlength
+writematrix
