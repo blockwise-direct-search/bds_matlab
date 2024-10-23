@@ -12,7 +12,7 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %
 %   Algorithm                   Algorithm to use. It can be "cbds" (cyclic blockwise direct
 %                               search) "pbds" (randomly permuted blockwise direct search), 
-%                               "rbds" (randomized blockwise direct search), "ds" %  %%
+%                               "rbds" (randomized blockwise direct search), "ds"
 %                               (the classical direct search), "pads" (parallel blockwise
 %                               direct search). "scbds" (symmetric blockwise direct 
 %                               search). Default: "cbds".

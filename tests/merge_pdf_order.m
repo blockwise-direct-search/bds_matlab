@@ -39,7 +39,6 @@ end
 % We need to use the index of the real_order according to the sortedIdx to
 % sort the pdfNamesCell.
 [~, real_order_index] = sort(real_order);
-keyboard
 pdfNamesCell = pdfNamesCell(real_order_index);
 % Use the strjoin function to concatenate the elements in a cell array into a single string.
 inputfiles = strjoin(pdfNamesCell, ' ');
