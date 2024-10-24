@@ -1,3 +1,4 @@
+
 Abadie
 Abbeel
 abbrev
@@ -704,6 +705,7 @@ Himmelblau
 hinf
 Hinterm
 Hintermuller
+histcounts
 HLAG
 hler
 hline
@@ -813,6 +815,7 @@ isrs
 isrv
 isscalar
 ISSMO
+isspace
 isstring
 isstruct
 isvector
@@ -1616,6 +1619,7 @@ Sohab
 Solodov
 Sondergaard
 sorfe
+sortrows
 Sousedik
 sovmd
 spadesuit
@@ -1665,6 +1669,7 @@ strcat
 strcmp
 strcmpi
 strjoin
+strlength
 stronconv
 strrep
 strs
@@ -1919,6 +1924,7 @@ workflow
 workflows
 wp
 wr
+writematrix
 wrn
 Wujek
 Wvec
@@ -1979,8 +1985,3 @@ Zikrin
 zlabel
 Zmat
 Zur
-histcounts
-isspace
-sortrows
-strlength
-writematrix
