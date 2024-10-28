@@ -42,6 +42,9 @@ else
     end
 
     options.maxfun = MaxFunctionEvaluations;
+    if isfield(options, "MaxFunctionEvaluations")
+        options = rmfield(options, "MaxFunctionEvaluations");
+    end
 
     if isfield(options, "Algorithm")
         Algorithm = options.Algorithm;
