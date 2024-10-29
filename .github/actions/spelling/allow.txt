@@ -370,6 +370,7 @@ Denoising
 denold
 densav
 dependabot
+depsc
 det
 detrat
 Devolder
@@ -1799,6 +1800,7 @@ Tomioka
 Tomov
 tomur
 Tonelli
+toolbar
 toolboxcache
 toplas
 Toraldo
@@ -1941,6 +1943,7 @@ xipt
 xjpt
 xlabel
 xlabh
+xlim
 xml
 xnew
 xopt
@@ -1951,6 +1954,7 @@ xpatch
 Xpt  
 xshift
 xspace
+XTick
 Xuan
 xval
 xyz
@@ -1962,6 +1966,7 @@ ylim
 yml
 Yoshii
 yshift
+YTick
 yticklabels
 yticks
 Yudin
