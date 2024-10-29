@@ -504,6 +504,7 @@ exe
 exists
 exitflag
 exp
+exportgraphics
 extbf
 extnormal
 extrm
@@ -1262,6 +1263,7 @@ Omojokun
 oneapi
 onelineskip
 oneside
+opengl
 OPENMP
 Oper
 Opin

@@ -32,7 +32,11 @@ else
     % window. When the value of iprint is negative, no information will be
     % printed on command window and will be stored in a file.
     % options.iprint = 0;
-    options.iprint = 0;
+    if isfield(options, "iprint")
+        options.iprint = options.iprint;
+    else
+        options.iprint = 0;
+    end
 
     % Set MAXFUN to the maximum number of function evaluations.
     if isfield(options, "MaxFunctionEvaluations")
