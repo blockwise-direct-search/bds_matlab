@@ -1318,6 +1318,7 @@ pdfname
 PDFO
 pdfwrite
 pdim
+pds
 Peherstorfer
 Peloquin
 perfdata
@@ -1939,6 +1940,7 @@ xelatex
 xhist
 Xiao
 Xie
+xin
 xipt
 xjpt
 xlabel
