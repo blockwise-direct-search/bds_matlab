@@ -110,8 +110,8 @@ else
     title_name = strcat(p.name, "-", num2str(length(p.x0)));
 end
 title(title_name);
-xlabel('Function evaluations');
-ylabel('Simplex gradient');
+xlabel('Simplex gradient');
+ylabel('Function evaluations');
 
 % Save the figure.
 currentFilePath = mfilename('fullpath');

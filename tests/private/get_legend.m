@@ -73,6 +73,12 @@ switch parameters.solvers_options{i}.solver
             solver_legend = strcat(solver_legend, "-", num2str(parameters.solvers_options{i}.num_random_vectors));
         end
 
+    case {"pds_xin"}
+        solver_legend = "DSPD-Xin";
+
+    case {"ds_xin"}
+        solver_legend = "DS-Xin";
+
     case {"bds_powell"}
         solver_legend = "CBDS-Powell";
 

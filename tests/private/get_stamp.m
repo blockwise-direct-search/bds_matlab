@@ -66,6 +66,12 @@ switch parameters.solvers_options{i}.solver
         if isfield(parameters.solvers_options{i}, "num_random_vectors")
             solver_stamp = strcat(solver_stamp, "-", num2str(parameters.solvers_options{i}.num_random_vectors));
         end
+    
+    case {"pds_xin"}
+        solver_stamp = "pds_xin";
+
+    case {"ds_xin"}
+        solver_stamp = "ds_xin";
 
     case {"bds_powell"}
         solver_stamp = "CBDS-Powell";

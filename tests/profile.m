@@ -192,6 +192,7 @@ try
     num_problems = length(problem_names);
     % Get Number of random tests(If num_random = 1, it means no random test).
     num_random = parameters.num_random;
+    fprintf("num_random = %d\n", num_random);
     % Record the minimum value of the problems of the random test.
     fmin = NaN(num_problems, num_random);
     frec = NaN(num_problems, num_solvers, num_random, MaxFunctionEvaluations_frec);

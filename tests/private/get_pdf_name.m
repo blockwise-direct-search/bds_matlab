@@ -103,8 +103,13 @@ switch parameters.solvers_options{i}.solver
             else
                 pdfname = strcat(pdfname, "_", num2str(parameters.solvers_options{i}.num_random_vectors));
             end
-
         end
+
+    case "pds_xin"
+        pdfname = "pds_xin";
+
+    case "ds_xin"
+        pdfname = "ds_xin";
 
     case "bds_powell"
         powell_factor_stamp = int2str(int32(-log10(parameters.solvers_options{i}.powell_factor)));

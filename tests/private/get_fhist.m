@@ -29,7 +29,6 @@ if isfield(options, "direction_set_type") && ...
     [Q,R] = qr(randn(n));
     options.direction_set = Q*diag(sign(diag(R)));
 end
-
 % Try ... catch is to avoid stopping by the collapse of solvers. When some
 % solver fails, we will use the iterates before it to record the fhist.
 obj = ScalarFunction(p);

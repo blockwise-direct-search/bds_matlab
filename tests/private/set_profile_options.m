@@ -170,20 +170,18 @@ end
 % Set number of experiments according to the problem setting. If problem_dim is not set,
 % the number of experiments is set to the default value, which is 1.
 if ~isfield(parameters, "num_random")
-    if isfield(parameters, "problem_dim")
-        if parameters.is_noisy && strcmpi(parameters.problem_dim, "small")
-            parameters.num_random = 10;
-        elseif parameters.is_noisy && strcmpi(parameters.problem_dim, "big")
-            parameters.num_random = 5;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && ~parameters.random_initial_point && (isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation"))
-            parameters.num_random = 10;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "big") && ~parameters.random_initial_point && (isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation"))
-            parameters.num_random = 5;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "small") && parameters.random_initial_point
-            parameters.num_random = 10;
-        elseif ~parameters.is_noisy && strcmpi(parameters.problem_dim, "big") && parameters.random_initial_point
-            parameters.num_random = 5;
-        end
+    if parameters.is_noisy && parameters.problem_maxdim <= 5
+        parameters.num_random = 10;
+    elseif parameters.is_noisy && parameters.problem_maxdim > 5
+        parameters.num_random = 5;
+    elseif ~parameters.is_noisy && parameters.problem_maxdim <= 5 && ~parameters.random_initial_point && (isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation"))
+        parameters.num_random = 10;
+    elseif ~parameters.is_noisy && parameters.problem_maxdim > 5 && ~parameters.random_initial_point && (isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation"))
+        parameters.num_random = 5;
+    elseif ~parameters.is_noisy && parameters.problem_maxdim <= 5 && parameters.random_initial_point
+        parameters.num_random = 10;
+    elseif ~parameters.is_noisy && parameters.problem_maxdim > 5 && parameters.random_initial_point
+        parameters.num_random = 5;
     end
 end
 
@@ -191,7 +189,7 @@ if ~isfield(parameters, "num_random")
     parameters.num_random = get_default_profile_options("num_random");
 end
 
-% To save time, set the number of experiments to 5 if the problem dimension is 
+% To save time, set the number of experiments to 5 if the problem dimension is
 % greater than 5.
 if parameters.problem_maxdim > 5
     parameters.num_random = min(parameters.num_random, 5);

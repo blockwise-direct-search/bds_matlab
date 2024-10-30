@@ -3,11 +3,11 @@ solvers_options = {};
 test_options = struct();
 
 parameters.problem_type = "u";
-parameters.problem_mindim = 10;
-parameters.problem_maxdim = 10;
+parameters.problem_mindim = 20;
+parameters.problem_maxdim = 20;
 
 if ~isfield(parameters, "test_type")
-    parameters.test_type = "matcutest";
+    parameters.test_type = "s2mpj";
 end
 
 % Get the problem names.
@@ -82,7 +82,7 @@ else
             problem_names = [problem_names, s.problem_data(i, 1)];
         end
     end
-    path_S2MPJ_matlab_problems = strcat(fileparts(mfilename('fullpath')), "/matlab_problems/");
+    path_S2MPJ_matlab_problems = strcat(fileparts(fileparts(mfilename('fullpath'))), "/matlab_problems/");
     if ~contains(path, path_S2MPJ_matlab_problems, 'IgnoreCase', true)
         if exist(path_S2MPJ_matlab_problems, 'dir') == 7
             addpath(path_S2MPJ_matlab_problems);
@@ -117,7 +117,7 @@ path_testdata = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'testdata'
 if test_options.is_noisy
     fhist_features = "fhist" + "_" + solvers_options{1}.solver + "_" + solvers_options{2}.solver + "_" ...
     + num2str(parameters.problem_mindim) + "_" + num2str(parameters.problem_maxdim) ...
-    + "_noisy" + num2str(log10(test_options.noise_level)) + "_" + parameters.test_type + "_" + time_str;
+    + "_noisy" + "_" + num2str(log10(test_options.noise_level)) + "_" + parameters.test_type + "_" + time_str;
 else
     fhist_features = "fhist" + "_" + solvers_options{1}.solver + "_" + solvers_options{2}.solver + "_" ...
     + num2str(parameters.problem_mindim) + "_" + num2str(parameters.problem_maxdim) ...
@@ -125,12 +125,14 @@ else
 end
 saved_dir = fullfile(path_testdata, fhist_features);
 mkdir(saved_dir);
+path_competitors = fullfile(fileparts(fileparts(mfilename('fullpath'))), 'competitors');
+addpath(path_competitors);
 
 for i_problem = 1:length(problem_names)
     if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
         p = macup(problem_names(1, i_problem));
     else
-        p = loader(problem_names(1, i_problem));
+        p = loader(problem_names{1, i_problem});
     end
     get_fhist_one_problem(p, solvers_options, test_options, saved_dir);
 end
