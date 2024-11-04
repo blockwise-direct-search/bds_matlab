@@ -70,6 +70,7 @@ for j = 1 : num_directions
         fprintf("The corresponding X is:\n");
         fprintf("%f  ", xnew(:)');
         fprintf("\n");
+        fprintf("The corresponding alpha is: %f\n", alpha);
     end
 
     % Update the best point and the best function value.
