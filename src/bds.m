@@ -370,6 +370,7 @@ if verbose
     fprintf("The corresponding X is:\n");
     fprintf("%f  ", xbase(:)');
     fprintf("\n");
+    fprintf("The corresponding alpha is: %f\n", alpha_all);
 end
 % Initialize xopt and fopt. xopt is the best point encountered so far, and fopt is the
 % corresponding function value. 
