@@ -285,6 +285,9 @@ try
                 % Set scaling matrix.
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                     % Badly_scaled is a flag to indicate whether the problem is badly scaled.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     if isfield(parameters, "badly_scaled_sigma")
                         scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
                     else
@@ -296,6 +299,9 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")
                     % Rotation_badly_scaled is a flag to indicate whether the problem is rotated and badly scaled.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     [Q,R] = qr(randn(dim));
                     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
                     rotation_matrix = Q;
@@ -310,6 +316,9 @@ try
                 if isfield(parameters, "feature") && (strcmpi(parameters.feature, "rotation") || ...
                         strcmpi(parameters.feature, "rotation_noisy"))
                     % Rotation is a flag to indicate whether the problem is rotated.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     [Q,R] = qr(randn(dim));
                     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
                     rotation_matrix = Q;
@@ -329,6 +338,9 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_structured")
                     % Rotation_structure is a flag to indicate whether the problem is rotated and added with l-p regularization term.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     [Q,R] = qr(randn(dim));
                     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
                     rotation_matrix = Q;
@@ -346,6 +358,9 @@ try
                 end
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
                     %p.x0 = p.x0 + 1 * max(1, norm(p.x0)) * rr;
@@ -385,6 +400,9 @@ try
                 % Set scaling matrix.
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "badly_scaled")
                     % Badly_scaled is a flag to indicate whether the problem is badly scaled.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     if isfield(parameters, "badly_scaled_sigma")
                         scale_matrix = diag(2.^(parameters.badly_scaled_sigma*randn(dim, 1)));
                     else
@@ -396,6 +414,9 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_badly_scaled")
                     % Rotation_badly_scaled is a flag to indicate whether the problem is rotated and badly scaled.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     [Q,R] = qr(randn(dim));
                     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
                     rotation_matrix = Q;
@@ -410,6 +431,9 @@ try
                 if isfield(parameters, "feature") && (strcmpi(parameters.feature, "rotation") || ...
                         strcmpi(parameters.feature, "rotation_noisy"))
                     % Rotation is a flag to indicate whether the problem is rotated.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     [Q,R] = qr(randn(dim));
                     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
                     rotation_matrix = Q;
@@ -430,6 +454,9 @@ try
                 end
                 if isfield(parameters, "feature") && strcmpi(parameters.feature, "rotation_structured")
                     % Rotated_structure is a flag to indicate whether the problem is rotated and added with l-p regularization term.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     [Q,R] = qr(randn(dim));
                     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
                     rotation_matrix = Q;
@@ -444,6 +471,9 @@ try
                 end
                 if isfield(parameters, "rotated_badly_scaled")
                     % Rotated_badly_scaled is a flag to indicate whether the problem is rotated and badly scaled.
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     [Q,R] = qr(randn(dim));
                     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
                     rotation_matrix = Q;
@@ -459,6 +489,9 @@ try
                 end
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
+                    seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
+                        abs(ceil(1e4 * sin(1e7*num_random))) + 5000 * num_random, 2^32 - 1 -num_random) + i_run;
+                    rng(seed)
                     rr = randn(size(p.x0));
                     rr = rr / norm(rr);
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;

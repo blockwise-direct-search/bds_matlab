@@ -64,6 +64,7 @@ classdef ScalarFunction < handle
                 if options.is_abs_noise
                     f = f + options.noise_level*noise;
                 else
+                    % f = f*(1.0+options.noise_level*noise);
                     % f = f * (1.0 + max(abs(f), 1) * options.noise_level * noise);
                     % The above line is the original code. We replace it with the following line,
                     % which makes the noise more intensive, especially when f is small.
