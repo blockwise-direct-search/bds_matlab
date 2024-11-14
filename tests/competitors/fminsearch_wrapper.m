@@ -1,4 +1,4 @@
-function fminsearch_wrapper(FUN, x0, options)
+function x = fminsearch_wrapper(FUN, x0, options)
 % A wrapper of fminsearch.m.
 %
 
@@ -26,7 +26,7 @@ else
     options = optimset("MaxFunEvals", MaxFunctionEvaluations, "maxiter", 10^20, "tolfun", eps, "tolx", tol);
 
     % [X,FVAL,EXITFLAG,OUTPUT] = fminsearch(FUN, x0, options)
-    fminsearch(FUN, x0, options);
+    [x, ~, ~, ~] = fminsearch(FUN, x0, options);
     
 end
 

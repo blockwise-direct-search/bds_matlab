@@ -1,4 +1,4 @@
-function prima_wrapper(fun, x0, options)
+function x = prima_wrapper(fun, x0, options)
 %A wrapper for PRIMA.
 %
 
@@ -60,7 +60,7 @@ else
     if isfield(options, "solver")
         options = rmfield(options, "solver");
     end
-    solver(fun, x0, options);
+    x = solver(fun, x0, options);
 
 end
 

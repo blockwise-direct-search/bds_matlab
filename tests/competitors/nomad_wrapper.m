@@ -1,4 +1,4 @@
-function nomad_wrapper(fun, x0, options)
+function x = nomad_wrapper(fun, x0, options)
 %A wrapper for NOMAD.
 %
 
@@ -20,6 +20,6 @@ options.solver = "nomad";
 
 params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
 
-nomadOpt(fun, x0, lb, ub, params);
+[x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
 
 end
