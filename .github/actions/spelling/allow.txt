@@ -271,6 +271,7 @@ clf
 closing
 clubsuit
 cmake
+cmdout
 cmpaths
 cmtools
 coap
@@ -540,6 +541,7 @@ fillbetween
 Financ
 FINISHSAV
 finv
+fitpaper
 FLETCHCR
 Floudas
 fmin
@@ -1244,6 +1246,7 @@ numel
 Numer
 nummath
 numvec
+nup
 nv
 nvfortran
 nwald
@@ -1275,6 +1278,7 @@ Optim
 optimisation
 optimoptions
 optimset
+optiprofiler
 optl
 orie
 osborne
@@ -1282,6 +1286,7 @@ OSCIPATH
 oslash
 otimes
 outdir
+outfile
 outputfile
 overleftarrow
 overrightarrow
@@ -1313,9 +1318,12 @@ pbaspect
 pbds
 pdf
 pdfborder
+pdfcrop
+pdfjam
 pdflatex
 pdfname
 PDFO
+pdftops
 pdfwrite
 pdim
 pds
