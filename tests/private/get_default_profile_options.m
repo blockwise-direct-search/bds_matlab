@@ -22,7 +22,7 @@ switch constant_name
     case {"problem_maxdim"}
         constant_value = 60;
     case {"MaxFunctionEvaluations_dim_factor"}
-        constant_value = 500;
+        constant_value = 2000;
     case {"MaxFunctionEvaluations"}
         constant_value = 1e5;
     case {"num_random"}

@@ -74,8 +74,6 @@ tests/competitors/private/imfil.m
 .github/workflows/test_dspd_num_random_vectors_small.yml
 
 # some temporary files for local test
-tests/probinfo.mat
-tests/matlab_problems
-tests/s2mpjlib.m
 tests/profile_script.m
 tests/test_script.m
+tests/optiprofiler

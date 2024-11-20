@@ -1,10 +1,23 @@
-clear all;
+function plot_fhist_script(parameters)
+
+if nargin < 1
+    parameters = struct();
+end
+
 solvers_options = {};
 test_options = struct();
 
-parameters.problem_type = "u";
-parameters.problem_mindim = 20;
-parameters.problem_maxdim = 20;
+if ~isfield(parameters, "problem_type")
+    parameters.problem_type = "u";
+end
+
+if ~isfield(parameters, "problem_mindim")
+    parameters.problem_mindim = 10;
+end
+
+if ~isfield(parameters, "problem_maxdim")
+    parameters.problem_maxdim = 10;
+end
 
 if ~isfield(parameters, "test_type")
     parameters.test_type = "s2mpj";
@@ -97,16 +110,24 @@ end
 
 fprintf("We will load %d problems\n\n", length(problem_names));
 
+if ~isfield(parameters, "solvers_options")
+    solvers_options{1}.solver = "bds";
+    solvers_options{1}.Algorithm = "ds";
+    solvers_options{2}.solver = "prima_wrapper";
+    solvers_options{2}.Algorithm = "newuoa";
+else
+    solvers_options = parameters.solvers_options;
+end
 
-solvers_options{1}.solver = "bds";
-solvers_options{1}.Algorithm = "ds";
-solvers_options{2}.solver = "prima_wrapper";
-solvers_options{2}.Algorithm = "newuoa";
+if ~isfield(parameters, "test_options")
+    test_options.is_noisy = true;
+    test_options.noise_level = 1e-3;
+    test_options.is_abs_noise = false;
+    test_options.noise_type = "gaussian";
+else
+    test_options = parameters.test_options;
+end
 
-test_options.is_noisy = true;
-test_options.noise_level = 1e-3;
-test_options.is_abs_noise = false;
-test_options.noise_type = "gaussian";
 
 % We use time_str to distinguish different test results.
 time_str = char(datetime('now', 'Format', 'yyyy-MM-dd HH:mm'));

@@ -17,9 +17,9 @@ if strcmpi(parameters.multi_feature, "all")
         "noise_1e-3_no_rotation", "noise_1e-4_no_rotation", "noise_1e-5_no_rotation", ...
         "noise_1e-6_no_rotation", "noise_1e-7_no_rotation", "noise_1e-8_no_rotation"];
 end
-if isfield(parameters, "solvers_name") && any(contains(parameters.solvers_name, "bfgs"))
-    multi_feature = multi_feature(~contains(multi_feature, "randomx0"));
-end
+% if isfield(parameters, "solvers_name") && any(contains(parameters.solvers_name, "bfgs"))
+%     multi_feature = multi_feature(~contains(multi_feature, "randomx0"));
+% end
 
 parameters = rmfield(parameters, "multi_feature");
 pdfname_feature = "";
@@ -57,6 +57,12 @@ end
 
 if ~isfield(parameters, "test_type")
     parameters.test_type = "matcutest";
+end
+
+if ~isfield(parameters, "cut_margin")
+    cut_margin = false;
+else 
+    cut_margin = parameters.cut_margin;
 end
 
 pdfname_solver = "";
@@ -119,7 +125,7 @@ end
 
 compdf_location = char(fullfile(path_tests, "private", "compdf"));
 pdfname = char(pdfname);
-merge_pdf_order(multi_feature_outdir, pdfname, compdf_location);
+merge_pdf_order(multi_feature_outdir, pdfname, compdf_location, cut_margin);
 
 % Return the path to the merged PDF file.
 currentPath = fileparts(mfilename('fullpath'));

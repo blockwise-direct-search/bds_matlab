@@ -34,25 +34,27 @@ end
 obj = ScalarFunction(p);
 try 
     solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
+    fhist = obj.valHist;
+    fhist_length = length(obj.valHist);
+    fhist_perfprof(1:fhist_length) = fhist;
+
+    % Trim fhist for performance profile. If the length of fhist is less than MaxFunctionEvaluations,
+    % then the prolonged parts will be imparted the value of the last function evaluation
+    % that we get eventually.
+    if  fhist_length < MaxFunctionEvaluations_frec
+        if fhist_length > 0
+            fhist_perfprof(fhist_length+1:MaxFunctionEvaluations_frec) = fhist_perfprof(fhist_length);
+        end
+    else
+        fhist_perfprof = fhist_perfprof(1:MaxFunctionEvaluations_frec);
+    end
 catch ME
     warning(ME.identifier, '%s', ME.message);
     warning('!!!Solver %s RAISE AN ERROR on problem %s with r = %d!!!', name_solver, p.name, r);
+    fhist = obj.valHist;
 end
 %solver(@(x)obj.fun(x,test_options.is_noisy,r,test_options), p.x0, options);
 
-fhist = obj.valHist;
-fhist_length = length(obj.valHist);
-fhist_perfprof(1:fhist_length) = fhist;
 
-% Trim fhist for performance profile. If the length of fhist is less than MaxFunctionEvaluations,
-% then the prolonged parts will be imparted the value of the last function evaluation
-% that we get eventually.
-if  fhist_length < MaxFunctionEvaluations_frec
-    if fhist_length > 0
-        fhist_perfprof(fhist_length+1:MaxFunctionEvaluations_frec) = fhist_perfprof(fhist_length);
-    end
-else
-    fhist_perfprof = fhist_perfprof(1:MaxFunctionEvaluations_frec);
-end
 
 end

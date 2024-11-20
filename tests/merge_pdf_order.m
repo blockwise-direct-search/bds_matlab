@@ -1,4 +1,4 @@
-function merge_pdf_order(outdir, outputfile, compdf_location)
+function merge_pdf_order(outdir, outputfile, compdf_location, cut_margin)
 % merge_pdf Merge pdf files in a folder.
 % outdir: the folder where the pdf files are stored.
 % outputfile: the full name of the merged pdf file (including ".pdf"). It
@@ -46,8 +46,19 @@ inputfiles = strjoin(pdfNamesCell, ' ');
 % Remove spaces at the beginning of a string.
 inputfiles = strtrim(inputfiles);
 
+% Check if the file name ends with .pdf.
+if ~endsWith(outputfile, '.pdf')
+    % If not, add the extension.
+    outputfile = [outputfile, '.pdf'];
+end
+
 % Merge pdf.
 system(['bash ', compdf_location, ' ', inputfiles, ' -o ', outputfile]);
+
+% Run pdfjam to merge pdf files into one page and cut the white margin if the setting is true.
+if cut_margin
+    run_pdfjam(outdir, numel(pdfFiles), outputfile);
+end
 
 end
 

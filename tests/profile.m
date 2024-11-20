@@ -44,7 +44,7 @@ try
     addpath(path_tests);
     addpath(path_src);
     addpath(path_competitors);
-
+    
     % If the folder of testdata does not exist, make a new one.
     path_testdata = fullfile(path_tests, "testdata");
     if ~exist(path_testdata, "dir")
@@ -100,7 +100,16 @@ try
             problem_names = secup(s);
         end
     else
-        s = load('probinfo.mat');
+        path_optiprofiler = strcat(fileparts(mfilename('fullpath')), "/optiprofiler");
+        path_optiprofiler_probinfo_s2mpj = strcat(path_optiprofiler, "/probinfo_s2mpj");
+        path_optiprofiler_matlab_problems = strcat(path_optiprofiler_probinfo_s2mpj, "/matlab_problems");
+        path_optiprofiler_src = strcat(path_optiprofiler, "/src");
+        path_optiprofiler_tests = strcat(path_optiprofiler, "/tests");
+        addpath(path_optiprofiler);
+        addpath(path_optiprofiler_probinfo_s2mpj);
+        addpath(path_optiprofiler_matlab_problems);
+        addpath(path_optiprofiler_src);
+        addpath(path_optiprofiler_tests);
         blacklist = ["DIAMON2DLS",...
             "DIAMON2D",...
             "DIAMON3DLS",...
@@ -139,26 +148,16 @@ try
             "VESUVIOLS",...
             "VESUVIOULS",...
             "YATP1CLS"];
+        options_s2mpj.problem_type = 'u';
+        options_s2mpj.mindim = parameters.problem_mindim;
+        options_s2mpj.maxdim = parameters.problem_maxdim;
+        problem_names_orig = s_select(options_s2mpj); 
         problem_names = [];
-        for i = 2:length(s.problem_data)
-            if strcmpi(s.problem_data(i, 2), parameters.problem_type) && ...
-                    cell2mat(s.problem_data(i, 3)) >= parameters.problem_mindim && ...
-                    cell2mat(s.problem_data(i, 3)) <= parameters.problem_maxdim && ...
-                    ~ismember(s.problem_data(i, 1), blacklist) && ...
-                    ~ismember(s.problem_data(i, 1), blacklist_time_consuming)
-                problem_names = [problem_names, s.problem_data(i, 1)];
+        for i = 1:length(problem_names_orig)
+            if ~ismember(problem_names_orig(i), blacklist) && ...
+                    ~ismember(problem_names_orig(i), blacklist_time_consuming)
+                problem_names = [problem_names, problem_names_orig(i)];
             end
-        end
-        path_S2MPJ_matlab_problems = strcat(fileparts(mfilename('fullpath')), "/matlab_problems/");
-        if ~contains(path, path_S2MPJ_matlab_problems, 'IgnoreCase', true)
-            if exist(path_S2MPJ_matlab_problems, 'dir') == 7
-                addpath(path_S2MPJ_matlab_problems);
-                disp('Add path_S2MPJ_matlab_problems to MATLAB path.');
-            else
-                disp('path_S2MPJ_matlab_problems does not exist on the local machine.');
-            end
-        else
-            disp('Path_S2MPJ_matlab_problems already exists in MATLAB path.');
         end
     end
 
@@ -276,9 +275,8 @@ try
             if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
                 p = macup(problem_names(1, i_problem));
             else
-                problem_orig = str2func(char(problem_names(i_problem)));
-                problem_info = problem_orig('setup');
-                p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+                problem_info = s_load(char(problem_names(i_problem)));
+                p = s2mpj_wrapper(problem_info);
             end
             dim = length(p.x0);
             for i_run = 1:num_random
@@ -391,9 +389,8 @@ try
             if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
                 p = macup(problem_names(1, i_problem));
             else
-                problem_orig = str2func(char(problem_names(i_problem)));
-                problem_info = problem_orig('setup');
-                p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+                problem_info = s_load(char(problem_names(i_problem)));
+                p = s2mpj_wrapper(problem_info);
             end
             dim = length(p.x0);
             for i_run = 1:num_random
@@ -549,9 +546,8 @@ try
                 if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
                     p = macup(problem_names(1, i_problem));
                 else
-                    problem_orig = str2func(char(problem_names(i_problem)));
-                    problem_info = problem_orig('setup');
-                    p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+                    problem_info = s_load(char(problem_names(i_problem)));
+                    p = s2mpj_wrapper(problem_info);
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 fprintf("%d. %s\n", i_problem, p.name);
@@ -567,9 +563,8 @@ try
                 if isfield(parameters, "test_type") && strcmpi(parameters.test_type, "matcutest")
                     p = macup(problem_names(1, i_problem));
                 else
-                    problem_orig = str2func(char(problem_names(i_problem)));
-                    problem_info = problem_orig('setup');
-                    p = s2mpj_wrapper(problem_info, problem_names(1, i_problem));
+                    problem_info = s_load(char(problem_names(i_problem)));
+                    p = s2mpj_wrapper(problem_info);
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
                 fprintf("%d. %s\n", i_problem, p.name);
@@ -642,8 +637,7 @@ try
                 data_dim(i_problem) = length(p.x0);
                 fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(p.x0)));
             else
-                problem_orig = str2func(char(problem_names(i_problem)));
-                problem_info = problem_orig('setup');
+                problem_info = s_load(char(problem_names(i_problem)));
                 data_dim(i_problem) = length(problem_info.x0);
                 fprintf(fileID, '%-15s %-15s\n', problem_names{i_problem}, num2str(length(problem_info.x0)));
             end
