@@ -32,6 +32,10 @@ function [xopt, fopt, exitflag, output] = bds(fun, x0, options)
 %                               Default: 2.
 %   shrink                      Shrinking factor of step size. A positive number less than 1.
 %                               Default: 0.5.
+%   alpha_threshold             The threshold of the step size. If the step size is smaller than
+%                               alpha_threshold, then the step size will be not allowed to shrink below
+%                               alpha_threshold. It should be strictly less than StepTolerance.
+%                               A positive number. Default: eps.
 %   forcing_function            The forcing function used for deciding whether the step achieves
 %                               a sufficient decrease. A function handle. 
 %                               Default: @(alpha) alpha^2. See also reduction_factor. 
@@ -269,6 +273,14 @@ else
     alpha_tol = get_default_constant("StepTolerance");
 end
 
+% Set the value of alpha_threshold. If the step size is smaller than alpha_threshold, then the step size
+% will be not allowed to shrink below alpha_threshold.
+if isfield(options, "alpha_threshold")
+    alpha_threshold = options.alpha_threshold;
+else
+    alpha_threshold = get_default_constant("alpha_threshold");
+end
+
 % Set the target of the objective function.
 if isfield(options, "ftarget")
     ftarget = options.ftarget;
@@ -493,7 +505,10 @@ for iter = 1:maxit
         if sub_fopt + reduction_factor(3) * forcing_function(alpha_all(i_real)) < fbase
             alpha_all(i_real) = expand * alpha_all(i_real);
         elseif sub_fopt + reduction_factor(2) * forcing_function(alpha_all(i_real)) >= fbase
-            alpha_all(i_real) = shrink * alpha_all(i_real);
+            alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
+            if shrink * alpha_all(i_real) < alpha_threshold
+                fprintf("The step size of the block %d is smaller than alpha_threshold.\n", i_real);
+            end
         end
         
         % Record the best function value and point encountered in the i_real-th block.

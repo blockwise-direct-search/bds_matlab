@@ -17,6 +17,8 @@ switch constant_name
         constant_value = @(alpha) alpha^2;
     case {"alpha_init"}
         constant_value = 1;
+    case {"alpha_threshold"}
+        constant_value = eps;
     case {"StepTolerance"}
         constant_value = 1e-6;
     case {"permuting_period"}
