@@ -49,20 +49,9 @@ end
 % cycling if there is a bug.
 maxit = MaxFunctionEvaluations;
 
-% Set the value of sufficient decrease factor.
-if isfield(options, "reduction_factor")
-    reduction_factor = options.reduction_factor;
-else
-    reduction_factor = get_default_constant("reduction_factor");
-end
-% After adjusting the framework of inner_direct_search, we need to set the sufficient decrease factor in
-% a new way. First, let reduction_factor(1) = 0 accept simple decrease. Then let 
-% reduction_factor(2) = reduction_factor(3) match the framework proposed by 
-% <<Worst case complexity bounds for linesearch-type derivative-free algorithms>>.
-% We set reduction_factor(2) = 1e-6, under the paper A derivative-free algorithm for bound constrained optimization,
-% G. Liuzzi, and S. Lucidi, Computational Optimization and Applications, 2002. (corresponding to the parameter gamma)
-reduction_factor(1) = 0;
-reduction_factor(2) = 1e-6;
+% Set the reduction factor. We adopt the reduction factor in the paper Worst case complexity bounds for linesearch-type 
+% derivative-free algorithms, 2024.
+reduction_factor = 1e-6;
 
 % Set the value of StepTolerance. The algorithm will terminate if the stepsize is less than 
 % the StepTolerance.
@@ -96,11 +85,11 @@ else
 end
 
 % Set the value of stepsize_factor. We adopt the step selection rule in A. Brilli, M. Kimiaei, G. Liuzzi, and S. Lucidi, Worst case
-% complexity bounds for linesearch-type derivative-free algorithms, 2023. (corresponding to the parameter c)
+% complexity bounds for linesearch-type derivative-free algorithms, 2024. (corresponding to the parameter c)
 if isfield(options, "stepsize_factor")
     stepsize_factor = options.stepsize_factor;
 else
-    stepsize_factor = 1e-8;
+    stepsize_factor = 1e-10;
 end
 
 % Set the type of linesearch.
@@ -122,7 +111,7 @@ end
 if isfield(options, "alpha_init")
     alpha_all = options.alpha_init*ones(num_blocks, 1);
 else
-    alpha_all = 0.5*ones(num_blocks, 1);
+    alpha_all = ones(num_blocks, 1);
 end
 
 % Initialize the history of function values.
@@ -152,14 +141,12 @@ end
 % Start the actual computations.
 for iter = 1:maxit
 
-    alpha_max = max(alpha_all); 
+    alpha_max = max(alpha_all);
 
     for i = 1:length(block_indices)
-        % If block_indices is 1 3 2, then block_indices(2) = 3, which is the real block that we are
-        % going to visit.
+
         i_real = block_indices(i);
         
-        % alpha = alpha_all(i_real);
         alpha_bar = max(alpha_all(i_real), stepsize_factor*alpha_max);
 
         % Get indices of directions in the i-th block.
@@ -181,7 +168,16 @@ for iter = 1:maxit
         fhist((nf+1):(nf+suboutput.nf)) = suboutput.fhist;
         xhist(:, (nf+1):(nf+suboutput.nf)) = suboutput.xhist;
         nf = nf+suboutput.nf;
-        
+
+        if suboutput.success
+            % If the sufficient decrease condition is satisfied, then the step size is updated by
+            % linesearch.
+            alpha_all(i_real) = suboutput.stepsize;
+        else
+            % If the sufficient decrease condition is not satisfied, then the step size is updated by shrink.
+            alpha_all(i_real) = shrink * alpha_all(i_real);
+        end
+
         % If suboutput.terminate is true, then inner_direct_search returns 
         % boolean value of terminate because either the maximum number of function
         % evaluations or the target of the objective function value is reached. 
@@ -195,27 +191,14 @@ for iter = 1:maxit
         % Retrieve the order of the polling directions and check whether a
         % sufficient decrease has been achieved in inner_direct_search.
         direction_set_indices{i_real} = suboutput.direction_indices;
-        success = suboutput.success;
         
-        % Update the step sizes.
-        if success
-            alpha_all(i_real) = suboutput.stepsize;
-            % alpha_all(i_real) = expand * suboutput.stepsize;
-            % alpha_all(i_real) = expand * alpha_bar;
-            % alpha_all(i_real) = expand * alpha;
-        else
-            % alpha_all(i_real) = shrink * alpha_bar;
-            alpha_all(i_real) = shrink * alpha_bar;
-            %alpha_all(i_real) = shrink * alpha_all(i_real);
-        end
-        
-        % Terminate the computations if the largest component of step size is below a
-        % given StepTolerance.
-        if max(alpha_all) < alpha_tol
-            terminate = true;
-            exitflag = get_exitflag("SMALL_ALPHA");
-            break
-        end
+    end
+
+    % Terminate the computations if the largest component of step size is below a
+    % given StepTolerance.
+    if max(alpha_all) < alpha_tol
+        exitflag = get_exitflag("SMALL_ALPHA");
+        break
     end
     
     % Check whether one of SMALL_ALPHA, MAXFUN_REACHED, and FTARGET_REACHED is reached.

@@ -61,7 +61,7 @@ for j = 1 : num_directions
     end
     
     % Check whether the sufficient decrease condition is achieved.
-    sufficient_decrease = (fnew + reduction_factor(3) * alpha^2/2 < fbase);
+    sufficient_decrease = (fnew + reduction_factor * alpha^2/2 < fbase);
     
     % if sufficient decrease
     if sufficient_decrease
@@ -72,7 +72,7 @@ for j = 1 : num_directions
     success = sufficient_decrease;
 
     while sufficient_decrease
-        % error("This part of code is not used.")
+
         alpha = alpha*expand;
         xnew = xbase+alpha*D(:, j);
         fnew = eval_fun(fun, xnew);
@@ -98,13 +98,8 @@ for j = 1 : num_directions
             exitflag = get_exitflag("MAXFUN_REACHED");
             break;
         end
-        
-        if strcmpi(options.linesearch_type, "standard")
-            sufficient_decrease = (fnew + reduction_factor(3) * alpha^2 < fbase);
-        elseif strcmpi(options.linesearch_type, "new")
-            sufficient_decrease = (fnew + reduction_factor(3) * (expand-1)...
-                *alpha)^2 < fhist(nf-1);    
-        end
+
+        sufficient_decrease = fnew + reduction_factor * ((expand-1) *alpha)^2 < fhist(nf-1);    
 
         if sufficient_decrease
             fval = fnew;

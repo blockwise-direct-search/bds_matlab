@@ -17,7 +17,8 @@ else
     if isfield(options, "StepTolerance")
         StepTolerance = options.StepTolerance;
     else
-        StepTolerance = eps;
+        StepTolerance = get_default_constant("StepTolerance");
+        %StepTolerance = eps;
     end
     
     % Set MAXFUN to the maximum number of function evaluations.
