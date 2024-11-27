@@ -66,9 +66,9 @@ for j = 1 : num_directions
     fhist(nf) = fnew_real;
     xhist(:, nf) = xnew;
     if verbose
-        fprintf("Function number %d, F = %f\n", FunctionEvaluations_exhausted + nf, fnew_real);
+        fprintf("Function number %d, F = %.8f\n", FunctionEvaluations_exhausted + nf, fnew_real);
         fprintf("The corresponding X is:\n");
-        fprintf("%f  ", xnew(:)');
+        fprintf("%.8f  ", xnew(:)');
         fprintf("\n");
     end
 
@@ -80,6 +80,13 @@ for j = 1 : num_directions
     
     % Check whether the sufficient decrease condition is achieved.
     sufficient_decrease = (fnew + reduction_factor(3) * forcing_function(alpha)/2 < fbase);
+    if verbose
+        if sufficient_decrease
+            fprintf("%g decrease is achieved------------------.\n", fbase - fnew);
+        else
+            fprintf("Sufficient decrease is not achieved.\n");
+        end
+    end
 
     % In the opportunistic case, if the current iteration achieves sufficient decrease,
     % stop the computations after cycling the indices of the polling directions. The reason  
@@ -87,6 +94,7 @@ for j = 1 : num_directions
     % in outer_direct_search. 
     if sufficient_decrease && ~strcmpi(polling_inner, "complete")
         direction_indices = cycling(direction_indices, j, cycling_strategy, with_cycling_memory);
+        output.sufficient_decrease = fbase - fnew;
         break;
     end
 

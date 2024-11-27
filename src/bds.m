@@ -378,11 +378,13 @@ xbase = x0;
 % (not eval_fun).
 [fbase, fbase_real] = eval_fun(fun, xbase);
 if verbose
-    fprintf("Function number %d, F = %f\n", 1, fbase_real);
+    fprintf("Function number %d, F = %.8f\n", 1, fbase_real);
     fprintf("The corresponding X is:\n");
-    fprintf("%f  ", xbase(:)');
+    fprintf("%.8f  ", xbase(:)');
     fprintf("\n");
-    fprintf("The corresponding alpha is: %f\n", alpha_all);
+    fprintf("The corresponding alpha are:\n");
+    fprintf("%.10e ", alpha_all);
+    fprintf("\n");
 end
 % Initialize xopt and fopt. xopt is the best point encountered so far, and fopt is the
 % corresponding function value. 
@@ -415,6 +417,7 @@ end
 all_block_indices = (1:num_blocks);
 num_visited_blocks = 0;
 
+sufficient_decrease = [];
 for iter = 1:maxit
 
     % Define block_indices, which is a vector containing the indices of blocks that we 
@@ -473,11 +476,15 @@ for iter = 1:maxit
         [sub_xopt, sub_fopt, sub_exitflag, sub_output] = inner_direct_search(fun, xbase,...
             fbase, D(:, direction_indices), direction_indices,...
             alpha_all(i_real), suboptions);
+
+        if isfield(sub_output, "sufficient_decrease")
+            sufficient_decrease = [sufficient_decrease, sub_output.sufficient_decrease];
+        end
         
         if verbose
             fprintf("The number of the block visited is: %d\n", i_real);
-            fprintf("The corresponding alpha is: \n");
-            fprintf("%f  ", alpha_all');
+            fprintf("The corresponding alpha are:\n");
+            fprintf("%.8e ", alpha_all);
             fprintf("\n");
         end
 
@@ -486,9 +493,9 @@ for iter = 1:maxit
         block_hist(num_visited_blocks) = i_real;   
 
         % Record the step size used by inner_direct_search above.
-        if output_alpha_hist
-            alpha_hist(:, iter) = alpha_all;
-        end
+        % if output_alpha_hist
+        %     alpha_hist(:, iter) = alpha_all;
+        % end
         
         % Record the points visited by inner_direct_search if output_xhist is true.
         if output_xhist
@@ -505,10 +512,15 @@ for iter = 1:maxit
         if sub_fopt + reduction_factor(3) * forcing_function(alpha_all(i_real)) < fbase
             alpha_all(i_real) = expand * alpha_all(i_real);
         elseif sub_fopt + reduction_factor(2) * forcing_function(alpha_all(i_real)) >= fbase
-            alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
-            if shrink * alpha_all(i_real) < alpha_threshold
-                fprintf("The step size of the block %d is smaller than alpha_threshold.\n", i_real);
-            end
+                % if isfield(options, "Algorithm") && ~strcmpi(options.Algorithm, "ds")
+                %     if shrink * alpha_all(i_real) < alpha_threshold
+                %         fprintf("The step size of the block %d is smaller than alpha_threshold.++++++++\n", i_real);
+                %     end
+                % end
+                % The following strategy is used to avoid the case that the step size of some block is too small such
+                % that it can not be updated. It might work on some anisotropic functions, but with no theoretical guarantee. 
+                alpha_all(i_real) = max(shrink * alpha_all(i_real), alpha_threshold);
+                %alpha_all(i_real) = shrink * alpha_all(i_real);
         end
         
         % Record the best function value and point encountered in the i_real-th block.
@@ -548,6 +560,9 @@ for iter = 1:maxit
             break;
         end 
     end
+
+    % Record the step size for every iteration if output_alpha_hist is true.
+    alpha_hist(:, iter) = alpha_all;
     
     % Update xopt and fopt. Note that we do this only if the iteration encounters a strictly better point.
     % Make sure that fopt is always the minimum of fhist after the moment we update fopt.
@@ -598,6 +613,86 @@ if output_xhist
     output.xhist = xhist(:, 1:nf);
 end
 output.fhist = fhist(1:nf);
+
+% Plot alpha_hist and decrease.
+if output_alpha_hist
+
+    x = 1:size(output.alpha_hist, 2);
+    y = mean(output.alpha_hist, 1);
+    % Create a plot to record the history of step sizes.
+    figure;  
+    plot(x, y, '-o');
+    xlabel('iteration number');
+    ylabel('average step size');
+    title('average step size');
+    grid on;
+
+    set(gca, 'YScale', 'log');
+
+    ylim([1e-8, 1e4]);
+
+    yticks(10.^(-8:4));
+
+    filePath = mfilename('fullpath');
+    [scriptPath, ~, ~] = fileparts(filePath);
+
+    print(fullfile(scriptPath, 'average_step_size.eps'), '-depsc');  % Use the -depsc option to save as a color EPS
+
+    % Create a plot to record the maximum of the step sizes.
+    figure;
+    plot(x, max(output.alpha_hist, [], 1), '-o');
+    xlabel('iteration number');
+    ylabel('maximum step size');
+    title('maximum step size');
+    grid on;
+
+    set(gca, 'YScale', 'log');
+
+    ylim([1e-8, 1e4]);
+
+    yticks(10.^(-8:4));
+
+    % Save as EPS format to the path where the current file is located
+    print(fullfile(scriptPath, 'maximum_step_size.eps'), '-depsc');  % Use the -depsc option to save as a color EPS
+
+
+    % Create a plot to record the minimum of the step sizes.
+    figure;
+    plot(x, min(output.alpha_hist, [], 1), '-o');
+    xlabel('iteration number');
+    ylabel('minimum step size');
+    title('minimum step size');
+    grid on;
+
+    set(gca, 'YScale', 'log');
+
+    ylim([1e-8, 1e4]);
+
+    yticks(10.^(-8:4));
+
+    % Save as EPS format to the path where the current file is located
+    print(fullfile(scriptPath, 'minimum_step_size.eps'), '-depsc');  % Use the -depsc option to save as a color EPS
+
+    % Create a plot to record sufficient_decrease.
+    figure;
+    plot(1:length(sufficient_decrease), sufficient_decrease, '-o');
+    xlabel('X Axis Label');
+    ylabel('sufficient decrease');
+    title('sufficient decrease');
+    grid on;
+
+    set(gca, 'YScale', 'log');
+
+    ylim([1e-16, 1e4]);
+
+    yticks(10.^(-16:4));
+
+    % Save as EPS format to the path where the current file is located
+    print(fullfile(scriptPath, 'sufficient_decrease.eps'), '-depsc');  % Use the -depsc option to save as a color EPS
+
+end
+
+
 
 % Set the message according to exitflag.
 switch exitflag

@@ -77,3 +77,4 @@ tests/competitors/private/imfil.m
 tests/profile_script.m
 tests/test_script.m
 tests/optiprofiler
+*.eps
