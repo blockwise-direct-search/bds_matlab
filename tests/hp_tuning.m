@@ -380,7 +380,7 @@ cd(old_dir);
 % fprintf('Optimized parameters: %f\n', x);
 % fprintf('Optimized value: %f\n', fx);
 % fprintf('History of parameters: \n'); fprintf('%f, %f\n', output.xhist);
-% fprintff('History of the values: %f\n', output.fhist);
+% fprintf('History of the values: %f\n', output.fhist);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 end
