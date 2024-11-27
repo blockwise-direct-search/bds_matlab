@@ -1,10 +1,10 @@
-function performance_return = hp_handle(hyparameters_value, parameters)
+function performance_return = hp_handle(hyperparameters_value, parameters)
 % perfprof_handle - Function handle for calculating the value of the
 % performance profile
 
 
-    parameters.solvers_options{1}.expand = hyparameters_value(1);
-    parameters.solvers_options{1}.shrink = hyparameters_value(2);
+    parameters.solvers_options{1}.expand = hyperparameters_value(1);
+    parameters.solvers_options{1}.shrink = hyperparameters_value(2);
 
     
     for i = 1:length(parameters.solvers_name)
