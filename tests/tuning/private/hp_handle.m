@@ -20,9 +20,8 @@ function performance_return = hp_handle(hyperparameters_value, parameters)
         multi_performance(i) = performance_calculated(frec, fmin, options_perf);
     end
     
-    performance_return = mean(multi_performance);
-
-
+    %performance_return = mean(multi_performance);
+    performance_return = mean(((1-1e-1) / (num_tau - 1) * sum(multi_performance(1:end-1))) + 1e-1*multi_performance(end));
 
 end
 

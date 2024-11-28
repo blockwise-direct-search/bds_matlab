@@ -47,14 +47,18 @@ old_dir = pwd();
 % Add the paths that we need to use in the performance profile into the MATLAB
 % search path.
 current_path = mfilename("fullpath");
-path_tests = fileparts(current_path);
+path_tests = fileparts(fileparts(current_path));
+path_tuning = fileparts(current_path);
 path_root = fileparts(path_tests);
+path_tools = fullfile(path_tests, "tools");
 path_src = fullfile(path_root, "src");
 path_competitors = fullfile(path_tests, "competitors");
 addpath(path_root);
 addpath(path_tests);
 addpath(path_src);
 addpath(path_competitors);
+addpath(path_tuning);
+addpath(path_tools);
 
 % If the folder of testdata does not exist, make a new one.
 path_testdata = fullfile(path_tests, "testdata");
@@ -116,7 +120,7 @@ switch parameters.tuning_solver
     case "bobyqa"
         %options.rhobeg = 0.125;
         options.rhoend = 1e-10;
-        options.scale = true;
+        options.scale = false;
         lb = log2([1 + 1e-2, 1e-2]);
         ub = log2([10, 1 - 1e-2]);
         [xopt, fopt, ~, output_tuning] = ...

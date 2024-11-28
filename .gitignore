@@ -78,3 +78,5 @@ tests/profile_script.m
 tests/test_script.m
 tests/optiprofiler
 *.eps
+tests/optiprofiler_script/out
+tests/tuning/tuning_data

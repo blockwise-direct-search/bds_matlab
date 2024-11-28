@@ -16,19 +16,6 @@ path_testdata_perf = " ";
 
 try
 
-    path_nlopt = "/usr/local/lib/matlab/";
-
-    if ~contains(path, path_nlopt, 'IgnoreCase', true)
-        if exist(path_nlopt, 'dir') == 7
-            addpath(path_nlopt);
-            disp('Add path_nlopt to MATLAB path.');
-        else
-            disp('path_nlopt does not exist on the local machine.');
-        end
-    else
-        disp('Path_nlopt already exists in MATLAB path.');
-    end
-
     if any(ismember(parameters.solvers_name, "nomad"))
         addpath '/home/lhtian97/Documents/nomad/build/release/lib'
     end
@@ -50,12 +37,12 @@ try
     if ~exist(path_testdata, "dir")
         mkdir(path_testdata);
     end
-
+    
     % In case no solvers are input, then throw an error.
     if ~isfield(parameters, "solvers_options") || length(parameters.solvers_options) < 2
         error("There should be at least two solvers.")
     end
-
+    
     % Get the parameters that the test needs.
     parameters = set_profile_options(parameters);
 
@@ -100,7 +87,11 @@ try
             problem_names = secup(s);
         end
     else
-        path_optiprofiler = strcat(fileparts(mfilename('fullpath')), "/optiprofiler");
+        path_optiprofiler = strcat(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))), ...
+        "/local", "/optiprofiler", "/matlab", "/optiprofiler"); 
+        if ~exist(path_optiprofiler, "dir")
+            error("The path of optiprofiler does not exist.");
+        end
         path_optiprofiler_probinfo_s2mpj = strcat(path_optiprofiler, "/probinfo_s2mpj");
         path_optiprofiler_matlab_problems = strcat(path_optiprofiler_probinfo_s2mpj, "/matlab_problems");
         path_optiprofiler_src = strcat(path_optiprofiler, "/src");
@@ -351,9 +342,6 @@ try
                     end
                     p.objective = @(x) p.objective(x) + h(x);
                 end
-                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    fhist_plot = cell(1, num_solvers);
-                end
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
                     seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
@@ -364,13 +352,10 @@ try
                     %p.x0 = p.x0 + 1 * max(1, norm(p.x0)) * rr;
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
-                fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
+                %fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 for i_solver = 1:num_solvers
                     [fhist, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                         i_run, solvers_options, test_options);
-                    if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                        fhist_plot{i_solver} = fhist;
-                    end
                     if isempty(fhist)
                         fval_tmp(i_solver) = NaN;
                     else
@@ -379,9 +364,6 @@ try
                     frec(i_problem,i_solver,i_run,:) = fhist_perfprof;
                 end
                 fmin(i_problem, i_run) = min(fval_tmp);
-                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    plot_fhist(dim, fhist_plot, p.name, i_run, parameters);
-                end
             end
         end
     else
@@ -481,9 +463,6 @@ try
                     p.objective = @(x) p.objective(h(x));
                     p.x0 = p.x0 ./ diag(scale_matrix);
                 end
-                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    fhist_plot = cell(1, num_solvers);
-                end
                 fval_tmp = NaN(1, num_solvers);
                 if parameters.random_initial_point
                     seed = min(abs(ceil(1e5*sin(1e9*sum(num_problems)))) + ...
@@ -493,7 +472,7 @@ try
                     rr = rr / norm(rr);
                     p.x0 = p.x0 + parameters.x0_perturbation_level * max(1, norm(p.x0)) * rr;
                 end
-                fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
+                %fprintf("%d(%d). %s\n", i_problem, i_run, p.name);
                 %fhist_tmp = cell(2, 1);
                 BDS_list = ["DS", "CBDS", "PBDS", "RBDS", "PADS", "sCBDS"];
                 if ~isempty(intersect(parameters.solvers_name, lower(BDS_list)))
@@ -513,9 +492,6 @@ try
                     % if any(isnan(fhist_perfprof))
                     %     keyboard
                     % end
-                    if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                        fhist_plot{i_solver} = fhist;
-                    end
                     if isempty(fhist)
                         fval_tmp(i_solver) = NaN;
                     else
@@ -527,9 +503,6 @@ try
                 %     keyboard
                 % end
                 fmin(i_problem, i_run) = min(fval_tmp);
-                if isfield(parameters, "plot_fhist") && parameters.plot_fhist
-                    plot_fhist(dim, fhist_plot, p.name, i_run, parameters);
-                end
             end
         end
     end
@@ -550,7 +523,7 @@ try
                     p = s2mpj_wrapper(problem_info);
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
-                fprintf("%d. %s\n", i_problem, p.name);
+                %fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
                     [~, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                         i_run, solvers_options, test_options);
@@ -567,7 +540,7 @@ try
                     p = s2mpj_wrapper(problem_info);
                 end
                 frec_local = NaN(num_solvers, MaxFunctionEvaluations_frec);
-                fprintf("%d. %s\n", i_problem, p.name);
+                %fprintf("%d. %s\n", i_problem, p.name);
                 for i_solver = 1:num_solvers
                     [~, fhist_perfprof] = get_fhist(p, MaxFunctionEvaluations_frec, i_solver,...
                         i_run, solvers_options, test_options);

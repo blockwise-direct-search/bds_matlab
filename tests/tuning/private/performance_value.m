@@ -1,4 +1,4 @@
-function [performance_diff] = performance_calculated(frec, fmin, options)
+function [performance_diff] = performance_value(frec, fmin, options)
 % This function calculates the performance of the solver being tested.
 % frec: trajectory of function values; frec(ip, is, ir, k) is the function value of the ip-th
 % problem obtained by the is-th solver at the ir-th random run at the k-th iteration.
