@@ -76,7 +76,7 @@ view(3) % 3D view
 saveas(FigHandle, fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_3d.eps']), 'epsc');
 % Try converting the eps to pdf.
 epsPath = fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_3d.eps']);
-system(('epstopdf '+epsPath));
+system(('epstopdf '+epsPath+' 2> /dev/null'));
 
 % Save eps of 2d plot 
 view(2); % Top-down view
@@ -84,7 +84,8 @@ saveas(FigHandle, fullfile(data_path, [param1_name, '_', param2_name, '_vs_perfo
 % Try converting the eps to pdf.
 epsPath = fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_2d.eps']);
 % One way to convert eps to pdf.
-system(('epstopdf '+epsPath));
+system(('epstopdf '+epsPath+' 2> /dev/null'));
+
 
 fprintf('Performance data and plots saved in \n %s\n', data_path);
 
