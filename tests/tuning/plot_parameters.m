@@ -20,7 +20,7 @@ perfs = NaN(size(p1));
 perfs_saved = cell(size(p1, 1), size(p1, 2));
 
 % Get performance for each parameter combination
-parfor ip = 1:numel(p1)
+for ip = 1:numel(p1)
     % Set solver options
     solver_options = struct();
     solver_options.(param1_name) = p1(ip);
@@ -78,9 +78,6 @@ fclose(fileID);
 
 % Plot
 FigHandle=figure('Name', ['(', param1_name, ', ', param2_name, ')', ' v.s. performance']);
-title(gca, strrep(feature_str, '_', '-')); 
-xlabel(param1_name);
-ylabel(param2_name);
 hold on;
 
 colormap(jet);
@@ -93,13 +90,18 @@ if isfield(options, 'log_color') && options.log_color
 else
     surf(p1, p2, perfs, 'FaceColor','interp');
 end
+
+title(gca, strrep(feature_str, '_', '-')); 
+xlabel(param1_name);
+ylabel(param2_name);
+
 colorbar; 
 
 % Find the top 10 maximum values
 [~, idx] = maxk(perfs(:), 10); % Find the indices of the top 10 maximum values
 
 % Only mark these points, without showing the values
-plot3(p1(idx), p2(idx), perfs(idx), 'o', 'MarkerSize', 10, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % Black black solid circle
+plot3(p1(idx), p2(idx), perfs(idx), 'o', 'MarkerSize', 6, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % Black black solid circle
 
 view(3) % 3D view
 % Save fig

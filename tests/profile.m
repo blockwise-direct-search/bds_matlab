@@ -28,23 +28,24 @@ try
     path_src = fullfile(path_root, "src");
     path_competitors = fullfile(path_tests, "competitors");
     path_tools = fullfile(path_tests, "tools");
+    disp(path_tools)
     addpath(path_root);
     addpath(path_tests);
     addpath(path_src);
     addpath(path_competitors);
     addpath(path_tools);
-    
+
     % If the folder of testdata does not exist, make a new one.
     path_testdata = fullfile(path_tests, "testdata");
     if ~exist(path_testdata, "dir")
         mkdir(path_testdata);
     end
-    
+
     % In case no solvers are input, then throw an error.
     if ~isfield(parameters, "solvers_options") || length(parameters.solvers_options) < 2
         error("There should be at least two solvers.")
     end
-    
+
     % Get the parameters that the test needs.
     parameters = set_profile_options(parameters);
 
@@ -90,7 +91,7 @@ try
         end
     else
         path_optiprofiler = strcat(fileparts(fileparts(fileparts(fileparts(mfilename('fullpath'))))), ...
-        "/local", "/optiprofiler", "/matlab", "/optiprofiler"); 
+            "/local", "/optiprofiler", "/matlab", "/optiprofiler");
         if ~exist(path_optiprofiler, "dir")
             error("The path of optiprofiler does not exist.");
         end
@@ -144,7 +145,7 @@ try
         options_s2mpj.problem_type = 'u';
         options_s2mpj.mindim = parameters.problem_mindim;
         options_s2mpj.maxdim = parameters.problem_maxdim;
-        problem_names_orig = s_select(options_s2mpj); 
+        problem_names_orig = s_select(options_s2mpj);
         problem_names = [];
         for i = 1:length(problem_names_orig)
             if ~ismember(problem_names_orig(i), blacklist) && ...
@@ -623,7 +624,7 @@ try
         % Save the frequency data to a text file
         % Obtain unique values and their indices
         [uniqueValues, ~, idx] = unique(data_dim);
-        % Count the number of occurrences of each unique value 
+        % Count the number of occurrences of each unique value
         counts = histcounts(idx, 1:max(idx)+1);
         % Calculate the total count
         totalCount = sum(counts);
@@ -636,7 +637,7 @@ try
         output_data = output_data(counts > 0, :);
 
         % Sort the data by the first column
-        output_data = sortrows(output_data, 1); 
+        output_data = sortrows(output_data, 1);
 
         % Convert the percentage to a string and add a percentage sign
         percentage_str = strcat(string(output_data(:, 3)), '%'); % Convert to string and add a percentage sign
