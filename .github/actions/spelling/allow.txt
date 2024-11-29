@@ -430,6 +430,7 @@ downarrow
 downdownarrows
 downharpoonleft
 downharpoonright
+DPlot
 Dragomir
 Droppo
 DRSOM
@@ -1083,6 +1084,7 @@ Maxhist
 maximality
 maxit
 maxiter
+maxk
 maxl
 maxq
 maxtime
@@ -1274,6 +1276,7 @@ Omojokun
 oneapi
 onelineskip
 oneside
+openfig
 opengl
 OPENMP
 Oper

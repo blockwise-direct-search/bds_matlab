@@ -28,7 +28,6 @@ try
     path_src = fullfile(path_root, "src");
     path_competitors = fullfile(path_tests, "competitors");
     path_tools = fullfile(path_tests, "tools");
-    disp(path_tools)
     addpath(path_root);
     addpath(path_tests);
     addpath(path_src);
