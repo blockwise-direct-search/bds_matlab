@@ -95,18 +95,26 @@ end
 colorbar; 
 
 view(3) % 3D view
+% Save fig
+saveas(FigHandle, fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_3d.fig']), 'fig');
+% Use openfig to open the fig file.
+% openfig('my3DPlot.fig');
 % Save eps of 3d plot 
 saveas(FigHandle, fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_3d.eps']), 'epsc');
 % Try converting the eps to pdf.
 epsPath = fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_3d.eps']);
+% One way to convert eps to pdf, without showing the output of the command.
 system(('epstopdf '+epsPath+' 2> /dev/null'));
 
 % Save eps of 2d plot 
 view(2); % Top-down view
+% Save fig
+saveas(FigHandle, fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_2d.fig']), 'fig');
+% Save eps of 2d plot
 saveas(FigHandle, fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_2d.eps']), 'epsc');
 % Try converting the eps to pdf.
 epsPath = fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_2d.eps']);
-% One way to convert eps to pdf.
+% One way to convert eps to pdf, without showing the output of the command.
 system(('epstopdf '+epsPath+' 2> /dev/null'));
 
 
