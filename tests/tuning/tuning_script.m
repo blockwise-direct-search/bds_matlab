@@ -1,8 +1,8 @@
 clear all
 
 parameters = struct();
-parameters.expand = [1:3];
-parameters.shrink = [0.3:0.1:0.6];
+parameters.expand = 1:5;
+parameters.shrink = 0.3:0.1:0.6;
 
 fprintf('Number of parameter combinations: %d\n', length(parameters.expand)*length(parameters.shrink));
 
@@ -14,7 +14,8 @@ options.mindim = 1;
 options.maxdim = 1;
 options.test_type = "s2mpj";
 options.tau = 10.^(-1:-1:-4);
-options.weights = [0.3, 0.3, 0.3, 0.1];
+options.tau_weights = [0.3, 0.3, 0.3, 0.1];
+options.curve_weights = @(x) 1;
 
 
 options.feature = "plain";

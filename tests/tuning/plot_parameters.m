@@ -61,10 +61,11 @@ fileID = fopen(fullfile(data_path, 'options.txt'), 'w');
 fprintf(fileID, 'options.mindim = %d;\n', options.mindim);
 fprintf(fileID, 'options.maxdim = %d;\n', options.maxdim);
 fprintf(fileID, 'options.test_type = "%s";\n', options.test_type);
-fprintf(fileID, 'options.weights = [%s];\n', num2str(options.weights));
+fprintf(fileID, 'options.tau_weights = [%s];\n', num2str(options.tau_weights));
 fprintf(fileID, 'options.feature = "%s";\n', options.feature);
 fprintf(fileID, 'options.num_random = %d;\n', options.num_random);
 fprintf(fileID, 'options.tau = [%s];\n', num2str(options.tau));
+fprintf(fileID, 'options.curve_weights = %s;\n', func2str(options.curve_weights));
 fclose(fileID);
 
 % Save the parameters into a mat file.
@@ -94,8 +95,8 @@ else
 end
 colorbar; 
 
-% Find the top 5 maximum values
-[~, idx] = maxk(perfs(:), 5); % Find the indices of the top 5 maximum values
+% Find the top 10 maximum values
+[~, idx] = maxk(perfs(:), 10); % Find the indices of the top 10 maximum values
 
 % Only mark these points, without showing the values
 plot3(p1(idx), p2(idx), perfs(idx), 'o', 'MarkerSize', 10, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % Black black solid circle

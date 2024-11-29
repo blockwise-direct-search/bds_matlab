@@ -39,12 +39,12 @@ function [perf, perf_prof_saved] = eval_performance(solver, competitor, options)
         num_valid_points = sum(perf_prof.curves{1}(1, :) <= perf_prof.cut_ratio);
         perf_prof.curves{1}(1, num_valid_points + 1) = perf_prof.cut_ratio;
         curve_solver = perf_prof.curves{1}(:, 1:num_valid_points + 1);
-        performance_solver = integrate(curve_solver) / perf_prof.cut_ratio;
+        performance_solver = integrate(curve_solver, options.curve_weights) / perf_prof.cut_ratio;
 
         num_valid_points = sum(perf_prof.curves{2}(1, :) <= perf_prof.cut_ratio);
         perf_prof.curves{2}(1, num_valid_points + 1) = perf_prof.cut_ratio;
         curve_competitor = perf_prof.curves{2}(:, 1:num_valid_points + 1);
-        performance_competitor = integral(curve_competitor) / perf_prof.cut_ratio;
+        performance_competitor = integrate(curve_competitor, options.curve_weights) / perf_prof.cut_ratio;
 
         perf_prof_saved{i}.perf_prof = perf_prof;
         perf_prof_saved{i}.performance_solver = performance_solver;
@@ -55,7 +55,7 @@ function [perf, perf_prof_saved] = eval_performance(solver, competitor, options)
 
     end
     
-    perf = sum(performances(1:length(options.tau))'.*options.weights);
+    perf = sum(performances(1:length(options.tau))'.*options.tau_weights);
     
 end
 
