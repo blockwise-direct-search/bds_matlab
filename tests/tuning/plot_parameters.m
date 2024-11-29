@@ -94,6 +94,12 @@ else
 end
 colorbar; 
 
+% Find the top 5 maximum values
+[~, idx] = maxk(perfs(:), 5); % Find the indices of the top 5 maximum values
+
+% Only mark these points, without showing the values
+plot3(p1(idx), p2(idx), perfs(idx), 'o', 'MarkerSize', 10, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % Black black solid circle
+
 view(3) % 3D view
 % Save fig
 saveas(FigHandle, fullfile(data_path, [param1_name, '_', param2_name, '_vs_performance_3d.fig']), 'fig');

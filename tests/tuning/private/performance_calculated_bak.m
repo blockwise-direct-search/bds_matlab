@@ -1,5 +1,5 @@
-function [performance_tuning, performance_benchmark, performance_diff] = performance_calculated(perf_prof)
-% This function calculates the performance of the solver being tuned.
+function [performance_tuning, performance_benchmark, performance_diff] = performance_calculated_bak(perf_prof)
+% This function integrates one curve to calculate the performance of the solver.
 
 ns = perf_prof.ns;
 cut_ratio = perf_prof.cut_ratio;
