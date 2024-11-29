@@ -266,11 +266,13 @@ circledcirc
 circleddash
 citecolor
 classdef
+clc
 Clerman
 clf
 closing
 clubsuit
 cmake
+cmap
 cmdout
 cmpaths
 cmtools
@@ -286,6 +288,7 @@ colombiana
 colorbar
 colorlet
 colorlinks
+colormap
 Combettes
 commentstyle
 Commun
@@ -402,6 +405,7 @@ dirname
 discretized
 distsq
 divideontimes
+DIXON
 djvu
 dmabr
 dmj
@@ -662,6 +666,7 @@ Grauman
 Graw
 Grenz
 grep
+griddata
 Griebel
 Griewank
 Grigas
@@ -769,6 +774,7 @@ Integralgleichungssysteme
 Intell
 INTEQNELS
 intercal
+interp
 invp
 ip
 ipami
@@ -971,6 +977,7 @@ linesearch
 Linesearch
 linewidth
 linkcolor
+linspace
 Linux
 Lipschitzian
 littlered
@@ -1331,6 +1338,7 @@ Peherstorfer
 Peloquin
 perfdata
 perfprof
+perfs
 Periaux
 perp
 Pesquet
@@ -1691,6 +1699,7 @@ struco
 stsin
 subadditivity
 subdifferential
+subfolder
 subfolders
 subgradient
 suboptions
@@ -1815,6 +1824,7 @@ toplas
 Toraldo
 Torczon
 Toselli
+TQUARTIC
 Traasdahl
 Trefethen
 triangledown

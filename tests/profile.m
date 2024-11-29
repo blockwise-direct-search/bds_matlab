@@ -27,10 +27,12 @@ try
     path_root = fileparts(path_tests);
     path_src = fullfile(path_root, "src");
     path_competitors = fullfile(path_tests, "competitors");
+    path_tools = fullfile(path_tests, "tools");
     addpath(path_root);
     addpath(path_tests);
     addpath(path_src);
     addpath(path_competitors);
+    addpath(path_tools);
     
     % If the folder of testdata does not exist, make a new one.
     path_testdata = fullfile(path_tests, "testdata");
