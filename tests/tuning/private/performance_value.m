@@ -1,5 +1,7 @@
-function [performance_diff] = performance_value(frec, fmin, options)
-% This function calculates the performance of the solver being tested.
+function [perf_prof] = performance_value(frec, fmin, options)
+% This function returns a struct containing the information that is needed to calculate the difference
+% in performance between the solver being tuned and the benchmark solver. The struct contains the
+% performance profiles of the solvers, the minimal function values, the number of solvers and cut ratio.
 % frec: trajectory of function values; frec(ip, is, ir, k) is the function value of the ip-th
 % problem obtained by the is-th solver at the ir-th random run at the k-th iteration.
 % fmin: the minimal function values; either fmin(ip) is the minimal function value of the ip-th
@@ -169,25 +171,13 @@ for is = 1 : ns
     perf_prof{is} = [x{is}; y{is}];
 end
 
-performance = zeros(ns, 1);
-% Here, we set the first solver as the one that being tested and the
-% second solver is the default one. Then we calculate the relative
-% performance for the first solver. Since the stair function is right continuous,
-% when we calculate the performance, we need to multiply the height of the
-% left point by the length of the stair.
-for is = 1 : ns
-    num_valid_points = sum(perf_prof{is}(1, :) <= cut_ratio);
-    perf_prof{is}(1, num_valid_points + 1) = cut_ratio;
-    for i = 2 : num_valid_points + 1
-        performance(is) = performance(is) + (perf_prof{is}(1, i) - perf_prof{is}(1, i-1))...
-            *perf_prof{is}(2, i-1);
-    end
-end
-% Scale the performance. Here we scale the performance by dividing the the value
-% of the default solver at the last point. Since the solver that we use is
-% to minimize, here we use performance(2) - performance(1). Since the
-% performance_diff is in the range of [-1, 1], we use the following formula.
-performance_diff = max(-1, min(1, (performance(2) - performance(1)) / cut_ratio));
+% Set the output.
+curves = perf_prof;
+perf_prof = struct();
+perf_prof.curves = curves;
+perf_prof.ns = ns;
+perf_prof.fmin = fmin;
+perf_prof.cut_ratio = cut_ratio;
 
 end
 

@@ -1,7 +1,7 @@
-function perf = eval_performance(solver, competitor, options)
+function [perf, perf_prof_saved] = eval_performance(solver, competitor, options)
 
-    perf = rand();
-    return
+    % perf = rand();
+    % return
 
     parameters = struct();
 
@@ -19,21 +19,27 @@ function perf = eval_performance(solver, competitor, options)
     parameters.solvers_options{1}.solver = solver;
     parameters.solvers_options{2}.solver = competitor;
 
+    perf_prof_saved = cell(10, 1);
+
     addpath(fileparts(fileparts(fileparts(mfilename('fullpath')))));
     tic;
     [~, frec, fmin] = profile(parameters);
     toc;
     perf_options = struct();
     perf_options.natural_stop = false;
-    tau = options.tau;
-    performances= NaN(size(tau));
+    performances= NaN(10, 1);
 
-    for i = 1 : length(tau)
-        perf_options.tau = tau(i);
-        performances(i) = performance_value(frec, fmin, perf_options);
+    for i = 1 : 10
+        perf_options.tau = 10^(-i);
+        perf_prof = performance_value(frec, fmin, perf_options);
+        [performance_tuning, performance_benchmark, performances(i)] = performance_calculated(perf_prof);
+        perf_prof_saved{i}.perf_prof = perf_prof;
+        perf_prof_saved{i}.performance_tuning = performance_tuning;
+        perf_prof_saved{i}.performance_benchmark = performance_benchmark;
+        perf_prof_saved{i}.performance_diff = performances(i);
     end
     
-    perf = sum(performances.*options.weights);
+    perf = sum(performances(1:length(options.tau))'.*options.weights);
     
 end
 

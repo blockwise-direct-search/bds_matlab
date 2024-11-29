@@ -16,6 +16,8 @@ param2_name = param_names{2};
 
 % Initialize performance matrix
 perfs = NaN(size(p1));
+% Initialize performance matrix for saving
+perfs_saved = cell(size(p1, 1), size(p1, 2));
 
 % Get performance for each parameter combination
 parfor ip = 1:numel(p1)
@@ -31,7 +33,7 @@ parfor ip = 1:numel(p1)
 
     % Compute performance
     fprintf('Evaluating performance for %s = %f, %s = %f\n', param1_name, p1(ip), param2_name, p2(ip));
-    perfs(ip) = eval_performance(solver, competitor, local_options);
+    [perfs(ip), perfs_saved{ip}] = eval_performance(solver, competitor, local_options);
 end
 
 % We save the results in the `data_path` folder. 
@@ -50,7 +52,7 @@ data_path = fullfile(data_path, data_path_name);
 mkdir(data_path);
 
 % Save performance data 
-save(fullfile(data_path, 'performance_data.mat'), 'p1', 'p2', 'perfs');
+save(fullfile(data_path, 'performance_data.mat'), 'p1', 'p2', 'perfs', 'perfs_saved');
 
 % Save options into a mat file.
 save(fullfile(data_path, 'options.mat'), 'options');
