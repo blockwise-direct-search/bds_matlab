@@ -34,9 +34,6 @@ parfor ip = 1:numel(p1)
     perfs(ip) = eval_performance(solver, competitor, local_options);
 end
 
-
-% Plot the save the results
-
 % We save the results in the `data_path` folder. 
 current_path = fileparts(mfilename("fullpath"));
 % Create the folder if it does not exist.
@@ -46,15 +43,39 @@ if ~exist(data_path, 'dir')
 end
 % Creat a subfolder stamped with the current time for the current test. 
 time_str = char(datetime('now', 'Format', 'yy_MM_dd_HH_mm'));
-data_path = fullfile(data_path, time_str);
+feature_str = [char(solver), '_vs_', char(competitor), '_', num2str(options.mindim), '_', ...
+                num2str(options.maxdim), '_', char(options.feature), '_', char(options.test_type)];
+data_path_name = [feature_str, '_', time_str];
+data_path = fullfile(data_path, data_path_name);
 mkdir(data_path);
 
 % Save performance data 
 save(fullfile(data_path, 'performance_data.mat'), 'p1', 'p2', 'perfs');
 
+% Save options into a mat file.
+save(fullfile(data_path, 'options.mat'), 'options');
+% Save options into a txt file.
+fileID = fopen(fullfile(data_path, 'options.txt'), 'w');
+fprintf(fileID, 'options.mindim = %d;\n', options.mindim);
+fprintf(fileID, 'options.maxdim = %d;\n', options.maxdim);
+fprintf(fileID, 'options.test_type = "%s";\n', options.test_type);
+fprintf(fileID, 'options.weights = [%s];\n', num2str(options.weights));
+fprintf(fileID, 'options.feature = "%s";\n', options.feature);
+fprintf(fileID, 'options.num_random = %d;\n', options.num_random);
+fprintf(fileID, 'options.tau = [%s];\n', num2str(options.tau));
+fclose(fileID);
+
+% Save the parameters into a mat file.
+save(fullfile(data_path, 'parameters.mat'), 'parameters');
+% Save the parameters into a txt file.
+fileID = fopen(fullfile(data_path, 'parameters.txt'), 'w');
+fprintf(fileID, 'parameters.%s = [%s];\n', param1_name, num2str(parameters.(param1_name)));
+fprintf(fileID, 'parameters.%s = [%s];\n', param2_name, num2str(parameters.(param2_name)));
+fclose(fileID);
+
 % Plot
 FigHandle=figure('Name', ['(', param1_name, ', ', param2_name, ')', ' v.s. performance']);
-title(gca,'performance');
+title(gca, strrep(feature_str, '_', '-')); 
 xlabel(param1_name);
 ylabel(param2_name);
 hold on;

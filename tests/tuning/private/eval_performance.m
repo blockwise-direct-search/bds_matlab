@@ -1,5 +1,8 @@
 function perf = eval_performance(solver, competitor, options)
 
+    perf = rand();
+    return
+
     parameters = struct();
 
     parameters.tuning = true;
