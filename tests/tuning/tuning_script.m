@@ -8,28 +8,28 @@ solver = "cbds";
 competitor = "cbds";
 
 options = struct();
-options.mindim = 6;
-options.maxdim = 50;
+options.mindim = 2;
+options.maxdim = 2;
 options.test_type = "s2mpj";
-options.tau = 10.^(-1:-1:-4);
+options.tau_indices = 1:4;
 options.tau_weights = [0.3, 0.3, 0.3, 0.1];
-options.curve_weights = @(x) curve_weights(x);
+options.plot_weights = @(x) plot_weights(x);
 
-% options.feature = "plain";
+options.feature = "plain";
+fprintf('Feature:\t %s\n', options.feature);
+options.num_random = 1;
+plot_parameters(parameters, solver, competitor, options);   
+
+% options.feature = "noise_1e-3_no_rotation";
 % fprintf('Feature:\t %s\n', options.feature);
-% options.num_random = 1;
+% options.num_random = 3;
 % plot_parameters(parameters, solver, competitor, options);   
 
-options.feature = "noise_1e-3_no_rotation";
-fprintf('Feature:\t %s\n', options.feature);
-options.num_random = 3;
-plot_parameters(parameters, solver, competitor, options);   
+% options.feature = "rotation_noisy_1e-3";
+% fprintf('Feature:\t %s\n', options.feature);
+% options.num_random = 3;
+% plot_parameters(parameters, solver, competitor, options);   
 
-options.feature = "rotation_noisy_1e-3";
-fprintf('Feature:\t %s\n', options.feature);
-options.num_random = 3;
-plot_parameters(parameters, solver, competitor, options);   
-
-function x = curve_weights(x)
-    x = 1;
+function w = plot_weights(x)
+    w = 1;
 end

@@ -64,8 +64,8 @@ fprintf(fileID, 'options.test_type = "%s";\n', options.test_type);
 fprintf(fileID, 'options.tau_weights = [%s];\n', num2str(options.tau_weights));
 fprintf(fileID, 'options.feature = "%s";\n', options.feature);
 fprintf(fileID, 'options.num_random = %d;\n', options.num_random);
-fprintf(fileID, 'options.tau = [%s];\n', num2str(options.tau));
-fprintf(fileID, 'options.curve_weights = %s;\n', func2str(options.curve_weights));
+fprintf(fileID, 'options.tau_indices = [%s];\n', num2str(options.tau_indices));
+fprintf(fileID, 'options.plot_weights = %s;\n', func2str(options.plot_weights));
 fclose(fileID);
 
 % Save the parameters into a mat file.
@@ -81,6 +81,7 @@ FigHandle=figure('Name', ['(', param1_name, ', ', param2_name, ')', ' v.s. perfo
 hold on;
 
 colormap(jet);
+
 if isfield(options, 'log_color') && options.log_color
     % Use log scale of perfs for a better usage of the color spectrum.
     max_perf = max(perfs(:));
