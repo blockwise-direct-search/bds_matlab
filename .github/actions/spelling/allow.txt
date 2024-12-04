@@ -507,6 +507,7 @@ evalin
 Evals
 ewton
 Exascale
+excludelist
 exe
 exists
 exitflag
@@ -964,6 +965,7 @@ lg
 lgroup
 lhd
 lhtian
+LIARWHD
 libprima
 Lidskii
 Liesen
