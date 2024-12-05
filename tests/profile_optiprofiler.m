@@ -37,14 +37,16 @@ function profile_optiprofiler(options)
     if ~isfield(options, 'labels')
         error('Please provide the labels for the solvers');
     end
-    feature_adaptive = ['noisy', 'truncated', 'custom'];
+    feature_adaptive = {'noisy', 'truncated', 'custom'};
     if ismember('fminunc', options.labels) && ismember(options.feature_name, feature_adaptive)
         options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive'};
     end
-    if ~isfield(options, 'n_runs') || strcmpi(options.feature_name, 'plain')
-        options.n_runs = 1;
-    else
-        options.n_runs = 3;
+    if ~isfield(options, 'n_runs')
+        if strcmpi(options.feature_name, 'plain')
+            options.n_runs = 1;
+        else
+            options.n_runs = 3;
+        end
     end
     time_str = char(datetime('now', 'Format', 'yy_MM_dd_HH_mm'));
     options.silent = false;
