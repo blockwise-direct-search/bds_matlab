@@ -34,6 +34,13 @@ function profile_optiprofiler(options)
     if ~isfield(options, 'feature_name')
         error('Please provide the feature name');
     end
+    if ~isfield(options, 'labels')
+        error('Please provide the labels for the solvers');
+    end
+    feature_adaptive = ['noisy', 'truncated', 'custom'];
+    if ismember('fminunc', options.labels) && ismember(options.feature_name, feature_adaptive)
+        options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive'};
+    end
     if ~isfield(options, 'n_runs') || strcmpi(options.feature_name, 'plain')
         options.n_runs = 1;
     else
@@ -59,9 +66,6 @@ function profile_optiprofiler(options)
     end
     if ~isfield(options, 'maxdim')
         options.maxdim = 5;
-    end
-    if ~isfield(options, 'labels')
-        error('Please provide the labels for the solvers');
     end
     solvers = cell(1, length(options.labels));
     for i = 1:length(options.labels)
