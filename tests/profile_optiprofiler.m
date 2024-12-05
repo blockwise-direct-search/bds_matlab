@@ -36,6 +36,8 @@ function profile_optiprofiler(options)
     end
     if ~isfield(options, 'n_runs') || strcmpi(options.feature_name, 'plain')
         options.n_runs = 1;
+    else
+        options.n_runs = 3;
     end
     time_str = char(datetime('now', 'Format', 'yy_MM_dd_HH_mm'));
     options.silent = false;
@@ -133,7 +135,7 @@ function profile_optiprofiler(options)
             'VESUVIOULS',...
             'YATP1CLS'};
 
-    if strcmp(options.feature_name, 'rotation_noisy_1e-3')
+    if strcmp(options.feature_name, 'custom')
         % We need mod_x0 to make sure that the linearly transformed problem is mathematically equivalent
         % to the original problem.
         options.mod_x0 = @mod_x0;
