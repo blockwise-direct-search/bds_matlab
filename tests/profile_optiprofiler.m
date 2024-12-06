@@ -47,7 +47,7 @@ function profile_optiprofiler(options)
         options.feature_name = 'truncated';
     end
     if startsWith(options.feature_name, 'random_nan')
-        options.rate_nan = str2double(options.feature_name(end)) / 100;
+        options.rate_nan = options.feature_name(find(str == '_', 1, 'last') + 1:end) / 100;
         options.feature_name = 'random_nan';
     end
     if ~isfield(options, 'labels')
