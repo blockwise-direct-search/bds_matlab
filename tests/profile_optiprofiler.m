@@ -34,6 +34,14 @@ function profile_optiprofiler(options)
     if ~isfield(options, 'feature_name')
         error('Please provide the feature name');
     end
+    if startsWith(options.feature_name, 'noisy')
+        options.noise_level = 10.^(str2double(options.feature_name(end-1:end)));
+        options.feature_name = 'noisy';
+    end 
+    if startsWith(options.feature_name, 'rotation_noisy')
+        options.noise_level = 10.^(str2double(options.feature_name(end-1:end)));
+        options.feature_name = 'custom';
+    end
     if ~isfield(options, 'labels')
         error('Please provide the labels for the solvers');
     end
@@ -98,6 +106,9 @@ function profile_optiprofiler(options)
     end
     options.benchmark_id =[strrep(options.labels{1}, '-', '_'), '_', strrep(options.labels{2}, '-', '_'),...
         '_', num2str(options.mindim), '_', num2str(options.maxdim), '_', num2str(options.n_runs), '_', options.feature_name];
+    if strcmpi(options.feature_name, 'noisy') || strcmpi(options.feature_name, 'custom')
+        options.benchmark_id = [options.benchmark_id, '_', num2str(options.noise_level)];
+    end
     if options.run_plain
         options.benchmark_id = [options.benchmark_id, '_plain'];
     end
@@ -146,9 +157,20 @@ function profile_optiprofiler(options)
         % to the original problem.
         options.mod_x0 = @mod_x0;
         % We only modify mod_fun since we are dealing with unconstrained problems.
-        options.mod_fun = @mod_fun;
+        switch options.noise_level
+            case 1e-1
+                options.mod_fun = @mod_fun_1e_1;
+            case 1e-2
+                options.mod_fun = @mod_fun_1e_2;
+            case 1e-3
+                options.mod_fun = @mod_fun_1e_3;
+            case 1e-4
+                options.mod_fun = @mod_fun_1e_4;
+            otherwise
+                error('Unknown noise level');
+        end
+        options = rmfield(options, 'noise_level');
         options.mod_affine = @mod_affine;
-        options.feature_name = 'custom';
     end
 
     benchmark(solvers, options)
@@ -162,10 +184,28 @@ function x0 = mod_x0(rand_stream, problem)
     x0 = Q * problem.x0;
 end
 
-function f = mod_fun(x, rand_stream, problem)
+function f = mod_fun_1e_1(x, rand_stream, problem)
+
+    f = problem.fun(x);
+    f = f + max(1, abs(f)) * 1e-1 * rand_stream.randn(1);
+end
+
+function f = mod_fun_1e_2(x, rand_stream, problem)
+
+    f = problem.fun(x);
+    f = f + max(1, abs(f)) * 1e-2 * rand_stream.randn(1);
+end
+
+function f = mod_fun_1e_3(x, rand_stream, problem)
 
     f = problem.fun(x);
     f = f + max(1, abs(f)) * 1e-3 * rand_stream.randn(1);
+end
+
+function f = mod_fun_1e_4(x, rand_stream, problem)
+
+    f = problem.fun(x);
+    f = f + max(1, abs(f)) * 1e-4 * rand_stream.randn(1);
 end
 
 function [A, b, inv] = mod_affine(rand_stream, problem)
