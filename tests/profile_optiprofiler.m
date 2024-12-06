@@ -55,7 +55,18 @@ function profile_optiprofiler(options)
     end
     feature_adaptive = {'noisy', 'truncated', 'custom'};
     if ismember('fminunc', options.labels) && ismember(options.feature_name, feature_adaptive)
-        options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive'};
+        switch options.noise_level
+            case 1e-1
+                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-1';
+            case 1e-2
+                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-2';
+            case 1e-3
+                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-3';
+            case 1e-4
+                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-4';
+            otherwise
+                error('Unknown noise level');
+        end
     end
     if ~isfield(options, 'n_runs')
         if strcmpi(options.feature_name, 'plain')
@@ -88,8 +99,14 @@ function profile_optiprofiler(options)
     solvers = cell(1, length(options.labels));
     for i = 1:length(options.labels)
         switch options.labels{i}
-            case 'fminunc-adaptive'
-                solvers{i} = @fminunc_adaptive;
+            case 'fminunc-adaptive-1e-1'
+                solvers{i} = @fminunc_adaptive_1;
+            case 'fminunc-adaptive-1e-2'
+                solvers{i} = @fminunc_adaptive_2;
+            case 'fminunc-adaptive-1e-3'
+                solvers{i} = @fminunc_adaptive_3;
+            case 'fminunc-adaptive-1e-4'
+                solvers{i} = @fminunc_adaptive_4;
             case 'fminunc'
                 solvers{i} = @fminunc_test;
             case 'fminsearch'
@@ -173,13 +190,13 @@ function profile_optiprofiler(options)
         % We only modify mod_fun since we are dealing with unconstrained problems.
         switch options.noise_level
             case 1e-1
-                options.mod_fun = @mod_fun_1e_1;
+                options.mod_fun = @mod_fun_1;
             case 1e-2
-                options.mod_fun = @mod_fun_1e_2;
+                options.mod_fun = @mod_fun_2;
             case 1e-3
-                options.mod_fun = @mod_fun_1e_3;
+                options.mod_fun = @mod_fun_3;
             case 1e-4
-                options.mod_fun = @mod_fun_1e_4;
+                options.mod_fun = @mod_fun_4;
             otherwise
                 error('Unknown noise level');
         end
@@ -198,25 +215,25 @@ function x0 = mod_x0(rand_stream, problem)
     x0 = Q * problem.x0;
 end
 
-function f = mod_fun_1e_1(x, rand_stream, problem)
+function f = mod_fun_1(x, rand_stream, problem)
 
     f = problem.fun(x);
     f = f + max(1, abs(f)) * 1e-1 * rand_stream.randn(1);
 end
 
-function f = mod_fun_1e_2(x, rand_stream, problem)
+function f = mod_fun_2(x, rand_stream, problem)
 
     f = problem.fun(x);
     f = f + max(1, abs(f)) * 1e-2 * rand_stream.randn(1);
 end
 
-function f = mod_fun_1e_3(x, rand_stream, problem)
+function f = mod_fun_3(x, rand_stream, problem)
 
     f = problem.fun(x);
     f = f + max(1, abs(f)) * 1e-3 * rand_stream.randn(1);
 end
 
-function f = mod_fun_1e_4(x, rand_stream, problem)
+function f = mod_fun_4(x, rand_stream, problem)
 
     f = problem.fun(x);
     f = f + max(1, abs(f)) * 1e-4 * rand_stream.randn(1);
@@ -328,10 +345,34 @@ function x = bfo_test(fun, x0)
     
 end
 
-function x = fminunc_adaptive(fun, x0)
+function x = fminunc_adaptive_1(fun, x0)
+
+    options.with_gradient = true;
+    options.noise_level = 1e-1;
+    x = test_fminunc(fun, x0, options);
+
+end
+
+function x = fminunc_adaptive_2(fun, x0)
+
+    options.with_gradient = true;
+    options.noise_level = 1e-2;
+    x = test_fminunc(fun, x0, options);
+
+end
+
+function x = fminunc_adaptive_3(fun, x0)
 
     options.with_gradient = true;
     options.noise_level = 1e-3;
+    x = test_fminunc(fun, x0, options);
+
+end
+
+function x = fminunc_adaptive_4(fun, x0)
+
+    options.with_gradient = true;
+    options.noise_level = 1e-4;
     x = test_fminunc(fun, x0, options);
 
 end
