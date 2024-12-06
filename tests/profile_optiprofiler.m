@@ -53,7 +53,9 @@ function profile_optiprofiler(options)
     if ~isfield(options, 'labels')
         error('Please provide the labels for the solvers');
     end
-    feature_adaptive = {'noisy', 'truncated', 'custom'};
+    % Why we remove the truncated form feature adaptive? Fminunc do not know the noise level
+    % such that it can not decide the step size.
+    feature_adaptive = {'noisy', 'custom'};
     if ismember('fminunc', options.labels) && ismember(options.feature_name, feature_adaptive)
         switch options.noise_level
             case 1e-1
