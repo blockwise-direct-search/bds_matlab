@@ -57,13 +57,13 @@ function profile_optiprofiler(options)
     if ismember('fminunc', options.labels) && ismember(options.feature_name, feature_adaptive)
         switch options.noise_level
             case 1e-1
-                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-1';
+                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-1'};
             case 1e-2
-                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-2';
+                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-2'};
             case 1e-3
-                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-3';
+                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-3'};
             case 1e-4
-                options.labels(strcmp(options.labels, 'fminunc')) = 'fminunc-adaptive-1e-4';
+                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-4'};
             otherwise
                 error('Unknown noise level');
         end
