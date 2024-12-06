@@ -42,6 +42,14 @@ function profile_optiprofiler(options)
         options.noise_level = 10.^(str2double(options.feature_name(end-1:end)));
         options.feature_name = 'custom';
     end
+    if startsWith(options.feature_name, 'truncated')
+        options.significant_digits = str2double(options.feature_name(end));
+        options.feature_name = 'truncated';
+    end
+    if startsWith(options.feature_name, 'random_nan')
+        options.rate_nan = str2double(options.feature_name(end)) / 100;
+        options.feature_name = 'random_nan';
+    end
     if ~isfield(options, 'labels')
         error('Please provide the labels for the solvers');
     end
@@ -108,6 +116,12 @@ function profile_optiprofiler(options)
         '_', num2str(options.mindim), '_', num2str(options.maxdim), '_', num2str(options.n_runs), '_', options.feature_name];
     if strcmpi(options.feature_name, 'noisy') || strcmpi(options.feature_name, 'custom')
         options.benchmark_id = [options.benchmark_id, '_', int2str(int32(-log10(options.noise_level)))];
+    end
+    if strcmpi(options.feature_name, 'truncated')
+        options.benchmark_id = [options.benchmark_id, '_', int2str(options.significant_digits)];
+    end
+    if strcmpi(options.feature_name, 'random_nan')
+        options.benchmark_id = [options.benchmark_id, '_', int2str(int32(options.rate_nan * 100))];
     end
     if options.run_plain
         options.benchmark_id = [options.benchmark_id, '_plain'];
