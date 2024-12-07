@@ -13,9 +13,9 @@ options = struct();
 options.mindim = 1;
 options.maxdim = 1;
 options.test_type = "s2mpj";
-options.tau = 10.^(-1:-1:-4);
+options.tau_indices = 1:4;
 options.tau_weights = [0.3, 0.3, 0.3, 0.1];
-options.curve_weights = @(x) curve_weights(x);
+options.plot_weights = @(x) plot_weights(x);
 
 
 options.feature = "plain";
