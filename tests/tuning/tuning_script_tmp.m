@@ -24,8 +24,8 @@ options.num_random = 1;
 plot_parameters(parameters, solver, competitor, options);   
 
 
-function x = curve_weights(x)
-    x = 1;
+function w = plot_weights(x)
+    w = 1;
 end
 
 % options.feature = "noise_1e-3_no_rotation";

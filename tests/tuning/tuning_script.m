@@ -8,8 +8,8 @@ solver = "cbds";
 competitor = "cbds";
 
 options = struct();
-options.mindim = 2;
-options.maxdim = 2;
+options.mindim = 6;
+options.maxdim = 50;
 options.test_type = "s2mpj";
 options.tau_indices = 1:4;
 options.tau_weights = [0.3, 0.3, 0.3, 0.1];

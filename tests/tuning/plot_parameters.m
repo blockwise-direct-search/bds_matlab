@@ -102,12 +102,12 @@ colorbar;
 [~, idx] = maxk(perfs(:), 10); % Find the indices of the top 10 maximum values
 
 % Set larger marker size
-markerSize = 10; % Increase marker size
+markerSize = 12; % Increase marker size
 plot3(p1(idx), p2(idx), perfs(idx), 'o', 'MarkerSize', markerSize, ...
       'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % Black solid circle
 
 % Set larger font size for the labels
-labelFontSize = 10; % Increase font size for the labels
+labelFontSize = 12; % Increase font size for the labels
 
 % Add text labels for the top 10 points at the center of the markers
 for i = 1:length(idx)
