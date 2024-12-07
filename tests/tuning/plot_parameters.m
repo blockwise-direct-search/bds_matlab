@@ -101,8 +101,21 @@ colorbar;
 % Find the top 10 maximum values
 [~, idx] = maxk(perfs(:), 10); % Find the indices of the top 10 maximum values
 
-% Only mark these points, without showing the values
-plot3(p1(idx), p2(idx), perfs(idx), 'o', 'MarkerSize', 6, 'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % Black black solid circle
+% Set larger marker size
+markerSize = 10; % Increase marker size
+plot3(p1(idx), p2(idx), perfs(idx), 'o', 'MarkerSize', markerSize, ...
+      'MarkerFaceColor', 'k', 'MarkerEdgeColor', 'k'); % Black solid circle
+
+% Set larger font size for the labels
+labelFontSize = 10; % Increase font size for the labels
+
+% Add text labels for the top 10 points at the center of the markers
+for i = 1:length(idx)
+    % Place the label exactly on the point
+    text(p1(idx(i)), p2(idx(i)), perfs(idx(i)), num2str(i), ...
+         'VerticalAlignment', 'middle', 'HorizontalAlignment', 'center', ...
+         'Color', 'w', 'FontSize', labelFontSize, 'FontWeight', 'bold');
+end
 
 view(3) % 3D view
 % Save fig

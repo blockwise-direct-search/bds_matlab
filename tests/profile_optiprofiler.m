@@ -57,21 +57,10 @@ function profile_optiprofiler(options)
     % such that it can not decide the step size.
     feature_adaptive = {'noisy', 'custom'};
     if ismember('fminunc', options.labels) && ismember(options.feature_name, feature_adaptive)
-        switch options.noise_level
-            case 1e-1
-                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-1'};
-            case 1e-2
-                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-2'};
-            case 1e-3
-                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-3'};
-            case 1e-4
-                options.labels(strcmp(options.labels, 'fminunc')) = {'fminunc-adaptive-1e-4'};
-            otherwise
-                error('Unknown noise level');
-        end
+        options.labels(strcmp(options.labels, 'fminunc')) = {strcat('fminunc-adaptive-1e-', int2str(int32(-log10(options.noise_level))))};
     end
     if ~isfield(options, 'n_runs')
-        if strcmpi(options.feature_name, 'plain')
+        if strcmpi(options.feature_name, 'plain') || strcmpi(options.feature_name, 'truncated') || strcmpi(options.feature_name, 'quantized')
             options.n_runs = 1;
         else
             options.n_runs = 3;
@@ -127,6 +116,8 @@ function profile_optiprofiler(options)
                 solvers{i} = @newuoa_test;
             case 'lam'
                 solvers{i} = @lam_test;
+            case 'nomad'
+                solvers{i} = @nomad_test;
             otherwise
                 error('Unknown solver');
         end
@@ -389,5 +380,22 @@ end
 function x = lam_test(fun, x0)
 
     x = lam(fun, x0);
+    
+end
+
+function x = nomad_test(fun, x0)
+
+    % Dimension
+    n = numel(x0);
+
+    % Set the default bounds.
+    lb = -inf(1, n);
+    ub = inf(1, n);
+
+    % Set MAXFUN to the maximum number of function evaluations.
+    MaxFunctionEvaluations = 500*n;
+
+    params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
+    [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
     
 end
