@@ -70,7 +70,7 @@ function profile_optiprofiler(options)
     options.silent = false;
     options.keep_pool = true;
     options.solver_verbose = 1;
-    options.problem_type = 'u';
+    options.p_type = 'u';
     if isfield(options, 'dim')
         if strcmpi(options.dim, 'small')
             options.mindim = 2;

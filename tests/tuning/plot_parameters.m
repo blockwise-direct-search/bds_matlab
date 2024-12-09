@@ -20,7 +20,7 @@ perfs = NaN(size(p1));
 perfs_saved = cell(size(p1, 1), size(p1, 2));
 
 % Get performance for each parameter combination
-parfor ip = 1:numel(p1)
+for ip = 1:numel(p1)
     % Set solver options
     solver_options = struct();
     solver_options.(param1_name) = p1(ip);

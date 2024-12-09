@@ -8,7 +8,7 @@ n = numel(x0);
 % Set the default bounds.
 lb = -inf(1, n);
 ub = inf(1, n);
-keyboard
+
 % Set MAXFUN to the maximum number of function evaluations.
 if isfield(options, "MaxFunctionEvaluations")
     MaxFunctionEvaluations = options.MaxFunctionEvaluations;
