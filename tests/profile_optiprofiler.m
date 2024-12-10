@@ -122,21 +122,18 @@ function profile_optiprofiler(options)
                 error('Unknown solver');
         end
     end
-    if strcmpi(options.feature_name, 'noisy')
-        options.benchmark_id =[strrep(options.labels{1}, '-', '_'), '_', strrep(options.labels{2}, '-', '_'),...
-            '_', num2str(options.mindim), '_', num2str(options.maxdim), '_', num2str(options.n_runs), '_', options.feature_name, '_no_rotation'];
-    else
-        options.benchmark_id =[strrep(options.labels{1}, '-', '_'), '_', strrep(options.labels{2}, '-', '_'),...
-            '_', num2str(options.mindim), '_', num2str(options.maxdim), '_', num2str(options.n_runs), '_', options.feature_name];
-    end
-    if strcmpi(options.feature_name, 'noisy') || strcmpi(options.feature_name, 'custom')
-        options.benchmark_id = [options.benchmark_id, '_', int2str(int32(-log10(options.noise_level)))];
-    end
-    if strcmpi(options.feature_name, 'truncated')
-        options.benchmark_id = [options.benchmark_id, '_', int2str(options.significant_digits)];
-    end
-    if strcmpi(options.feature_name, 'random_nan')
-        options.benchmark_id = [options.benchmark_id, '_', int2str(int32(options.rate_nan * 100))];
+    options.benchmark_id =[strrep(options.labels{1}, '-', '_'), '_', strrep(options.labels{2}, '-', '_'),...
+        '_', num2str(options.mindim), '_', num2str(options.maxdim), '_', num2str(options.n_runs)];
+
+    switch options.feature_name
+        case 'noisy'
+            options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(-log10(options.noise_level))), '_no_rotation'];
+        case 'custom'
+            options.benchmark_id = [options.benchmark_id, '_', 'rotation_noisy', '_', int2str(int32(-log10(options.noise_level)))];
+        case 'truncated'
+            options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(options.significant_digits)];
+        case 'random_nan'
+            options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(options.rate_nan * 100))];
     end
     if options.run_plain
         options.benchmark_id = [options.benchmark_id, '_plain'];
