@@ -60,7 +60,7 @@ function profile_optiprofiler(options)
         options.labels(strcmp(options.labels, 'fminunc')) = {strcat('fminunc-adaptive-1e-', int2str(int32(-log10(options.noise_level))))};
     end
     if ~isfield(options, 'n_runs')
-        if strcmpi(options.feature_name, 'plain') || strcmpi(options.feature_name, 'truncated') || strcmpi(options.feature_name, 'quantized')
+        if strcmpi(options.feature_name, 'plain') || strcmpi(options.feature_name, 'quantized')
             options.n_runs = 1;
         else
             options.n_runs = 3;
