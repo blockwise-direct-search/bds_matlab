@@ -134,6 +134,8 @@ function profile_optiprofiler(options)
             options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(options.significant_digits)];
         case 'random_nan'
             options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(options.rate_nan * 100))];
+    otherwise
+        options.benchmark_id = [options.benchmark_id, '_', options.feature_name];
     end
     if options.run_plain
         options.benchmark_id = [options.benchmark_id, '_plain'];
