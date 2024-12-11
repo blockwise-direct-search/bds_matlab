@@ -50,14 +50,23 @@ function profile_optiprofiler(options)
         options.rate_nan = str2double(options.feature_name(find(options.feature_name == '_', 1, 'last') + 1:end)) / 100;
         options.feature_name = 'random_nan';
     end
-    if ~isfield(options, 'labels')
-        error('Please provide the labels for the solvers');
+    if startsWith(options.feature_name, 'perturbed_x0')
+        if sum(options.feature_name == '_') > 1
+            str = split(options.feature_name, '_');
+            options.noise_level = str2double(str{end});
+        else
+            options.noise_level = 1e-3;
+        end
+        options.feature_name = 'perturbed_x0';
+    end
+    if ~isfield(options, 'solver_names')
+        error('Please provide the solver_names for the solvers');
     end
     % Why we remove the truncated form feature adaptive? Fminunc do not know the noise level
     % such that it can not decide the step size.
     feature_adaptive = {'noisy', 'custom'};
-    if ismember('fminunc', options.labels) && ismember(options.feature_name, feature_adaptive)
-        options.labels(strcmp(options.labels, 'fminunc')) = {strcat('fminunc-adaptive-1e-', int2str(int32(-log10(options.noise_level))))};
+    if ismember('fminunc', options.solver_names) && ismember(options.feature_name, feature_adaptive)
+        options.solver_names(strcmp(options.solver_names, 'fminunc')) = {strcat('fminunc-adaptive-1e-', int2str(int32(-log10(options.noise_level))))};
     end
     if ~isfield(options, 'n_runs')
         if strcmpi(options.feature_name, 'plain') || strcmpi(options.feature_name, 'quantized')
@@ -87,17 +96,11 @@ function profile_optiprofiler(options)
     if ~isfield(options, 'maxdim')
         options.maxdim = 5;
     end
-    solvers = cell(1, length(options.labels));
-    for i = 1:length(options.labels)
-        switch options.labels{i}
-            case 'fminunc-adaptive-1e-1'
-                solvers{i} = @fminunc_adaptive_1;
-            case 'fminunc-adaptive-1e-2'
-                solvers{i} = @fminunc_adaptive_2;
-            case 'fminunc-adaptive-1e-3'
-                solvers{i} = @fminunc_adaptive_3;
-            case 'fminunc-adaptive-1e-4'
-                solvers{i} = @fminunc_adaptive_4;
+    solvers = cell(1, length(options.solver_names));
+    for i = 1:length(options.solver_names)
+        switch options.solver_names{i}
+            case 'fminunc-adaptive'
+                solvers{i} = @(fun, x0) fminunc_adaptive(fun, x0, options.noise_level);
             case 'fminunc'
                 solvers{i} = @fminunc_test;
             case 'fminsearch'
@@ -122,7 +125,7 @@ function profile_optiprofiler(options)
                 error('Unknown solver');
         end
     end
-    options.benchmark_id =[strrep(options.labels{1}, '-', '_'), '_', strrep(options.labels{2}, '-', '_'),...
+    options.benchmark_id =[strrep(options.solver_names{1}, '-', '_'), '_', strrep(options.solver_names{2}, '-', '_'),...
         '_', num2str(options.mindim), '_', num2str(options.maxdim), '_', num2str(options.n_runs)];
 
     switch options.feature_name
@@ -133,7 +136,19 @@ function profile_optiprofiler(options)
         case 'truncated'
             options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(options.significant_digits)];
         case 'random_nan'
-            options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(options.rate_nan * 100))];
+            if options.rate_nan < 10
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_0', int2str(int32(options.rate_nan * 100))];
+            else
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(options.rate_nan * 100))];
+            end
+        case 'perturbed_x0'
+            if abs(options.noise_level - 1e-3) < eps
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name];
+            elseif abs(options.noise_level - 1) < eps
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', '01'];
+            elseif abs(options.noise_level - 10) < eps
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', '10'];
+            end
     otherwise
         options.benchmark_id = [options.benchmark_id, '_', options.feature_name];
     end
@@ -301,6 +316,14 @@ function x = fminunc_test(fun, x0)
 
 end
 
+function x = fminunc_adaptive(fun, x0, noise_level)
+
+    options.with_gradient = true;
+    options.noise_level = noise_level;
+    x = test_fminunc(fun, x0, options);
+
+end
+
 function x = ds_test(fun, x0)
 
     option.Algorithm = 'ds';
@@ -340,38 +363,6 @@ function x = bfo_test(fun, x0)
 
     [x, ~, ~, ~, ~] = bfo(fun, x0, 'epsilon', StepTolerance, 'maxeval', maxeval);
     
-end
-
-function x = fminunc_adaptive_1(fun, x0)
-
-    options.with_gradient = true;
-    options.noise_level = 1e-1;
-    x = test_fminunc(fun, x0, options);
-
-end
-
-function x = fminunc_adaptive_2(fun, x0)
-
-    options.with_gradient = true;
-    options.noise_level = 1e-2;
-    x = test_fminunc(fun, x0, options);
-
-end
-
-function x = fminunc_adaptive_3(fun, x0)
-
-    options.with_gradient = true;
-    options.noise_level = 1e-3;
-    x = test_fminunc(fun, x0, options);
-
-end
-
-function x = fminunc_adaptive_4(fun, x0)
-
-    options.with_gradient = true;
-    options.noise_level = 1e-4;
-    x = test_fminunc(fun, x0, options);
-
 end
 
 function x = newuoa_test(fun, x0)
