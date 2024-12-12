@@ -47,7 +47,7 @@ function profile_optiprofiler(options)
         options.feature_name = 'truncated';
     end
     if startsWith(options.feature_name, 'random_nan')
-        options.rate_nan = str2double(options.feature_name(find(options.feature_name == '_', 1, 'last') + 1:end)) / 100;
+        options.nan_rate = str2double(options.feature_name(find(options.feature_name == '_', 1, 'last') + 1:end)) / 100;
         options.feature_name = 'random_nan';
     end
     if startsWith(options.feature_name, 'perturbed_x0')
@@ -66,7 +66,7 @@ function profile_optiprofiler(options)
     % such that it can not decide the step size.
     feature_adaptive = {'noisy', 'custom'};
     if ismember('fminunc', options.solver_names) && ismember(options.feature_name, feature_adaptive)
-        options.solver_names(strcmp(options.solver_names, 'fminunc')) = {strcat('fminunc-adaptive-1e-', int2str(int32(-log10(options.noise_level))))};
+        options.solver_names(strcmp(options.solver_names, 'fminunc')) = {'fminunc-adaptive'};
     end
     if ~isfield(options, 'n_runs')
         if strcmpi(options.feature_name, 'plain') || strcmpi(options.feature_name, 'quantized')
@@ -96,7 +96,11 @@ function profile_optiprofiler(options)
     if ~isfield(options, 'maxdim')
         options.maxdim = 5;
     end
+    if ~isfield(options, 'run_plain')
+        options.run_plain = false;
+    end
     solvers = cell(1, length(options.solver_names));
+    keyboard
     for i = 1:length(options.solver_names)
         switch options.solver_names{i}
             case 'fminunc-adaptive'
@@ -127,7 +131,6 @@ function profile_optiprofiler(options)
     end
     options.benchmark_id =[strrep(options.solver_names{1}, '-', '_'), '_', strrep(options.solver_names{2}, '-', '_'),...
         '_', num2str(options.mindim), '_', num2str(options.maxdim), '_', num2str(options.n_runs)];
-
     switch options.feature_name
         case 'noisy'
             options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(-log10(options.noise_level))), '_no_rotation'];
@@ -136,10 +139,10 @@ function profile_optiprofiler(options)
         case 'truncated'
             options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(options.significant_digits)];
         case 'random_nan'
-            if options.rate_nan < 10
-                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_0', int2str(int32(options.rate_nan * 100))];
+            if options.nan_rate < 10
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_0', int2str(int32(options.nan_rate * 100))];
             else
-                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(options.rate_nan * 100))];
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(options.nan_rate * 100))];
             end
         case 'perturbed_x0'
             if abs(options.noise_level - 1e-3) < eps
@@ -214,6 +217,7 @@ function profile_optiprofiler(options)
         end
         options = rmfield(options, 'noise_level');
         options.mod_affine = @mod_affine;
+        options.feature_stamp = strcat('rotation_noisy_', int2str(int32(-log10(options.noise_level))));
     end
 
     benchmark(solvers, options)

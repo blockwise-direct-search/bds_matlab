@@ -30,8 +30,8 @@ keywords=(
 output_file="merged.pdf"
 declare -a pdf_files  # Use an array to store PDF files
 
-# Obtain all PDF files starting with 'summary'
-all_pdf_files=(summary*.pdf)
+# Obtain all PDF files named 'summary*.pdf' in the current directory
+all_pdf_files=(summary.pdf)
 
 # Print the array content for debugging
 echo "Found these PDF files:"
