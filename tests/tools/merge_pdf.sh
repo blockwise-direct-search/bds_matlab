@@ -1,5 +1,5 @@
 mkdir summary
-find . -type f -name 'summary*.pdf' -exec cp {} summary/ \;
+find . -type f -name 'summary.pdf' -exec cp {} summary/ \;
 cd summary
 # Define keywords to search for PDF files
 keywords=(
@@ -30,7 +30,7 @@ keywords=(
 output_file="merged.pdf"
 declare -a pdf_files  # Use an array to store PDF files
 
-# Obtain all PDF files named 'summary*.pdf' in the current directory
+# Obtain all PDF files named 'summary.pdf' in the current directory
 all_pdf_files=(summary.pdf)
 
 # Print the array content for debugging
