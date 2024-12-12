@@ -100,7 +100,6 @@ function profile_optiprofiler(options)
         options.run_plain = false;
     end
     solvers = cell(1, length(options.solver_names));
-    keyboard
     for i = 1:length(options.solver_names)
         switch options.solver_names{i}
             case 'fminunc-adaptive'
@@ -215,9 +214,9 @@ function profile_optiprofiler(options)
             otherwise
                 error('Unknown noise level');
         end
-        options = rmfield(options, 'noise_level');
         options.mod_affine = @mod_affine;
         options.feature_stamp = strcat('rotation_noisy_', int2str(int32(-log10(options.noise_level))));
+        options = rmfield(options, 'noise_level');
     end
 
     benchmark(solvers, options)
