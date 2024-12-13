@@ -104,8 +104,8 @@ jobs:
             addpath(pwd);
 
             % Setup matcutest
-            # cd(fullfile(root_dir, 'matcutest'));
-            # install
+            % cd(fullfile(root_dir, 'matcutest'));
+            % install
 
             % Setup nomad
             cd(fullfile(root_dir, 'nomad', 'build', 'release', 'lib'));
