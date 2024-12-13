@@ -1,0 +1,239 @@
+name: Profile cbds and simplex using optiprofiler, big
+
+on:
+  # Trigger the workflow on # push or pull request
+  # push:
+  # Trigger the workflow manually
+  # schedule:
+  # - cron: '0 0 */3 * *'
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Profile BDS and fminsearch, big
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        matlab: [latest]
+        dim: [big]
+        with_optim_toolbox: [yes]
+        solver: [cbds]
+        competitor: [fminsearch]
+        run_plain: [false]
+        feature: [plain, perturbed_x0, perturbed_x0_1, perturbed_x0_10, noisy_1e-1, noisy_1e-2, noisy_1e-3, noisy_1e-4, truncated_1, truncated_2, truncated_3, truncated_4, permuted, linearly_transformed, random_nan_5, random_nan_10, random_nan_20, quantized, rotation_noisy_1e-1, rotation_noisy_1e-2, rotation_noisy_1e-3, rotation_noisy_1e-4]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Checkout OptiProfiler
+        uses: actions/checkout@v4
+        with:
+          repository: optiprofiler/optiprofiler
+          ref: matlab
+          path: optiprofiler
+      
+      - name: Checkout BDS
+        uses: actions/checkout@v4
+        with:
+          repository: blockwise-direct-search/bds
+          ref: main
+          path: bds
+
+      - name: Install Texlive
+        run: sudo apt-get update && sudo apt-get install texlive
+
+      - name: Check whether LaTeX is installed
+        run: pdflatex --version
+
+      - name: Cache MATLAB
+        id: cache-matlab
+        uses: actions/cache@v4.0.1
+        with:
+          path: ${{ runner.tool_cache }}/MATLAB
+          key: ${{ matrix.os }}-${{ matrix.matlab }}-${{ matrix.with_optim_toolbox }}
+
+      - name: Set up MATLAB with optimization toolbox
+        if: ${{ matrix.with_optim_toolbox == 'yes' }}
+        uses: matlab-actions/setup-matlab@v2.1.2
+        with:
+          release: ${{ matrix.matlab }}
+          products: Optimization_Toolbox
+      
+
+      - name: Run test
+        uses: matlab-actions/run-command@v2.1.1
+        with:
+            command: |
+              root_dir = pwd()
+              ls
+  
+              % Setup optiprofiler
+              cd(fullfile(root_dir, 'optiprofiler'));
+              setup
+              cd(root_dir);
+  
+              % Setup bds
+              cd(fullfile(root_dir, 'bds'));
+              setup
+              cd(fullfile(root_dir, 'bds', 'tests', 'competitors'));
+              addpath(pwd);
+  
+              % profile
+              cd(fullfile(root_dir, 'bds', 'tests'));
+              options = struct();
+              options.feature_name = '${{ matrix.feature }}';
+              options.solver_names = {'${{ matrix.solver }}', '${{ matrix.competitor }}'};
+              options.dim = '${{ matrix.dim }}';
+              options.run_plain = ${{ matrix.run_plain }};
+              profile_optiprofiler(options);
+              cd(root_dir);
+              cd(fullfile(root_dir, 'bds', 'tests', 'out'));
+              ls -R
+              cd(root_dir);
+
+      - name: Change the summary file name
+        run: |
+          cd ./bds/tests/out
+          ls -R
+          find . -type f -name 'summary*.pdf' | while read -r file; do
+          # Obtain the parent directory and name
+          parent_dir=$(dirname "$file")
+          parent_name=$(basename "$parent_dir")
+
+          # Obtain the new name(Why the fifth underline? Because the last five parts are the time stamp)
+          new_name=$(echo "$parent_name" | awk -F'_' '{if(NF>=5) {for(i=1;i<=NF-5;i++) printf "%s%s", $i, (i<NF-5?"_":"")} else print $0}')
+
+          # Print the new name
+          echo "New name: $new_name"
+
+          # Obtain the directory name
+          dir_name=$(dirname "$file")
+
+          # Rename the file
+          mv "$file" "$dir_name/summary_$new_name.pdf"
+          echo "Renamed $file to $dir_name/summary_$new_name.pdf"
+          done
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3.1.2
+        with:
+          name: profile_optiprofiler_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.dim }}_${{ matrix.feature }}_${{ matrix.run_plain }}
+          path: ./bds/tests/out/**
+
+  merge_artifacts:
+    name: Merge Artifacts
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      actions: read
+      contents: read
+    
+    steps:
+      - name: Install PDF tools
+        run: sudo apt-get update && sudo apt-get install -y poppler-utils
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: downloaded_artifacts
+
+      - name: List downloaded files
+        run: |
+          echo "Downloaded files:"
+          ls -R downloaded_artifacts/
+
+      - name: Merge PDF files
+        run: |
+          cd downloaded_artifacts
+          ls -R
+          mkdir summary
+          find . -type f -name 'summary*.pdf' -exec cp {} summary/ \;
+          cd summary
+          # Define keywords to search for PDF files
+          keywords=(
+              "plain"
+              "noisy_1_no_rotation"
+              "noisy_2_no_rotation"
+              "noisy_3_no_rotation"
+              "noisy_4_no_rotation"
+              "rotation_noisy_1"
+              "rotation_noisy_2"
+              "rotation_noisy_3"
+              "rotation_noisy_4"
+              "permuted"
+              "linearly_transformed"
+              "quantized"
+              "perturbed_x0"
+              "random_nan_5"
+              "random_nan_10"
+              "random_nan_20"
+              "truncated_1"
+              "truncated_2"
+              "truncated_3"
+              "truncated_4"
+          )
+
+          output_file="merged.pdf"
+          declare -a pdf_files  # Use an array to store PDF files
+
+          # Obtain all PDF files starting with 'summary'
+          all_pdf_files=(summary*.pdf)
+
+          # Print the array content for debugging
+          echo "Found these PDF files:"
+          for file in "${all_pdf_files[@]}"; do
+              echo "  $file"
+          done
+
+          # Create an associative array to store keyword to file mapping
+          declare -A keyword_to_file
+
+          # Search for PDF files with keywords
+          for keyword in "${keywords[@]}"; do
+              echo "Searching for keyword: $keyword"
+              for file in "${all_pdf_files[@]}"; do
+                  if [[ $file == *"$keyword"* ]]; then
+                      echo "  Found file for keyword '$keyword': $file"
+                      keyword_to_file[$keyword]=$file
+                      break  # Every keyword should have only one file
+                  fi
+              done
+          done
+
+          # Clear array to store PDF files in order of keywords
+          pdf_files=()
+
+          # Add PDF files to the array in order of keywords
+          for keyword in "${keywords[@]}"; do
+              if [[ -n "${keyword_to_file[$keyword]}" ]]; then
+                  pdf_files+=("${keyword_to_file[$keyword]}")
+              fi
+          done
+
+          # Print the array content for debugging
+          echo -e "\nFiles in order of keywords:"
+          printf '%s\n' "${pdf_files[@]}"
+
+          # Print total number of files found
+          echo -e "\nTotal files found: ${#pdf_files[@]}"
+
+          # Merge PDF files
+          if [[ ${#pdf_files[@]} -gt 0 ]]; then
+              pdfunite "${pdf_files[@]}" "$output_file"
+              echo "Merge successfully: $output_file"
+          else
+              echo "There are no PDF files to merge."
+              echo -e "\nAll PDF files in current directory:"
+              ls summary*.pdf
+          fi
+
+      - name: Upload merged artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: merged_profiles
+          path: downloaded_artifacts

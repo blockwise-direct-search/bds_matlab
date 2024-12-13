@@ -54,6 +54,14 @@ function profile_optiprofiler(options)
         end
         options.feature_name = 'truncated';
     end
+    if startsWith(options.feature_name, 'quantized')
+        if sum(options.feature_name == '_') > 0
+            options.mesh_size = 10.^(str2double(options.feature_name(end)));
+        else
+            options.mesh_size = 1e-3;
+        end
+        options.feature_name = 'quantized';
+    end
     if startsWith(options.feature_name, 'random_nan')
         options.nan_rate = str2double(options.feature_name(find(options.feature_name == '_', 1, 'last') + 1:end)) / 100;
         options.feature_name = 'random_nan';
@@ -145,6 +153,8 @@ function profile_optiprofiler(options)
             options.benchmark_id = [options.benchmark_id, '_', 'rotation_noisy', '_', int2str(int32(-log10(options.noise_level)))];
         case 'truncated'
             options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(options.significant_digits)];
+        case 'quantized'
+            options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(-log10(options.mesh_size)))];
         case 'random_nan'
             if 100*options.nan_rate < 10
                 options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_0', int2str(int32(options.nan_rate * 100))];
