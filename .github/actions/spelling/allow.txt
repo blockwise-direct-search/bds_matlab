@@ -967,6 +967,7 @@ lhd
 lhtian
 LIARWHD
 libprima
+libstdc
 Lidskii
 Liesen
 liminf
@@ -981,6 +982,7 @@ Linesearch
 linewidth
 linkcolor
 linspace
+linux
 Linux
 Lipschitzian
 littlered
@@ -1285,6 +1287,7 @@ Oper
 Opin
 oplus
 opteng
+Opti
 optim
 Optim
 optimisation
@@ -1336,6 +1339,7 @@ pdflatex
 pdfname
 PDFO
 pdftops
+pdfunite
 pdfwrite
 pdim
 pds
@@ -1381,6 +1385,7 @@ Polyak
 Polymathematics
 polyu
 Poonen
+poppler
 Porcelli
 postconditions
 Potra
@@ -1399,6 +1404,7 @@ preconditioners
 precsim
 Precup
 Prefs
+PRELOAD
 Prieto
 printchaptername
 printchapternum
@@ -1886,6 +1892,7 @@ usepackage
 userpath
 usr
 UTF
+utils
 utm
 utx
 VALHIST
