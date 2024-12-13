@@ -420,11 +420,6 @@ num_visited_blocks = 0;
 sufficient_decrease = [];
 for iter = 1:maxit
 
-    if isfield(options, "expand") && isfield(options, "shrink")
-        expand = options.expand - (options.expand - 2) / iter;
-        shrink = options.shrink - (options.shrink - 0.5) / iter;
-    end
-
     % Define block_indices, which is a vector containing the indices of blocks that we 
     % are going to visit in this iteration.
     if strcmpi(options.Algorithm, "ds") || strcmpi(options.Algorithm, "cbds") ...
