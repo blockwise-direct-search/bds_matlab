@@ -23,10 +23,9 @@ params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2s
 % evaluation fails. This seems to be because OptiProfiler wraps the function 
 % handle in a way that NOMAD does not expect: NONAD expects a function handle 
 % `fun` with the signature fun(x), where x is a column vector, while OptiProfiler 
-% produces one with the signature @(varargin) fun(varargin{:}).
+% produces one with the signature @(varargin)featured_problem.fun(varargin{:}).
 fun = @(x) fun(x(:));
 
 [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
 
 end
-
