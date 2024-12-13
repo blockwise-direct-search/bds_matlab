@@ -46,13 +46,6 @@ jobs:
         with:
             repository: matcutest/matcutest_compiled
             path: matcutest
-      
-      - name: Checkout BDS
-        uses: actions/checkout@v4
-        with:
-          repository: blockwise-direct-search/bds
-          ref: main
-          path: bds
 
       - name: Checkout Nomad
         uses: actions/checkout@v4
@@ -105,9 +98,9 @@ jobs:
             cd(root_dir);
 
             % Setup bds
-            cd(fullfile(root_dir, 'bds'));
+            cd(root_dir);
             setup
-            cd(fullfile(root_dir, 'bds', 'tests', 'competitors'));
+            cd(fullfile(root_dir, 'tests', 'competitors'));
             addpath(pwd);
 
             % Setup matcutest

@@ -415,6 +415,6 @@ function x = nomad_test(fun, x0)
 
     % params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
     % [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
-    x = nomad_wrapper(fun, x0, options);
+    x = nomad_wrapper(fun, x0, struct());
     
 end
