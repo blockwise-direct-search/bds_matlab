@@ -13,42 +13,56 @@ keywords=(
     "linearly_transformed"
     "quantized"
     "perturbed_x0"
-    "perturbed_x0_01"
-    "perturbed_x0_10"
-    "random_nan_5"
-    "random_nan_10"
-    "random_nan_20"
-    "truncated_1"
-    "truncated_2"
-    "truncated_3"
-    "truncated_4"
+    "random_nan"
+    "truncated"
 )
 
 output_file="merged.pdf"
 declare -a pdf_files  # Use an array to store PDF files
 
-# Obtain all PDF files named 'summary*.pdf' in the current directory
-all_pdf_files=(summary*.pdf)
-
-# Print the array content for debugging
+# Print all PDF files for debugging
 echo "Found these PDF files:"
-for file in "${all_pdf_files[@]}"; do
+find . -maxdepth 1 -name "summary*.pdf" -type f | while read -r file; do
     echo "  $file"
 done
 
-# Create an associative array to store keyword to file mapping
-declare -A keyword_to_file
+# Create an associative array to store keyword to files mapping
+declare -A keyword_to_files
 
-# Search for PDF files with keywords
+# Function to add files to array in natural sort order
+add_files_sorted() {
+    local key=$1
+    local files=("${@:2}")
+    if [ ${#files[@]} -gt 0 ]; then
+        # Convert array to newline-separated string, sort, and store
+        keyword_to_files[$key]="$(printf "%s\n" "${files[@]}" | sort -V)"
+    fi
+}
+
+# Search for PDF files with keywords and sort them
 for keyword in "${keywords[@]}"; do
     echo "Searching for keyword: $keyword"
-    for file in "${all_pdf_files[@]}"; do
-        if [[ $file == *"$keyword"* ]]; then
-            echo "  Found file for keyword '$keyword': $file"
-            keyword_to_file[$keyword]=$file
-            break  # Every keyword should have only one file
-        fi
-    done
+    case "$keyword" in
+        "perturbed_x0")
+            # Match perturbed_x0.pdf, perturbed_x0_01.pdf, perturbed_x0_10.pdf
+            files=($(find . -maxdepth 1 -type f -name "summary*perturbed_x0*.pdf"))
+            add_files_sorted "$keyword" "${files[@]}"
+            ;;
+        "random_nan")
+            # Match random_nan_05.pdf, random_nan_10.pdf, random_nan_20.pdf
+            files=($(find . -maxdepth 1 -type f -name "summary*random_nan*.pdf"))
+            add_files_sorted "$keyword" "${files[@]}"
+            ;;
+        "truncated")
+            # Match truncated_1.pdf through truncated_4.pdf
+            files=($(find . -maxdepth 1 -type f -name "summary*truncated*.pdf"))
+            add_files_sorted "$keyword" "${files[@]}"
+            ;;
+        *)
+            files=($(find . -maxdepth 1 -type f -name "summary*${keyword}.pdf" -o -name "summary*${keyword}_*.pdf"))
+            add_files_sorted "$keyword" "${files[@]}"
+            ;;
+    esac
 done
 
 # Clear array to store PDF files in order of keywords
@@ -56,8 +70,12 @@ pdf_files=()
 
 # Add PDF files to the array in order of keywords
 for keyword in "${keywords[@]}"; do
-    if [[ -n "${keyword_to_file[$keyword]}" ]]; then
-        pdf_files+=("${keyword_to_file[$keyword]}")
+    if [[ -n "${keyword_to_files[$keyword]}" ]]; then
+        while IFS= read -r file; do
+            if [[ -f "$file" ]]; then
+                pdf_files+=("$file")
+            fi
+        done <<< "${keyword_to_files[$keyword]}"
     fi
 done
 
@@ -75,5 +93,5 @@ if [[ ${#pdf_files[@]} -gt 0 ]]; then
 else
     echo "There are no PDF files to merge."
     echo -e "\nAll PDF files in current directory:"
-    ls summary*.pdf
+    find . -maxdepth 1 -name "summary*.pdf" -type f
 fi

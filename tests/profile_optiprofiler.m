@@ -35,7 +35,11 @@ function profile_optiprofiler(options)
         error('Please provide the feature name');
     end
     if startsWith(options.feature_name, 'noisy')
-        options.noise_level = 10.^(str2double(options.feature_name(end-1:end)));
+        if sum(options.feature_name == '_') > 0
+            options.noise_level = 10.^(str2double(options.feature_name(end-1:end)));
+        else
+            options.noise_level = 1e-3;
+        end
         options.feature_name = 'noisy';
     end 
     if startsWith(options.feature_name, 'rotation_noisy')
@@ -43,7 +47,11 @@ function profile_optiprofiler(options)
         options.feature_name = 'custom';
     end
     if startsWith(options.feature_name, 'truncated')
-        options.significant_digits = str2double(options.feature_name(end));
+        if sum(options.feature_name == '_') > 0
+            options.significant_digits = str2double(options.feature_name(end));
+        else
+            options.significant_digits = 6;
+        end
         options.feature_name = 'truncated';
     end
     if startsWith(options.feature_name, 'random_nan')
