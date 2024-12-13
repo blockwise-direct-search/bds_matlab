@@ -1,7 +1,7 @@
 clear all
 options_s2mpj.problem_type = 'u';
-options_s2mpj.mindim = 6;
-options_s2mpj.maxdim = 50;
+options_s2mpj.mindim = 1;
+options_s2mpj.maxdim = 5;
 problem_names = s_select(options_s2mpj);
 for i = 1:length(problem_names)
     q = s_load(char(problem_names(i)));

@@ -395,8 +395,8 @@ function x = nomad_test(fun, x0)
     n = numel(x0);
 
     % Set the default bounds.
-    lb = -inf(1, n);
-    ub = inf(1, n);
+    lb = -inf(n, 1);
+    ub = inf(n, 1);
 
     % Set MAXFUN to the maximum number of function evaluations.
     MaxFunctionEvaluations = 500*n;
