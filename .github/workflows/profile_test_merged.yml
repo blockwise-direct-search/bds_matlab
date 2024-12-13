@@ -2,7 +2,7 @@ name: Profile cbds and simplex using optiprofiler, small
 
 on:
   # Trigger the workflow on # push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   # schedule:
   # - cron: '0 0 */3 * *'
@@ -22,6 +22,7 @@ jobs:
         solver: [cbds]
         competitor: [fminunc]
         run_plain: [false]
+        summarize_log_ratio_profiles: [false]
         feature: [plain, perturbed_x0_0.001, perturbed_x0_1, perturbed_x0_10, perturbed_x0_100, noisy_1e-1, noisy_1e-2, noisy_1e-3, noisy_1e-4, truncated_1, truncated_2, truncated_3, truncated_4, permuted, linearly_transformed, random_nan_5, random_nan_10, random_nan_20, quantized_1, quantized_2, quantized_3, quantized_4, rotation_noisy_1e-1, rotation_noisy_1e-2, rotation_noisy_1e-3, rotation_noisy_1e-4]
 
     steps:
@@ -36,13 +37,6 @@ jobs:
           repository: optiprofiler/optiprofiler
           ref: matlab
           path: optiprofiler
-      
-      - name: Checkout BDS
-        uses: actions/checkout@v4
-        with:
-          repository: blockwise-direct-search/bds
-          ref: main
-          path: bds
 
       - name: Install Texlive
         run: sudo apt-get update && sudo apt-get install texlive
@@ -78,13 +72,12 @@ jobs:
               cd(root_dir);
   
               % Setup bds
-              cd(fullfile(root_dir, 'bds'));
               setup
-              cd(fullfile(root_dir, 'bds', 'tests', 'competitors'));
+              cd(fullfile(root_dir, 'tests', 'competitors'));
               addpath(pwd);
   
               % profile
-              cd(fullfile(root_dir, 'bds', 'tests'));
+              cd(fullfile(root_dir, 'tests'));
               options = struct();
               options.feature_name = '${{ matrix.feature }}';
               options.solver_names = {'${{ matrix.solver }}', '${{ matrix.competitor }}'};
@@ -94,16 +87,16 @@ jobs:
               options.maxdim = 2;
               options.n_runs = 1;
               options.run_plain = ${{ matrix.run_plain }};
-              options.summarize_log_ratio_profiles = false;
+              options.summarize_log_ratio_profiles = ${{ matrix.summarize_log_ratio_profiles }};
               profile_optiprofiler(options);
               cd(root_dir);
-              cd(fullfile(root_dir, 'bds', 'tests', 'out'));
+              cd(fullfile(root_dir, 'tests', 'out'));
               ls -R
               cd(root_dir);
 
       - name: Change the summary file name
         run: |
-          cd ./bds/tests/out
+          cd ./tests/out
           ls -R
           find . -type f -name 'summary.pdf' | while read -r file; do
             # Obtain the parent directory and name
@@ -135,7 +128,7 @@ jobs:
         uses: actions/upload-artifact@v3.1.2
         with:
           name: profile_optiprofiler_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.dim }}_${{ matrix.feature }}_${{ matrix.run_plain }}
-          path: ./bds/tests/out/**
+          path: ./tests/out/**
 
   merge_artifacts:
     name: Merge Artifacts
@@ -146,12 +139,10 @@ jobs:
       contents: read
     
     steps:
-      - name: Checkout BDS
+      - name: Check out repository
         uses: actions/checkout@v4
         with:
-          repository: blockwise-direct-search/bds
-          ref: main
-          path: bds
+          submodules: recursive
 
       - name: Install PDF tools
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
@@ -159,17 +150,17 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          path: bds/tests/testdata/downloaded_artifacts
+          path: tests/testdata/downloaded_artifacts
 
       - name: List all files
         run: |
-          cd bds/tests/testdata/downloaded_artifacts
+          cd tests/testdata/downloaded_artifacts
           ls -R
 
       - name: Merge PDF files
         run: |
-          cp bds/tests/tools/merge_pdf.sh bds/tests/testdata/downloaded_artifacts
-          cd bds/tests/testdata/downloaded_artifacts/
+          cp tests/tools/merge_pdf.sh tests/testdata/downloaded_artifacts
+          cd tests/testdata/downloaded_artifacts/
 
           ARTIFACT_NAME=$(ls | grep "profile_optiprofiler" | head -n 1)
           BASE_INFO=$(echo $ARTIFACT_NAME | sed -n 's/.*optiprofiler_\([^_]*_[^_]*_\(small\|big\)\).*/\1/p')
@@ -198,7 +189,7 @@ jobs:
           BASE_INFO: ${{ env.BASE_INFO }}
         with:
           name: merged_profiles_${{ env.BASE_INFO }}
-          path: bds/tests/testdata/downloaded_artifacts/**
+          path: tests/testdata/downloaded_artifacts/**
 
       - name: Upload summary files
         uses: actions/upload-artifact@v3
@@ -206,4 +197,4 @@ jobs:
           BASE_INFO: ${{ env.BASE_INFO }}
         with:
           name: summary_files_${{ env.BASE_INFO }}
-          path: bds/tests/testdata/downloaded_artifacts/summary_${{ env.BASE_INFO }}/**
+          path: tests/testdata/downloaded_artifacts/summary_${{ env.BASE_INFO }}/**
