@@ -168,6 +168,8 @@ function profile_optiprofiler(options)
                 options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', '01'];
             elseif abs(options.noise_level - 10) < eps
                 options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', '10'];
+            elseif abs(options.noise_level - 100) < eps
+                options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', '100'];
             end
     otherwise
         options.benchmark_id = [options.benchmark_id, '_', options.feature_name];
