@@ -2,7 +2,7 @@ name: Profile cbds and nomad using optiprofiler, small
 
 on:
   # Trigger the workflow on # # push or pull request
-  # push:
+  push:
   # Trigger the workflow manually
   # schedule:
   # - cron: '0 0 */4 * *'
@@ -104,8 +104,8 @@ jobs:
             addpath(pwd);
 
             % Setup matcutest
-            cd(fullfile(root_dir, 'matcutest'));
-            install
+            # cd(fullfile(root_dir, 'matcutest'));
+            # install
 
             % Setup nomad
             cd(fullfile(root_dir, 'nomad', 'build', 'release', 'lib'));
@@ -114,7 +114,7 @@ jobs:
             % Test nomad
             cd(fullfile(root_dir, 'nomad', 'interfaces', 'Matlab_MEX'));
             test_nomad_gerad
-            cd(fullfile(root_dir, 'bds', 'tests', 'competitors'));
+            cd(fullfile(root_dir, 'tests', 'competitors'));
             test_nomad_s2mpj
             
 

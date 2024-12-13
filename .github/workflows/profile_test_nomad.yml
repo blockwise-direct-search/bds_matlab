@@ -96,6 +96,10 @@ jobs:
               % Setup nomad
               cd(fullfile(root_dir, 'nomad', 'build', 'release', 'lib'));
               addpath(pwd);
+
+              % Test nomad
+              cd(fullfile(root_dir, 'nomad', 'interfaces', 'Matlab_MEX'));
+              test_nomad_gerad
   
               % profile
               cd(fullfile(root_dir, 'tests'));
