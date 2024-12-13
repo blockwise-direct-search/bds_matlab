@@ -403,17 +403,18 @@ end
 
 function x = nomad_test(fun, x0)
 
-    % Dimension
-    n = numel(x0);
+    % % Dimension
+    % n = numel(x0);
 
-    % Set the default bounds.
-    lb = -inf(n, 1);
-    ub = inf(n, 1);
+    % % Set the default bounds.
+    % lb = -inf(n, 1);
+    % ub = inf(n, 1);
 
-    % Set MAXFUN to the maximum number of function evaluations.
-    MaxFunctionEvaluations = 500*n;
+    % % Set MAXFUN to the maximum number of function evaluations.
+    % MaxFunctionEvaluations = 500*n;
 
-    params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
-    [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
+    % params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
+    % [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
+    x = nomad_wrapper(fun, x0, options);
     
 end
