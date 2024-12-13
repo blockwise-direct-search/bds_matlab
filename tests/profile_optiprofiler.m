@@ -138,7 +138,7 @@ function profile_optiprofiler(options)
         case 'truncated'
             options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(options.significant_digits)];
         case 'random_nan'
-            if options.nan_rate < 10
+            if 100*options.nan_rate < 10
                 options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_0', int2str(int32(options.nan_rate * 100))];
             else
                 options.benchmark_id = [options.benchmark_id, '_', options.feature_name, '_', int2str(int32(options.nan_rate * 100))];
