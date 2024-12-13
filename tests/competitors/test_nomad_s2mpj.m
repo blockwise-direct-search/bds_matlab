@@ -8,5 +8,6 @@ for i = 1:length(problem_names)
     fprintf('Solving %s\n', q.name);
     p.objective = @(x) q.fun(x);
     p.x0 = q.x0;
+    keyboard
     nomad_wrapper(p.objective, p.x0, struct());
 end

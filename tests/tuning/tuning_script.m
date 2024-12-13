@@ -20,15 +20,15 @@ fprintf('Feature:\t %s\n', options.feature);
 options.num_random = 1;
 plot_parameters(parameters, solver, competitor, options);   
 
-% options.feature = "noise_1e-3_no_rotation";
-% fprintf('Feature:\t %s\n', options.feature);
-% options.num_random = 3;
-% plot_parameters(parameters, solver, competitor, options);   
+options.feature = "noise_1e-3_no_rotation";
+fprintf('Feature:\t %s\n', options.feature);
+options.num_random = 3;
+plot_parameters(parameters, solver, competitor, options);   
 
-% options.feature = "rotation_noisy_1e-3";
-% fprintf('Feature:\t %s\n', options.feature);
-% options.num_random = 3;
-% plot_parameters(parameters, solver, competitor, options);   
+options.feature = "rotation_noisy_1e-3";
+fprintf('Feature:\t %s\n', options.feature);
+options.num_random = 3;
+plot_parameters(parameters, solver, competitor, options);   
 
 function w = plot_weights(x)
     w = 1;

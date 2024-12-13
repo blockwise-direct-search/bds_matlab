@@ -415,6 +415,13 @@ function x = nomad_test(fun, x0)
 
     % params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
     % [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
+    % fun = @(x) eval_objective(x, fun);
     x = nomad_wrapper(fun, x0, struct());
     
 end
+
+
+
+% function f = eval_objective(x, fun)
+%     f = fun(double(x));
+% end
