@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Profile default cbds and lam using optiprofiler, small
+    name: Profile default cbds and lam, small
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -22,7 +22,8 @@ jobs:
         solver: [cbds-original]
         competitor: [lam]
         run_plain: [false]
-        feature: [plain, perturbed_x0, perturbed_x0_1, perturbed_x0_10, noisy_1e-1, noisy_1e-2, noisy_1e-3, noisy_1e-4, truncated_1, truncated_2, truncated_3, truncated_4, permuted, linearly_transformed, random_nan_5, random_nan_10, random_nan_20, quantized, rotation_noisy_1e-1, rotation_noisy_1e-2, rotation_noisy_1e-3, rotation_noisy_1e-4]
+        summarize_log_ratio_profiles: [false]
+        feature: [plain, perturbed_x0_0.001, perturbed_x0_1, perturbed_x0_10, perturbed_x0_100, noisy_1e-1, noisy_1e-2, noisy_1e-3, noisy_1e-4, truncated_1, truncated_2, truncated_3, truncated_4, permuted, linearly_transformed, random_nan_5, random_nan_10, random_nan_20, quantized_1, quantized_2, quantized_3, quantized_4, rotation_noisy_1e-1, rotation_noisy_1e-2, rotation_noisy_1e-3, rotation_noisy_1e-4]
 
     steps:
       - name: Check out repository
@@ -36,13 +37,6 @@ jobs:
           repository: optiprofiler/optiprofiler
           ref: matlab
           path: optiprofiler
-      
-      - name: Checkout BDS
-        uses: actions/checkout@v4
-        with:
-          repository: blockwise-direct-search/bds
-          ref: main
-          path: bds
 
       - name: Install Texlive
         run: sudo apt-get update && sudo apt-get install texlive
@@ -63,7 +57,6 @@ jobs:
         with:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
-      
 
       - name: Run test
         uses: matlab-actions/run-command@v2.1.1
@@ -78,52 +71,59 @@ jobs:
               cd(root_dir);
   
               % Setup bds
-              cd(fullfile(root_dir, 'bds'));
               setup
-              cd(fullfile(root_dir, 'bds', 'tests', 'competitors'));
+              cd(fullfile(root_dir, 'tests', 'competitors'));
               addpath(pwd);
   
               % profile
-              cd(fullfile(root_dir, 'bds', 'tests'));
+              cd(fullfile(root_dir, 'tests'));
               options = struct();
               options.feature_name = '${{ matrix.feature }}';
               options.solver_names = {'${{ matrix.solver }}', '${{ matrix.competitor }}'};
               options.dim = '${{ matrix.dim }}';
               options.run_plain = ${{ matrix.run_plain }};
+              options.summarize_log_ratio_profiles = ${{ matrix.summarize_log_ratio_profiles }};
               profile_optiprofiler(options);
               cd(root_dir);
-              cd(fullfile(root_dir, 'bds', 'tests', 'out'));
+              cd(fullfile(root_dir, 'tests', 'out'));
               ls -R
               cd(root_dir);
 
       - name: Change the summary file name
         run: |
-          cd ./bds/tests/out
+          cd ./tests/out
           ls -R
-          find . -type f -name 'summary*.pdf' | while read -r file; do
-          # Obtain the parent directory and name
-          parent_dir=$(dirname "$file")
-          parent_name=$(basename "$parent_dir")
+          find . -type f -name 'summary.pdf' | while read -r file; do
+            # Obtain the parent directory and name
+            parent_dir=$(dirname "$file")
+            parent_name=$(basename "$parent_dir")
 
-          # Obtain the new name(Why the fifth underline? Because the last five parts are the time stamp)
-          new_name=$(echo "$parent_name" | awk -F'_' '{if(NF>=5) {for(i=1;i<=NF-5;i++) printf "%s%s", $i, (i<NF-5?"_":"")} else print $0}')
+            # Obtain the new name(Why the fifth underline? Because the last five parts are the time stamp)
+            new_name=$(echo "$parent_name" | awk -F'_' '{if(NF>=5) {for(i=1;i<=NF-5;i++) printf "%s%s", $i, (i<NF-5?"_":"")} else print $0}')
 
-          # Print the new name
-          echo "New name: $new_name"
+            # Print the new name
+            echo "New name: $new_name"
 
-          # Obtain the directory name
-          dir_name=$(dirname "$file")
-
-          # Rename the file
-          mv "$file" "$dir_name/summary_$new_name.pdf"
-          echo "Renamed $file to $dir_name/summary_$new_name.pdf"
+            # Obtain the directory name
+            dir_name=$(dirname "$file")
+            
+            # Establish the new file name
+            new_file="$dir_name/summary_$new_name.pdf"
+            
+            # Check if the source and destination are the same
+            if [ "$file" != "$new_file" ]; then
+              mv "$file" "$new_file"
+              echo "Renamed $file to $new_file"
+            else
+              echo "Source and destination are the same, skipping: $file"
+            fi
           done
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3.1.2
         with:
           name: profile_optiprofiler_${{ matrix.solver }}_${{ matrix.competitor }}_${{ matrix.dim }}_${{ matrix.feature }}_${{ matrix.run_plain }}
-          path: ./bds/tests/out/**
+          path: ./tests/out/**
 
   merge_artifacts:
     name: Merge Artifacts
@@ -134,106 +134,62 @@ jobs:
       contents: read
     
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
       - name: Install PDF tools
         run: sudo apt-get update && sudo apt-get install -y poppler-utils
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          path: downloaded_artifacts
+          path: tests/testdata/downloaded_artifacts
 
-      - name: List downloaded files
+      - name: List all files
         run: |
-          echo "Downloaded files:"
-          ls -R downloaded_artifacts/
+          cd tests/testdata/downloaded_artifacts
+          ls -R
 
       - name: Merge PDF files
         run: |
-          cd downloaded_artifacts
-          ls -R
-          mkdir summary
-          find . -type f -name 'summary*.pdf' -exec cp {} summary/ \;
-          cd summary
-          # Define keywords to search for PDF files
-          keywords=(
-              "plain"
-              "noisy_1_no_rotation"
-              "noisy_2_no_rotation"
-              "noisy_3_no_rotation"
-              "noisy_4_no_rotation"
-              "rotation_noisy_1"
-              "rotation_noisy_2"
-              "rotation_noisy_3"
-              "rotation_noisy_4"
-              "permuted"
-              "linearly_transformed"
-              "quantized"
-              "perturbed_x0"
-              "random_nan_5"
-              "random_nan_10"
-              "random_nan_20"
-              "truncated_1"
-              "truncated_2"
-              "truncated_3"
-              "truncated_4"
-          )
+          cp tests/tools/merge_pdf.sh tests/testdata/downloaded_artifacts
+          cd tests/testdata/downloaded_artifacts/
 
-          output_file="merged.pdf"
-          declare -a pdf_files  # Use an array to store PDF files
-
-          # Obtain all PDF files starting with 'summary'
-          all_pdf_files=(summary*.pdf)
-
-          # Print the array content for debugging
-          echo "Found these PDF files:"
-          for file in "${all_pdf_files[@]}"; do
-              echo "  $file"
-          done
-
-          # Create an associative array to store keyword to file mapping
-          declare -A keyword_to_file
-
-          # Search for PDF files with keywords
-          for keyword in "${keywords[@]}"; do
-              echo "Searching for keyword: $keyword"
-              for file in "${all_pdf_files[@]}"; do
-                  if [[ $file == *"$keyword"* ]]; then
-                      echo "  Found file for keyword '$keyword': $file"
-                      keyword_to_file[$keyword]=$file
-                      break  # Every keyword should have only one file
-                  fi
-              done
-          done
-
-          # Clear array to store PDF files in order of keywords
-          pdf_files=()
-
-          # Add PDF files to the array in order of keywords
-          for keyword in "${keywords[@]}"; do
-              if [[ -n "${keyword_to_file[$keyword]}" ]]; then
-                  pdf_files+=("${keyword_to_file[$keyword]}")
-              fi
-          done
-
-          # Print the array content for debugging
-          echo -e "\nFiles in order of keywords:"
-          printf '%s\n' "${pdf_files[@]}"
-
-          # Print total number of files found
-          echo -e "\nTotal files found: ${#pdf_files[@]}"
+          ARTIFACT_NAME=$(ls | grep "profile_optiprofiler" | head -n 1)
+          BASE_INFO=$(echo $ARTIFACT_NAME | sed -n 's/.*optiprofiler_\([^_]*_[^_]*_\(small\|big\)\).*/\1/p')
+          echo "Base info extracted: ${BASE_INFO}"
+          echo "BASE_INFO=${BASE_INFO}" >> $GITHUB_ENV
 
           # Merge PDF files
-          if [[ ${#pdf_files[@]} -gt 0 ]]; then
-              pdfunite "${pdf_files[@]}" "$output_file"
-              echo "Merge successfully: $output_file"
-          else
-              echo "There are no PDF files to merge."
-              echo -e "\nAll PDF files in current directory:"
-              ls summary*.pdf
+          mkdir summary
+          for f in $(find . -maxdepth 3 -type f -name 'summary*.pdf'); do
+              if [ ! -f "summary/$(basename $f)" ]; then
+                  cp "$f" summary/
+              fi
+          done
+          cd summary
+          ls
+          bash ../merge_pdf.sh
+          mv merged.pdf "summary_${BASE_INFO}.pdf"
+          cd ..
+          if [ -d "summary" ]; then
+            mv summary "summary_${BASE_INFO}"
           fi
 
       - name: Upload merged artifact
         uses: actions/upload-artifact@v3
+        env:
+          BASE_INFO: ${{ env.BASE_INFO }}
         with:
-          name: merged_profiles
-          path: downloaded_artifacts
+          name: merged_profiles_${{ env.BASE_INFO }}
+          path: tests/testdata/downloaded_artifacts/**
+
+      - name: Upload summary files
+        uses: actions/upload-artifact@v3
+        env:
+          BASE_INFO: ${{ env.BASE_INFO }}
+        with:
+          name: summary_files_${{ env.BASE_INFO }}
+          path: tests/testdata/downloaded_artifacts/summary_${{ env.BASE_INFO }}/**
