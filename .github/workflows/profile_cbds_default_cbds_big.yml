@@ -1,4 +1,4 @@
-name: Profile CBDS and default CBDS, big
+name: Profile cbds and default cbds using optiprofiler, big
 
 on:
   # Trigger the workflow on # push or pull request
