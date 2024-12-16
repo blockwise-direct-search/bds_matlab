@@ -130,6 +130,14 @@ function profile_optiprofiler(options)
                 solvers{i} = @pbds_test;
             case 'cbds'
                 solvers{i} = @cbds_test;
+            case 'cbds-half'
+                solvers{i} = @cbds_half_test;
+            case 'cbds-quarter'
+                solvers{i} = @cbds_quarter_test;
+            case 'cbds-randomized-orthogonal'
+                solvers{i} = @cbds_randomized_orthogonal_test;
+            case 'cbds-randomized-gaussian'
+                solvers{i} = @cbds_randomized_gaussian_test;
             case 'cbds-original'
                 solvers{i} = @cbds_original_test;
             case 'bfo'
@@ -369,6 +377,44 @@ function x = cbds_test(fun, x0)
     
 end
 
+function x = cbds_half_test(fun, x0)
+
+    option.Algorithm = 'cbds';
+    option.expand = 1.25;
+    option.shrink = 0.85;
+    option.num_blocks = ceil(numel(x0)/2);
+    x = bds(fun, x0, option);
+    
+end
+
+function x = cbds_quarter_test(fun, x0)
+
+    option.Algorithm = 'cbds';
+    option.expand = 1.25;
+    option.shrink = 0.85;
+    option.num_blocks = ceil(numel(x0)/4);
+    x = bds(fun, x0, option);
+    
+end
+
+function x = cbds_randomized_orthogonal_test(fun, x0)
+
+    option.Algorithm = 'cbds';
+    [Q,R] = qr(randn(numel(x0), numel(x0)));
+    Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
+    option.direction_set = Q;
+    x = bds(fun, x0, option);
+    
+end
+
+function x = cbds_randomized_gaussian_test(fun, x0)
+
+    option.Algorithm = 'cbds';
+    option.direction_set = randn(numel(x0), numel(x0));
+    x = bds(fun, x0, option);
+    
+end
+
 function x = cbds_original_test(fun, x0)
 
     option.Algorithm = 'cbds';
@@ -402,26 +448,31 @@ function x = lam_test(fun, x0)
 end
 
 function x = nomad_test(fun, x0)
+    
+    % Dimension:
+    n = numel(x0);
 
-    % % Dimension
-    % n = numel(x0);
+    % Set the default bounds.
+    lb = -inf(n, 1);
+    ub = inf(n, 1);
 
-    % % Set the default bounds.
-    % lb = -inf(n, 1);
-    % ub = inf(n, 1);
+    % Set MAXFUN to the maximum number of function evaluations.
+    if isfield(options, "MaxFunctionEvaluations")
+        MaxFunctionEvaluations = options.MaxFunctionEvaluations;
+    else
+        MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
+    end
 
-    % % Set MAXFUN to the maximum number of function evaluations.
-    % MaxFunctionEvaluations = 500*n;
+    params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
 
-    % params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
-    % [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
-    % fun = @(x) eval_objective(x, fun);
-    x = nomad_wrapper(fun, x0, struct());
+    % As of NOMAD version 4.4.0 and OptiProfiler commit 24d8cc0, the following line is 
+    % necessary. Otherwise, NOMAD will throw an error, complaining that the blackbox 
+    % evaluation fails. This seems to be because OptiProfiler wraps the function 
+    % handle in a way that NOMAD does not expect: NOMAD expects a function handle 
+    % `fun` with the signature fun(x), where x is a column vector, while OptiProfiler 
+    % produces one with the signature @(varargin)featured_problem.fun(varargin{:}).
+    fun = @(x) fun(x(:));
+
+    [x, ~, ~, ~, ~] = nomadOpt(fun,x0,lb,ub,params);
     
 end
-
-
-
-% function f = eval_objective(x, fun)
-%     f = fun(double(x));
-% end
