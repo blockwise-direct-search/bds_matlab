@@ -46,7 +46,7 @@ The tests are **automated** by
     - [![Profile default cbds and ds using optiprofiler, big](https://github.com/zeroth-order-optimization/bds/actions/workflows/profile_default_cbds_ds_big.yml/badge.svg)](https://github.com/zeroth-order-optimization/bds/actions/workflows/profile_default_cbds_ds_big.yml)
     - [![Profile default cbds and ds using optiprofiler, small](https://github.com/zeroth-order-optimization/bds/actions/workflows/profile_default_cbds_ds_small.yml/badge.svg)](https://github.com/zeroth-order-optimization/bds/actions/workflows/profile_default_cbds_ds_small.yml)
 
-- [Tests](https://github.com/0thopt/bds/actions) at [zeroth-order-optimization/bds](https://github.com/0thopt/bds)
+- [Tests](https://github.com/0thopt/bds/actions) at [0thopt/bds](https://github.com/0thopt/bds)
 
     - [![Profile cbds and bfo using optiprofiler, big](https://github.com/0thopt/bds/actions/workflows/profile_cbds_bfo_big.yml/badge.svg)](https://github.com/0thopt/bds/actions/workflows/profile_cbds_bfo_big.yml)
     - [![Profile cbds and bfo using optiprofiler, small](https://github.com/0thopt/bds/actions/workflows/profile_cbds_bfo_small.yml/badge.svg)](https://github.com/0thopt/bds/actions/workflows/profile_cbds_bfo_small.yml)
