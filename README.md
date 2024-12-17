@@ -52,4 +52,37 @@ The tests are **automated** by
     - [![Profile cbds and bfo using optiprofiler, small](https://github.com/0thopt/bds/actions/workflows/profile_cbds_bfo_small.yml/badge.svg)](https://github.com/0thopt/bds/actions/workflows/profile_cbds_bfo_small.yml)
     - [![Profile default cbds and bfo using optiprofiler, big](https://github.com/0thopt/bds/actions/workflows/profile_default_cbds_bfo_big.yml/badge.svg)](https://github.com/0thopt/bds/actions/workflows/profile_default_cbds_bfo_big.yml)
     - [![Profile cbds and bfo using optiprofiler, small](https://github.com/0thopt/bds/actions/workflows/profile_default_cbds_bfo_small.yml/badge.svg)](https://github.com/0thopt/bds/actions/workflows/profile_default_cbds_bfo_small.yml)    
+
+- [Tests](https://github.com/bladesopt/bds/actions) at [bladesopt/bds](https://github.com/bladesopt/bds)
+
+    - [![Profile cbds and bfgs using optiprofiler, big](https://github.com/bladesopt/bds/actions/workflows/profile_cbds_bfgs_big.yml/badge.svg)](https://github.com/bladesopt/bds/actions/workflows/profile_cbds_bfgs_big.yml)
+    - [![Profile cbds and bfgs using optiprofiler, small](https://github.com/bladesopt/bds/actions/workflows/profile_cbds_bfgs_small.yml/badge.svg)](https://github.com/bladesopt/bds/actions/workflows/profile_cbds_bfgs_small.yml)
+    - [![Profile default cbds and bfgs using optiprofiler, big](https://github.com/bladesopt/bds/actions/workflows/profile_default_cbds_bfgs_big.yml/badge.svg)](https://github.com/bladesopt/bds/actions/workflows/profile_default_cbds_bfgs_big.yml)
+    - [![Profile default cbds and bfgs using optiprofiler, small](https://github.com/bladesopt/bds/actions/workflows/profile_default_cbds_bfgs_small.yml/badge.svg)](https://github.com/bladesopt/bds/actions/workflows/profile_default_cbds_bfgs_small.yml)
+
+- [Tests](https://github.com/derivative-free-optimization/bds/actions) at [derivative-free-optimization/bds](https://github.com/derivative-free-optimization/bds)
+
+    - [![Profile cbds and lam using optiprofiler, big](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_cbds_lam_big.yml/badge.svg)](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_cbds_lam_big.yml)
+    - [![Profile cbds and lam using optiprofiler, small](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_cbds_lam_small.yml/badge.svg)](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_cbds_lam_small.yml)
+    - [![Profile default cbds and lam using optiprofiler, big](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_default_cbds_lam_big.yml/badge.svg)](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_default_cbds_lam_big.yml)
+    - [![Profile default cbds and lam using optiprofiler, small](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_default_cbds_lam_small.yml/badge.svg)](https://github.com/derivative-free-optimization/bds/actions/workflows/profile_default_cbds_lam_small.yml)
   
+- [Tests](https://github.com/dfopt/bds/actions) at [dfopt/bds](https://github.com/dfopt/bds)
+
+    - [![Profile cbds and newuoa using optiprofiler, big](https://github.com/dfopt/bds/actions/workflows/profile_cbds_newuoa_big.yml/badge.svg)](https://github.com/dfopt/bds/actions/workflows/profile_cbds_newuoa_big.yml)
+    - [![Profile cbds and newuoa using optiprofiler, small](https://github.com/dfopt/bds/actions/workflows/profile_cbds_newuoa_small.yml/badge.svg)](https://github.com/dfopt/bds/actions/workflows/profile_cbds_newuoa_small.yml)
+    - [![Profile default cbds and newuoa using optiprofiler, big](https://github.com/dfopt/bds/actions/workflows/profile_default_cbds_newuoa_big.yml/badge.svg)](https://github.com/dfopt/bds/actions/workflows/profile_default_cbds_newuoa_big.yml)
+    - [![Profile default cbds and newuoa using optiprofiler, small](https://github.com/dfopt/bds/actions/workflows/profile_default_cbds_newuoa_small.yml/badge.svg)](https://github.com/dfopt/bds/actions/workflows/profile_default_cbds_newuoa_small.yml)
+
+- [Tests](https://github.com/gradient-free-opt/bds/actions) at [gradient-free-opt/bds](https://github.com/gradient-free-opt/bds)
+
+    - [![Profile cbds and simplex using optiprofiler, big](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_big.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_big.yml)
+    - [![Profile cbds and simplex using optiprofiler, small](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_small.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_small.yml)
+    - [![Profile default cbds and simplex using optiprofiler, big](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml)
+    - [![Profile default cbds and simplex using optiprofiler, small](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml)
+
+- [Tests](https://github.com/libblades/bds/actions) at [libblades/bds](https://github.com/libblades/bds)
+
+    - [![Profile cbds and default cbds, big](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_big.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_big.yml)
+    - [![Profile cbds and default cbds, small](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_small.yml)    
+
