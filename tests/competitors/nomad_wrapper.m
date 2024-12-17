@@ -16,7 +16,7 @@ else
     MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
 end
 
-params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
+params = struct('min_frame_size','* 0.000001', 'MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
 
 % As of NOMAD version 4.4.0 and OptiProfiler commit 24d8cc0, the following line is 
 % necessary. Otherwise, NOMAD will throw an error, complaining that the blackbox 
