@@ -100,5 +100,5 @@ The tests are **automated** by
 
 - [Tests](https://github.com/gradient-free-optimization/bds/actions) at [gradient-free-optimization/bds](https://github.com/gradient-free-optimization/bds)
 
-    - [![Profile cbds with different blocks input, big](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_big.yml/badge.svg)](https://github.com/gradient-free-optimization/actions/workflows/profile_cbds_blocks_big.yml)
-    - [![Profile cbds with different blocks input, small](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_small.yml/badge.svg)](https://github.com/gradient-free-optimization/actions/workflows/profile_cbds_blocks_small.yml)
+    - [![Profile cbds with different blocks input, big](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_big.yml/badge.svg)](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_big.yml)
+    - [![Profile cbds with different blocks input, small](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_small.yml/badge.svg)](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_small.yml) 
