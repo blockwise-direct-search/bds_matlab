@@ -168,6 +168,7 @@ blacktriangle
 blacktriangledown
 blacktriangleleft
 blacktriangleright
+bladesopt
 Blanchet
 Blei
 blockwise
@@ -379,6 +380,7 @@ det
 detrat
 Devolder
 DFO
+dfopt
 dfp
 DFVLR
 dhd
@@ -966,6 +968,7 @@ lgroup
 lhd
 lhtian
 LIARWHD
+libblades
 libprima
 libstdc
 Lidskii
@@ -1804,6 +1807,7 @@ thickapprox
 thicksim
 thispagestyle
 thodes
+thopt
 thresholding
 tian
 Tibshirani

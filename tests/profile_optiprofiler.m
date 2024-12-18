@@ -46,6 +46,15 @@ function profile_optiprofiler(options)
         options.noise_level = 10.^(str2double(options.feature_name(end-1:end)));
         options.feature_name = 'custom';
     end
+    if startsWith(options.feature_name, 'permuted_noisy')
+        if sum(options.feature_name == '_') > 0
+            options.noise_level = 10.^(str2double(options.feature_name(end-1:end)));
+        else
+            options.noise_level = 1e-3;
+        end
+        options.feature_name = 'custom';
+        options.permuted = true;
+    end
     if startsWith(options.feature_name, 'truncated')
         if sum(options.feature_name == '_') > 0
             options.significant_digits = str2double(options.feature_name(end));
@@ -138,6 +147,8 @@ function profile_optiprofiler(options)
                 solvers{i} = @cbds_randomized_orthogonal_test;
             case 'cbds-randomized-gaussian'
                 solvers{i} = @cbds_randomized_gaussian_test;
+            case 'cbds-permuted'
+                solvers{i} = @cbds_permuted_test;
             case 'cbds-original'
                 solvers{i} = @cbds_original_test;
             case 'bfo'
@@ -226,9 +237,19 @@ function profile_optiprofiler(options)
             'YATP1CLS'};
 
     if strcmp(options.feature_name, 'custom')
-        % We need mod_x0 to make sure that the linearly transformed problem is mathematically equivalent
-        % to the original problem.
-        options.mod_x0 = @mod_x0;
+
+        if ~isfield(options, 'permuted')
+            % We need mod_x0 to make sure that the linearly transformed problem is mathematically equivalent
+            % to the original problem.
+            options.mod_x0 = @mod_x0;
+            options.mod_affine = @mod_affine;
+            options.feature_stamp = strcat('rotation_noisy_', int2str(int32(-log10(options.noise_level))));
+        else
+            options.mod_x0 = @mod_x0_permuted;
+            options.mod_affine = @perm_affine;
+            options.feature_stamp = strcat('permuted_noisy_', int2str(int32(-log10(options.noise_level))));
+            options = rmfield(options, 'permuted');
+        end
         % We only modify mod_fun since we are dealing with unconstrained problems.
         switch options.noise_level
             case 1e-1
@@ -242,9 +263,8 @@ function profile_optiprofiler(options)
             otherwise
                 error('Unknown noise level');
         end
-        options.mod_affine = @mod_affine;
-        options.feature_stamp = strcat('rotation_noisy_', int2str(int32(-log10(options.noise_level))));
-        options = rmfield(options, 'noise_level');
+            options = rmfield(options, 'noise_level');
+
     end
 
     benchmark(solvers, options)
@@ -256,6 +276,13 @@ function x0 = mod_x0(rand_stream, problem)
     [Q, R] = qr(rand_stream.randn(problem.n));
     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
     x0 = Q * problem.x0;
+end
+
+function x0 = mod_x0_permuted(rand_stream, problem)
+
+    P = eye(problem.n);
+    P = P(rand_stream.randperm(problem.n), :);
+    x0 = P * problem.x0;
 end
 
 function f = mod_fun_1(x, rand_stream, problem)
@@ -289,6 +316,16 @@ function [A, b, inv] = mod_affine(rand_stream, problem)
     A = Q';
     b = zeros(problem.n, 1);
     inv = Q;
+end
+
+function [A, b, inv] = perm_affine(rand_stream, problem)
+
+    p = rand_stream.randperm(problem.n);
+    P = eye(problem.n);
+    P = P(p,:);
+    A = P';
+    b = zeros(problem.n, 1);    
+    inv = P;
 end
 
 function x = fminsearch_test(fun, x0)
@@ -400,6 +437,8 @@ end
 function x = cbds_randomized_orthogonal_test(fun, x0)
 
     option.Algorithm = 'cbds';
+    option.expand = 1.25;
+    option.shrink = 0.85;
     [Q,R] = qr(randn(numel(x0), numel(x0)));
     Q(:, diag(R) < 0) = -Q(:, diag(R) < 0);
     option.direction_set = Q;
@@ -410,7 +449,22 @@ end
 function x = cbds_randomized_gaussian_test(fun, x0)
 
     option.Algorithm = 'cbds';
+    option.expand = 1.25;
+    option.shrink = 0.85;
     option.direction_set = randn(numel(x0), numel(x0));
+    x = bds(fun, x0, option);
+    
+end
+
+function x = cbds_permuted_test(fun, x0)
+
+    option.Algorithm = 'cbds';
+    option.expand = 1.25;
+    option.shrink = 0.85;
+    p = rand_stream.randperm(problem.n);
+    P = eye(problem.n);
+    P = P(p,:);
+    option.direction_set = P;
     x = bds(fun, x0, option);
     
 end
