@@ -79,7 +79,7 @@ The tests are **automated** by
     - [![Profile cbds and simplex using optiprofiler, big](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_big.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_big.yml)
     - [![Profile cbds and simplex using optiprofiler, small](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_small.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_cbds_simplex_small.yml)
     - [![Profile default cbds and simplex using optiprofiler, big](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml)
-    - [![Profile default cbds and simplex using optiprofiler, small](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_big.yml)
+    - [![Profile default cbds and simplex using optiprofiler, small](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_small.yml/badge.svg)](https://github.com/gradient-free-opt/bds/actions/workflows/profile_default_cbds_simplex_small.yml)
 
 - [Tests](https://github.com/libblades/bds/actions) at [libblades/bds](https://github.com/libblades/bds)
 
