@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Profile CBDS and lam, small
+    name: Profile CBDS and LAM, small
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

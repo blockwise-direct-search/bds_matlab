@@ -1,4 +1,4 @@
-name: Profile cbds and newuoa using optiprofiler, small
+name: Profile default cbds and nomad using optiprofiler, small
 
 on:
   # Trigger the workflow on # push or pull request
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Profile CBDS and NEWUOA, small
+    name: Profile default BDS and nomad, small
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -19,8 +19,8 @@ jobs:
         matlab: [latest]
         dim: [small]
         with_optim_toolbox: [yes]
-        solver: [cbds]
-        competitor: [newuoa]
+        solver: [cbds-original]
+        competitor: [nomad]
         run_plain: [false]
         summarize_log_ratio_profiles: [false]
         feature: [plain, perturbed_x0_0.001, perturbed_x0_1, perturbed_x0_10, perturbed_x0_100, noisy_1e-1, noisy_1e-2, noisy_1e-3, noisy_1e-4, truncated_1, truncated_2, truncated_3, truncated_4, permuted, linearly_transformed, random_nan_5, random_nan_10, random_nan_20, quantized_1, quantized_2, quantized_3, quantized_4, rotation_noisy_1e-1, rotation_noisy_1e-2, rotation_noisy_1e-3, rotation_noisy_1e-4]
@@ -37,6 +37,12 @@ jobs:
           repository: optiprofiler/optiprofiler
           ref: matlab
           path: optiprofiler
+
+      - name: Checkout Nomad
+        uses: actions/checkout@v4
+        with:
+          repository: bbopt/nomad
+          path: nomad  
 
       - name: Install Texlive
         run: sudo apt-get update && sudo apt-get install texlive
@@ -58,6 +64,18 @@ jobs:
           release: ${{ matrix.matlab }}
           products: Optimization_Toolbox
 
+      - name: Set up Nomad
+        run: |
+          cd ./nomad 
+          cmake --version 
+          cmake -DTEST_OPENMP=OFF -DBUILD_INTERFACE_MATLAB=ON -S . -B build/release
+          cmake --build build/release
+          cmake --install build/release
+          find /usr/lib /lib -name "libstdc++.so.6"
+
+      - name: Set LD_PRELOAD
+        run: echo "LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6" >> $GITHUB_ENV
+
       - name: Run test
         uses: matlab-actions/run-command@v2.1.1
         with:
@@ -73,6 +91,10 @@ jobs:
               % Setup bds
               setup
               cd(fullfile(root_dir, 'tests', 'competitors'));
+              addpath(pwd);
+
+              % Setup nomad
+              cd(fullfile(root_dir, 'nomad', 'build', 'release', 'lib'));
               addpath(pwd);
   
               % profile
