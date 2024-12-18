@@ -86,5 +86,15 @@ The tests are **automated** by
     - [![Profile cbds and default cbds, big](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_big.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_big.yml)
     - [![Profile cbds and default cbds, small](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_small.yml)
     - [![Profile cbds and nomad, small](https://github.com/libblades/bds/actions/workflows/profile_cbds_nomad_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_nomad_small.yml)
-    - [![Profile default cbds and nomad, small](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml)     
+    - [![Profile default cbds and nomad, small](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml)   
+
+- [Tests](https://github.com/opt-lab/bds/actions) at [opt-lab/bds](https://github.com/opt-lab/bds)
+
+    - [![Profile cbds with randomized orthogonal matrix input, big](https://github.com/opt-lab/bds/actions/workflows/profile_cbds_randomized_orthogonal_big.yml/badge.svg)](https://github.com/opt-lab/bds/actions/workflows/profile_cbds_randomized_orthogonal_big.yml)
+    - [![Profile cbds with randomized orthogonal matrix input, small](https://github.com/opt-lab/bds/actions/workflows/profile_cbds_randomized_orthogonal_small.yml/badge.svg)](https://github.com/opt-lab/bds/actions/workflows/profile_cbds_randomized_orthogonal_small.yml)  
+
+- [Tests](https://github.com/optimlib/bds/actions) at [optimlib/bds](https://github.com/optimlib/bds)
+
+    - [![Profile cbds with permuted matrix input, big](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_big.yml/badge.svg)](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_big.yml)
+    - [![Profile cbds with permuted matrix input, small](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_small.yml/badge.svg)](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_small.yml)   
 
