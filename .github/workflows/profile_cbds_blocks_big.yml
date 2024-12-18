@@ -1,4 +1,4 @@
-name: Profile cbds with different blocks, big
+name: Profile cbds with different blocks input, big
 
 on:
   # Trigger the workflow on # push or pull request
@@ -10,7 +10,7 @@ on:
 
 jobs:
   test:
-    name: Profile BDS with different blocks, big
+    name: Profile BDS with different blocks input, big
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

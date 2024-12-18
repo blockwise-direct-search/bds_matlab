@@ -98,3 +98,7 @@ The tests are **automated** by
     - [![Profile cbds with permuted matrix input, big](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_big.yml/badge.svg)](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_big.yml)
     - [![Profile cbds with permuted matrix input, small](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_small.yml/badge.svg)](https://github.com/optimlib/bds/actions/workflows/profile_cbds_permuted_small.yml)   
 
+- [Tests](https://github.com/gradient-free-optimization/bds/actions) at [gradient-free-optimization/bds](https://github.com/gradient-free-optimization/bds)
+
+    - [![Profile cbds with different blocks input, big](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_big.yml/badge.svg)](https://github.com/optimlib/gradient-free-optimization/actions/workflows/profile_cbds_blocks_big.yml)
+    - [![Profile cbds with different blocks input, small](https://github.com/gradient-free-optimization/bds/actions/workflows/profile_cbds_blocks_small.yml/badge.svg)](https://github.com/optimlib/gradient-free-optimization/actions/workflows/profile_cbds_blocks_small.yml)

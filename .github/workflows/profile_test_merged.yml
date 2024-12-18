@@ -1,4 +1,4 @@
-name: Profile cbds and simplex using optiprofiler, small
+name: Profile test merged
 
 on:
   # Trigger the workflow on # push or pull request
