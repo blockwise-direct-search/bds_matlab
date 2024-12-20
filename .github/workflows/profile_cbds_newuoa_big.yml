@@ -38,6 +38,12 @@ jobs:
           ref: matlab
           path: optiprofiler
 
+      - name: Clone PRIMA
+        uses: actions/checkout@v4
+        with:
+          repository: libprima/prima
+          path: prima
+
       - name: Install Texlive
         run: sudo apt-get update && sudo apt-get install texlive
 
@@ -69,6 +75,10 @@ jobs:
               cd(fullfile(root_dir, 'optiprofiler'));
               setup
               cd(root_dir);
+
+              % Setup prima
+              cd(fullfile(root_dir, 'prima'));
+              setup
   
               % Setup bds
               setup
