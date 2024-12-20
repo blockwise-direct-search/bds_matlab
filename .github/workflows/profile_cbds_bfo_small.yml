@@ -84,6 +84,7 @@ jobs:
               addpath(pwd);
   
               % Setup bds
+              cd(root_dir);
               setup
               cd(fullfile(root_dir, 'tests', 'competitors'));
               addpath(pwd);
