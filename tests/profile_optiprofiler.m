@@ -509,11 +509,7 @@ function x = nomad_test(fun, x0)
     ub = inf(n, 1);
 
     % Set MAXFUN to the maximum number of function evaluations.
-    if isfield(options, "MaxFunctionEvaluations")
-        MaxFunctionEvaluations = options.MaxFunctionEvaluations;
-    else
-        MaxFunctionEvaluations = get_default_constant("MaxFunctionEvaluations_dim_factor")*n;
-    end
+    MaxFunctionEvaluations = 500*n;
 
     params = struct('MAX_BB_EVAL', num2str(MaxFunctionEvaluations), 'max_eval',num2str(MaxFunctionEvaluations));
 
