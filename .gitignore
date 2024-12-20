@@ -79,6 +79,6 @@ tests/test_script.m
 tests/optiprofiler
 *.eps
 tests/optiprofiler_script/out
-tests/tuning/tuning_data
+tests/tuning/tuning_data/
 tests/out
 tests/competitors/out
