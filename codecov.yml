@@ -1,5 +1,8 @@
 # Codecov
 
+codecov:
+  token: 43d14d1f-aab0-4b34-ae45-c550fdbc98b2
+
 coverage:
   status:
     project:
