@@ -37,6 +37,15 @@ jobs:
           repository: optiprofiler/optiprofiler
           ref: matlab
           path: optiprofiler
+          
+      - name: Clone BFO
+        uses: actions/checkout@v4
+        with:
+          repository: m01marpor/BFO
+          path: bfo
+
+      - name: modify BFO 
+        run: cd ./bfo && sed -i '/^found  /{s/.*/found = 1/;n;d;}' bfo.m && cat bfo.m | grep found
 
       - name: Install Texlive
         run: sudo apt-get update && sudo apt-get install texlive
@@ -69,6 +78,10 @@ jobs:
               cd(fullfile(root_dir, 'optiprofiler'));
               setup
               cd(root_dir);
+
+              % Setup bfo
+              cd(fullfile(root_dir, 'bfo'));
+              addpath(pwd);
   
               % Setup bds
               setup
