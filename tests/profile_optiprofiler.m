@@ -459,7 +459,7 @@ function x = cbds_permuted_test(fun, x0)
 
     option.expand = 1.25;
     option.shrink = 0.85;
-    p = rand_stream.randperm(problem.n);
+    p = randperm(problem.n);
     P = eye(problem.n);
     P = P(p,:);
     option.direction_set = P;
