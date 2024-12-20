@@ -183,7 +183,7 @@ jobs:
         env:
           BASE_INFO: ${{ env.BASE_INFO }}
         with:
-          name: merged_profiles_${{ env.BASE_INFO }}
+          name: merged_profiles_permuted_small
           path: tests/testdata/downloaded_artifacts/**
 
       - name: Upload summary files
@@ -191,5 +191,5 @@ jobs:
         env:
           BASE_INFO: ${{ env.BASE_INFO }}
         with:
-          name: summary_files_${{ env.BASE_INFO }}
+          name: summary_files_permuted_small
           path: tests/testdata/downloaded_artifacts/summary_${{ env.BASE_INFO }}/**
