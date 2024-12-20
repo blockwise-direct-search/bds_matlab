@@ -86,7 +86,9 @@ The tests are **automated** by
     - [![Profile cbds and default cbds, big](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_big.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_big.yml)
     - [![Profile cbds and default cbds, small](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_default_cbds_small.yml)
     - [![Profile cbds and nomad, small](https://github.com/libblades/bds/actions/workflows/profile_cbds_nomad_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_nomad_small.yml)
-    - [![Profile default cbds and nomad, small](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml)   
+    - [![Profile default cbds and nomad, small](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_small.yml) 
+    - [![Profile cbds and nomad, big](https://github.com/libblades/bds/actions/workflows/profile_cbds_nomad_big.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_cbds_nomad_big.yml)
+    - [![Profile default cbds and nomad, big](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_big.yml/badge.svg)](https://github.com/libblades/bds/actions/workflows/profile_default_cbds_nomad_big.yml)     
 
 - [Tests](https://github.com/opt-lab/bds/actions) at [opt-lab/bds](https://github.com/opt-lab/bds)
 
