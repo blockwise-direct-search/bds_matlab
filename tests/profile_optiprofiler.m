@@ -100,6 +100,9 @@ function profile_optiprofiler(options)
             options.n_runs = 3;
         end
     end
+    if ~isfield(options, 'solver_verbose')
+        options.solver_verbose = 2;
+    end
     time_str = char(datetime('now', 'Format', 'yy_MM_dd_HH_mm'));
     options.silent = false;
     options.keep_pool = true;
@@ -416,7 +419,6 @@ end
 
 function x = cbds_half_test(fun, x0)
 
-    option.Algorithm = 'cbds';
     option.expand = 1.25;
     option.shrink = 0.85;
     option.num_blocks = ceil(numel(x0)/2);
@@ -426,7 +428,6 @@ end
 
 function x = cbds_quarter_test(fun, x0)
 
-    option.Algorithm = 'cbds';
     option.expand = 1.25;
     option.shrink = 0.85;
     option.num_blocks = ceil(numel(x0)/4);
@@ -436,7 +437,6 @@ end
 
 function x = cbds_randomized_orthogonal_test(fun, x0)
 
-    option.Algorithm = 'cbds';
     option.expand = 1.25;
     option.shrink = 0.85;
     [Q,R] = qr(randn(numel(x0), numel(x0)));
@@ -448,7 +448,6 @@ end
 
 function x = cbds_randomized_gaussian_test(fun, x0)
 
-    option.Algorithm = 'cbds';
     option.expand = 1.25;
     option.shrink = 0.85;
     option.direction_set = randn(numel(x0), numel(x0));
@@ -458,7 +457,6 @@ end
 
 function x = cbds_permuted_test(fun, x0)
 
-    option.Algorithm = 'cbds';
     option.expand = 1.25;
     option.shrink = 0.85;
     p = rand_stream.randperm(problem.n);

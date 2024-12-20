@@ -133,31 +133,56 @@ end
 
 % Get the direction set.
 D = get_direction_set(n, options);
+% Get the number of blocks.
+num_directions = size(D, 2);
 
-% Set the default Algorithm of BDS, which is "cbds".
+% % Set the default Algorithm of BDS, which is "cbds".
+% if ~isfield(options, "Algorithm")
+%     options.Algorithm = get_default_constant("Algorithm");
+% end
+Algorithm_list = ["ds", "cbds", "pbds", "rbds", "pads", "scbds"];
+if isfield(options, "Algorithm") && ~ismember(options.Algorithm, Algorithm_list)
+    error("The Algorithm input is invalid");
+end
+
+% Preprocess the number of blocks.
+if isfield(options, "Algorithm")
+    if isfield(options, "num_blocks")
+        warning("The num_blocks input is ignored since the Algorithm is specified.");
+        options = rmfield(options, "num_blocks");
+    end
+else
+    if isfield(options, "num_blocks")
+        if options.num_blocks > num_directions
+            error("The number of blocks should be less than or equal to the number of directions.");
+        end
+        if options.num_blocks > n
+            warning("The number of blocks should be less than or equal to the dimension of the problem.\n");
+            warning("The number of blocks is set to be the minimum of the number of directions and the dimension of the problem.\n");
+            options.num_blocks = min(num_directions, n);
+        end
+    end
+end
+
+% Set the default value of Algorithm.
 if ~isfield(options, "Algorithm")
     options.Algorithm = get_default_constant("Algorithm");
 end
 
-% Get the number of blocks.
-num_directions = size(D, 2);
-if strcmpi(options.Algorithm, "ds")
-    % For ds, num_blocks can only be 1.
-    num_blocks = 1;
-elseif isfield(options, "block")
-    % num_blocks cannot exceed num_directions.
-    num_blocks = min(num_directions, options.block);
-elseif strcmpi(options.Algorithm, "cbds") || strcmpi(options.Algorithm, "pbds") ...
-    || strcmpi(options.Algorithm, "rbds") || strcmpi(options.Algorithm, "pads") ...
-    || strcmpi(options.Algorithm, "scbds")
-    % For these algorithms, the default value of num_blocks is num_directions/2. 
-    num_blocks = ceil(num_directions/2);
+% Set the default value of num_blocks.
+if ~isfield(options, "num_blocks")
+    if strcmpi(options.Algorithm, "ds")
+        num_blocks = 1;
+    else
+        num_blocks = ceil(num_directions/2);
+    end
+else
+    num_blocks = options.num_blocks;
 end
 
 % Determine the indices of directions in each block.
 direction_set_indices = divide_direction_set(n, num_blocks);
 
-options.num_blocks = num_blocks;
 % Check the inputs of the user when debug_flag is true.
 if debug_flag
     verify_preconditions(fun, x0, options);
