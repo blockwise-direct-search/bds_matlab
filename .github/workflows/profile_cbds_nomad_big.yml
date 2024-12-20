@@ -106,6 +106,7 @@ jobs:
               options = rmfield(options, 'dim');
               options.mindim = 6;
               options.maxdim = 20;
+              options.n_runs = 1;
               options.run_plain = ${{ matrix.run_plain }};
               options.summarize_log_ratio_profiles = ${{ matrix.summarize_log_ratio_profiles }};
               profile_optiprofiler(options);
