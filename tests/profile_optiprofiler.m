@@ -106,7 +106,6 @@ function profile_optiprofiler(options)
     time_str = char(datetime('now', 'Format', 'yy_MM_dd_HH_mm'));
     options.silent = false;
     options.keep_pool = true;
-    options.solver_verbose = 1;
     options.p_type = 'u';
     if isfield(options, 'dim')
         if strcmpi(options.dim, 'small')
